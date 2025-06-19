@@ -1,0 +1,30 @@
+﻿  Renderer.cpp
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(9,1): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(9,21): error C2146: syntax error: missing ';' before identifier 'ParseShader'
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(10,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(10,1): error C2447: '{': missing function header (old-style formal list?)
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,216): error C2397: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,216): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,223): error C2397: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,223): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,182): error C2397: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,182): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,193): error C2397: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(101,193): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(119,22): error C2146: syntax error: missing ';' before identifier 'ShaderSource'
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(119,22): error C2065: 'ShaderSource': undeclared identifier
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(120,2): error C2065: 'ShaderSource': undeclared identifier
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(120,17): error C3861: 'ParseShader': identifier not found
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(121,29): error C2065: 'ShaderSource': undeclared identifier
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(121,46): error C2065: 'ShaderSource': undeclared identifier
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(121,16): error C2660: 'CreateShader': function does not take 1 arguments
+      C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(79,14):
+      see declaration of 'CreateShader'
+      C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\XoeEngine\src\Renderer.cpp(121,16):
+      while trying to match the argument list '()'
+  
+  XoeEngine.cpp
+C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\dependencies\GLEW\include\GL\glew.h(85,1): error C1189: #error:  gl.h included before glew.h
+  (compiling source file 'src/XoeEngine.cpp')
+  
+  Generating Code...
