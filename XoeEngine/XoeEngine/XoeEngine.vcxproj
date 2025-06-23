@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\lib\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\lib\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
@@ -143,13 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\ErrorSystem.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Vendor\stb_image\stb_Image.h" />
-    <ClInclude Include="src\XoeEngine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ErrorSystem.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Vendor\stb_image\std_Image.cpp" />
     <ClCompile Include="src\XoeEngine.cpp" />

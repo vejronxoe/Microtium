@@ -19,15 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ErrorSystem.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XoeEngine\XoeEngine.vcxproj">
-      <Project>{fb7eda4b-3f14-46d6-9176-f70af710cdf7}</Project>
-    </ProjectReference>
+    <Text Include="res\shaders\Basic.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\shaders\Basic.txt" />
+    <ClInclude Include="src\ErrorSystem.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -86,12 +85,12 @@
     <IntDir>$(SolutionDir)$bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\Intermeddiate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$bin\$(Platform)\$(Configuration)\</OutDir>
@@ -101,15 +100,15 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)XoeEngine\src;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)XoeEngine\src;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\GLFW\lib-vc2022;$(SolutionDir)dependencies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -118,13 +117,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)XoeEngine\src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)XoeEngine\src;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\GLFW\lib-vc2022;$(SolutionDir)dependencies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

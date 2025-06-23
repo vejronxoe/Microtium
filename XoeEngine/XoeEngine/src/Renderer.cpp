@@ -5,6 +5,11 @@
 
 
 #include"Vendor/stb_image/stb_Image.h"
+struct shaderProgramSource
+{
+	std::string VS;
+	std::string FS;
+};
 
 shaderProgramSource ParseShader(const std::string& filepath)
 {
@@ -91,14 +96,10 @@ unsigned int CreateShader(const std::string& vertexShader, const std::string& fr
 	return program;
 }
 
-struct shaderProgramSource
-{
-	std::string VS;
-	std::string FS;
-};
+
 #if _DEBUG 
-squere::squere(int TransformX, int TransformY, int ScaleX, int ScaleY, std::string pathImageEXE, std::string pathImage, int TexSlot,std::string pathshaderEXE, std::string pathshader)
-	:m_Points{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } , m_Order{ 0,1,2,2,3,0 }, m_ImageID(0), m_PointsID(0), m_OrderID(0), m_LocalBuffer(0), m_Height(0), m_Width(0), m_BPP(0), m_Transform{ TransformX,TransformY }, m_Scale{ ScaleX,ScaleY }
+squere::squere(float TransformX, float TransformY, float ScaleX, float ScaleY, std::string pathImageEXE, std::string pathImage, int TexSlot,std::string pathshaderEXE, std::string pathshader)
+	:m_Points{ 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f } , m_Order{ 0,1,2,2,3,0 }, m_ImageID(0), m_PointsID(0), m_OrderID(0), m_LocalBuffer(0), m_Height(0), m_Width(0), m_BPP(0), m_Transform{ TransformX,TransformY }, m_Scale{ ScaleX,ScaleY }
 {
 	CountPoints();
 	ErrorGL(glGenBuffers(1, &m_OrderID));
@@ -121,7 +122,7 @@ squere::squere(int TransformX, int TransformY, int ScaleX, int ScaleY, std::stri
 	m_ProgramID = CreateShader(ShaderSource.VS, ShaderSource.FS);
 	if (m_LocalBuffer)
 		stbi_image_free(m_LocalBuffer);
-	ErrorGL(int location = glGetUniformLocation(m_ProgramID, "u_Texture"));
+	int location = glGetUniformLocation(m_ProgramID, "u_Texture");
 	if (location == -1)
 		std::cout << "(warnig) uniform not found     name: " << "u_Texture" << std::endl;
 	glUniform1i(location, TexSlot);
@@ -175,7 +176,7 @@ void squere::Bind() const
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ImageID));
 	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_PointsID));
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_OrderID));
-	ErrorGL(glUseProgram(m_ProgramID));
+	glUseProgram(m_ProgramID);
 
 }
 

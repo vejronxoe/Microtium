@@ -26,6 +26,6 @@ private:
 	void Bind() const;
 	void Unbind() const;
 public:
-	squere(int TansformX, int TansformY, int ScaleX, int ScaleY, std::string pathImageEXE, std::string pathImage, int TexSlot, std::string pathshaderEXE, std::string pathshader);
+	squere(float TansformX, float TansformY, float ScaleX, float ScaleY, std::string pathImageEXE, std::string pathImage, int TexSlot, std::string pathshaderEXE, std::string pathshader);
 	void rendererObject();
 };
