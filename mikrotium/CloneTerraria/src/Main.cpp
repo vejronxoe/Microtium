@@ -124,16 +124,18 @@ int main()
 	ErrorGL(glBufferData(GL_ARRAY_BUFFER,sizeof(vertices) , vertices, GL_STATIC_DRAW));
 	ErrorGL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,3 * sizeof(float), nullptr));
 	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glBindVertexArray(0));
 
 	unsigned int eob;
 	ErrorGL(glGenBuffers(1, &eob));
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
-	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(order), order, GL_STATIC_DRAW));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+
+	
 	
 	ErrorGL(glUseProgram(shaderProgram));
 	ErrorGL(glBindVertexArray(vao));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob);
 
 
 
