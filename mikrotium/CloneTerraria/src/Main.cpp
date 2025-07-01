@@ -28,7 +28,7 @@ int main()
 
 
 
-	window = glfwCreateWindow(1500, 720, "Mikrotium", NULL, NULL);
+	window = glfwCreateWindow(1000, 500, "Mikrotium", NULL, NULL);
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -64,7 +64,7 @@ int main()
 		"}\0";
 	const char* vertexShaderSource =
 		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 0) in vec4 aPos;\n"
 		"layout (location = 1) in vec2 aTexCoord;\n"
 
 		"out vec2 texCoord;\n"
@@ -74,17 +74,19 @@ int main()
 		"void main()\n"
 		"{\n"
 			"texCoord = aTexCoord;\n"
-		"   gl_Position = camera * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   gl_Position = camera * vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
 		"}\0";
 	Shader sh(vertexShaderSource, fragmentShaderSource);
 
 	float vertices[20] =
 	{
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f
+		
+		400.0f, 350.0f, 0.0f, 0.0f, 1.0f,
+		600.0f, 350.0f, 0.0f, 1.0f, 1.0f,
+		600.0f, 150.0f, 0.0f, 1.0f, 0.0f,
+		400.0f, 150.0f, 0.0f, 0.0f, 0.0f
 	};
+
 
 	unsigned char order[6] = 
 	{
@@ -113,7 +115,8 @@ int main()
 	Texture tex("res/textures/player0.jpg");
 
 	sh.Bind();
-	float* posicionCamera = Camera(0.0f, 1500.0f, 0.0f, 720.0f);
+	float posicionCamera[16];
+	Camera(0.0f, 1000.0f, 0.0f, 500.0f, posicionCamera);
 	sh.SetUniformMat4("camera", posicionCamera);
 	tex.Bind();
 	ErrorGL(glBindVertexArray(vao));
