@@ -1,17 +1,55 @@
 #include "Shader.h"
 
-#include<GL/glew.h>
-#include<iostream>
 
-unsigned int CompileShader(unsigned int type, const char* source,const char* nameShader = "no shader name was assigned")
+
+unsigned int Shader::GetUniformLocation(std::string &name)
+{
+	if (m_UniformsLocations.find(name) == m_UniformsLocations.end())
+	{
+		m_UniformsLocations[name] = glGetUniformLocation(m_ID, name.c_str());
+	}
+	if (m_UniformsLocations[name] == -1)
+	{
+		std::cout << "can not find uniform named "<< name << std::endl;
+	}
+	return m_UniformsLocations[name];
+}
+
+Shader::Shader(const char* VertexShaderSource, const char* FragmentShadersource)
+		:m_ID(glCreateProgram())
+	{
+		unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, VertexShaderSource, "Vertex Shader");
+		unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, FragmentShadersource, "Fragment Shader");
+		LinkBasicShader(vertexShader, fragmentShader);
+	}
+
+void Shader::SetUniform4f(std::string name,float v0, float v1, float v2, float v3)
+{
+	Bind();
+	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
+}
+void Shader::SetUniform1f(std::string name, float v)
+{
+	Bind();
+	glUniform1i(GetUniformLocation(name), v);
+}
+
+void Shader::SetUniformMat4(std::string name, float* v)
+{
+	Bind();
+	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, v);
+}
+
+
+unsigned int Shader::CompileShader(unsigned int type, const char* source, const char* nameShader = "no shader name was assigned")
 {
 	int success;
 	char errorMessage[512];
 	unsigned int shader;
-	shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(shader, 1, &source, 0);
-	glCompileShader(shader);
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	shader = glCreateShader(type);
+	ErrorGL(glShaderSource(shader, 1, &source, 0));
+	ErrorGL(glCompileShader(shader));
+	ErrorGL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
 	if (!success)
 	{
 		glGetShaderInfoLog(shader, 512, 0, errorMessage);
@@ -20,15 +58,29 @@ unsigned int CompileShader(unsigned int type, const char* source,const char* nam
 	return shader;
 }
 
-void LinkShader(unsigned int shaderProgram)
+void Shader::LinkBasicShader(unsigned int vertexShader, unsigned int fragmentShader)
 {
 	int success;
 	char errorMessage[512];
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	ErrorGL(glAttachShader(m_ID, vertexShader));
+	ErrorGL(glAttachShader(m_ID, fragmentShader));
+	ErrorGL(glLinkProgram(m_ID));
+	ErrorGL(glGetProgramiv(m_ID, GL_LINK_STATUS, &success));
 	if (!success)
 	{
-		glGetShaderInfoLog(shaderProgram, 512, NULL, errorMessage);
-		std::cout << "[OpenGLError] Shader error " << "linking fail (it could be you dont attach the shaders) " << errorMessage << std::endl;
+		glGetShaderInfoLog(m_ID, 512, NULL, errorMessage);
+		std::cout << "[OpenGLError] Shader error " << "linking fail " << errorMessage << std::endl;
 	}
+	ErrorGL(glDeleteShader(vertexShader));
+	ErrorGL(glDeleteShader(fragmentShader));
+}
+
+void Shader::Bind()
+{
+	ErrorGL(glUseProgram(m_ID));
+}
+
+void Shader::Unbind()
+{
+	ErrorGL(glUseProgram(0));
 }

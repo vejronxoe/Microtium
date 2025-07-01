@@ -20,12 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ErrorSystem.cpp" />
+    <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\matrix.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ErrorSystem.h" />
+    <ClInclude Include="src\imageLoader\stb_image.h" />
+    <ClInclude Include="src\matrix.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
