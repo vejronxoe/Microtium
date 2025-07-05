@@ -19,19 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ErrorSystem.cpp" />
+    <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
     <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\matrix.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\math\matrix.cpp" />
+    <ClCompile Include="src\Opengl\Shader.cpp" />
+    <ClCompile Include="src\Opengl\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ErrorSystem.h" />
+    <ClInclude Include="src\Opengl\ErrorSystem.h" />
     <ClInclude Include="src\imageLoader\stb_image.h" />
-    <ClInclude Include="src\matrix.h" />
-    <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\math\matrix.h" />
+    <ClInclude Include="src\Opengl\Shader.h" />
+    <ClInclude Include="src\Opengl\Texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\save\map.txt" />
+    <Text Include="res\shaders\vertexBlock.txt" />
+    <Text Include="res\shaders\fragmentShaderBasic.txt" />
+    <Text Include="res\shaders\vertexPlayer.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
