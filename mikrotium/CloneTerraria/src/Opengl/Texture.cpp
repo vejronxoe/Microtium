@@ -6,12 +6,13 @@
 #include"../imageLoader/stb_image.h"
 
 
-Texture::Texture(const char* filePath, bool isItRGBA)
+unsigned int CreateTexture(const char* filePath, bool isItRGBA = false)
 {
+	unsigned int iD;
 	if (isItRGBA)
 	{
-		ErrorGL(glGenTextures(1, &m_ID));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ID));
+		ErrorGL(glGenTextures(1, &iD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, iD));
 		ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 		ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
@@ -31,10 +32,10 @@ Texture::Texture(const char* filePath, bool isItRGBA)
 			std::cout << "failed to Load a texture" << filePath << std::endl;
 		}
 		stbi_image_free(data);
-		return;
+		return iD;
 	}
-	ErrorGL(glGenTextures(1, &m_ID));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ID));
+	ErrorGL(glGenTextures(1, &iD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, iD));
 	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
@@ -54,13 +55,7 @@ Texture::Texture(const char* filePath, bool isItRGBA)
 		std::cout << "failed to Load a texture" << filePath << std::endl;
 	}
 	stbi_image_free(data);
+	return iD;
 }
-void Texture::Bind()
-{
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ID));
-}
-void Texture::Unbind()
-{
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, 0));
+	
 
-}

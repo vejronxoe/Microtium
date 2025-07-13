@@ -16,6 +16,7 @@ private:
 	void LinkBasicShader(unsigned int vertexShader, unsigned int fragmentShader);
 public:
 	Shader(const char* VertexShaderSource, const char* FragmentShadersource);
+	~Shader();
 	void SetUniform4f(std::string name, float v0, float v1, float v2, float v3);
 	void SetUniform1f(std::string name, float v);
 	void SetUniformMat4(std::string name, float* v);

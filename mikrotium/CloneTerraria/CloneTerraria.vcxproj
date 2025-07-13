@@ -19,19 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Blocks.cpp" />
+    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
     <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\math\matrix.cpp" />
     <ClCompile Include="src\Opengl\Shader.cpp" />
     <ClCompile Include="src\Opengl\Texture.cpp" />
+    <ClCompile Include="src\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Blocks.h" />
+    <ClInclude Include="src\input.h" />
     <ClInclude Include="src\Opengl\ErrorSystem.h" />
     <ClInclude Include="src\imageLoader\stb_image.h" />
     <ClInclude Include="src\math\matrix.h" />
     <ClInclude Include="src\Opengl\Shader.h" />
     <ClInclude Include="src\Opengl\Texture.h" />
+    <ClInclude Include="src\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\save\map.txt" />

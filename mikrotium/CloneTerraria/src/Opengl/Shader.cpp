@@ -4,6 +4,10 @@
 #include<fstream>
 #include<sstream>
 
+Shader::~Shader()
+{
+	ErrorGL(glDeleteProgram(m_ID));
+}
 std::string Shader::fileShaderRead(std::string filePath)
 {
 	std::string shader;
@@ -27,7 +31,7 @@ unsigned int Shader::GetUniformLocation(std::string &name)
 	}
 	if (m_UniformsLocations[name] == -1)
 	{
-		std::cout << "can not find uniform named "<< name << std::endl;
+		std::cout << "can not find uniform named "<< name << "Or bind shader" << std::endl;
 	}
 	return m_UniformsLocations[name];
 }
@@ -44,18 +48,15 @@ Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentSha
 
 void Shader::SetUniform4f(std::string name,float v0, float v1, float v2, float v3)
 {
-	Bind();
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 void Shader::SetUniform1f(std::string name, float v)
 {
-	Bind();
 	glUniform1i(GetUniformLocation(name), v);
 }
 
 void Shader::SetUniformMat4(std::string name, float* v)
 {
-	Bind();
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, v);
 }
 

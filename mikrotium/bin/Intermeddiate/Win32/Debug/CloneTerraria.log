@@ -1,6 +1,8 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\) contains files shared from another project (CloneTerraria.vcxproj, XoeEngine.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Input.cpp
   Main.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(194,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(250,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(267,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(96,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(117,21): warning C4018: '<': signed/unsigned mismatch
+  Player.cpp
+  Generating Code...
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe
