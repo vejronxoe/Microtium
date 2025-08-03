@@ -6,7 +6,7 @@
 
 
 Player::Player(unsigned int eob)
-	:m_VAO(0), m_VB(0), m_Tex(0), m_MaxMovementSpeed(15), m_Velocity{0,0}, m_Transform{0, 0}, m_vertices{-1.0f, 3.0f, 0.0f, 0.0f, 1.0f,			1.0f, 3.0f, 0.0f, 1.0f, 1.0f,			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f}
+	:m_VAO(0), m_VB(0), m_Tex(0), m_Timers{0}, m_CanJump(false), m_Acceleration(20.0f), m_Friction(20.0f), m_MaxMovementSpeed(15), m_Velocity{0,0}, m_Transform{0, 0}, m_vertices{-1.0f, 3.0f, 0.0f, 0.0f, 1.0f,			1.0f, 3.0f, 0.0f, 1.0f, 1.0f,			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 {
 	m_Tex = CreateTexture("res/textures/player0.png", true);
 
@@ -28,24 +28,25 @@ Player::Player(unsigned int eob)
 }
 void Player::EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox)
 {
-	
+	m_Timers[0] += deltaTime;
 	if (Input::DHold)
-		m_Velocity[0] += 20.0f * deltaTime;
+		m_Velocity[0] += m_Acceleration * deltaTime;
 	if (Input::AHold)
-		m_Velocity[0] += -20.0f * deltaTime;
+		m_Velocity[0] += -m_Acceleration * deltaTime;
 
 	if (m_Velocity[0] >= m_MaxMovementSpeed)
 		m_Velocity[0] = m_MaxMovementSpeed;
 	else if(m_Velocity[0] <= -m_MaxMovementSpeed)
 		m_Velocity[0] = -m_MaxMovementSpeed;
-	if (Input::SpacePress)
+	if (Input::SpacePress && m_CanJump)
 	{
 		m_Velocity[1] += 20;
+		m_CanJump = false;
 	}
 	m_Velocity[1] += -20 * deltaTime;
 	if (!Input::AHold && !Input::DHold || Input::DHold && Input::AHold)
 	{
-		float velocity =abs(m_Velocity[0]) - 40 * deltaTime;
+		float velocity =abs(m_Velocity[0]) - m_Friction * deltaTime;
 		if (velocity < 0)
 		{
 			m_Velocity[0] = 0;
@@ -59,7 +60,16 @@ void Player::EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox
 	bool wall = false;
 	bool floor = false;
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, hitbox, wall, floor);
-
+	if (floor)
+	{
+		m_CanJump = true;
+		m_Timers[0] = 0.0f;
+	}
+	if (!floor && m_CanJump && m_Timers[0] >= 0.25f)
+	{
+		m_CanJump = false;
+		m_Timers[0] = 0.0f;
+	}
 
 
 	m_Transform[0] += m_Velocity[0] * deltaTime;

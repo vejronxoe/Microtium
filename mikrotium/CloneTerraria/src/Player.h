@@ -13,7 +13,11 @@ private:
 	unsigned int m_VAO;
 	unsigned int m_VB;
 	unsigned int m_Tex;
+	float m_Timers[1];
+	bool m_CanJump;
 public:
+	float m_Acceleration;
+	float m_Friction;
 	float m_MaxMovementSpeed;
 	float m_vertices[20];
 	float m_Transform[2];
