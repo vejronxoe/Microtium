@@ -1,10 +1,8 @@
 #include"Player.h"
 
 
-
 #include"Opengl/Texture.h"
 #include"Input.h"
-
 
 
 Player::Player(unsigned int eob)
@@ -28,7 +26,7 @@ Player::Player(unsigned int eob)
 	ErrorGL(glBindVertexArray(0));
 	
 }
-void Player::everyframe(float deltaTime)
+void Player::EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox)
 {
 	
 	if (Input::DHold)
@@ -40,6 +38,11 @@ void Player::everyframe(float deltaTime)
 		m_Velocity[0] = m_MaxMovementSpeed;
 	else if(m_Velocity[0] <= -m_MaxMovementSpeed)
 		m_Velocity[0] = -m_MaxMovementSpeed;
+	if (Input::SpacePress)
+	{
+		m_Velocity[1] += 20;
+	}
+	m_Velocity[1] += -20 * deltaTime;
 	if (!Input::AHold && !Input::DHold || Input::DHold && Input::AHold)
 	{
 		float velocity =abs(m_Velocity[0]) - 40 * deltaTime;
@@ -52,11 +55,15 @@ void Player::everyframe(float deltaTime)
 			m_Velocity[0] = (m_Velocity[0] / (abs(m_Velocity[0]))) * velocity;
 		}
 	}
+	float hitboxvertices[4] = { m_vertices[0] + m_Transform[0],m_vertices[1] + m_Transform[1],m_vertices[10] + m_Transform[0],m_vertices[11] + m_Transform[1] };
+	bool wall = false;
+	bool floor = false;
+	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, hitbox, wall, floor);
+
+
+
 	m_Transform[0] += m_Velocity[0] * deltaTime;
-
-
-
-
+	m_Transform[1] += m_Velocity[1] * deltaTime;
 }
 void Player::DrawPlayer(Shader &Sh)
 {
@@ -65,3 +72,4 @@ void Player::DrawPlayer(Shader &Sh)
 	ErrorGL(glBindVertexArray(m_VAO));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
+

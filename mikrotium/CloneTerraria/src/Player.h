@@ -1,5 +1,11 @@
 #pragma once
+
+#include<vector>
+
+#include"Blocks.h"
 #include"Opengl/Shader.h"
+#include"Collision.h"
+
 
 class Player
 {
@@ -14,6 +20,7 @@ public:
 	float m_Velocity[2];
 	float m_Camera[16];
 	Player(unsigned int eob);
-	void everyframe(float deltaTime);
+	void EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox);
 	void DrawPlayer(Shader &Sh);
 };
+

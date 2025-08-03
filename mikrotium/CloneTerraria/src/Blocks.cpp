@@ -40,11 +40,6 @@ void Block::DrawBlock()
 	
 }
 
-void EveryFrame()
-{
-
-}
-
 void Block::DeleteBlock()
 {
 	ErrorGL(glDeleteBuffers(1, &m_VB));
@@ -52,7 +47,7 @@ void Block::DeleteBlock()
 
 }
 
-void LoadMap(const char* Path, std::vector<Block>& blocks, unsigned int EOB, unsigned int grass )
+void LoadMap(const char* Path, std::vector<StaticSquereHitbox>& hitbox, std::vector<Block>& blocks, unsigned int EOB, unsigned int grass)
 {
 	std::string line;
 	std::ifstream map(Path);
@@ -70,6 +65,8 @@ void LoadMap(const char* Path, std::vector<Block>& blocks, unsigned int EOB, uns
 			{
 				
 				blocks.push_back(Block(grass, x, y, EOB));
+				hitbox.push_back(StaticSquereHitbox(x, y));
+
 			}
 			x++;
 		}

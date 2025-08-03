@@ -1,3 +1,0 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\bin\Intermeddiate\Win32\Debug\) contains files shared from another project (CloneTerraria.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  XoeEngine.cpp
-  XoeEngine.vcxproj -> C:\Users\leosz\Desktop\Cpp\Xoe_Engine\Xoe-Engine\XoeEngine\bin\lib\Win32\Debug\XoeEngine.lib

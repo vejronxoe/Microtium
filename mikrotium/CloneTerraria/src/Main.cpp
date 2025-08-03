@@ -15,6 +15,7 @@
 #include"Blocks.h"
 #include"input.h"
 #include"player.h"
+#include"Collision.h"
 
 
 
@@ -82,8 +83,9 @@ int main()
 	Shader blockShader("res/shaders/vertexBlock.txt", "res/shaders/fragmentShaderBasic.txt");
 	unsigned int grass = CreateTexture("res/textures/grass.jpg", false);
 	std::vector<Block> blocks;
-	LoadMap("res/save/map.txt", blocks, eob, grass);
-
+	std::vector<StaticSquereHitbox> staticHitbox;
+	LoadMap("res/save/map.txt", staticHitbox, blocks, eob, grass);
+	std::vector<Block*> blocksInScene;
 
 	float deltaTime;
 	
@@ -93,6 +95,8 @@ int main()
 	{
 
 		glClear(GL_COLOR_BUFFER_BIT);
+
+
 		deltaTime = glfwGetTime() - pastTime;
 		pastTime = glfwGetTime();
 		timer += deltaTime;
@@ -106,11 +110,10 @@ int main()
 		
 
 
-		player.everyframe(deltaTime);
+		player.EveryFrame(deltaTime, staticHitbox);
 		Camera(-56.0f + player.m_Transform[0], 56.0f + player.m_Transform[0], -31.5f + player.m_Transform[1], 31.5f + player.m_Transform[1], player.m_Camera);
 
-
-
+		
 		player.DrawPlayer(playerShader);
 		blockShader.Bind();
 		blockShader.SetUniformMat4("camera", player.m_Camera);
