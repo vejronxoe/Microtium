@@ -5,6 +5,10 @@
 
 namespace Input
 {
+	extern double YmousePos;
+	extern double XmousePos;
+	extern bool LeftMouseHold;
+	extern bool LeftMousePress;
 	extern bool WHold;
 	extern bool WPress;
 	extern bool AHold;
@@ -16,5 +20,6 @@ namespace Input
 	extern bool SpaceHold;
 	extern bool SpacePress;
 	void EndOfLoop();
-	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 }

@@ -57,7 +57,8 @@ int main()
 	
 
 	double pastTime = glfwGetTime();
-	glfwSetKeyCallback(window, Input::key_callback);
+	glfwSetCursorPosCallback(window, Input::cursorPositionCallback);
+	glfwSetKeyCallback(window, Input::keyCallback);
 
 	stbi_set_flip_vertically_on_load(true);
 	ErrorGL(glEnable(GL_BLEND));
@@ -93,12 +94,12 @@ int main()
 	int fps = 0;
 	while (!glfwWindowShouldClose(window))
 	{
-
 		glClear(GL_COLOR_BUFFER_BIT);
-
 
 		deltaTime = glfwGetTime() - pastTime;
 		pastTime = glfwGetTime();
+		
+		
 		timer += deltaTime;
 		fps++;
 		if (timer > 1)

@@ -11,4 +11,4 @@ public:
 	bool m_Active;
 	StaticSquereHitbox(float x, float y);
 };
-void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& wallHit, bool& floorHit);
+void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit);

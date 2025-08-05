@@ -150,7 +150,7 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 	}
 }
 
-void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& wallHit, bool& floorHit)
+void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
 {
 	if (velocity[0] == 0 && velocity[1] == 0)
 		return;
@@ -164,7 +164,7 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[1];
 		vertices[8] = objectVertices4f[2]; vertices[9] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[10] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[11] = objectVertices4f[1];
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 3, 2, 1, transform, velocity, closestVertices, floorHit, wallHit);
+		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 3, 2, 1, transform, velocity, closestVertices, ceilHit, rightWallHit);
 	}
 	else if (velocity[0] < 0 && velocity[1] < 0)
 	{
@@ -175,7 +175,7 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[3] + velocity[1] * deltaTime;
 		vertices[8] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[9] = objectVertices4f[3];
 		vertices[10] = objectVertices4f[0]; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 1, 0, 3, transform, velocity, closestVertices, floorHit, wallHit);
+		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 1, 0, 3, transform, velocity, closestVertices, floorHit, leftWallHit);
 	}
 	else if (velocity[0] < 0 && velocity[1] > 0)
 	{
@@ -185,7 +185,7 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[1];
 		vertices[8] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[9] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[10] = objectVertices4f[0]; vertices[11] = objectVertices4f[1];
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 3, 0, 1, transform, velocity, closestVertices, floorHit, wallHit);
+		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 3, 0, 1, transform, velocity, closestVertices, ceilHit, leftWallHit);
 	}
 	else if (velocity[0] > 0 && velocity[1] < 0)
 	{
@@ -195,14 +195,14 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[3] + velocity[1] * deltaTime;
 		vertices[8] = objectVertices4f[2]; vertices[9] = objectVertices4f[3];
 		vertices[10] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 1, 2, 3, transform, velocity, closestVertices, floorHit, wallHit);
+		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 1, 2, 3, transform, velocity, closestVertices, floorHit, rightWallHit);
 
 	}
 	else if (velocity[1] > 0)
 	{
 		vertices[0] = objectVertices4f[0] + 0.1f; vertices[1] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[2] = objectVertices4f[2] - 0.1f; vertices[3] = objectVertices4f[1];
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], closestVertices[0], floorHit);
+		OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], closestVertices[0], ceilHit);
 	}
 	else if (velocity[1] < 0)
 	{
@@ -214,13 +214,13 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 	{
 		vertices[0] = objectVertices4f[2]; vertices[1] = objectVertices4f[1] - 0.1f;
 		vertices[2] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[3] = objectVertices4f[3] + 0.1f;
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], closestVertices[0], wallHit);
+		OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], closestVertices[0], leftWallHit);
 	}
 	else if(velocity[0] < 0)
 	{
 		vertices[0] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[1] = objectVertices4f[1] - 0.1f;
 		vertices[2] = objectVertices4f[0]; vertices[3] = objectVertices4f[3] + 0.1f;
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], closestVertices[0], wallHit);
+		OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], closestVertices[0], rightWallHit);
 	}
 	
 }

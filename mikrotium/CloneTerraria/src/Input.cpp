@@ -1,28 +1,37 @@
 #include "input.h"
 
+#include<iostream>
+
 namespace Input
 {
-	 bool WHold = false;
-	 bool WPress = false;
-	 bool AHold = false;
-	 bool APress = false;
-	 bool SHold = false;
-	 bool SPress = false;
-	 bool DHold = false;
-	 bool DPress = false;
-	 bool SpaceHold = false;
-	 bool SpacePress = false;
-	 void EndOfLoop()
-	 {
-		 WHold = false;
-		 SPress = false;
-		 DPress = false;
-		 APress = false;
-		 SpacePress = false;
-
-	 }
-	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	double YMousePos;
+	double XMousePos;
+	bool LeftMouseHold = false;
+	bool LeftMousePress = false;
+	bool WHold = false;
+	bool WPress = false;
+	bool AHold = false;
+	bool APress = false;
+	bool SHold = false;
+	bool SPress = false;
+	bool DHold = false;
+	bool DPress = false;
+	bool SpaceHold = false;
+	bool SpacePress = false;
+	void EndOfLoop()
 	{
+		LeftMousePress = false;
+		WHold = false;
+		SPress = false;
+		DPress = false;
+		APress = false;
+		SpacePress = false;
+
+	}
+	void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+
+
 		if (key == GLFW_KEY_W && action == GLFW_PRESS)
 		{
 			WHold = true;
@@ -80,5 +89,9 @@ namespace Input
 			SpaceHold = false;
 		}
 	}
-
+	void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+	{
+		YMousePos = (((-1 * ypos) / 120) * 7) + 31.5;
+		XMousePos = ((xpos / 120) * 7) - 56;
+	}
 }

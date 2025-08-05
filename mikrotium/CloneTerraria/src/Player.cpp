@@ -6,7 +6,7 @@
 
 
 Player::Player(unsigned int eob)
-	:m_VAO(0), m_VB(0), m_Tex(0), m_Timers{0}, m_CanJump(false), m_Acceleration(20.0f), m_Friction(20.0f), m_MaxMovementSpeed(15), m_Velocity{0,0}, m_Transform{0, 0}, m_vertices{-1.0f, 3.0f, 0.0f, 0.0f, 1.0f,			1.0f, 3.0f, 0.0f, 1.0f, 1.0f,			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f}
+	:m_VAO(0), m_VB(0), m_Tex(0),m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{0,0}, m_Transform{0, 0}, m_vertices{-1.0f, 3.0f, 0.0f, 0.0f, 1.0f,			1.0f, 3.0f, 0.0f, 1.0f, 1.0f,			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 {
 	m_Tex = CreateTexture("res/textures/player0.png", true);
 
@@ -28,47 +28,77 @@ Player::Player(unsigned int eob)
 }
 void Player::EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox)
 {
-	m_Timers[0] += deltaTime;
-	if (Input::DHold)
-		m_Velocity[0] += m_Acceleration * deltaTime;
-	if (Input::AHold)
-		m_Velocity[0] += -m_Acceleration * deltaTime;
+	m_CoyoteTimer += deltaTime;
 
-	if (m_Velocity[0] >= m_MaxMovementSpeed)
-		m_Velocity[0] = m_MaxMovementSpeed;
-	else if(m_Velocity[0] <= -m_MaxMovementSpeed)
-		m_Velocity[0] = -m_MaxMovementSpeed;
-	if (Input::SpacePress && m_CanJump)
+
+	if (Input::DHold)
 	{
-		m_Velocity[1] += 20;
-		m_CanJump = false;
+		m_Velocity[0] += m_Acceleration * deltaTime;
 	}
-	m_Velocity[1] += -20 * deltaTime;
-	if (!Input::AHold && !Input::DHold || Input::DHold && Input::AHold)
+	else if(m_Velocity[0] > 0)
 	{
-		float velocity =abs(m_Velocity[0]) - m_Friction * deltaTime;
+		float velocity = m_Velocity[0] - m_Friction * deltaTime;
 		if (velocity < 0)
 		{
 			m_Velocity[0] = 0;
 		}
 		else
 		{
-			m_Velocity[0] = (m_Velocity[0] / (abs(m_Velocity[0]))) * velocity;
+			m_Velocity[0] = velocity;
 		}
 	}
+	if (Input::AHold)
+	{
+		m_Velocity[0] += -m_Acceleration * deltaTime;
+	}
+	else if (m_Velocity[0] < 0)
+	{
+		float velocity = m_Velocity[0] + m_Friction * deltaTime;
+		if (velocity > 0)
+		{
+			m_Velocity[0] = 0;
+		}
+		else
+		{
+			m_Velocity[0] = velocity;
+		}
+	}
+
+	if (abs(m_Velocity[0]) > m_MaxMovementSpeed)
+		m_Velocity[0] = m_MaxMovementSpeed * (m_Velocity[0]/abs(m_Velocity[0]));
+
+	if (Input::SpacePress && m_CanJump && !m_CeilHit)
+	{
+		m_Velocity[1] += m_JumpPower;
+		m_CanJump = false;
+		m_JumpTimer += deltaTime;
+	}
+	else if(Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f && !m_CeilHit)
+	{
+		m_Velocity[1] += ( - m_JumpPower / 2)* deltaTime;
+		m_JumpTimer += deltaTime;
+	}
+	else
+	{
+		m_Velocity[1] += m_Gravity * deltaTime;
+		m_JumpTimer = 0;
+	}
+
+	m_FloorHit = false;
+	m_CeilHit = false;
+	m_WallHit =false;
 	float hitboxvertices[4] = { m_vertices[0] + m_Transform[0],m_vertices[1] + m_Transform[1],m_vertices[10] + m_Transform[0],m_vertices[11] + m_Transform[1] };
-	bool wall = false;
-	bool floor = false;
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, hitbox, wall, floor);
-	if (floor)
+	
+	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, hitbox, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+	if (m_FloorHit)
 	{
 		m_CanJump = true;
-		m_Timers[0] = 0.0f;
+		m_CoyoteTimer = 0.0f;
 	}
-	if (!floor && m_CanJump && m_Timers[0] >= 0.25f)
+	if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.25f)
 	{
 		m_CanJump = false;
-		m_Timers[0] = 0.0f;
+		m_CoyoteTimer = 0.0f;
 	}
 
 

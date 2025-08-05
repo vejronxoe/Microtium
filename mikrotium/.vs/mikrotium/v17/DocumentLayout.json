@@ -3,24 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Collision.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Collision.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Collision.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Collision.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\input.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\input.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,8 +38,57 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Collision.cpp",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\Collision.cpp",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp",
+              "RelativeToolTip": "CloneTerraria\\src\\Collision.cpp",
+              "ViewState": "AgIAAKcAAAAAAAAAAAAgwLsAAABuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-08-05T08:15:21.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Collision.h",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\Collision.h",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h",
+              "RelativeToolTip": "CloneTerraria\\src\\Collision.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAADVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-08-05T08:15:20.41Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "input.h",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\input.h",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\input.h",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\input.h",
+              "RelativeToolTip": "CloneTerraria\\src\\input.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-08-04T11:49:39.196Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Input.cpp",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Input.cpp",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\Input.cpp",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Input.cpp",
+              "RelativeToolTip": "CloneTerraria\\src\\Input.cpp",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-08-04T11:49:57.83Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -40,59 +97,31 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.h",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.h",
               "RelativeToolTip": "CloneTerraria\\src\\Player.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABEAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-08-03T19:56:31.218Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-03T19:56:31.218Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Player.cpp",
               "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp",
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Player.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABhAAAAAAAAAA==",
+              "ViewState": "AgIAADwAAAAAAAAAAAAAAEsAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-08-03T19:56:20.654Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Collision.h",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\Collision.h",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.h",
-              "RelativeToolTip": "CloneTerraria\\src\\Collision.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-08-03T11:55:48.696Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-03T19:56:20.654Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Collision.cpp",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\Collision.cpp",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Collision.cpp",
-              "RelativeToolTip": "CloneTerraria\\src\\Collision.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-23T18:36:03.386Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "Main.cpp",
               "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Main.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Main.cpp",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAAAHAAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAGUAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-07-03T17:40:57.789Z"
             }
