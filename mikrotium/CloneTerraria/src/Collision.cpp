@@ -3,11 +3,15 @@
 #include<iostream>
 #include<math.h>
 
-StaticSquereHitbox::StaticSquereHitbox(float x, float y)
-	:m_Transform{x,y}, m_Vertices{x - 0.5f, y + 0.5f, x + 0.5f, y - 0.5f}, m_Active(true)
-{}
+void GetCorners(int x , int y , float* hitboxsCorners )
+{
+	hitboxsCorners[0] = x - 0.5f;
+	hitboxsCorners[1] = y + 0.5f; 
+	hitboxsCorners[2] = x + 0.5f; 
+	hitboxsCorners[3] = y - 0.5f;
+}
 
-void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, const int blockIndex, const int playerIndex, float& transform, float& velocity, float& closestVertice, bool& sideHit)
+void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int blockIndex, const int playerIndex, float& transform, float& velocity, float& closestVertice, bool& sideHit)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -15,23 +19,25 @@ void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{ 
-		if (hitbox.at(i).m_Active)
+		if (hitbox.at(i).m_CollisionActive)
 		{
 			float x = hitbox.at(i).m_Transform[0];
 			float y = hitbox.at(i).m_Transform[1];
 
 			if (x >= vertices[0] && y <= vertices[1] && x <= vertices[2] && y >= vertices[3])
 			{
+				float corners[4];
+				GetCorners(hitbox.at(i).m_Transform[0], hitbox.at(i).m_Transform[1], corners);
 				if (sideHit)
 				{
-					if (abs(closestVertice - objectVertices4f[playerIndex]) > abs(hitbox.at(i).m_Vertices[blockIndex] - objectVertices4f[playerIndex]))
+					if (abs(closestVertice - objectVertices4f[playerIndex]) > abs(corners[blockIndex] - objectVertices4f[playerIndex]))
 					{
-						closestVertice = hitbox.at(i).m_Vertices[blockIndex];
+						closestVertice = corners[blockIndex];
 					}
 				}
 				else
 				{
-					closestVertice = hitbox.at(i).m_Vertices[blockIndex];
+					closestVertice = corners[blockIndex];
 					sideHit = true;
 				}
 			}
@@ -43,7 +49,7 @@ void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 		transform += closestVertice - objectVertices4f[playerIndex];
 	}
 }
-void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, const int XHitboxIndex, const int YHitboxIndex, const int XplayerIndex, const int YplayerIndex, float* transform, float* velocity, float* closestVertice, bool& floorHit, bool& wallHit)
+void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int XHitboxIndex, const int YHitboxIndex, const int XplayerIndex, const int YplayerIndex, float* transform, float* velocity, float* closestVertice, bool& floorHit, bool& wallHit)
 {
 	bool edgehit = false;
 	float edgeVertice[2];
@@ -53,7 +59,7 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{
-		if (hitbox.at(i).m_Active)
+		if (hitbox.at(i).m_CollisionActive)
 		{
 			bool xHit = false;
 			bool yHit = false;
@@ -62,16 +68,18 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 
 			if (x >= vertices[0] && y <= vertices[1] && x <= vertices[2] && y >= vertices[3])
 			{
+				float corners[4];
+				GetCorners(hitbox.at(i).m_Transform[0], hitbox.at(i).m_Transform[1], corners);
 				if (wallHit)
 				{
-					if (abs(closestVertice[0] - objectVertices4f[XplayerIndex]) > abs(hitbox.at(i).m_Vertices[XHitboxIndex] - objectVertices4f[XplayerIndex]))
+					if (abs(closestVertice[0] - objectVertices4f[XplayerIndex]) > abs(corners[XHitboxIndex] - objectVertices4f[XplayerIndex]))
 					{
-						closestVertice[0] = hitbox.at(i).m_Vertices[XHitboxIndex];
+						closestVertice[0] = corners[XHitboxIndex];
 					}
 				}
 				else
 				{
-					closestVertice[0] = hitbox.at(i).m_Vertices[XHitboxIndex];
+					closestVertice[0] = corners[XHitboxIndex];
 					wallHit = true;
 				}
 				xHit = true;
@@ -80,16 +88,18 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 
 			if (x >= vertices[4] && y <= vertices[5] && x <= vertices[6] && y >= vertices[7])
 			{
+				float corners[4];
+				GetCorners(hitbox.at(i).m_Transform[0], hitbox.at(i).m_Transform[1], corners);
 				if (floorHit)
 				{
-					if (abs(closestVertice[1] - objectVertices4f[YplayerIndex]) > abs(hitbox.at(i).m_Vertices[YHitboxIndex] - objectVertices4f[YplayerIndex]))
+					if (abs(closestVertice[1] - objectVertices4f[YplayerIndex]) > abs(corners[YHitboxIndex] - objectVertices4f[YplayerIndex]))
 					{
-						closestVertice[1] = hitbox.at(i).m_Vertices[YHitboxIndex];
+						closestVertice[1] = corners[YHitboxIndex];
 					}
 				}
 				else
 				{
-					closestVertice[1] = hitbox.at(i).m_Vertices[YHitboxIndex];
+					closestVertice[1] = corners[YHitboxIndex];
 					floorHit = true;
 				}
 				yHit = true;
@@ -98,22 +108,24 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 			{
 				if (x >= vertices[8] && y <= vertices[9] && x <= vertices[10] && y >= vertices[11])
 				{
+					float corners[4];
+					GetCorners(hitbox.at(i).m_Transform[0], hitbox.at(i).m_Transform[1], corners);
 					if (edgehit)
 					{
 
 						if (abs(edgeVertice[0] - objectVertices4f[XplayerIndex]) > abs(closestVertice[XHitboxIndex] - objectVertices4f[XplayerIndex]))
 						{
-							edgeVertice[0] = hitbox.at(i).m_Vertices[XHitboxIndex];
+							edgeVertice[0] = corners[XHitboxIndex];
 						}
 						if (abs(edgeVertice[1] - objectVertices4f[YplayerIndex]) > abs(closestVertice[YHitboxIndex] - objectVertices4f[YplayerIndex]))
 						{
-							edgeVertice[1] = hitbox.at(i).m_Vertices[YHitboxIndex];
+							edgeVertice[1] = corners[YHitboxIndex];
 						}
 					}
 					else
 					{
-						edgeVertice[1] = hitbox.at(i).m_Vertices[YHitboxIndex];
-						edgeVertice[0] = hitbox.at(i).m_Vertices[XHitboxIndex];
+						edgeVertice[1] = corners[YHitboxIndex];
+						edgeVertice[0] = corners[XHitboxIndex];
 						edgehit = true;
 					}
 				}
@@ -150,7 +162,7 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Sta
 	}
 }
 
-void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
+void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
 {
 	if (velocity[0] == 0 && velocity[1] == 0)
 		return;

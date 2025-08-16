@@ -1,21 +1,17 @@
 #pragma once
 #include<vector>
 
-#include"Collision.h"
 
 class Block
 {
 private:
 	unsigned int m_te;
-	unsigned int m_VB;
-	unsigned int m_vao;
-
 public:
-	float m_vertices[20];
-	float m_transform[2];
-	Block(unsigned int tex, float x, float y, unsigned int eob);
-	void DeleteBlock();
-	void DrawBlock();
+	int m_Transform[2];
+	bool m_CollisionActive;
+	Block(unsigned int tex, int x, int y, bool hitboxActive);
+	void DrawBlock(unsigned int blocksDrawData);
 };
-
-void LoadMap(const char* Path, std::vector<StaticSquereHitbox>& hitbox, std::vector<Block>& blocks, unsigned int EOB, unsigned int grass);
+void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* texturesIDs);
+void CreateAllBlockTextures(unsigned int* IDs);
+void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob);

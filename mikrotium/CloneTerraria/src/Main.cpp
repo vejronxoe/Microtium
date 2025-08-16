@@ -1,4 +1,3 @@
-
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
 #include<iostream>
@@ -13,9 +12,10 @@
 #include"Math/matrix.h"
 #include"imageLoader/stb_image.h"
 #include"Blocks.h"
-#include"input.h"
+#include"GLFW/input.h"
 #include"player.h"
 #include"Collision.h"
+#include"GLFW/Window.h"
 
 
 
@@ -24,6 +24,12 @@
 
 int main()
 {
+	if (!Window::GetInfoForWindow("res/settings.txt"))
+	{
+		std::cout << "settings error dont read all informations" << std::endl;
+		return -1;
+	}
+
 	GLFWwindow* window;
 	if (!glfwInit())
 	{
@@ -31,15 +37,19 @@ int main()
 		return -1;
 	}
 
-
-
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	if (Window::fullScreen)
+	{
+		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", glfwGetPrimaryMonitor(), NULL);
+	}
+	else
+	{
+		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", NULL, NULL);
+	}
 
 
-
-	window = glfwCreateWindow(1920, 1080, "Mikrotium", NULL, NULL);
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -54,38 +64,42 @@ int main()
 		std::cout << "GLEW DONT WORK" << std::endl;
 		return -1;
 	}
-	
+
 
 	double pastTime = glfwGetTime();
-	glfwSetCursorPosCallback(window, Input::cursorPositionCallback);
-	glfwSetKeyCallback(window, Input::keyCallback);
+	glfwSetCursorPosCallback(window, Input::CursorPositionCallback);
+	glfwSetKeyCallback(window, Input::KeyCallback);
+	glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
 
 	stbi_set_flip_vertically_on_load(true);
 	ErrorGL(glEnable(GL_BLEND));
 	ErrorGL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-	
-	unsigned char order[6] = 
+
+	unsigned char order[6] =
 	{
 		0, 1, 3,
-		1, 2, 3 
+		1, 2, 3
 	};
-
 	unsigned int eob;
 	ErrorGL(glGenBuffers(1, &eob));
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
 	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
 
+	
+
 	Player player(eob);
-	Camera(-56.0f, 56.0f, -31.5f, 31.5f, player.m_Camera);
+	Camera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
 	Shader playerShader("res/shaders/vertexPlayer.txt", "res/shaders/fragmentShaderBasic.txt");
 	playerShader.Bind();
 	playerShader.SetUniformMat4("camera", player.m_Camera);
 	
+	unsigned int blocksDrawData;
+	unsigned int blockTextures[2];
+	CreateAllBlockTextures(blockTextures);
+	SetupBlockDrawData(blocksDrawData, eob);
 	Shader blockShader("res/shaders/vertexBlock.txt", "res/shaders/fragmentShaderBasic.txt");
-	unsigned int grass = CreateTexture("res/textures/grass.jpg", false);
 	std::vector<Block> blocks;
-	std::vector<StaticSquereHitbox> staticHitbox;
-	LoadMap("res/save/map.txt", staticHitbox, blocks, eob, grass);
+	LoadMap("res/save/map.txt", blocks, blockTextures);
 	std::vector<Block*> blocksInScene;
 
 	float deltaTime;
@@ -111,8 +125,8 @@ int main()
 		
 
 
-		player.EveryFrame(deltaTime, staticHitbox);
-		Camera(-56.0f + player.m_Transform[0], 56.0f + player.m_Transform[0], -31.5f + player.m_Transform[1], 31.5f + player.m_Transform[1], player.m_Camera);
+		player.EveryFrame(deltaTime, blocks);
+		Camera(-Window::halfWidthOfGameTransform + player.m_Transform[0], Window::halfWidthOfGameTransform + player.m_Transform[0], -Window::halfHeightOfGameTransform + player.m_Transform[1], Window::halfHeightOfGameTransform + player.m_Transform[1], player.m_Camera);
 
 		
 		player.DrawPlayer(playerShader);
@@ -120,7 +134,7 @@ int main()
 		blockShader.SetUniformMat4("camera", player.m_Camera);
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			blocks.at(i).DrawBlock();
+			blocks.at(i).DrawBlock(blocksDrawData);
 		}
 		blockShader.Unbind();
 		Input::EndOfLoop();

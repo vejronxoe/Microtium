@@ -30,7 +30,7 @@ public:
 	float m_Velocity[2];
 	float m_Camera[16];
 	Player(unsigned int eob);
-	void EveryFrame(float deltaTime, std::vector<StaticSquereHitbox>& hitbox);
+	void EveryFrame(float deltaTime, std::vector<Block>& blocks);
 	void DrawPlayer(Shader &Sh);
 };
 

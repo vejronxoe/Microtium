@@ -21,6 +21,7 @@ std::string Shader::fileShaderRead(std::string filePath)
 	{
 		shader += line + "\n";
 	}
+	shaderFile.close();
 	return shader;
 }
 unsigned int Shader::GetUniformLocation(std::string &name)

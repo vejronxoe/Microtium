@@ -1,14 +1,7 @@
 #pragma once
-
 #include<vector>
 
+#include"Blocks.h"
 
-class StaticSquereHitbox
-{
-public:
-	float m_Transform[2];
-	float m_Vertices[4];
-	bool m_Active;
-	StaticSquereHitbox(float x, float y);
-};
-void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<StaticSquereHitbox>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit);
+
+void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit);

@@ -1,22 +1,5 @@
-﻿  Collision.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(16,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(54,20): warning C4018: '<': signed/unsigned mismatch
-  Blocks.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(62,21): warning C4018: '<': signed/unsigned mismatch
-  Input.cpp
-  ErrorSystem.cpp
-  ImageLoader.cpp
-  Main.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(99,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(121,21): warning C4018: '<': signed/unsigned mismatch
-  matrix.cpp
-  Shader.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\Shader.cpp(55,40): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-  Texture.cpp
-  Player.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(9,188): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  Generating Code...
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\vc120.pdb'; linking object as if no debug info
+﻿  Blocks.cpp
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(77,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(89,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(95,23): warning C4018: '<': signed/unsigned mismatch
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe
