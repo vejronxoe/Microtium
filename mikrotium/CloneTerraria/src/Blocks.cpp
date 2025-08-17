@@ -7,6 +7,7 @@
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/Texture.h"
+#include"math/matrix.h"
 
 enum BlockBehavior
 {
@@ -39,8 +40,10 @@ void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 	ErrorGL(glBindVertexArray(0));
 }
 
-void Block::DrawBlock(unsigned int blocksDrawData)
+void Block::DrawBlock(unsigned int blocksDrawData, Shader& basicShader, unsigned int location, float* transform)
 {
+	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	basicShader.SetUniformMat4(location, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
 	ErrorGL(glBindVertexArray(blocksDrawData));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -99,11 +102,11 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 					case'd':
 							if (lines.at(i-1).at(j) == ' ')
 							{
-								CreateBlock(x, y, texturesIDs[Dirt], blocks);
+								CreateBlock(x, y, texturesIDs[Grass], blocks);
 							}
 							else
 							{
-								CreateBlock(x, y, texturesIDs[Grass], blocks);
+								CreateBlock(x, y, texturesIDs[Dirt], blocks);
 							}
 						break;
 					}

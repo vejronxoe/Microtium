@@ -88,16 +88,22 @@ int main()
 	
 
 	Player player(eob);
-	Camera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
-	Shader playerShader("res/shaders/vertexPlayer.txt", "res/shaders/fragmentShaderBasic.txt");
-	playerShader.Bind();
-	playerShader.SetUniformMat4("camera", player.m_Camera);
+	CreateCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
+	Shader basicShader("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBasic.txt");
+	basicShader.Bind();
+
+	std::string uniformName = "transform";
+	unsigned int transformLocation = basicShader.GetUniformLocation(uniformName);
 	
+
+
+
+	float transform[16];
+	CreateTransform(0, 0, transform);
 	unsigned int blocksDrawData;
 	unsigned int blockTextures[2];
 	CreateAllBlockTextures(blockTextures);
 	SetupBlockDrawData(blocksDrawData, eob);
-	Shader blockShader("res/shaders/vertexBlock.txt", "res/shaders/fragmentShaderBasic.txt");
 	std::vector<Block> blocks;
 	LoadMap("res/save/map.txt", blocks, blockTextures);
 	std::vector<Block*> blocksInScene;
@@ -124,19 +130,21 @@ int main()
 		}
 		
 
-
 		player.EveryFrame(deltaTime, blocks);
-		Camera(-Window::halfWidthOfGameTransform + player.m_Transform[0], Window::halfWidthOfGameTransform + player.m_Transform[0], -Window::halfHeightOfGameTransform + player.m_Transform[1], Window::halfHeightOfGameTransform + player.m_Transform[1], player.m_Camera);
+		ChangeCamera(-Window::halfWidthOfGameTransform + player.m_Transform[0], Window::halfWidthOfGameTransform + player.m_Transform[0], -Window::halfHeightOfGameTransform + player.m_Transform[1], Window::halfHeightOfGameTransform + player.m_Transform[1], player.m_Camera);
 
 		
-		player.DrawPlayer(playerShader);
-		blockShader.Bind();
-		blockShader.SetUniformMat4("camera", player.m_Camera);
+
+
+
+		basicShader.Bind();
+		basicShader.SetUniformMat4("camera", player.m_Camera);
+
+		player.DrawPlayer(basicShader, transformLocation, transform);
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			blocks.at(i).DrawBlock(blocksDrawData);
+			blocks.at(i).DrawBlock(blocksDrawData, basicShader, transformLocation, transform);
 		}
-		blockShader.Unbind();
 		Input::EndOfLoop();
 		glfwSwapBuffers(window);
 		glfwPollEvents();

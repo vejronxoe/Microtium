@@ -82,10 +82,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\shaders\vertexPlayer.txt" />
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
     <Text Include="res\save\map.txt" />
-    <Text Include="res\shaders\vertexBlock.txt" />
+    <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\settings.txt" />
   </ItemGroup>
 </Project>

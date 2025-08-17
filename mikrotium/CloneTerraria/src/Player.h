@@ -31,6 +31,6 @@ public:
 	float m_Camera[16];
 	Player(unsigned int eob);
 	void EveryFrame(float deltaTime, std::vector<Block>& blocks);
-	void DrawPlayer(Shader &Sh);
+	void DrawPlayer(Shader &Sh,unsigned int location, float* transform);
 };
 

@@ -3,6 +3,7 @@
 
 #include"Opengl/Texture.h"
 #include"GLFW/Input.h"
+#include"math/matrix.h"
 
 
 Player::Player(unsigned int eob)
@@ -118,9 +119,10 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 	m_Transform[0] += m_Velocity[0] * deltaTime;
 	m_Transform[1] += m_Velocity[1] * deltaTime;
 }
-void Player::DrawPlayer(Shader &Sh)
+void Player::DrawPlayer(Shader &basicShader, unsigned int location ,float* transform)
 {
-	Sh.Bind();
+	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	basicShader.SetUniformMat4(location, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex));
 	ErrorGL(glBindVertexArray(m_VAO));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));

@@ -32,7 +32,7 @@ unsigned int Shader::GetUniformLocation(std::string &name)
 	}
 	if (m_UniformsLocations[name] == -1)
 	{
-		std::cout << "can not find uniform named "<< name << "Or bind shader" << std::endl;
+		std::cout << "can not find uniform named "<< name << " or your dont bind shader" << std::endl;
 	}
 	return m_UniformsLocations[name];
 }
@@ -60,7 +60,10 @@ void Shader::SetUniformMat4(std::string name, float* v)
 {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, v);
 }
-
+void Shader::SetUniformMat4(unsigned int location, float* v)
+{
+	glUniformMatrix4fv(location, 1, GL_FALSE, v);
+}
 
 unsigned int Shader::CompileShader(unsigned int type, const char* source, const char* nameShader = "no shader name was assigned")
 {
