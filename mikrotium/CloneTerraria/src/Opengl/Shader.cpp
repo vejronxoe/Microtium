@@ -4,7 +4,7 @@
 #include<fstream>
 #include<sstream>
 
-Shader::~Shader()
+void Shader::DeleteShader() 
 {
 	ErrorGL(glDeleteProgram(m_ID));
 }
@@ -24,17 +24,14 @@ std::string Shader::fileShaderRead(std::string filePath)
 	shaderFile.close();
 	return shader;
 }
-unsigned int Shader::GetUniformLocation(std::string &name)
+unsigned int Shader::GetUniformLocation(const char* name)
 {
-	if (m_UniformsLocations.find(name) == m_UniformsLocations.end())
-	{
-		m_UniformsLocations[name] = glGetUniformLocation(m_ID, name.c_str());
-	}
-	if (m_UniformsLocations[name] == -1)
+	 unsigned int location = glGetUniformLocation(m_ID, name);
+	if (location == -1)
 	{
 		std::cout << "can not find uniform named "<< name << " or your dont bind shader" << std::endl;
 	}
-	return m_UniformsLocations[name];
+	return location;
 }
 
 Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentShader)
@@ -47,23 +44,20 @@ Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentSha
 		LinkBasicShader(vertexShader, fragmentShader);
 	}
 
-void Shader::SetUniform4f(std::string name,float v0, float v1, float v2, float v3)
+void Shader::SetUniform4f(unsigned int location,float v0, float v1, float v2, float v3)
 {
-	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
+	glUniform4f(location, v0, v1, v2, v3);
 }
-void Shader::SetUniform1f(std::string name, float v)
+void Shader::SetUniform1f(unsigned int location, float v)
 {
-	glUniform1i(GetUniformLocation(name), v);
+	glUniform1i(location, v);
 }
 
-void Shader::SetUniformMat4(std::string name, float* v)
-{
-	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, v);
-}
 void Shader::SetUniformMat4(unsigned int location, float* v)
 {
 	glUniformMatrix4fv(location, 1, GL_FALSE, v);
 }
+
 
 unsigned int Shader::CompileShader(unsigned int type, const char* source, const char* nameShader = "no shader name was assigned")
 {

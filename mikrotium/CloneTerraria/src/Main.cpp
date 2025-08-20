@@ -92,16 +92,17 @@ int main()
 	Shader basicShader("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBasic.txt");
 	basicShader.Bind();
 
-	std::string uniformName = "transform";
-	unsigned int transformLocation = basicShader.GetUniformLocation(uniformName);
 	
-
-
+	unsigned int transformLocation = basicShader.GetUniformLocation("transform");
+	unsigned int cameraLocation = basicShader.GetUniformLocation("camera");
+	
 
 	float transform[16];
 	CreateTransform(0, 0, transform);
+
+	
 	unsigned int blocksDrawData;
-	unsigned int blockTextures[2];
+	unsigned int blockTextures[16];
 	CreateAllBlockTextures(blockTextures);
 	SetupBlockDrawData(blocksDrawData, eob);
 	std::vector<Block> blocks;
@@ -138,12 +139,13 @@ int main()
 
 
 		basicShader.Bind();
-		basicShader.SetUniformMat4("camera", player.m_Camera);
+		basicShader.SetUniformMat4(cameraLocation, player.m_Camera);
 
 		player.DrawPlayer(basicShader, transformLocation, transform);
+		ErrorGL(glBindVertexArray(blocksDrawData));
 		for (int i = 0; i < blocks.size(); i++)
 		{
-			blocks.at(i).DrawBlock(blocksDrawData, basicShader, transformLocation, transform);
+			blocks.at(i).DrawBlock(basicShader, transformLocation, transform);
 		}
 		Input::EndOfLoop();
 		glfwSwapBuffers(window);

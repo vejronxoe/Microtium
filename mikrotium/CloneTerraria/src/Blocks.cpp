@@ -40,12 +40,11 @@ void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 	ErrorGL(glBindVertexArray(0));
 }
 
-void Block::DrawBlock(unsigned int blocksDrawData, Shader& basicShader, unsigned int location, float* transform)
+void Block::DrawBlock( Shader& basicShader, unsigned int location, float* transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicShader.SetUniformMat4(location, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
-	ErrorGL(glBindVertexArray(blocksDrawData));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	
 }
@@ -53,19 +52,132 @@ void Block::DrawBlock(unsigned int blocksDrawData, Shader& basicShader, unsigned
 
 enum TexturesOfBlocks 
 {
-	Grass = 0, 
+	TopGrass = 0, 
+	LeftGrass,
+	DownGrass,
+	RightGrass,
+	TopDownGrass,
+	LeftRightGrass,
+	TopLeftGrass,
+	DownLeftGrass,
+	DownRightGrass,
+	TopRightGrass,
+	MissingTopGrass,
+	MissingLeftGrass,
+	MissingDownGrass,
+	MissingRightGrass,
+	FullGrass,
 	Dirt,
 
 };
 void CreateAllBlockTextures(unsigned int* IDs)
 {
-	IDs[Grass] = CreateTexture("res/textures/GrassBlock.png", true);
-	IDs[Dirt] = CreateTexture("res/textures/DirtBlock.png", true);
+	IDs[TopGrass] = CreateTexture("res/textures/topGrassBlock.png", true);
+	IDs[LeftGrass] = CreateTexture("res/textures/leftGrassBlock.png", true);
+	IDs[DownGrass] = CreateTexture("res/textures/downGrassBlock.png", true);
+	IDs[RightGrass] = CreateTexture("res/textures/rightGrassBlock.png", true);
+	IDs[TopDownGrass] = CreateTexture("res/textures/topDownGrassBlock.png", true);
+	IDs[LeftRightGrass] = CreateTexture("res/textures/leftRightGrassBlock.png", true);
+	IDs[TopLeftGrass] = CreateTexture("res/textures/topLeftGrassBlock.png", true);
+	IDs[DownLeftGrass] = CreateTexture("res/textures/downLeftGrassBlock.png", true);
+	IDs[DownRightGrass] = CreateTexture("res/textures/downRightGrassBlock.png", true);
+	IDs[TopRightGrass] = CreateTexture("res/textures/topRightGrassBlock.png", true);
+	IDs[MissingTopGrass] = CreateTexture("res/textures/missingTopGrassBlock.png", true);
+	IDs[MissingLeftGrass] = CreateTexture("res/textures/missingLeftGrassBlock.png", true);
+	IDs[MissingDownGrass] = CreateTexture("res/textures/missingDownGrassBlock.png", true);
+	IDs[MissingRightGrass] = CreateTexture("res/textures/missingRightGrassBlock.png", true);
+	IDs[FullGrass] = CreateTexture("res/textures/fullGrassBlock.png", true);
+	IDs[Dirt] = CreateTexture("res/textures/dirtBlock.png", true);		 
 }
 
-void CreateBlock(int x, int y, unsigned int texture,  std::vector<Block>& blocks)
+
+unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs, std::vector<std::string>& lines, int i , int j)
 {
-	blocks.emplace_back(texture, x, y, true);
+	if (lines.at(i - 1).at(j) == ' ')
+	{
+		if (lines.at(i + 1).at(j) == ' ')
+		{
+			if (lines.at(i).at(j - 1) == ' ')
+			{
+				if (lines.at(i).at(j + 1) == ' ')
+				{
+					return TexturesIDs[FullGrass];
+				}
+				else
+				{
+					return TexturesIDs[MissingRightGrass];
+				}
+			}
+			else if (lines.at(i).at(j + 1) == ' ')
+			{
+				return TexturesIDs[MissingLeftGrass];
+			}
+			else
+			{
+				return TexturesIDs[TopDownGrass];
+			}
+		}
+		else if (lines.at(i).at(j - 1) == ' ')
+		{
+			if (lines.at(i).at(j + 1) == ' ')
+			{
+				return TexturesIDs[MissingDownGrass];
+			}
+			else
+			{
+				return TexturesIDs[TopLeftGrass];
+			}
+		}
+		else if (lines.at(i).at(j + 1) == ' ')
+		{
+			return TexturesIDs[TopRightGrass];
+		}
+		else
+		{
+			return TexturesIDs[TopGrass];
+		}
+	}
+	else if (lines.at(i + 1).at(j) == ' ')
+	{
+		if (lines.at(i).at(j - 1) == ' ')
+		{
+			if (lines.at(i).at(j + 1) == ' ')
+			{
+				return TexturesIDs[MissingTopGrass];
+			}
+			else
+			{
+				return TexturesIDs[DownLeftGrass];
+			}
+		}
+		else if (lines.at(i).at(j + 1) == ' ')
+		{
+			return TexturesIDs[DownRightGrass];
+		}
+		else
+		{
+			return TexturesIDs[DownGrass];
+		}
+	}
+	else if (lines.at(i).at(j - 1) == ' ')
+	{
+		if (lines.at(i).at(j + 1) == ' ')
+		{
+			return TexturesIDs[LeftRightGrass];
+		}
+		else
+		{
+			return TexturesIDs[LeftGrass];
+		}
+	}
+	else if (lines.at(i).at(j + 1) == ' ')
+	{
+		return TexturesIDs[RightGrass];
+	}
+	else
+	{
+		return TexturesIDs[Dirt];
+	}
 }
 void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* texturesIDs)
 {
@@ -77,22 +189,33 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 	}
 	else
 	{
-		int y = 0.0f;
+		
 		{
 			lines.emplace_back(" ");
-			int i = 0;
+			lines.emplace_back(" ");
+			int i = 1;
 			while (std::getline(map, lines[i]))
 			{
+				lines.at(i) = " " + lines.at(i) + " ";
 				lines.emplace_back(" ");
 				i++;
 			}
+
 		}
-		lines.pop_back();
+		for (int i = 0; i < lines.at(1).length(); i++)
+		{
+			lines.at(0) += " ";
+		}
+		for (int i = 0; i < lines.at(lines.size() - 2).length(); i++)
+		{
+			lines.at(lines.size() - 1) += " ";
+		}
+
+
 		map.close();
+		int y = 0.0f;
 		for (int i = 0; i < lines.size(); i++)
 		{
-
-
 			int x = -56;
 			{
 				for (int j = 0; j < lines.at(i).length(); j++)
@@ -100,14 +223,8 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 					switch (lines.at(i).at(j))
 					{
 					case'd':
-							if (lines.at(i-1).at(j) == ' ')
-							{
-								CreateBlock(x, y, texturesIDs[Grass], blocks);
-							}
-							else
-							{
-								CreateBlock(x, y, texturesIDs[Dirt], blocks);
-							}
+							
+								blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true);
 						break;
 					}
 

@@ -119,7 +119,7 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 	m_Transform[0] += m_Velocity[0] * deltaTime;
 	m_Transform[1] += m_Velocity[1] * deltaTime;
 }
-void Player::DrawPlayer(Shader &basicShader, unsigned int location ,float* transform)
+void Player::DrawPlayer(Shader& basicShader, unsigned int location ,float* transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicShader.SetUniformMat4(location, transform);
