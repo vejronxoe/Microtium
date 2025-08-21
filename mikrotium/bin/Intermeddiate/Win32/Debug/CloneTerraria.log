@@ -1,11 +1,10 @@
-﻿  Collision.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(22,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(26,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(27,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(62,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(68,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(69,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\vc120.pdb'; linking object as if no debug info
+﻿  Player.cpp
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(10,188): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(35,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(36,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(37,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(110,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(115,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(120,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(125,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe

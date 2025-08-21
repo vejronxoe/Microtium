@@ -103,7 +103,30 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 	m_WallHit = false;
 	float hitboxvertices[4] = { m_vertices[0] + m_Transform[0],m_vertices[1] + m_Transform[1],m_vertices[10] + m_Transform[0],m_vertices[11] + m_Transform[1] };
 
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+	unsigned int moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+	switch (moveBehavior)
+	{
+	case(air):
+		m_Acceleration = 5.0f;
+		m_Friction = 5;
+		m_MaxMovementSpeed = 11;
+		break;
+	case(slippery):
+		m_Acceleration = 12.0f;
+		m_Friction = 7;
+		m_MaxMovementSpeed = 12;
+		break;
+	case(asphalt):
+		m_Acceleration = 20.0f;
+		m_Friction = 60;
+		m_MaxMovementSpeed = 20;
+		break;
+	case(basicSolid):
+		m_Acceleration = 25.0f;
+		m_Friction = 30; 
+		m_MaxMovementSpeed = 10;
+		break;
+	}
 	if (m_FloorHit)
 	{
 		m_CanJump = true;

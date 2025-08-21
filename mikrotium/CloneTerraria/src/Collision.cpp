@@ -13,8 +13,9 @@ void GetCorners(int x , int y , float* hitboxsCorners )
 	hitboxsCorners[3] = y - 0.5f;
 }
 
-void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int blockIndex, const int playerIndex, float& transform, float& velocity, float& closestVertice, bool& sideHit)
+unsigned int OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int blockIndex, const int playerIndex, float& transform, float& velocity, float& closestVertice, bool& sideHit)
 {
+	unsigned int behavior = air;
 	for (int i = 0; i < 4; i++)
 	{
 			vertices[i] = std::roundf(vertices[i]);
@@ -35,12 +36,14 @@ void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 					if (abs(closestVertice - objectVertices4f[playerIndex]) > abs(corners[blockIndex] - objectVertices4f[playerIndex]))
 					{
 						closestVertice = corners[blockIndex];
+						behavior = hitbox.at(i).m_BlockBehavior;
 					}
 				}
 				else
 				{
 					closestVertice = corners[blockIndex];
 					sideHit = true;
+					behavior = hitbox.at(i).m_BlockBehavior;
 				}
 			}
 		}
@@ -49,12 +52,18 @@ void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 	{
 		velocity = 0;
 		transform += closestVertice - objectVertices4f[playerIndex];
+		if (behavior == platform)
+			return basicSolid;
+		return behavior;
 	}
+	return air;
 }
-void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int XHitboxIndex, const int YHitboxIndex, const int XplayerIndex, const int YplayerIndex, float* transform, float* velocity, float* closestVertice, bool& floorHit, bool& wallHit)
+unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Block>& hitbox, const int XHitboxIndex, const int YHitboxIndex, const int XplayerIndex, const int YplayerIndex, float* transform, float* velocity, float* closestVertice, bool& floorHit, bool& wallHit)
 {
 	bool edgehit = false;
 	float edgeVertice[2];
+	unsigned int behavior = air;
+	unsigned int edgeBehavior = air;
 	for (int i = 0; i < 12; i++)
 	{
 		vertices[i] = std::roundf(vertices[i]);
@@ -97,12 +106,14 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 					if (abs(closestVertice[1] - objectVertices4f[YplayerIndex]) > abs(corners[YHitboxIndex] - objectVertices4f[YplayerIndex]))
 					{
 						closestVertice[1] = corners[YHitboxIndex];
+						behavior = hitbox.at(i).m_BlockBehavior;
 					}
 				}
 				else
 				{
 					closestVertice[1] = corners[YHitboxIndex];
 					floorHit = true;
+					behavior = hitbox.at(i).m_BlockBehavior;
 				}
 				yHit = true;
 			}
@@ -122,12 +133,14 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 						if (abs(edgeVertice[1] - objectVertices4f[YplayerIndex]) > abs(closestVertice[YHitboxIndex] - objectVertices4f[YplayerIndex]))
 						{
 							edgeVertice[1] = corners[YHitboxIndex];
+							edgeBehavior = hitbox.at(i).m_BlockBehavior;
 						}
 					}
 					else
 					{
 						edgeVertice[1] = corners[YHitboxIndex];
 						edgeVertice[0] = corners[XHitboxIndex];
+						edgeBehavior = hitbox.at(i).m_BlockBehavior;
 						edgehit = true;
 					}
 				}
@@ -144,9 +157,11 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 		}
 		else
 		{
-
 			velocity[1] = 0;
 			transform[1] += edgeVertice[1] - objectVertices4f[YplayerIndex];
+			if (edgeBehavior == platform)
+				return basicSolid;
+			return edgeBehavior;
 		}
 	}
 	else
@@ -160,14 +175,18 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 		{
 			velocity[1] = 0;
 			transform[1] += closestVertice[1] - objectVertices4f[YplayerIndex];
+			if (behavior == platform)
+				return basicSolid;
+			return behavior;
 		}
 	}
+	return air;
 }
 
-void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
+unsigned int DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
 {
 	if (velocity[0] == 0 && velocity[1] == 0)
-		return;
+		return air;
 	float closestVertices[2];
 	float vertices[12];
 	if (velocity[0] > 0 && velocity[1] > 0)
@@ -178,7 +197,7 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[1];
 		vertices[8] = objectVertices4f[2]; vertices[9] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[10] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[11] = objectVertices4f[1];
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 3, 2, 1, transform, velocity, closestVertices, ceilHit, rightWallHit);
+		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 3, 2, 1, transform, velocity, closestVertices, ceilHit, rightWallHit);
 	}
 	else if (velocity[0] < 0 && velocity[1] < 0)
 	{
@@ -189,7 +208,8 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[3] + velocity[1] * deltaTime;
 		vertices[8] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[9] = objectVertices4f[3];
 		vertices[10] = objectVertices4f[0]; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 1, 0, 3, transform, velocity, closestVertices, floorHit, leftWallHit);
+		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 1, 0, 3, transform, velocity, closestVertices, floorHit, leftWallHit);
+		return behavior;
 	}
 	else if (velocity[0] < 0 && velocity[1] > 0)
 	{
@@ -199,7 +219,7 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[1];
 		vertices[8] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[9] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[10] = objectVertices4f[0]; vertices[11] = objectVertices4f[1];
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 3, 0, 1, transform, velocity, closestVertices, ceilHit, leftWallHit);
+		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 3, 0, 1, transform, velocity, closestVertices, ceilHit, leftWallHit);
 	}
 	else if (velocity[0] > 0 && velocity[1] < 0)
 	{
@@ -209,32 +229,34 @@ void DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, flo
 		vertices[6] = objectVertices4f[2] - 0.1f; vertices[7] = objectVertices4f[3] + velocity[1] * deltaTime;
 		vertices[8] = objectVertices4f[2]; vertices[9] = objectVertices4f[3];
 		vertices[10] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
-		TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 1, 2, 3, transform, velocity, closestVertices, floorHit, rightWallHit);
+		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 1, 2, 3, transform, velocity, closestVertices, floorHit, rightWallHit);
+		return behavior;
 
 	}
 	else if (velocity[1] > 0)
 	{
 		vertices[0] = objectVertices4f[0] + 0.1f; vertices[1] = objectVertices4f[1] + velocity[1] * deltaTime;
 		vertices[2] = objectVertices4f[2] - 0.1f; vertices[3] = objectVertices4f[1];
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], closestVertices[0], ceilHit);
+		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], closestVertices[0], ceilHit);
 	}
 	else if (velocity[1] < 0)
 	{
 		vertices[0] = objectVertices4f[0] + 0.1f; vertices[1] = objectVertices4f[3];
 		vertices[2] = objectVertices4f[2] - 0.1f; vertices[3] = objectVertices4f[3] + velocity[1] * deltaTime;
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 1, 3, transform[1], velocity[1], closestVertices[0], floorHit);
+		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 1, 3, transform[1], velocity[1], closestVertices[0], floorHit);
+		return behavior;
 	}
 	else if (velocity[0] > 0)
 	{
 		vertices[0] = objectVertices4f[2]; vertices[1] = objectVertices4f[1] - 0.1f;
 		vertices[2] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[3] = objectVertices4f[3] + 0.1f;
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], closestVertices[0], leftWallHit);
+		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], closestVertices[0], leftWallHit);
 	}
 	else if(velocity[0] < 0)
 	{
 		vertices[0] = objectVertices4f[0] + velocity[0] * deltaTime; vertices[1] = objectVertices4f[1] - 0.1f;
 		vertices[2] = objectVertices4f[0]; vertices[3] = objectVertices4f[3] + 0.1f;
-		OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], closestVertices[0], rightWallHit);
-	}
-	
+		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], closestVertices[0], rightWallHit);
+	}	
+	return air;
 }
