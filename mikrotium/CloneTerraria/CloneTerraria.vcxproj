@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Blocks.cpp" />
-    <ClCompile Include="src\GLFW\Input.cpp" />
+    <ClCompile Include="src\glfw\Input.cpp" />
     <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
     <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -29,19 +29,19 @@
     <ClCompile Include="src\Opengl\Shader.cpp" />
     <ClCompile Include="src\Opengl\Texture.cpp" />
     <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\GLFW\Window.cpp" />
+    <ClCompile Include="src\glfw\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Blocks.h" />
-    <ClInclude Include="src\GLFW\input.h" />
+    <ClInclude Include="src\glfw\input.h" />
     <ClInclude Include="src\Opengl\ErrorSystem.h" />
     <ClInclude Include="src\imageLoader\stb_image.h" />
     <ClInclude Include="src\math\matrix.h" />
     <ClInclude Include="src\Opengl\Shader.h" />
     <ClInclude Include="src\Opengl\Texture.h" />
     <ClInclude Include="src\Player.h" />
-    <ClInclude Include="src\GLFW\Window.h" />
+    <ClInclude Include="src\glfw\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\save\map.txt" />

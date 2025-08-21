@@ -3,6 +3,15 @@
 
 #include"Opengl/Shader.h"
 
+enum BlockBehavior
+{
+	basicSolid = 0,
+	air,
+	slippery,
+	asphalt,
+	platform,
+};
+
 class Block
 {
 private:
@@ -10,7 +19,8 @@ private:
 public:
 	int m_Transform[2];
 	bool m_CollisionActive;
-	Block(unsigned int tex, int x, int y, bool hitboxActive);
+	unsigned int m_BlockBehavior;
+	Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int Behavior);
 	void DrawBlock( Shader& basicShader, unsigned int location ,float* transform);
 };
 void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* texturesIDs);

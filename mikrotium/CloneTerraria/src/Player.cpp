@@ -2,7 +2,7 @@
 
 
 #include"Opengl/Texture.h"
-#include"GLFW/Input.h"
+#include"glfw/Input.h"
 #include"math/matrix.h"
 
 

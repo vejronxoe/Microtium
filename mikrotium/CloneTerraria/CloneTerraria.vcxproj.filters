@@ -39,13 +39,13 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GLFW\Input.cpp">
+    <ClCompile Include="src\glfw\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GLFW\Window.cpp">
+    <ClCompile Include="src\glfw\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,13 +71,13 @@
     <ClInclude Include="src\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GLFW\input.h">
+    <ClInclude Include="src\glfw\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GLFW\Window.h">
+    <ClInclude Include="src\glfw\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

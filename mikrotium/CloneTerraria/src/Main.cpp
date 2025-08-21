@@ -12,10 +12,10 @@
 #include"Math/matrix.h"
 #include"imageLoader/stb_image.h"
 #include"Blocks.h"
-#include"GLFW/input.h"
+#include"glfw/input.h"
 #include"player.h"
 #include"Collision.h"
-#include"GLFW/Window.h"
+#include"glfw/Window.h"
 
 
 
@@ -101,9 +101,12 @@ int main()
 	CreateTransform(0, 0, transform);
 
 	
-	unsigned int blocksDrawData;
-	unsigned int blockTextures[16];
+
+
+	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
+
+	unsigned int blocksDrawData;
 	SetupBlockDrawData(blocksDrawData, eob);
 	std::vector<Block> blocks;
 	LoadMap("res/save/map.txt", blocks, blockTextures);

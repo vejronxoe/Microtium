@@ -3,6 +3,8 @@
 #include<iostream>
 #include<math.h>
 
+#include"glfw/input.h"
+
 void GetCorners(int x , int y , float* hitboxsCorners )
 {
 	hitboxsCorners[0] = x - 0.5f;
@@ -19,7 +21,7 @@ void OneDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{ 
-		if (hitbox.at(i).m_CollisionActive)
+		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && objectVertices4f[3] >= hitbox.at(i).m_Transform[1] + 0.5f && !Input::SHold)
 		{
 			float x = hitbox.at(i).m_Transform[0];
 			float y = hitbox.at(i).m_Transform[1];
@@ -59,7 +61,7 @@ void TwoDirectionCheck(float* vertices, float* objectVertices4f, std::vector<Blo
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{
-		if (hitbox.at(i).m_CollisionActive)
+		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && objectVertices4f[3] >= hitbox.at(i).m_Transform[1] + 0.5f && !Input::SHold)
 		{
 			bool xHit = false;
 			bool yHit = false;

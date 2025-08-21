@@ -9,12 +9,9 @@
 #include"Opengl/Texture.h"
 #include"math/matrix.h"
 
-enum BlockBehavior
-{
-	basicSolid, air, slippery, asphalt
-};
-Block::Block(unsigned int tex, int x, int y, bool hitboxActive)
-	: m_te(tex), m_Transform{x,y}, m_CollisionActive(hitboxActive)
+
+Block::Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int behavior)
+	: m_te(tex), m_Transform{x,y}, m_CollisionActive(hitboxActive), m_BlockBehavior(behavior)
 {}
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 {
@@ -68,6 +65,9 @@ enum TexturesOfBlocks
 	MissingRightGrass,
 	FullGrass,
 	Dirt,
+	Ice,
+	Asphalt,
+	Platform,
 
 };
 void CreateAllBlockTextures(unsigned int* IDs)
@@ -87,7 +87,10 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[MissingDownGrass] = CreateTexture("res/textures/missingDownGrassBlock.png", true);
 	IDs[MissingRightGrass] = CreateTexture("res/textures/missingRightGrassBlock.png", true);
 	IDs[FullGrass] = CreateTexture("res/textures/fullGrassBlock.png", true);
-	IDs[Dirt] = CreateTexture("res/textures/dirtBlock.png", true);		 
+	IDs[Dirt] = CreateTexture("res/textures/dirtBlock.png", true);
+	IDs[Ice] = CreateTexture("res/textures/ice.png", true);
+	IDs[Asphalt] = CreateTexture("res/textures/Asphalt.png", true);
+	IDs[Platform] = CreateTexture("res/textures/platform.png", true);
 }
 
 
@@ -223,11 +226,18 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 					switch (lines.at(i).at(j))
 					{
 					case'd':
-							
-								blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true);
+						blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true, basicSolid);
+						break;
+					case'p':
+						blocks.emplace_back(texturesIDs[Platform], x, y, true, platform);
+						break;
+					case'a':
+						blocks.emplace_back(texturesIDs[Asphalt], x, y, true, asphalt);
+						break;
+					case'i':
+						blocks.emplace_back(texturesIDs[Ice], x, y, true, slippery);
 						break;
 					}
-
 					x++;
 				}
 			}
