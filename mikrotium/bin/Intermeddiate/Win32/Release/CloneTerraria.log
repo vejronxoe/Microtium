@@ -1,31 +1,21 @@
 ﻿  Blocks.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(45,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(45,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(192,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(204,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(208,23): warning C4018: '<': signed/unsigned mismatch
-  Collision.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(20,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(24,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(25,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(60,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(66,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp(67,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(42,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(42,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(209,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(211,18): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(216,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(218,32): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(224,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(225,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp(229,23): warning C4018: '<': signed/unsigned mismatch
   Main.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(120,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(146,21): warning C4018: '<': signed/unsigned mismatch
-  Shader.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\Shader.cpp(53,24): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-  Player.cpp
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(10,188): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(35,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(36,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(37,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(127,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp(153,21): warning C4018: '<': signed/unsigned mismatch
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 499 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  0 of 512 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Release\vc120.pdb'; linking object as if no debug info
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'glew32s.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Release\glew32s.pdb'; linking object as if no debug info
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Release\mikrotium.exe

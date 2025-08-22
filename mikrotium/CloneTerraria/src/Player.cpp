@@ -109,12 +109,12 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 	case(air):
 		m_Acceleration = 5.0f;
 		m_Friction = 5;
-		m_MaxMovementSpeed = 11;
+		m_MaxMovementSpeed = 12;
 		break;
 	case(slippery):
 		m_Acceleration = 12.0f;
 		m_Friction = 7;
-		m_MaxMovementSpeed = 12;
+		m_MaxMovementSpeed = 14;
 		break;
 	case(asphalt):
 		m_Acceleration = 20.0f;

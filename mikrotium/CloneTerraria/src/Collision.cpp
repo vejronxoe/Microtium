@@ -22,7 +22,8 @@ unsigned int OneDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{ 
-		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && objectVertices4f[3] >= hitbox.at(i).m_Transform[1] + 0.5f && !Input::SHold)
+		float blockTop = hitbox.at(i).m_Transform[1] + 0.5f;
+		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && (objectVertices4f[3] > blockTop || objectVertices4f[3] == blockTop && !Input::SHold))
 		{
 			float x = hitbox.at(i).m_Transform[0];
 			float y = hitbox.at(i).m_Transform[1];
@@ -70,7 +71,8 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	}
 	for (int i = 0; i < hitbox.size(); i++)
 	{
-		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && objectVertices4f[3] >= hitbox.at(i).m_Transform[1] + 0.5f && !Input::SHold)
+		float blockTop = hitbox.at(i).m_Transform[1] + 0.5f;
+		if (hitbox.at(i).m_CollisionActive && hitbox.at(i).m_BlockBehavior != platform || hitbox.at(i).m_BlockBehavior == platform && (objectVertices4f[3] > blockTop || objectVertices4f[3] == blockTop && !Input::SHold))
 		{
 			bool xHit = false;
 			bool yHit = false;

@@ -27,6 +27,7 @@ int main()
 	if (!Window::GetInfoForWindow("res/settings.txt"))
 	{
 		std::cout << "settings error dont read all informations" << std::endl;
+		std::cin.get();
 		return -1;
 	}
 
@@ -34,6 +35,7 @@ int main()
 	if (!glfwInit())
 	{
 		std::cout << "GLFW DONT WORK" << std::endl;
+		std::cin.get();
 		return -1;
 	}
 
@@ -54,6 +56,7 @@ int main()
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
 		glfwTerminate();
+		std::cin.get();
 		return -1;
 	}
 
@@ -62,6 +65,7 @@ int main()
 	if (glewInit() != GLEW_OK)
 	{
 		std::cout << "GLEW DONT WORK" << std::endl;
+		std::cin.get();
 		return -1;
 	}
 
@@ -155,6 +159,7 @@ int main()
 		glfwPollEvents();
 	}
 	glfwTerminate();
+	std::cin.get();
 	return 0;
 
 }

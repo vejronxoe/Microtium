@@ -192,7 +192,7 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 	}
 	else
 	{
-		
+
 		{
 			lines.emplace_back(" ");
 			lines.emplace_back(" ");
@@ -205,16 +205,21 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 			}
 
 		}
-		for (int i = 0; i < lines.at(1).length(); i++)
+		int maxLenght = 1;
+		for (int i = 0; i < lines.size(); i++)
 		{
-			lines.at(0) += " ";
+			if (maxLenght < lines.at(i).length())
+			{
+				maxLenght = lines.at(i).length();
+			}
 		}
-		for (int i = 0; i < lines.at(lines.size() - 2).length(); i++)
+		for (int i = 0; i < lines.size(); i++)
 		{
-			lines.at(lines.size() - 1) += " ";
+			while (lines.at(i).length() < maxLenght)
+			{
+				lines.at(i) += " ";
+			}
 		}
-
-
 		map.close();
 		int y = 0.0f;
 		for (int i = 0; i < lines.size(); i++)
