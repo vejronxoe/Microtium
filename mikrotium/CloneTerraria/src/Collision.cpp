@@ -185,7 +185,7 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	return air;
 }
 
-unsigned int DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
+unsigned char DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<Block>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)
 {
 	if (velocity[0] == 0 && velocity[1] == 0)
 		return air;

@@ -19,7 +19,7 @@ private:
 public:
 	int m_Transform[2];
 	bool m_CollisionActive;
-	unsigned int m_BlockBehavior;
+	unsigned char m_BlockBehavior;
 	Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int Behavior);
 	void DrawBlock( Shader& basicShader, unsigned int location ,float* transform);
 };

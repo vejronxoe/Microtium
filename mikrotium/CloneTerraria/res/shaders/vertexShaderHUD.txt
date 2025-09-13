@@ -1,0 +1,16 @@
+#version 330 core
+layout (location = 0) in vec4 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 texCoord;
+
+uniform mat4 HUDCamera;
+uniform mat4 HUDTransform;
+uniform mat4 HUDBasicLocation;
+uniform mat4 HUDScale;
+
+void main()
+{
+	texCoord = aTexCoord;
+	gl_Position =   HUDCamera * HUDTransform * HUDBasicLocation * HUDScale * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+}

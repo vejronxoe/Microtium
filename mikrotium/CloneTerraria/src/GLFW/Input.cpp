@@ -8,6 +8,9 @@ namespace Input
 {
 	double YMousePos;
 	double XMousePos;
+	double YRawMousePos;
+	double XRawMousePos;
+	char MouseWheel;
 	bool LeftMouseHold = false;
 	bool LeftMousePress = false;
 	bool WHold = false;
@@ -20,15 +23,23 @@ namespace Input
 	bool DPress = false;
 	bool SpaceHold = false;
 	bool SpacePress = false;
+	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
+	bool EscapePress = false;
+
 	void EndOfLoop()
 	{
+		MouseWheel = 0;
 		LeftMousePress = false;
 		WHold = false;
 		SPress = false;
 		DPress = false;
 		APress = false;
 		SpacePress = false;
-
+		for (int i = 0; i < 10; i++)
+		{
+			NumberPress[i] = false;
+		}
+		EscapePress = false;
 	}
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
@@ -90,11 +101,62 @@ namespace Input
 		{
 			SpaceHold = false;
 		}
+
+
+
+		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+		{
+			NumberPress[9] = true;
+		}
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+		{
+			NumberPress[0] = true;
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+		{
+			NumberPress[1] = true;
+		}
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+		{
+			NumberPress[2] = true;
+		}
+		if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+		{
+			NumberPress[3] = true;
+		}
+		if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+		{
+			NumberPress[4] = true;
+		}
+		if (key == GLFW_KEY_6 && action == GLFW_PRESS)
+		{
+			NumberPress[5] = true;
+		}
+		if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+		{
+			NumberPress[6] = true;
+		}
+		if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+		{
+			NumberPress[7] = true;
+		}
+		if (key == GLFW_KEY_9 && action == GLFW_PRESS)
+		{
+			NumberPress[8] = true;
+		}
+
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		{
+			EscapePress = true;
+		}
+
 	}
 	void CursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 	{
-		YMousePos = (((-1 * ypos) / Window::divisor) * Window::multiplier) + Window::halfHeightOfGameTransform;
-		XMousePos = ((xpos / Window::divisor) * Window::multiplier) - Window::halfWidthOfGameTransform;
+		XRawMousePos = xpos;
+		YRawMousePos =	ypos;
+		YMousePos = (((-ypos / Window::height) * 2) + 1) * Window::halfHeightOfGameTransform;
+		XMousePos = (((xpos / Window::width) * 2) - 1) * Window::halfWidthOfGameTransform;
 	}
 	void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
@@ -108,4 +170,9 @@ namespace Input
 			LeftMouseHold = false;
 		}
 	}
+	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		MouseWheel += yoffset;
+	}
 }
+

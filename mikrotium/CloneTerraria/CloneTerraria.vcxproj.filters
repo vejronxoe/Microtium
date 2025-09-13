@@ -48,7 +48,7 @@
     <ClCompile Include="src\glfw\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\HUD.cpp">
+    <ClCompile Include="src\glfw\cursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="src\glfw\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\HUD.h">
+    <ClInclude Include="src\glfw\cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,5 +92,7 @@
     <Text Include="res\save\map.txt" />
     <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\settings.txt" />
+    <Text Include="res\shaders\fragmentShaderTest.txt" />
+    <Text Include="res\shaders\vertexShaderHUD.txt" />
   </ItemGroup>
 </Project>

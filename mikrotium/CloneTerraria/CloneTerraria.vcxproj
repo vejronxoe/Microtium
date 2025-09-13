@@ -21,8 +21,8 @@
   <ItemGroup>
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Blocks.cpp" />
+    <ClCompile Include="src\glfw\cursor.cpp" />
     <ClCompile Include="src\glfw\Input.cpp" />
-    <ClCompile Include="src\HUD.cpp" />
     <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
     <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -35,8 +35,8 @@
   <ItemGroup>
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Blocks.h" />
+    <ClInclude Include="src\glfw\cursor.h" />
     <ClInclude Include="src\glfw\input.h" />
-    <ClInclude Include="src\HUD.h" />
     <ClInclude Include="src\Opengl\ErrorSystem.h" />
     <ClInclude Include="src\imageLoader\stb_image.h" />
     <ClInclude Include="src\math\matrix.h" />
@@ -48,8 +48,10 @@
   <ItemGroup>
     <Text Include="res\save\map.txt" />
     <Text Include="res\settings.txt" />
+    <Text Include="res\shaders\fragmentShaderTest.txt" />
     <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
+    <Text Include="res\shaders\vertexShaderHUD.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
