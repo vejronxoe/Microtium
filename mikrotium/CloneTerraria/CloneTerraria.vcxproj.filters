@@ -51,6 +51,12 @@
     <ClCompile Include="src\glfw\cursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\NumberRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Opengl\DrawData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -86,6 +92,12 @@
     <ClInclude Include="src\glfw\cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\NumberRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Opengl\DrawData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
@@ -94,5 +106,6 @@
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragmentShaderTest.txt" />
     <Text Include="res\shaders\vertexShaderHUD.txt" />
+    <Text Include="res\shaders\vertexShaderFont.txt" />
   </ItemGroup>
 </Project>

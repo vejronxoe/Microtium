@@ -1,3 +1,4 @@
 #pragma once
 
-unsigned int CreateTexture(const char* filePath, bool isItRGBA);
+unsigned int CreateTextureRGB(const char* filePath);
+unsigned int CreateTextureRGBA(const char* filePath);

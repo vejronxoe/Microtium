@@ -64,17 +64,18 @@ private:
 	unsigned int m_SlotTexture;
 	unsigned int m_UseSlotTexture;
 	unsigned int m_TrashCanSlotTexture;
-	unsigned int m_AllItemTextures[5];
-	unsigned short int m_PlayerSlots[52];
-	unsigned short int m_AmountInSlots[52];
 	float m_SlotVertices[4];
 	float m_SlotGap;
-	bool m_IsInventoryOpen;
-	char m_HUDUseSlot;
-	unsigned char m_UseSlot;
+	unsigned char m_HUDUseSlot;
 	unsigned int m_HUDTransformLocation;
 	unsigned int m_HUDScaleLocation;
 public:
+	unsigned char m_AimingAtSlot;
+	unsigned char m_UseSlot;
+	bool m_IsInventoryOpen;
+	unsigned int m_AllItemTextures[5];
+	unsigned short int m_PlayerSlots[52];
+	unsigned short int m_AmountInSlots[52];
 	float m_CooldownToUse;
 	unsigned char m_TypeOfItem;
 	unsigned char m_PickaxeStreanght;

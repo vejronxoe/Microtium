@@ -2,16 +2,18 @@
 
 
 #include"Opengl/Texture.h"
+#include"Opengl/drawData.h"
 #include"glfw/Input.h"
 #include"glfw/window.h"
 #include"math/matrix.h"
+#include"NumberRender.h"
 
 void Player::CreateAllItemsTexture()
 {
-	m_AllItemTextures[CooperPickaxe] = CreateTexture("res/textures/cooperPickaxe.png", true);
-	m_AllItemTextures[CooperAxe] = CreateTexture("res/textures/cooperAxe.png", true);
-	m_AllItemTextures[CooperHammer] = CreateTexture("res/textures/cooperHammer.png", true);
-	m_AllItemTextures[CooperSword] = CreateTexture("res/textures/cooperSword.png", true);
+	m_AllItemTextures[CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
+	m_AllItemTextures[CooperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
+	m_AllItemTextures[CooperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
+	m_AllItemTextures[CooperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
 }
 
 Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot)
@@ -32,7 +34,7 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	}
 	for (int i = 0; i < 52; i++)
 	{
-		m_AmountInSlots[i] = 0;
+		m_AmountInSlots[i] = 10;
 	}
 	m_PlayerSlots[1] = CooperSword;
 	m_PlayerSlots[2] = CooperPickaxe;
@@ -45,30 +47,13 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	m_Range = 0;
 	m_Damage = 0;
 	m_Placeable = 0;
-	float vertices[20] = {
-	   -1.0f, 1.5f, 0.0f, 0.0f, 1.0f,
-	   1.0f, 1.5f, 0.0f, 1.0f, 1.0f,
-	   1.0f, -1.5f, 0.0f, 1.0f, 0.0f,
-	   -1.0f, -1.5f, 0.0f, 0.0f, 0.0f };
-	unsigned int VB;
+	m_AimingAtSlot = 0;
+	
 
-	m_Tex = CreateTexture("res/textures/player0.png", true);
+	m_Tex = CreateTextureRGBA("res/textures/player0.png");
 	CreateAllItemsTexture();
-	ErrorGL(glGenVertexArrays(1, &m_PlayerDrawData));
-
-	ErrorGL(glBindVertexArray(m_PlayerDrawData));
-	ErrorGL(glGenBuffers(1, &VB));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, VB));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), vertices, GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
-	ErrorGL(glBindVertexArray(0));
-
+	
+	m_PlayerDrawData = CreateDrawData(eob, 1.5f, -1.5f, 1.0f, -1.0f);
 
 
 	unsigned int inventoryVertexBuffer;
@@ -88,34 +73,13 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	top -= yLocationOfFirstSlot;
 	left -= xLocationOfFirstSlot;
 	right -= xLocationOfFirstSlot;
-	inventoryVertices[0] = left; inventoryVertices[1] = top; inventoryVertices[2] = 0.5f; inventoryVertices[3] = 0.0f; inventoryVertices[4] = 1.0f;
-	inventoryVertices[5] = right; inventoryVertices[6] = top; inventoryVertices[7] = 0.5f; inventoryVertices[8] = 1.0f; inventoryVertices[9] = 1.0f;
-	inventoryVertices[10] = right; inventoryVertices[11] = down; inventoryVertices[12] = 0.5f; inventoryVertices[13] = 1.0f; inventoryVertices[14] = 0.0f;
-	inventoryVertices[15] = left; inventoryVertices[16] = down; inventoryVertices[17] = 0.5f; inventoryVertices[18] = 0.0f; inventoryVertices[19] = 0.0f;
-
-
-
-	ErrorGL(glGenVertexArrays(1, &m_InventoryDrawData));
-	ErrorGL(glBindVertexArray(m_InventoryDrawData));
-	ErrorGL(glGenBuffers(1, &inventoryVertexBuffer));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, inventoryVertexBuffer));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), inventoryVertices, GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
-
-	ErrorGL(glBindVertexArray(0));
-
+	m_InventoryDrawData = CreateDrawData(eob, top, down, right, left);
 
 	CreateScale(1,1,m_Scale);
 
-	m_SlotTexture = CreateTexture("res/textures/inventorySlot.png", true);
-	m_UseSlotTexture = CreateTexture("res/textures/useInventorySlot.png", true);
-	m_TrashCanSlotTexture = CreateTexture("res/textures/trash.png", true);
+	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
+	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
+	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
 
 }
 void Player::SwapItemStats()
@@ -165,15 +129,16 @@ bool Player::IsItStackble(unsigned short int item)
 }
 void Player::ItermGetToInventory(unsigned short int amount, unsigned short int item)
 {
+	bool isItDone = false;
 	if (IsItStackble(item))
 	{
+		unsigned char freeSlot = 0;
+		
 		for (int i = 1; i < 51; i++)
 		{
-			if (m_PlayerSlots[i] == Nothing)
+			if (m_PlayerSlots[i] == Nothing && freeSlot == 0)
 			{
-				m_PlayerSlots[i] = item;
-				m_AmountInSlots[i] = amount;
-				break;
+				freeSlot = i;
 			}
 			else if (m_PlayerSlots[i] == item)
 			{
@@ -183,6 +148,7 @@ void Player::ItermGetToInventory(unsigned short int amount, unsigned short int i
 					if (amountSlotOverflow <= 9999)
 					{
 						m_AmountInSlots[i] = amountSlotOverflow;
+						isItDone = true;
 						break;
 					}
 					else
@@ -193,6 +159,14 @@ void Player::ItermGetToInventory(unsigned short int amount, unsigned short int i
 					}
 				}
 			}
+
+			if (!isItDone && freeSlot)
+			{
+				m_AmountInSlots[freeSlot] = amount;
+				m_PlayerSlots[freeSlot] = item;
+				isItDone = true;
+			}
+
 		}
 	}
 	else
@@ -203,9 +177,14 @@ void Player::ItermGetToInventory(unsigned short int amount, unsigned short int i
 			{
 				m_PlayerSlots[i] = item;
 				m_AmountInSlots[i] = amount;
+				isItDone = true;
 				break;
 			}
 		}
+	}
+	if (!isItDone)
+	{
+		//drop Item
 	}
 }
 void Player::MovementEveryFrame(float deltaTime, std::vector<Block>& blocks)
@@ -309,54 +288,30 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<Block>& blocks)
 }
 void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 {
-	if (m_IsInventoryOpen && Input::LeftMousePress)
+	m_AimingAtSlot = 0;
+	for (int i = 0; i < 5; i++)
 	{
-		for (int i = 0; i < 5; i++)
+		for (int j = 0; j < 10; j++)
 		{
-			for (int j = 0; j < 10; j++)
+			if ((m_PlayerSlots[0] != Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != Nothing)
 			{
-				if ((m_PlayerSlots[0] != Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != Nothing)
+				if (m_SlotGap * j + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * j + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * i + m_SlotVertices[3] > Input::YRawMousePos)
 				{
-					if (m_SlotGap * j + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * j + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * i + m_SlotVertices[3] > Input::YRawMousePos)
-					{
-						if (m_UseSlot == 0)
-						{
-							m_PlayerSlots[0] = Nothing;
-							m_AmountInSlots[0] = 0;
-						}
-						m_UseSlot = i * 10 + j + 1;
-						if (m_PlayerSlots[0] == Nothing)
-						{
-							m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
-							m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
-							m_PlayerSlots[m_UseSlot] = Nothing;
-							m_AmountInSlots[m_UseSlot] = 0;
-						}
-						else if (m_PlayerSlots[m_UseSlot] == Nothing)
-						{
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-							m_UseSlot = 0;
-							m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-							m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-						}
-						else
-						{
-							unsigned short int holdForPlyerSlot = m_PlayerSlots[m_UseSlot];
-							unsigned short int holdForAmountInSlot = m_AmountInSlots[m_UseSlot];
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-							m_PlayerSlots[0] = holdForPlyerSlot;
-							m_AmountInSlots[0] = holdForAmountInSlot;
-						}
-						SwapItemStats();
-					}
+					m_AimingAtSlot = i * 10 + j + 1;
 				}
 			}
 		}
-		if ( m_UseSlot != 0 && m_PlayerSlots[0] != Nothing || m_PlayerSlots[51] != Nothing)
+	}
+	if (m_SlotGap * 9 + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * 5 + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + m_SlotVertices[3] > Input::YRawMousePos)
+	{
+		m_AimingAtSlot = 51;
+	}
+
+	if (Input::LeftMousePress && m_AimingAtSlot)
+	{
+		if (m_IsInventoryOpen)
 		{
-			if (m_SlotGap * 9 + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * 5 + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + m_SlotVertices[3] > Input::YRawMousePos)
+			if (m_AimingAtSlot == 51)
 			{
 				if (m_UseSlot == 0)
 				{
@@ -381,6 +336,48 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 				}
 				SwapItemStats();
 			}
+			else
+			{
+
+				if (m_UseSlot == 0)
+				{
+					m_PlayerSlots[0] = Nothing;
+					m_AmountInSlots[0] = 0;
+				}
+				m_UseSlot = m_AimingAtSlot;
+				if (m_PlayerSlots[0] == Nothing)
+				{
+					m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
+					m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
+					m_PlayerSlots[m_UseSlot] = Nothing;
+					m_AmountInSlots[m_UseSlot] = 0;
+				}
+				else if (m_PlayerSlots[m_UseSlot] == Nothing)
+				{
+					m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+					m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+					m_UseSlot = 0;
+					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+					m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+				}
+				else
+				{
+					unsigned short int holdForPlyerSlot = m_PlayerSlots[m_UseSlot];
+					unsigned short int holdForAmountInSlot = m_AmountInSlots[m_UseSlot];
+					m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+					m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+					m_PlayerSlots[0] = holdForPlyerSlot;
+					m_AmountInSlots[0] = holdForAmountInSlot;
+				}
+				SwapItemStats();
+			}
+		}
+		else
+		{
+			m_HUDUseSlot = m_AimingAtSlot;
+			m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+			m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+			SwapItemStats();
 		}
 
 	}
@@ -477,7 +474,6 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 
 	MovementEveryFrame(deltaTime, blocks);
 }
-
 void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, unsigned int transformLocation, float* transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
@@ -588,5 +584,6 @@ void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, unsigned int transformLo
 			}
 		}
 	}
+	
 
 }

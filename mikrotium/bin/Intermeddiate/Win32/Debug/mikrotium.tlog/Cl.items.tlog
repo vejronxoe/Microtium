@@ -2,10 +2,12 @@ C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Collision.cpp;C
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Blocks.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Blocks.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\cursor.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\Input.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Input.obj
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\DrawData.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\DrawData.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\ErrorSystem.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\ErrorSystem.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\imageLoader\ImageLoader.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\ImageLoader.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Main.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Main.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\math\matrix.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\matrix.obj
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\NumberRender.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\NumberRender.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\Shader.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Shader.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Opengl\Texture.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Texture.obj
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp;C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Intermeddiate\Win32\Debug\Player.obj

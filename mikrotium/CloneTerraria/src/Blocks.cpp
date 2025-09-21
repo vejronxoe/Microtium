@@ -7,6 +7,7 @@
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/Texture.h"
+#include"Opengl/drawData.h"
 #include"math/matrix.h"
 
 
@@ -15,26 +16,7 @@ Block::Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int beh
 {}
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 {
-	unsigned int blocksvertexBuffer;
-	float blocksVertices[20];
-	blocksVertices[0] = -0.5f; blocksVertices[1] = 0.5f; blocksVertices[2] = 0.1f; blocksVertices[3] = 0.0f; blocksVertices[4] = 1.0f;
-	blocksVertices[5] = 0.5f; blocksVertices[6] = 0.5f; blocksVertices[7] = 0.1f; blocksVertices[8] = 1.0f; blocksVertices[9] = 1.0f;
-	blocksVertices[10] = 0.5f; blocksVertices[11] = -0.5f; blocksVertices[12] = 0.1f; blocksVertices[13] = 1.0f; blocksVertices[14] = 0.0f;
-	blocksVertices[15] = -0.5f; blocksVertices[16] = -0.5f; blocksVertices[17] = 0.1f; blocksVertices[18] = 0.0f; blocksVertices[19] = 0.0f;
-	ErrorGL(glGenVertexArrays(1, &blocksDrawData));
-	ErrorGL(glBindVertexArray(blocksDrawData));
-	ErrorGL(glGenBuffers(1, &blocksvertexBuffer));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, blocksvertexBuffer));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), blocksVertices , GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
-
-	ErrorGL(glBindVertexArray(0));
+	blocksDrawData = CreateDrawData(eob, 0.5f, -0.5f, -0.5f, 0.5f);
 }
 
 void Block::DrawBlock( Shader& basicShader, unsigned int location, float* transform)
@@ -72,25 +54,25 @@ enum TexturesOfBlocks
 };
 void CreateAllBlockTextures(unsigned int* IDs)
 {
-	IDs[TopGrass] = CreateTexture("res/textures/topGrassBlock.png", true);
-	IDs[LeftGrass] = CreateTexture("res/textures/leftGrassBlock.png", true);
-	IDs[DownGrass] = CreateTexture("res/textures/downGrassBlock.png", true);
-	IDs[RightGrass] = CreateTexture("res/textures/rightGrassBlock.png", true);
-	IDs[TopDownGrass] = CreateTexture("res/textures/topDownGrassBlock.png", true);
-	IDs[LeftRightGrass] = CreateTexture("res/textures/leftRightGrassBlock.png", true);
-	IDs[TopLeftGrass] = CreateTexture("res/textures/topLeftGrassBlock.png", true);
-	IDs[DownLeftGrass] = CreateTexture("res/textures/downLeftGrassBlock.png", true);
-	IDs[DownRightGrass] = CreateTexture("res/textures/downRightGrassBlock.png", true);
-	IDs[TopRightGrass] = CreateTexture("res/textures/topRightGrassBlock.png", true);
-	IDs[MissingTopGrass] = CreateTexture("res/textures/missingTopGrassBlock.png", true);
-	IDs[MissingLeftGrass] = CreateTexture("res/textures/missingLeftGrassBlock.png", true);
-	IDs[MissingDownGrass] = CreateTexture("res/textures/missingDownGrassBlock.png", true);
-	IDs[MissingRightGrass] = CreateTexture("res/textures/missingRightGrassBlock.png", true);
-	IDs[FullGrass] = CreateTexture("res/textures/fullGrassBlock.png", true);
-	IDs[Dirt] = CreateTexture("res/textures/dirtBlock.png", true);
-	IDs[Ice] = CreateTexture("res/textures/ice.png", true);
-	IDs[Asphalt] = CreateTexture("res/textures/Asphalt.png", true);
-	IDs[Platform] = CreateTexture("res/textures/platform.png", true);
+	IDs[TopGrass] = CreateTextureRGBA("res/textures/topGrassBlock.png");
+	IDs[LeftGrass] = CreateTextureRGBA("res/textures/leftGrassBlock.png");
+	IDs[DownGrass] = CreateTextureRGBA("res/textures/downGrassBlock.png");
+	IDs[RightGrass] = CreateTextureRGBA("res/textures/rightGrassBlock.png");
+	IDs[TopDownGrass] = CreateTextureRGBA("res/textures/topDownGrassBlock.png");
+	IDs[LeftRightGrass] = CreateTextureRGBA("res/textures/leftRightGrassBlock.png");
+	IDs[TopLeftGrass] = CreateTextureRGBA("res/textures/topLeftGrassBlock.png");
+	IDs[DownLeftGrass] = CreateTextureRGBA("res/textures/downLeftGrassBlock.png");
+	IDs[DownRightGrass] = CreateTextureRGBA("res/textures/downRightGrassBlock.png");
+	IDs[TopRightGrass] = CreateTextureRGBA("res/textures/topRightGrassBlock.png");
+	IDs[MissingTopGrass] = CreateTextureRGBA("res/textures/missingTopGrassBlock.png");
+	IDs[MissingLeftGrass] = CreateTextureRGBA("res/textures/missingLeftGrassBlock.png");
+	IDs[MissingDownGrass] = CreateTextureRGBA("res/textures/missingDownGrassBlock.png");
+	IDs[MissingRightGrass] = CreateTextureRGBA("res/textures/missingRightGrassBlock.png");
+	IDs[FullGrass] = CreateTextureRGBA("res/textures/fullGrassBlock.png");
+	IDs[Dirt] = CreateTextureRGBA("res/textures/dirtBlock.png");
+	IDs[Ice] = CreateTextureRGBA("res/textures/ice.png");
+	IDs[Asphalt] = CreateTextureRGBA("res/textures/Asphalt.png");
+	IDs[Platform] = CreateTextureRGBA("res/textures/platform.png");
 }
 
 
@@ -231,10 +213,10 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 					switch (lines.at(i).at(j))
 					{
 					case'd':
-						blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true, basicSolid);
+						blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true,basicSolid);
 						break;
 					case'p':
-						blocks.emplace_back(texturesIDs[Platform], x, y, true, platform);
+						blocks.emplace_back(texturesIDs[Platform], x, y, true,platform);
 						break;
 					case'a':
 						blocks.emplace_back(texturesIDs[Asphalt], x, y, true, asphalt);

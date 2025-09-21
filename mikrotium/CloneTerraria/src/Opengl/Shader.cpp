@@ -50,6 +50,11 @@ void Shader::SetUniform4f(unsigned int location,float v0, float v1, float v2, fl
 }
 void Shader::SetUniform1f(unsigned int location, float v)
 {
+	glUniform1f(location, v);
+}
+
+void Shader::SetUniform1i(unsigned int location, float v)
+{
 	glUniform1i(location, v);
 }
 
