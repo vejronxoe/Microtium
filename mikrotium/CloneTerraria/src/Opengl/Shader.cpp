@@ -46,21 +46,21 @@ Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentSha
 
 void Shader::SetUniform4f(unsigned int location,float v0, float v1, float v2, float v3)
 {
-	glUniform4f(location, v0, v1, v2, v3);
+	ErrorGL(glUniform4f(location, v0, v1, v2, v3));
 }
 void Shader::SetUniform1f(unsigned int location, float v)
 {
-	glUniform1f(location, v);
+	ErrorGL(glUniform1f(location, v));
 }
 
 void Shader::SetUniform1i(unsigned int location, float v)
 {
-	glUniform1i(location, v);
+	ErrorGL(glUniform1i(location, v));
 }
 
 void Shader::SetUniformMat4(unsigned int location, float* v)
 {
-	glUniformMatrix4fv(location, 1, GL_FALSE, v);
+	ErrorGL(glUniformMatrix4fv(location, 1, GL_FALSE, v));
 }
 
 

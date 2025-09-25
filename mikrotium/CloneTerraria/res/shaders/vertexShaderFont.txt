@@ -5,12 +5,12 @@ layout (location = 1) in vec2 aTexCoord;
 out vec2 texCoord;
 
 uniform mat4 fontCamera;
-uniform mat4 fontransform;
-uniform mat4 fontBasicLocation;
+uniform mat4 fontTransform;
+uniform int fontLetter;
 uniform mat4 fontScale;
 
 void main()
 {
-	texCoord = aTexCoord;
+	texCoord = vec2(fontLetter * 0.1f + aTexCoord.x,aTexCoord.y);
 	gl_Position =   fontCamera * fontTransform * fontScale * vec4(aPos.x, aPos.y, 0.0f, 1.0f);
 }

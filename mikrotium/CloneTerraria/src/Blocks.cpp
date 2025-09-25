@@ -16,7 +16,7 @@ Block::Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int beh
 {}
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 {
-	blocksDrawData = CreateDrawData(eob, 0.5f, -0.5f, -0.5f, 0.5f);
+	blocksDrawData = CreateDrawData(eob,0.5f,-0.5,-0.5f, 0.5f,1,0,0,1);
 }
 
 void Block::DrawBlock( Shader& basicShader, unsigned int location, float* transform)

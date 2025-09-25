@@ -53,7 +53,7 @@ public:
 	float m_Scale[16];
 	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot);
 	void EveryFrame(float deltaTime, std::vector<Block>& blocks);
-	void DrawPlayer(Shader& basicSh, Shader& HUDSh, unsigned int transformLocation, float* transform);
+	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
 
 private:
 	bool IsItStackble(unsigned short int item);

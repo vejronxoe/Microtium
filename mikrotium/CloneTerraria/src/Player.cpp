@@ -34,7 +34,7 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	}
 	for (int i = 0; i < 52; i++)
 	{
-		m_AmountInSlots[i] = 10;
+		m_AmountInSlots[i] = 30;
 	}
 	m_PlayerSlots[1] = CooperSword;
 	m_PlayerSlots[2] = CooperPickaxe;
@@ -474,7 +474,7 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 
 	MovementEveryFrame(deltaTime, blocks);
 }
-void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, unsigned int transformLocation, float* transform)
+void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicSh.SetUniformMat4(transformLocation, transform);
@@ -584,6 +584,17 @@ void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, unsigned int transformLo
 			}
 		}
 	}
-	
+	fontSh.Bind();
+	ErrorGL(glBindVertexArray(fontDrawData));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			float right = (m_SlotVertices[2] + j * m_SlotGap);
+			float left = (m_SlotVertices[0] + j * m_SlotGap);
+			drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f,m_AmountInSlots[(i * 10) + j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, m_Scale, transform, fontSh);
+		}
+	}
 
 }

@@ -100,10 +100,11 @@ int main()
 	basicSh.Bind();
 	unsigned int transformLocation = basicSh.GetUniformLocation("transform");
 	unsigned int cameraLocation = basicSh.GetUniformLocation("camera");
-	/*Shader fontSh("res/shaders/vertexShader.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader fontSh("res/shaders/vertexShaderfont.txt", "res/shaders/fragmentShaderBasic.txt");
 	fontSh.Bind();
-	unsigned int fontTransformLocation = fontSh.GetUniformLocation("transform");
-	unsigned int fontCameraLocation = fontSh.GetUniformLocation("camera");*/
+	unsigned int fontTransformLocation = fontSh.GetUniformLocation("fontTransform");
+	unsigned int fontscaleLocation = fontSh.GetUniformLocation("fontScale");
+	unsigned int fontLetterLocation = fontSh.GetUniformLocation("fontLetter");
 	Shader HUDSh("res/shaders/vertexShaderHUD.txt", "res/shaders/fragmentShaderBasic.txt ");
 	HUDSh.Bind();
 	unsigned int HUDTransformLocation = HUDSh.GetUniformLocation("HUDTransform");
@@ -119,8 +120,10 @@ int main()
 	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), player.m_Camera);
 	CreateTransform(MoveLeft, MoveUp, transform);
 	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDBasicLocation"), transform);
+	fontSh.Bind();
+	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), player.m_Camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
-	
+
 
 	unsigned int cursorTextures[5];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
@@ -175,9 +178,10 @@ int main()
 		}
 
 		
-		player.DrawPlayer(basicSh, HUDSh, transformLocation, transform);
+		player.DrawPlayer(basicSh, HUDSh, fontSh,transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
 		DrawCursor(cursorTextures, cursorDD, basicSh, transformLocation, transform, cameraLocation, player);
+
 
 		Input::EndOfLoop();
 		glfwSwapBuffers(window);
