@@ -34,11 +34,14 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	}
 	for (int i = 0; i < 52; i++)
 	{
-		m_AmountInSlots[i] = 30;
+		m_AmountInSlots[i] = 0;
 	}
 	m_PlayerSlots[1] = CooperSword;
 	m_PlayerSlots[2] = CooperPickaxe;
 	m_PlayerSlots[3] = CooperAxe;
+	m_AmountInSlots[1] = 1;
+	m_AmountInSlots[2] = 1;
+	m_AmountInSlots[3] = 1;
 	m_CooldownToUse = 0;
 	m_TypeOfItem = 0;
 	m_PickaxeStreanght = 0;
@@ -545,6 +548,18 @@ void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[51]]));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
+		fontSh.Bind();
+		ErrorGL(glBindVertexArray(fontDrawData));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				float right = (m_SlotVertices[2] + j * m_SlotGap);
+				float left = (m_SlotVertices[0] + j * m_SlotGap);
+				drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, m_Scale, transform, fontSh);
+			}
+		}
 	}
 	else
 	{
@@ -569,7 +584,7 @@ void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 			}
-			
+
 		}
 		ChangeScale(0.8f, 0.8f, m_Scale);
 		HUDSh.SetUniformMat4(m_HUDScaleLocation, m_Scale);
@@ -583,18 +598,14 @@ void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			}
 		}
-	}
-	fontSh.Bind();
-	ErrorGL(glBindVertexArray(fontDrawData));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
-	for (int i = 0; i < 5; i++)
-	{
+		fontSh.Bind();
+		ErrorGL(glBindVertexArray(fontDrawData));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 		for (int j = 0; j < 10; j++)
 		{
 			float right = (m_SlotVertices[2] + j * m_SlotGap);
 			float left = (m_SlotVertices[0] + j * m_SlotGap);
-			drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f,m_AmountInSlots[(i * 10) + j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, m_Scale, transform, fontSh);
+			drawNumber(Window::height - m_SlotVertices[3], left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, m_Scale, transform, fontSh);
 		}
 	}
-
 }
