@@ -10,9 +10,13 @@
 #include"Opengl/drawData.h"
 #include"math/matrix.h"
 
+int xMaxBlock;
+int xMinBlock;
+int yMaxBlock;
+int yMinBlock;
 
-Block::Block(unsigned int tex, int x, int y, bool hitboxActive, unsigned int behavior)
-	: m_te(tex), m_Transform{x,y}, m_CollisionActive(hitboxActive), m_BlockBehavior(behavior)
+Block::Block(unsigned int tex, int x, int y, unsigned int behavior)
+	: m_te(tex), m_Transform{x,y}, m_BlockBehavior(behavior)
 {}
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 {
@@ -164,8 +168,14 @@ unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs, std::vector<st
 		return TexturesIDs[Dirt];
 	}
 }
-void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* texturesIDs)
+void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int minX, int maxX, int minY, int maxY, unsigned int* texturesIDs)
 {
+
+	for (int i = minX ; i <= maxX; i++)
+	{
+		std::vector<Block> emptyVector;
+		blocks.push_back(emptyVector);
+	}
 	std::ifstream map(filepath);
 	std::vector<std::string> lines;
 	if (!map)
@@ -203,26 +213,26 @@ void LoadMap(const char* filepath, std::vector<Block>& blocks, unsigned int* tex
 			}
 		}
 		map.close();
-		int y = 0.0f;
+		int y = minY;
 		for (int i = 0; i < lines.size(); i++)
 		{
-			int x = -56;
+			int x = minX;
 			{
 				for (int j = 0; j < lines.at(i).length(); j++)
 				{
 					switch (lines.at(i).at(j))
 					{
 					case'd':
-						blocks.emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y, true,basicSolid);
+						blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, j), x, y,basicSolid);
 						break;
 					case'p':
-						blocks.emplace_back(texturesIDs[Platform], x, y, true,platform);
+						blocks.at(x).emplace_back(texturesIDs[Platform], x, y, platform);
 						break;
 					case'a':
-						blocks.emplace_back(texturesIDs[Asphalt], x, y, true, asphalt);
+						blocks.at(x).emplace_back(texturesIDs[Asphalt], x, y, asphalt);
 						break;
 					case'i':
-						blocks.emplace_back(texturesIDs[Ice], x, y, true, slippery);
+						blocks.at(x).emplace_back(texturesIDs[Ice], x, y, slippery);
 						break;
 					}
 					x++;

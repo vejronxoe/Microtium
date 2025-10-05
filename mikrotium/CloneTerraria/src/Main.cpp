@@ -135,8 +135,8 @@ int main()
 	SetupBlockDrawData(blocksDrawData, eob);
 	
 	
-	std::vector<Block> blocks;
-	LoadMap("res/save/map.txt", blocks, blockTextures);
+	std::vector<std::vector<Block>> blocks;
+	LoadMap("res/save/map.txt", blocks, 0, 200, -100, 100, blockTextures);
 
 
 	float deltaTime;
@@ -172,11 +172,13 @@ int main()
 		basicSh.SetUniformMat4(cameraLocation, player.m_Camera);
 
 		ErrorGL(glBindVertexArray(blocksDrawData));
-		for (int i = 0; i < blocks.size(); i++)
+		for (int j = 0; j < blocks.size(); j++)
 		{
-			blocks.at(i).DrawBlock(basicSh, transformLocation, transform);
+			for (int i = 0; i < blocks.at(j).size(); i++)
+			{
+				blocks.at(j).at(i).DrawBlock(basicSh, transformLocation, transform);
+			}
 		}
-
 		
 		player.DrawPlayer(basicSh, HUDSh, fontSh,transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 

@@ -30,7 +30,7 @@ enum ItemType
 class Player
 {
 private:
-	void MovementEveryFrame(float deltaTime, std::vector<Block>& blocks);
+	void MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks);
 	unsigned int m_PlayerDrawData;
 	unsigned int m_Tex;
 	bool m_FloorHit;
@@ -52,7 +52,7 @@ public:
 	float m_Camera[16];
 	float m_Scale[16];
 	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot);
-	void EveryFrame(float deltaTime, std::vector<Block>& blocks);
+	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks);
 	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
 
 private:

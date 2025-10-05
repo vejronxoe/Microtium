@@ -17,7 +17,7 @@ void Player::CreateAllItemsTexture()
 }
 
 Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot)
-	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 0, 0 }
+	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 5, 100 }
 {	
 	m_HUDTransformLocation = HUDTransformLocatin;
 	m_HUDScaleLocation = HUDScaleLocatin;
@@ -190,7 +190,7 @@ void Player::ItermGetToInventory(unsigned short int amount, unsigned short int i
 		//drop Item
 	}
 }
-void Player::MovementEveryFrame(float deltaTime, std::vector<Block>& blocks)
+void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks)
 {
 	m_CoyoteTimer += deltaTime;
 	if (Input::DHold)
@@ -289,7 +289,7 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<Block>& blocks)
 	m_Transform[0] += m_Velocity[0] * deltaTime;
 	m_Transform[1] += m_Velocity[1] * deltaTime;
 }
-void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
+void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks)
 {
 	m_AimingAtSlot = 0;
 	for (int i = 0; i < 5; i++)
@@ -384,6 +384,7 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 		}
 
 	}
+	/*
 	if(Input::LeftMousePress)
 	{
  		int xM = std::round(Input::XMousePos + m_Transform[0]);
@@ -396,7 +397,7 @@ void Player::EveryFrame(float deltaTime, std::vector<Block>& blocks)
 			}
 		}
 	}
-
+	*/
 
 
 	
