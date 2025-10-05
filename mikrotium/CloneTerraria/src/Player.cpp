@@ -17,7 +17,7 @@ void Player::CreateAllItemsTexture()
 }
 
 Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot)
-	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 5, 100 }
+	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 50 }
 {	
 	m_HUDTransformLocation = HUDTransformLocatin;
 	m_HUDScaleLocation = HUDScaleLocatin;
