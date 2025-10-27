@@ -9,7 +9,7 @@
 
 unsigned int CreateDrawDataNumbers(unsigned int eob, unsigned int& numberTexture)
 {
-	numberTexture = CreateTextureRGBA("res/textures/Numbers.png");
+	numberTexture = CreateTextureLinearRGBA("res/textures/Numbers.png");
 	return CreateDrawData(eob,1,0,1,0,0,1,0,0.1f);
 }
 void drawNumber(float bottom, float right, float left, unsigned short int value, unsigned int NumberDrawData,unsigned int numberLocation, unsigned int transformLocation, unsigned int scaleLocation, float* scale, float* transform, Shader Sh)
@@ -22,7 +22,7 @@ void drawNumber(float bottom, float right, float left, unsigned short int value,
 		int secondDigit = ((value / 10) - fourthDigit * 100 - thirdDigit * 10);
 		int firstDigit = value - fourthDigit * 1000 - thirdDigit * 100 - secondDigit * 10;
 
-		float oneLeterSize = (right - left) / 4.0f;
+		float oneLeterSize = (right - left) / 4;
 		ChangeScale(oneLeterSize, oneLeterSize, scale);
 		Sh.SetUniformMat4(scaleLocation, scale);
 		bottom -= oneLeterSize;

@@ -8,24 +8,18 @@
 
 enum Items 
 {
-	Nothing = 0,
-	CooperPickaxe,
-	CooperAxe,
-	CooperHammer,
-	CooperSword,
+	i_Nothing = 0,
+	i_CooperPickaxe,
+	i_CooperAxe,
+	i_CooperHammer,
+	i_CooperSword,
+	i_Dirt,
+	i_Ice,
+	i_Asphalt,
+	i_Platform,
+};
 
-};
-enum ToolStreanght
-{
-	Cooper = 0,
-	Iron
-};
-enum ItemType
-{
-	Tools = 0,
-	Blocks,
-	Coins
-};
+
 
 class Player
 {
@@ -51,15 +45,15 @@ public:
 	float m_Velocity[2];
 	float m_Camera[16];
 	float m_Scale[16];
-	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot);
-	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks);
+	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot,unsigned int* texturesIDs);
+	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs);
 	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
-
+	void IventoryEveryFrame();
 private:
 	bool IsItStackble(unsigned short int item);
 	void ItermGetToInventory(unsigned short int amount, unsigned short int item);
 	void SwapItemStats();
-	void CreateAllItemsTexture();
+	void CreateAllItemsTexture(unsigned int* texturesIDs);
 	unsigned int m_InventoryDrawData;  
 	unsigned int m_SlotTexture;
 	unsigned int m_UseSlotTexture;
@@ -73,11 +67,15 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[5];
+	unsigned int m_AllItemTextures[9];
 	unsigned short int m_PlayerSlots[52];
 	unsigned short int m_AmountInSlots[52];
+
+public:
+	float m_UseItemTimer;
+	bool m_CursorOnMinableBlock;
+	bool m_CursorOnPlaceableSpot;
 	float m_CooldownToUse;
-	unsigned char m_TypeOfItem;
 	unsigned char m_PickaxeStreanght;
 	unsigned char m_AxeSteanght;
 	unsigned char m_HammerStreanght;

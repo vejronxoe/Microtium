@@ -1,5 +1,6 @@
 #include"cursor.h"
 
+
 #include"../Opengl/drawData.h"
 #include"../Opengl/Texture.h"
 #include"../glfw/input.h"
@@ -15,34 +16,35 @@ unsigned int CreateCursorDrawData(unsigned int* CursorTextures, unsigned int eob
 	CursorTextures[canHammerIt] = CreateTextureRGBA("res/textures/canHammerIt.png");
 	return drawData;
 }
-void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, Shader& basicSh,unsigned int transformLocation,float* transform,unsigned int cameraLocation, Player& player) 
+void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, Shader& basicSh, unsigned int transformLocation, float* transform, unsigned int cameraLocation, Player& player)
 {
 	basicSh.Bind();
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
 	basicSh.SetUniformMat4(transformLocation, transform);
 	ChangeCamera(0, Window::width, 0, Window::height,player.m_Camera);
 	basicSh.SetUniformMat4(cameraLocation, player.m_Camera);
-	if (player.m_UseSlot != 0 && player.m_PlayerSlots[0] != Nothing)
+	int x = std::roundf(player.m_Transform[0] + Input::XMousePos);
+	int y = std::roundf(player.m_Transform[1] + Input::YMousePos);
+	
+	bool canClickOn = player.m_AimingAtSlot;
+	if (player.m_UseSlot != 0 && player.m_PlayerSlots[0] != i_Nothing)
 	{
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_AllItemTextures[player.m_PlayerSlots[0]]));
 	}
-	else
+	else if(canClickOn)
 	{
-		
-		bool canClickOn = false;
-		if (player.m_AimingAtSlot)
-		{
-			canClickOn = true;
-		}
-		if (!canClickOn)
-		{
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canNotDoIt]));
-		}
-		else
-		{
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
-		}
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
 	}
+	else if(player.m_CursorOnMinableBlock)
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canPickaxeIt]));
+
+	}
+	else 
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canNotDoIt]));
+	}
+	
 	ErrorGL(glBindVertexArray(cursorDrawData));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }

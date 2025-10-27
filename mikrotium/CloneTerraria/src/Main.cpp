@@ -110,10 +110,20 @@ int main()
 	unsigned int HUDTransformLocation = HUDSh.GetUniformLocation("HUDTransform");
 	unsigned int HUDScaleLocation = HUDSh.GetUniformLocation("HUDScale");
 	
+	unsigned int cursorTextures[5];
+	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
+	unsigned int numberTexture;
+	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
+	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	CreateAllBlockTextures(blockTextures);
+	unsigned int blocksDrawData;
+	SetupBlockDrawData(blocksDrawData, eob);
+	unsigned int damageTexture = CreateTextureRGBA("res/textures/DamageBlock.png");
+
 	float MoveLeft;
 	float MoveUp;
 
-	Player player(eob, HUDTransformLocation, HUDScaleLocation,MoveUp,MoveLeft);
+	Player player(eob, HUDTransformLocation, HUDScaleLocation, MoveUp, MoveLeft, blockTextures);
 
 	float transform[16];
 	CreateCamera(0, Window::width, 0, Window::height, player.m_Camera);
@@ -125,17 +135,11 @@ int main()
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
 
 
-	unsigned int cursorTextures[5];
-	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
-	unsigned int numberTexture;
-	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
-	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	CreateAllBlockTextures(blockTextures);
-	unsigned int blocksDrawData;
-	SetupBlockDrawData(blocksDrawData, eob);
+	
 	
 	
 	std::vector<std::vector<Block>> blocks;
+	std::vector<DamagedBlock> damagedBlocks;
 	LoadMap("res/save/map.txt", blocks, 0, 200, -100, 100, blockTextures);
 
 
@@ -160,10 +164,17 @@ int main()
 			timer = 0;
 			fps = 0;
 		}
-		
-		
-		player.EveryFrame(deltaTime, blocks);
-		ChangeCamera(-Window::halfWidthOfGameTransform + player.m_Transform[0], Window::halfWidthOfGameTransform + player.m_Transform[0], -Window::halfHeightOfGameTransform + player.m_Transform[1], Window::halfHeightOfGameTransform + player.m_Transform[1], player.m_Camera);
+
+		float CameraCoordinates[2];
+		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
+		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+		player.EveryFrame(deltaTime, blocks, damagedBlocks, CameraCoordinates, blockTextures);
+
+
+
+		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
+		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], player.m_Camera);
 
 		
 	
@@ -179,7 +190,10 @@ int main()
 				blocks.at(j).at(i).DrawBlock(basicSh, transformLocation, transform);
 			}
 		}
-		
+		for (int i = 0; i < damagedBlocks.size(); i++)
+		{
+			damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);
+		}
 		player.DrawPlayer(basicSh, HUDSh, fontSh,transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
 		DrawCursor(cursorTextures, cursorDD, basicSh, transformLocation, transform, cameraLocation, player);
