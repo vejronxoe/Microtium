@@ -13,9 +13,9 @@ C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(498,
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(502,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(503,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(507,39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(514,36): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(535,37): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(549,38): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(562,36): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(588,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(543,37): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(564,38): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(578,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(592,36): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\Player.cpp(618,39): warning C4018: '<': signed/unsigned mismatch
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe

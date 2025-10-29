@@ -506,52 +506,82 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 	m_CursorOnMinableBlock = false;
 	if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 	{
+		
 		if (m_Placeable)
 		{
+			float verticesPlayer[4] = { m_Transform[0] - 1 ,m_Transform[1] + 1.5f,m_Transform[0] + 1,m_Transform[1] - 1.5f };
+			verticesPlayer[0] = roundf(verticesPlayer[0]);
+			if ((verticesPlayer[3] - std::floorf(verticesPlayer[3])) == 0.5f)
+			{
+				verticesPlayer[3] = std::ceilf(verticesPlayer[3]);
+			}
+			else
+			{
+				verticesPlayer[3] = roundf(verticesPlayer[3]);
+			}
+			if ((verticesPlayer[1] - std::floorf(verticesPlayer[1])) == 0.5f)
+			{
+				verticesPlayer[1] = std::floorf(verticesPlayer[1]);
+			}
+			else
+			{
+				verticesPlayer[1] = roundf(verticesPlayer[1]);
+			}
+			if ((verticesPlayer[2] - std::floorf(verticesPlayer[2])) == 0.5f)
+			{
+				verticesPlayer[2] = std::floorf(verticesPlayer[2]);
+			}
+			else
+			{
+				verticesPlayer[2] = roundf(verticesPlayer[2]);
+			}
+
 			bool inBlock = false;
 			bool youCanbuild = false;
-
-			for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
+			if (!(x >= verticesPlayer[0] && x <= verticesPlayer[2] && y <= verticesPlayer[1] && y >= verticesPlayer[3]))
 			{
-
-				if (y == blocks.at(x).at(blockIndex).m_Transform[1])
+				for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 				{
-					inBlock = true;
-					break;
-				}
-				else if (y + 1 == blocks.at(x).at(blockIndex).m_Transform[1] || y - 1 == blocks.at(x).at(blockIndex).m_Transform[1])
-				{
-					youCanbuild = true;
-				}
-			}
-			if (!inBlock && youCanbuild)
-			{
-				m_CursorOnPlaceableSpot = true;
-			}
-			else if (!inBlock)
-			{
 
-
-				for (blockIndex = 0; blockIndex < blocks.at(x - 1).size(); blockIndex++)
-				{
-					if (y == blocks.at(x - 1).at(blockIndex).m_Transform[1])
+					if (y == blocks.at(x).at(blockIndex).m_Transform[1])
 					{
-						youCanbuild = true;
+						inBlock = true;
 						break;
 					}
+					else if (y + 1 == blocks.at(x).at(blockIndex).m_Transform[1] || y - 1 == blocks.at(x).at(blockIndex).m_Transform[1])
+					{
+						youCanbuild = true;
+					}
 				}
-				if (youCanbuild)
+				if (!inBlock && youCanbuild)
 				{
 					m_CursorOnPlaceableSpot = true;
 				}
-				else
+				else if (!inBlock)
 				{
-					for (blockIndex = 0; blockIndex < blocks.at(x + 1).size(); blockIndex++)
+
+
+					for (blockIndex = 0; blockIndex < blocks.at(x - 1).size(); blockIndex++)
 					{
-						if (y == blocks.at(x + 1).at(blockIndex).m_Transform[1])
+						if (y == blocks.at(x - 1).at(blockIndex).m_Transform[1])
 						{
-							m_CursorOnPlaceableSpot = true;
+							youCanbuild = true;
 							break;
+						}
+					}
+					if (youCanbuild)
+					{
+						m_CursorOnPlaceableSpot = true;
+					}
+					else
+					{
+						for (blockIndex = 0; blockIndex < blocks.at(x + 1).size(); blockIndex++)
+						{
+							if (y == blocks.at(x + 1).at(blockIndex).m_Transform[1])
+							{
+								m_CursorOnPlaceableSpot = true;
+								break;
+							}
 						}
 					}
 				}
