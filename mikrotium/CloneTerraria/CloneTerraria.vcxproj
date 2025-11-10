@@ -21,8 +21,10 @@
   <ItemGroup>
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Blocks.cpp" />
+    <ClCompile Include="src\DroppedItems.cpp" />
     <ClCompile Include="src\glfw\cursor.cpp" />
     <ClCompile Include="src\glfw\Input.cpp" />
+    <ClCompile Include="src\math\VectorOperation.cpp" />
     <ClCompile Include="src\Opengl\DrawData.cpp" />
     <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
     <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
@@ -37,8 +39,11 @@
   <ItemGroup>
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Blocks.h" />
+    <ClInclude Include="src\DroppedItems.h" />
     <ClInclude Include="src\glfw\cursor.h" />
     <ClInclude Include="src\glfw\input.h" />
+    <ClInclude Include="src\ItemList.h" />
+    <ClInclude Include="src\math\VectorOperation.h" />
     <ClInclude Include="src\NumberRender.h" />
     <ClInclude Include="src\Opengl\DrawData.h" />
     <ClInclude Include="src\Opengl\ErrorSystem.h" />

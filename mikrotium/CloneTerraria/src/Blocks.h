@@ -50,7 +50,8 @@ public:
 	int m_Transform[2];
 	unsigned char m_BlockBehavior;
 	unsigned char m_Hardness;
-	Block(unsigned int tex, int x, int y, unsigned char Behavior, unsigned char hardness);
+	unsigned short m_ItemDrop;
+	Block(unsigned int tex, int x, int y, unsigned char Behavior, unsigned char hardness, unsigned short int itemDrop);
 
 	void DrawBlock( Shader& basicShader, unsigned int location ,float* transform);
 };

@@ -12,6 +12,8 @@ namespace Input
 	extern char MouseWheel;
 	extern bool LeftMouseHold;
 	extern bool LeftMousePress;
+	extern bool RightMouseHold;
+	extern bool RightMousePress;
 	extern bool WHold;
 	extern bool WPress;
 	extern bool AHold;
@@ -20,6 +22,8 @@ namespace Input
 	extern bool SPress;
 	extern bool DHold;
 	extern bool DPress;
+	extern bool TPress;
+	extern bool THold;
 	extern bool SpaceHold;
 	extern bool SpacePress;
 	extern bool NumberPress[10];

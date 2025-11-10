@@ -5,26 +5,15 @@
 #include"Blocks.h"
 #include"Opengl/Shader.h"
 #include"Collision.h"
-
-enum Items 
-{
-	i_Nothing = 0,
-	i_CooperPickaxe,
-	i_CooperAxe,
-	i_CooperHammer,
-	i_CooperSword,
-	i_Dirt,
-	i_Ice,
-	i_Asphalt,
-	i_Platform,
-};
+#include"DroppedItems.h"
+#include"ItemList.h"
 
 
 
 class Player
 {
 private:
-	void MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks);
+	void MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, float* playerVertices);
 	unsigned int m_PlayerDrawData;
 	unsigned int m_Tex;
 	bool m_FloorHit;
@@ -34,7 +23,7 @@ private:
 	float m_JumpTimer;
 	bool m_CanJump;
 public:
-	
+	short int m_DirectionLook;
 
 	int m_JumpPower;
 	float m_Gravity;
@@ -46,24 +35,26 @@ public:
 	float m_Camera[16];
 	float m_Scale[16];
 	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot,unsigned int* texturesIDs);
-	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs);
+	bool ItermGetToInventory(unsigned short int& amount, unsigned short int item);
+	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs, std::vector<DroppedItem>& droppedItems);
 	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
-	void IventoryEveryFrame();
-private:
-	bool IsItStackble(unsigned short int item);
-	void ItermGetToInventory(unsigned short int amount, unsigned short int item);
+	bool HavePlayerSpace(unsigned short int item);
 	void SwapItemStats();
+private:
+	void ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs, float* playerVertices, std::vector<DroppedItem>& droppedItems);
+	void IventoryEveryFrame(std::vector<DroppedItem>& droppedItems);
+	bool IsItStackble(unsigned short int item);
 	void CreateAllItemsTexture(unsigned int* texturesIDs);
 	unsigned int m_InventoryDrawData;  
 	unsigned int m_SlotTexture;
-	unsigned int m_UseSlotTexture;
 	unsigned int m_TrashCanSlotTexture;
 	float m_SlotVertices[4];
 	float m_SlotGap;
-	unsigned char m_HUDUseSlot;
 	unsigned int m_HUDTransformLocation;
 	unsigned int m_HUDScaleLocation;
 public:
+	unsigned char m_HUDUseSlot;
+	unsigned int m_UseSlotTexture;
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;

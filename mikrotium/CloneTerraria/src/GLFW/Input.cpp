@@ -1,4 +1,4 @@
-#include "input.h"
+	#include "input.h"
 
 #include<iostream>
 
@@ -13,6 +13,8 @@ namespace Input
 	char MouseWheel;
 	bool LeftMouseHold = false;
 	bool LeftMousePress = false;
+	bool RightMouseHold = false;
+	bool RightMousePress = false;
 	bool WHold = false;
 	bool WPress = false;
 	bool AHold = false;
@@ -21,6 +23,8 @@ namespace Input
 	bool SPress = false;
 	bool DHold = false;
 	bool DPress = false;
+	bool THold = false;
+	bool TPress = false;
 	bool SpaceHold = false;
 	bool SpacePress = false;
 	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
@@ -30,10 +34,12 @@ namespace Input
 	{
 		MouseWheel = 0;
 		LeftMousePress = false;
-		WHold = false;
+		RightMousePress = false;
+		WPress = false;
 		SPress = false;
 		DPress = false;
 		APress = false;
+		TPress = false;
 		SpacePress = false;
 		for (int i = 0; i < 10; i++)
 		{
@@ -91,6 +97,15 @@ namespace Input
 			DHold = false;
 		}
 
+		if (key == GLFW_KEY_T && action == GLFW_PRESS)
+		{
+			TPress = true;
+			THold = true;
+		}
+		else if (key == GLFW_KEY_T && action == GLFW_RELEASE)
+		{
+			THold = false;
+		}
 
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 		{
@@ -168,6 +183,15 @@ namespace Input
 		else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 		{
 			LeftMouseHold = false;
+		}
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+		{
+			RightMouseHold = true;
+			RightMousePress = true;
+		}
+		else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+		{
+			RightMouseHold = false;
 		}
 	}
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)

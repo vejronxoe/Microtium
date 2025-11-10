@@ -8,17 +8,18 @@
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/shader.h"
+#include"Opengl/DrawData.h"
 #include"Opengl/Texture.h"
 #include"Math/matrix.h"
 #include"imageLoader/stb_image.h"
-#include"Blocks.h"
+#include"glfw/Window.h"
+#include"glfw/cursor.h"
 #include"glfw/input.h"
 #include"player.h"
 #include"Collision.h"
-#include"glfw/Window.h"
-#include"glfw/cursor.h"
+#include"Blocks.h"
 #include"NumberRender.h"
-
+#include"DroppedItems.h"
 
 
 
@@ -119,6 +120,7 @@ int main()
 	unsigned int blocksDrawData;
 	SetupBlockDrawData(blocksDrawData, eob);
 	unsigned int damageTexture = CreateTextureRGBA("res/textures/DamageBlock.png");
+	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 	float MoveLeft;
 	float MoveUp;
@@ -136,7 +138,10 @@ int main()
 
 
 	
+	std::vector<DroppedItem> dropItems;
+	dropItems.emplace_back(124, 0, 1, i_Ice, 1, true);
 	
+
 	
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;
@@ -154,13 +159,14 @@ int main()
 		deltaTime = glfwGetTime() - pastTime;
 		pastTime = glfwGetTime();
 		
-	
+		
 
 		timer += deltaTime;
 		fps++;
 		if (timer >= 1)
 		{
-		std::cout << fps << std::endl;
+			
+			std::cout << fps << std::endl;
 			timer = 0;
 			fps = 0;
 		}
@@ -168,10 +174,30 @@ int main()
 		float CameraCoordinates[2];
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
-		player.EveryFrame(deltaTime, blocks, damagedBlocks, CameraCoordinates, blockTextures);
 
 
-
+		player.EveryFrame(deltaTime, blocks, damagedBlocks, CameraCoordinates, blockTextures,dropItems);
+		for (int i = 0; i < dropItems.size();i++)
+		{
+			if (dropItems.at(i).EveryFrame(deltaTime, blocks, player.m_Transform, player.HavePlayerSpace(dropItems.at(i).m_Item)))
+			{
+				unsigned short int itemSwapCheck;
+				if (player.m_UseSlot == 0)
+				{
+					itemSwapCheck = player.m_PlayerSlots[player.m_HUDUseSlot];
+				}
+				if (player.ItermGetToInventory(dropItems.at(i).m_Amount, dropItems.at(i).m_Item))
+				{
+					if (player.m_UseSlot == 0 && itemSwapCheck != player.m_PlayerSlots[player.m_HUDUseSlot])
+					{
+						player.m_PlayerSlots[0] = player.m_PlayerSlots[player.m_HUDUseSlot];
+						player.m_AmountInSlots[0] = player.m_AmountInSlots[player.m_HUDUseSlot];
+						player.SwapItemStats();
+					}
+					dropItems.erase(dropItems.begin() + i);
+				}
+			}
+		}
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], player.m_Camera);
@@ -194,9 +220,14 @@ int main()
 		{
 			damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);
 		}
+		for (int i = 0; i < dropItems.size(); i++)
+		{
+			dropItems.at(i).DrawItem(player.m_AllItemTextures, itemDD, basicSh, transformLocation, transform);
+		}
+
 		player.DrawPlayer(basicSh, HUDSh, fontSh,transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
-		DrawCursor(cursorTextures, cursorDD, basicSh, transformLocation, transform, cameraLocation, player);
+		DrawCursor(cursorTextures, cursorDD, blocksDrawData, basicSh, transformLocation, transform, cameraLocation, player);
 
 
 		Input::EndOfLoop();

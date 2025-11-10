@@ -30,8 +30,9 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 	m_UseSlotTexture = 0;
 	m_SlotGap = 0;
 	m_IsInventoryOpen = 0;
-	m_HUDUseSlot = 0;
+	m_HUDUseSlot = 1;
 	m_UseSlot = 0;
+	m_DirectionLook = -1;
 	for (int i = 0; i < 52; i++)
 	{
 		m_PlayerSlots[i] = i_Nothing;
@@ -93,7 +94,7 @@ Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int 
 }
 void Player::SwapItemStats()
 {
-	m_CooldownToUse = 0.5f;
+	m_CooldownToUse = 0.1f;
 	m_PickaxeStreanght = 0;
 	m_AxeSteanght = 0;
 	m_HammerStreanght = 0;
@@ -108,11 +109,13 @@ void Player::SwapItemStats()
 			m_Placeable = false;
 		break;
 		case(i_CooperSword):
+			m_CooldownToUse = 0.5;
 			m_Damage = 2;
 			m_Placeable = false;
 		break;
 		
 		case(i_CooperAxe):
+			m_CooldownToUse = 0.5;
 			m_AxeSteanght = 1;
 			m_Damage = 1;
 			m_Placeable = false;
@@ -120,12 +123,14 @@ void Player::SwapItemStats()
 		
 
 		case(i_CooperPickaxe):
+			m_CooldownToUse = 0.5;
 			m_PickaxeStreanght = 1;
 			m_Damage = 1;
 			m_Placeable = false;
 		break;
 		
 		case(i_CooperHammer):
+			m_CooldownToUse = 0.5;
 			m_HammerStreanght = 1;
 			m_Damage = 1;
 			m_Placeable = false;
@@ -157,7 +162,35 @@ bool Player::IsItStackble(unsigned short int item)
 	}
 	return isItStackble;
 }
-void Player::ItermGetToInventory(unsigned short int amount, unsigned short int item)
+bool Player::HavePlayerSpace(unsigned short int item)
+{
+	if (IsItStackble(item))
+	{
+		for (int i = 1; i < 51; i++)
+		{
+			if (m_PlayerSlots[i] == i_Nothing)
+			{
+				return true;
+			}
+			else if (m_PlayerSlots[i] == item && m_AmountInSlots[i] < 9999)
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 1; i < 51; i++)
+		{
+			if (m_PlayerSlots[i] == i_Nothing)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool Player::ItermGetToInventory(unsigned short int& amount, unsigned short int item)
 {
 	bool isItDone = false;
 	if (IsItStackble(item))
@@ -212,17 +245,15 @@ void Player::ItermGetToInventory(unsigned short int amount, unsigned short int i
 			}
 		}
 	}
-	if (!isItDone)
-	{
-		//drop Item
-	}
+	return isItDone;
 }
-void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks)
+void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, float* playerVertices)
 {
 	m_CoyoteTimer += deltaTime;
 	if (Input::DHold)
 	{
 		m_Velocity[0] += m_Acceleration * deltaTime;
+		m_DirectionLook = 1;
 	}
 	else if (m_Velocity[0] > 0)
 	{
@@ -238,6 +269,7 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>
 	}
 	if (Input::AHold)
 	{
+		m_DirectionLook = -1;
 		m_Velocity[0] += -m_Acceleration * deltaTime;
 	}
 	else if (m_Velocity[0] < 0)
@@ -280,9 +312,8 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>
 	m_CeilHit = false;
 	m_WallHit = false;
 	
-	float hitboxvertices[4] = { -1.0f + m_Transform[0],1.5f + m_Transform[1],1.0f + m_Transform[0],-1.5f + m_Transform[1] };
 
-	unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, hitboxvertices, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+	unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, playerVertices, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
 	switch (moveBehavior)
 	{
 	case(b_Air):
@@ -306,7 +337,7 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>
 		m_MaxMovementSpeed = 10;
 		break;
 	}
-	AddVelocityToTransform(hitboxvertices, m_Transform, m_Velocity, m_FloorHit,deltaTime);
+	AddVelocityToTransform(playerVertices, m_Transform, m_Velocity, m_FloorHit,deltaTime);
 	if (m_FloorHit)
 	{
 		m_CanJump = true;
@@ -318,7 +349,7 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>
 		m_CoyoteTimer = 0.0f;
 	}
 }
-void Player::IventoryEveryFrame()
+void Player::IventoryEveryFrame( std::vector<DroppedItem>& droppedItems)
 {
 	m_AimingAtSlot = 0;
 	for (int i = 0; i < 5; i++)
@@ -438,7 +469,13 @@ void Player::IventoryEveryFrame()
 			{
 				if (m_PlayerSlots[m_UseSlot] != i_Nothing)
 				{
-					ItermGetToInventory(m_AmountInSlots[0], m_PlayerSlots[0]);
+					if (!ItermGetToInventory(m_AmountInSlots[0], m_PlayerSlots[0]))
+					{
+						droppedItems.emplace_back(m_Transform[0], m_Transform[1],m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
+						m_PlayerSlots[0] = i_Nothing;
+						m_AmountInSlots[0] = 0;
+						SwapItemStats();
+					}
 				}
 				else
 				{
@@ -488,11 +525,9 @@ void Player::IventoryEveryFrame()
 		}
 	}
 }
-void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs)
+void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs,float* VerticesPlayer, std::vector<DroppedItem>& droppedItems)
 {
-
-
-	IventoryEveryFrame();
+	float playerVertices[4] = { VerticesPlayer[0], VerticesPlayer[1], VerticesPlayer[2], VerticesPlayer[3]};
 
 	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
 	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
@@ -502,43 +537,59 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 	int rangeX = Input::XMousePos + CameraCoordinates[0] - m_Transform[0];
 	int rangeY = Input::YMousePos + CameraCoordinates[1] - m_Transform[1];
 
+	if (Input::TPress && m_PlayerSlots[0] != i_Nothing && m_UseSlot == 0 )
+	{
+		droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
+		m_PlayerSlots[0] = 0;
+		m_PlayerSlots[m_HUDUseSlot] = 0;
+		m_AmountInSlots[0] = 0;
+		m_AmountInSlots[m_HUDUseSlot] = 0;
+		SwapItemStats();	
+	}
+	else if(Input::RightMousePress && m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0)
+	{
+		droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
+		m_PlayerSlots[0] = 0;
+		m_AmountInSlots[0] = 0;
+		SwapItemStats();
+	}
 	m_CursorOnPlaceableSpot = false;
 	m_CursorOnMinableBlock = false;
 	if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 	{
-		
+
 		if (m_Placeable)
 		{
-			float verticesPlayer[4] = { m_Transform[0] - 1 ,m_Transform[1] + 1.5f,m_Transform[0] + 1,m_Transform[1] - 1.5f };
-			verticesPlayer[0] = roundf(verticesPlayer[0]);
-			if ((verticesPlayer[3] - std::floorf(verticesPlayer[3])) == 0.5f)
+
+			playerVertices[0] = roundf(playerVertices[0]);
+			if ((playerVertices[3] - std::floorf(playerVertices[3])) == 0.5f)
 			{
-				verticesPlayer[3] = std::ceilf(verticesPlayer[3]);
+				playerVertices[3] = std::ceilf(playerVertices[3]);
 			}
 			else
 			{
-				verticesPlayer[3] = roundf(verticesPlayer[3]);
+				playerVertices[3] = roundf(playerVertices[3]);
 			}
-			if ((verticesPlayer[1] - std::floorf(verticesPlayer[1])) == 0.5f)
+			if ((playerVertices[1] - std::floorf(playerVertices[1])) == 0.5f)
 			{
-				verticesPlayer[1] = std::floorf(verticesPlayer[1]);
-			}
-			else
-			{
-				verticesPlayer[1] = roundf(verticesPlayer[1]);
-			}
-			if ((verticesPlayer[2] - std::floorf(verticesPlayer[2])) == 0.5f)
-			{
-				verticesPlayer[2] = std::floorf(verticesPlayer[2]);
+				playerVertices[1] = std::floorf(playerVertices[1]);
 			}
 			else
 			{
-				verticesPlayer[2] = roundf(verticesPlayer[2]);
+				playerVertices[1] = roundf(playerVertices[1]);
+			}
+			if ((playerVertices[2] - std::floorf(playerVertices[2])) == 0.5f)
+			{
+				playerVertices[2] = std::floorf(playerVertices[2]);
+			}
+			else
+			{
+				playerVertices[2] = roundf(playerVertices[2]);
 			}
 
 			bool inBlock = false;
 			bool youCanbuild = false;
-			if (!(x >= verticesPlayer[0] && x <= verticesPlayer[2] && y <= verticesPlayer[1] && y >= verticesPlayer[3]))
+			if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 			{
 				for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 				{
@@ -625,11 +676,13 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 				}
 				if (damaged)
 				{
+					droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 					damageblocks.erase(damageblocks.begin() + damageIndex);
 					blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 				}
 				else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 2.0f))
 				{
+					droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 					blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 				}
 				else
@@ -643,16 +696,16 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 				switch (m_PlayerSlots[0])
 				{
 				case i_Dirt:
-					blocks.at(x).emplace_back(texturesIDs[t_Dirt], x, y, b_BasicSolid, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Dirt], x, y, b_BasicSolid, 1, i_Dirt);
 					break;
 				case i_Platform:
-					blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 1, i_Platform);
 					break;
 				case i_Asphalt:
-					blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 1, i_Asphalt);
 					break;
 				case i_Ice:
-					blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 1, i_Ice);
 					break;
 				}
 				if (m_UseSlot)
@@ -676,7 +729,7 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 						SwapItemStats();
 					}
 				}
-				
+
 			}
 			m_UseItemTimer = 0;
 
@@ -686,9 +739,18 @@ void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks
 	{
 		m_UseItemTimer += deltaTime;
 	}
+}
+void Player::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs, std::vector<DroppedItem>& droppedItems)
+{
 
 
-	MovementEveryFrame(deltaTime, blocks);
+	IventoryEveryFrame(droppedItems);
+	float verticesPlayer[4] = { m_Transform[0] - 0.8f ,m_Transform[1] + 1.3f,m_Transform[0] + 0.8f,m_Transform[1] - 1.5f };
+
+	ItemUseEveryframe(deltaTime,blocks,damageblocks,CameraCoordinates,texturesIDs,verticesPlayer,droppedItems);
+
+
+	MovementEveryFrame(deltaTime, blocks,verticesPlayer);
 }
 void Player::DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture)
 {

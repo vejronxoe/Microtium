@@ -12,4 +12,4 @@ enum cursor
 };
 
 unsigned int CreateCursorDrawData(unsigned int* CursorTextures, unsigned int eob);
-void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, Shader& basicSh, unsigned int transformLocation, float* transform, unsigned int cameraLocation, Player& player);
+void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, unsigned int blockDrawData, Shader& basicSh, unsigned int transformLocation, float* transform, unsigned int cameraLocation, Player& player);

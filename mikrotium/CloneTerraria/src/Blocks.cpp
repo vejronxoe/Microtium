@@ -9,6 +9,8 @@
 #include"Opengl/Texture.h"
 #include"Opengl/drawData.h"
 #include"math/matrix.h"
+#include"ItemList.h"
+
 namespace Blocks
 {
 	int xMax;
@@ -16,8 +18,8 @@ namespace Blocks
 	int yMax;
 	int yMin;
 };
-Block::Block(unsigned int tex, int x, int y, unsigned char behavior, unsigned char hardness)
-	: m_te(tex), m_Transform{ x,y }, m_BlockBehavior(behavior),m_Hardness(hardness)
+Block::Block(unsigned int tex, int x, int y, unsigned char behavior, unsigned char hardness, unsigned short int itemDrop)
+	: m_te(tex), m_Transform{ x,y }, m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
 {}
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
 {
@@ -197,16 +199,16 @@ void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int 
 				switch (lines.at(i).at(x))
 				{
 				case'd':
-					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , x, y, b_BasicSolid, 1);
+					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , x, y, b_BasicSolid, 1,i_Dirt);
 					break;
 				case'p':
-					blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 1, i_Platform);
 					break;
 				case'a':
-					blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 1, i_Asphalt);
 					break;
 				case'i':
-					blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 1);
+					blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 1, i_Ice);
 					break;
 				}
 			}
