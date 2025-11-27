@@ -10,6 +10,7 @@
 #include"Opengl/drawData.h"
 #include"math/matrix.h"
 #include"ItemList.h"
+#include"glfw/Window.h"
 
 namespace Blocks
 {
@@ -148,6 +149,25 @@ unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs, std::vector<st
 		return TexturesIDs[t_Dirt];
 	}
 }
+void CreateBlock(int x, int y, unsigned short int IDOfItemBlock, std::vector<std::vector<Block>>& blocks, unsigned int* texturesIDs)
+{
+	switch (IDOfItemBlock)
+	{
+	case i_Dirt:
+		blocks.at(x).emplace_back(texturesIDs[t_Dirt], x, y, b_BasicSolid, 15, i_Dirt);
+		break;
+	case i_Platform:
+		blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 20, i_Platform);
+		break;
+	case i_Asphalt:
+		blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 35, i_Asphalt);
+		break;
+	case i_Ice:
+		blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 15, i_Ice);
+		break;
+	}
+	
+}
 void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int minX, int maxX, int minY, int maxY, unsigned int* texturesIDs)
 {
 	Blocks::xMax = maxX;
@@ -196,20 +216,25 @@ void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int 
 		{
 			for (int x = minX; x <= maxX && x < lines.at(i).length(); x++)
 			{
+				unsigned short int blockID = 0;
 				switch (lines.at(i).at(x))
 				{
 				case'd':
-					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , x, y, b_BasicSolid, 1,i_Dirt);
+					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , x, y, b_BasicSolid, 25,i_Dirt);
 					break;
 				case'p':
-					blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 1, i_Platform);
+					blockID = i_Platform;
 					break;
 				case'a':
-					blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 1, i_Asphalt);
+					blockID = i_Asphalt;
 					break;
 				case'i':
-					blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 1, i_Ice);
+					blockID = i_Ice;
 					break;
+				}
+				if (blockID)
+				{
+					CreateBlock(x, y, blockID, blocks, texturesIDs);
 				}
 			}
 			y--;
@@ -217,14 +242,42 @@ void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int 
 	}
 }
 
-void DamagedBlock::DrawDamage(Shader& basicShader, unsigned int location, float* transform, unsigned int texture)
+void DamagedBlock::DrawDamage(Shader& basicShader, unsigned int location, float* transform, unsigned int* texture)
 {
 
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicShader.SetUniformMat4(location, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
-DamagedBlock::DamagedBlock(int x, int y)
-	:m_Transform{x,y}
+DamagedBlock::DamagedBlock(int x, int y, char HP)
+	:m_Transform{ x, y }, m_HP(HP)
 {}
+
+void drawBlocks(std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damagedBlocks, float* cameraCoordinate, Shader& basicSh, unsigned int *damageTexture, unsigned int transformLocation, float* transform, unsigned int cameraLocation, float* camera)
+{
+	basicSh.Bind();
+	basicSh.SetUniformMat4(cameraLocation, camera);
+	for (int j = 0; j < blocks.size(); j++)
+	{
+		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform) < j)
+		{
+			break;
+		}
+		else if (floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform) <= j)
+		{
+			for (int i = 0; i < blocks.at(j).size(); i++)
+			{
+				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Transform[1])
+				{
+					blocks.at(j).at(i).DrawBlock(basicSh, transformLocation, transform);
+				}
+			}
+		}
+	}
+	for (int i = 0; i < damagedBlocks.size(); i++)
+	{
+		damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);
+	}
+
+}

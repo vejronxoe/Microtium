@@ -47,11 +47,11 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	}
 	if (m_GoToPlayer)
 	{
-		m_Velocity[0] = playerTransform[0] - m_Transform[0];
-		m_Velocity[1] = playerTransform[1] - m_Transform[1];
+		m_Velocity[0] += playerTransform[0] - m_Transform[0];
+		m_Velocity[1] += playerTransform[1] - m_Transform[1];
 		NormalizeVector(m_Velocity);
-		m_Velocity[0] *= 10 * (m_Timer - PickUpTime) / distanceToPlayer;
-		m_Velocity[1] *= 10 * (m_Timer - PickUpTime) / distanceToPlayer;
+		m_Velocity[0] *= 25 * (m_Timer - PickUpTime) / distanceToPlayer;
+		m_Velocity[1] *= 25 * (m_Timer - PickUpTime) / distanceToPlayer;
 	}
 	else if (m_Velocity[0] == 0 && m_Velocity[0] <= 0)
 	{
@@ -91,12 +91,12 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	AddVelocityToTransform(itemVertices, m_Transform, m_Velocity, hit, deltaTime);
 	return false;
 }
-void DroppedItem::DrawItem(unsigned int* textureIDs, unsigned int itemDD, Shader& basicSh, unsigned int transformLocation, float* transform)
+void DroppedItem::DrawItem(unsigned int* textureIDs, Shader& basicSh, unsigned int transformLocation, float* transform)
 {
+	
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicSh.SetUniformMat4(transformLocation, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, textureIDs[m_Item]));
-	ErrorGL(glBindVertexArray(itemDD));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 }

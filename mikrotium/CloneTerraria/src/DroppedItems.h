@@ -14,7 +14,7 @@ public:
 	int m_BlockIndex;
 	bool m_GoToPlayer;
 	bool EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks,  float* playerTransfor, bool doesPlayerHaveSpace);
-	void DrawItem(unsigned int* textureIDs, unsigned int itemDD, Shader& basicSh, unsigned int transformLocation, float* transform);
+	void DrawItem(unsigned int* textureIDs, Shader& basicSh, unsigned int transformLocation, float* transform);
 };
 
 void ItemHitBox(DroppedItem& dropItem, std::vector<std::vector<Block>>& hitbox, float* itemVertices, float deltaTime);

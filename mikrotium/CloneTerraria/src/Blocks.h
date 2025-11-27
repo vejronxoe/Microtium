@@ -51,16 +51,20 @@ public:
 	unsigned char m_BlockBehavior;
 	unsigned char m_Hardness;
 	unsigned short m_ItemDrop;
+
 	Block(unsigned int tex, int x, int y, unsigned char Behavior, unsigned char hardness, unsigned short int itemDrop);
 
 	void DrawBlock( Shader& basicShader, unsigned int location ,float* transform);
 };
 struct DamagedBlock
 {
-	DamagedBlock(int x, int y);
+	DamagedBlock(int x, int y, char HP);
 	int m_Transform[2];
-	void DrawDamage(Shader& basicShader, unsigned int location, float* transform, unsigned int texture);
+	char m_HP;
+	void DrawDamage(Shader& basicShader, unsigned int location, float* transform, unsigned int* texture);
 };
+void CreateBlock(int x, int y, unsigned short int IDOfItemBlock, std::vector<std::vector<Block>>& blocks, unsigned int* texturesIDs);
 void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int minX, int maxX, int minY, int maxY, unsigned int* texturesIDs);
 void CreateAllBlockTextures(unsigned int* IDs);
 void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob);
+void drawBlocks(std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damagedBlocks, float* cameraCoordinate, Shader& basicSh, unsigned int* damageTexture, unsigned int transformLocation, float* transform, unsigned int cameraLocation, float* camera);

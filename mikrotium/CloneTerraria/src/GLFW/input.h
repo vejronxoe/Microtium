@@ -26,6 +26,7 @@ namespace Input
 	extern bool THold;
 	extern bool SpaceHold;
 	extern bool SpacePress;
+	extern bool CtrlHold;
 	extern bool NumberPress[10];
 	extern bool EscapePress;
 	void EndOfLoop();

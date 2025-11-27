@@ -27,6 +27,7 @@ namespace Input
 	bool TPress = false;
 	bool SpaceHold = false;
 	bool SpacePress = false;
+	bool CtrlHold = false;
 	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
 	bool EscapePress = false;
 
@@ -117,6 +118,14 @@ namespace Input
 			SpaceHold = false;
 		}
 
+		if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS)
+		{
+			CtrlHold = true;
+		}
+		else if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE)
+		{
+			CtrlHold = false;
+		}
 
 
 		if (key == GLFW_KEY_0 && action == GLFW_PRESS)

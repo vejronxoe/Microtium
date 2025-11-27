@@ -20,7 +20,7 @@
 #include"Blocks.h"
 #include"NumberRender.h"
 #include"DroppedItems.h"
-
+#include"walls.h"
 
 
 
@@ -106,11 +106,19 @@ int main()
 	unsigned int fontTransformLocation = fontSh.GetUniformLocation("fontTransform");
 	unsigned int fontscaleLocation = fontSh.GetUniformLocation("fontScale");
 	unsigned int fontLetterLocation = fontSh.GetUniformLocation("fontLetter");
-	Shader HUDSh("res/shaders/vertexShaderHUD.txt", "res/shaders/fragmentShaderBasic.txt ");
+	Shader HUDSh("res/shaders/vertexShaderHUD.txt", "res/shaders/fragmentShaderShadow.txt ");
 	HUDSh.Bind();
 	unsigned int HUDTransformLocation = HUDSh.GetUniformLocation("HUDTransform");
 	unsigned int HUDScaleLocation = HUDSh.GetUniformLocation("HUDScale");
-	
+	unsigned int HUDShadowLocation = HUDSh.GetUniformLocation("shadow");
+	Shader shadowSh("res/shaders/vertexShaderbasic.txt", "res/shaders/fragmentShaderShadow.txt ");
+	shadowSh.Bind();
+	unsigned int shadowTransformLocation = shadowSh.GetUniformLocation("transform");
+	unsigned int shadowCameraLocation = shadowSh.GetUniformLocation("camera");
+	unsigned int shadowLocation = shadowSh.GetUniformLocation("shadow");
+
+
+
 	unsigned int cursorTextures[5];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
@@ -119,7 +127,7 @@ int main()
 	CreateAllBlockTextures(blockTextures);
 	unsigned int blocksDrawData;
 	SetupBlockDrawData(blocksDrawData, eob);
-	unsigned int damageTexture = CreateTextureRGBA("res/textures/DamageBlock.png");
+	unsigned int damageTexture[2] = {CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png")};
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 	float MoveLeft;
@@ -128,6 +136,7 @@ int main()
 	Player player(eob, HUDTransformLocation, HUDScaleLocation, MoveUp, MoveLeft, blockTextures);
 
 	float transform[16];
+	HUDSh.Bind();
 	CreateCamera(0, Window::width, 0, Window::height, player.m_Camera);
 	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), player.m_Camera);
 	CreateTransform(MoveLeft, MoveUp, transform);
@@ -136,20 +145,20 @@ int main()
 	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), player.m_Camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
 
+		
 
-	
+
 	std::vector<DroppedItem> dropItems;
 	dropItems.emplace_back(124, 0, 1, i_Ice, 1, true);
 	
-
-	
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;
-	LoadMap("res/save/map.txt", blocks, 0, 200, -100, 100, blockTextures);
-
+	LoadMap("res/save/mapBlocks.txt", blocks, 0, 200, -100, 100, blockTextures);
+	std::vector<std::vector<wall>> walls;
+	std::vector<DamagedBlock> damagedWalls;
+	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
 
 	float deltaTime;
-	
 	float timer = 0;
 	int fps = 0;
 	while (!glfwWindowShouldClose(window))
@@ -176,59 +185,47 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
 
-		player.EveryFrame(deltaTime, blocks, damagedBlocks, CameraCoordinates, blockTextures,dropItems);
-		for (int i = 0; i < dropItems.size();i++)
+		player.EveryFrame(deltaTime, blocks, walls, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures,dropItems);
+		if (damagedBlocks.size() > 20)
 		{
-			if (dropItems.at(i).EveryFrame(deltaTime, blocks, player.m_Transform, player.HavePlayerSpace(dropItems.at(i).m_Item)))
-			{
-				unsigned short int itemSwapCheck;
-				if (player.m_UseSlot == 0)
-				{
-					itemSwapCheck = player.m_PlayerSlots[player.m_HUDUseSlot];
-				}
-				if (player.ItermGetToInventory(dropItems.at(i).m_Amount, dropItems.at(i).m_Item))
-				{
-					if (player.m_UseSlot == 0 && itemSwapCheck != player.m_PlayerSlots[player.m_HUDUseSlot])
-					{
-						player.m_PlayerSlots[0] = player.m_PlayerSlots[player.m_HUDUseSlot];
-						player.m_AmountInSlots[0] = player.m_AmountInSlots[player.m_HUDUseSlot];
-						player.SwapItemStats();
-					}
-					dropItems.erase(dropItems.begin() + i);
-				}
-			}
+			damagedBlocks.erase(damagedBlocks.begin());
 		}
+		else if (damagedWalls.size() > 20)
+		{
+			damagedWalls.erase(damagedWalls.begin());
+		}
+
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], player.m_Camera);
-
+		
 		
 	
 		
-		basicSh.Bind();
-		basicSh.SetUniformMat4(cameraLocation, player.m_Camera);
+		
 
 		ErrorGL(glBindVertexArray(blocksDrawData));
-		for (int j = 0; j < blocks.size(); j++)
-		{
-			for (int i = 0; i < blocks.at(j).size(); i++)
-			{
-				blocks.at(j).at(i).DrawBlock(basicSh, transformLocation, transform);
-			}
-		}
-		for (int i = 0; i < damagedBlocks.size(); i++)
-		{
-			damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);
-		}
+		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, player.m_Camera);
+		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, player.m_Camera, shadowTransformLocation, transform, CameraCoordinates);
+		ErrorGL(glBindVertexArray(itemDD));
+		shadowSh.SetUniform1i(shadowLocation, 0);
 		for (int i = 0; i < dropItems.size(); i++)
 		{
-			dropItems.at(i).DrawItem(player.m_AllItemTextures, itemDD, basicSh, transformLocation, transform);
+			if (dropItems.at(i).m_Item >= i_WallDirt && dropItems.at(i).m_Item <= i_WallIce)
+			{
+				shadowSh.SetUniform1i(shadowLocation, 1);
+			}
+			dropItems.at(i).DrawItem(player.m_AllItemTextures, shadowSh, shadowTransformLocation, transform);
+			if (dropItems.at(i).m_Item >= i_WallDirt && dropItems.at(i).m_Item <= i_WallIce)
+			{
+				shadowSh.SetUniform1i(shadowLocation, 0);
+			}
 		}
+		basicSh.Bind();
+		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
-		player.DrawPlayer(basicSh, HUDSh, fontSh,transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
-
-		DrawCursor(cursorTextures, cursorDD, blocksDrawData, basicSh, transformLocation, transform, cameraLocation, player);
-
+		DrawCursor(cursorTextures, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
+		
 
 		Input::EndOfLoop();
 		glfwSwapBuffers(window);

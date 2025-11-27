@@ -35,6 +35,7 @@
     <ClCompile Include="src\Opengl\Texture.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
+    <ClCompile Include="src\walls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Collision.h" />
@@ -53,10 +54,13 @@
     <ClInclude Include="src\Opengl\Texture.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
+    <ClInclude Include="src\walls.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\save\map.txt" />
+    <Text Include="res\save\mapBlocks.txt" />
+    <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\settings.txt" />
+    <Text Include="res\shaders\fragmentShaderShadow.txt" />
     <Text Include="res\shaders\fragmentShaderTest.txt" />
     <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\shaders\fragmentShaderBasic.txt" />

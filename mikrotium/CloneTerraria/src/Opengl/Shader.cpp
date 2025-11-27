@@ -53,11 +53,14 @@ void Shader::SetUniform1f(unsigned int location, float v)
 	ErrorGL(glUniform1f(location, v));
 }
 
-void Shader::SetUniform1i(unsigned int location, float v)
+void Shader::SetUniform1i(unsigned int location, int v)
 {
 	ErrorGL(glUniform1i(location, v));
 }
-
+void Shader::SetUniform1b(unsigned int location, bool v)
+{
+	ErrorGL(glUniform1d(location, v));
+}
 void Shader::SetUniformMat4(unsigned int location, float* v)
 {
 	ErrorGL(glUniformMatrix4fv(location, 1, GL_FALSE, v));

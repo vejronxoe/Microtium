@@ -7,7 +7,7 @@
 #include"Collision.h"
 #include"DroppedItems.h"
 #include"ItemList.h"
-
+#include"walls.h"
 
 
 class Player
@@ -36,35 +36,38 @@ public:
 	float m_Scale[16];
 	Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot,unsigned int* texturesIDs);
 	bool ItermGetToInventory(unsigned short int& amount, unsigned short int item);
-	void EveryFrame(float deltaTime, std::vector< std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs, std::vector<DroppedItem>& droppedItems);
-	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
+	void EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<std::vector<wall>>& walls, std::vector<DamagedBlock>& damageblocks, std::vector<DamagedBlock>& damagedWalls, float* CameraCoordinates, unsigned int* texturesIDs, std::vector<DroppedItem>& droppedItems);
+	void DrawPlayer(Shader& basicSh, Shader& HUDSh, Shader& fontSh, unsigned int shadowLocation, unsigned int transformLocation, float* transform, int fontDrawData, int numberLocation, int fontTransformLocation, int fontscaleLocation, int numberTexture);
 	bool HavePlayerSpace(unsigned short int item);
 	void SwapItemStats();
 private:
-	void ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damageblocks, float* CameraCoordinates, unsigned int* texturesIDs, float* playerVertices, std::vector<DroppedItem>& droppedItems);
-	void IventoryEveryFrame(std::vector<DroppedItem>& droppedItems);
+	void ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<std::vector<wall>>& walls, std::vector<DamagedBlock>& damageblocks, std::vector<DamagedBlock>& damagedWalls, float* CameraCoordinates, unsigned int* texturesIDs, float* playerVertices, std::vector<DroppedItem>& droppedItems);
+	void IventoryEveryFrame(float deltaTime, std::vector<DroppedItem>& droppedItems);
 	bool IsItStackble(unsigned short int item);
 	void CreateAllItemsTexture(unsigned int* texturesIDs);
 	unsigned int m_InventoryDrawData;  
 	unsigned int m_SlotTexture;
 	unsigned int m_TrashCanSlotTexture;
-	float m_SlotVertices[4];
 	float m_SlotGap;
 	unsigned int m_HUDTransformLocation;
 	unsigned int m_HUDScaleLocation;
+	float m_TimerSplitingItem;
+	float m_AddNextFrame;
 public:
+	float m_SlotVertices[4];
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[9];
+	unsigned int m_AllItemTextures[12];
 	unsigned short int m_PlayerSlots[52];
 	unsigned short int m_AmountInSlots[52];
 
 public:
 	float m_UseItemTimer;
 	bool m_CursorOnMinableBlock;
+	bool m_CursorOnMinableWall;
 	bool m_CursorOnPlaceableSpot;
 	float m_CooldownToUse;
 	unsigned char m_PickaxeStreanght;

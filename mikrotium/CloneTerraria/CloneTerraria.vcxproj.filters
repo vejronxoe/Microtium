@@ -63,6 +63,9 @@
     <ClCompile Include="src\math\VectorOperation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\walls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -113,14 +116,19 @@
     <ClInclude Include="src\ItemList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\walls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
-    <Text Include="res\save\map.txt" />
+    <Text Include="res\save\mapBlocks.txt" />
     <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragmentShaderTest.txt" />
     <Text Include="res\shaders\vertexShaderHUD.txt" />
     <Text Include="res\shaders\vertexShaderFont.txt" />
+    <Text Include="res\save\mapWalls.txt" />
+    <Text Include="res\shaders\fragmentShaderShadow.txt" />
   </ItemGroup>
 </Project>

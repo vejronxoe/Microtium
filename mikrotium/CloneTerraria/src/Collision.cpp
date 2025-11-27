@@ -234,7 +234,7 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	}
 	return b_Air;
 }
-void AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime)
+bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime)
 {
 	transform[0] += velocity[0] * deltaTime;
 	transform[1] += velocity[1] * deltaTime;
@@ -242,29 +242,32 @@ void AddVelocityToTransform(float* objectVertices4f, float* transform, float* ve
 	objectVertices4f[2] = 1.0f + transform[0]; objectVertices4f[3] = -1.5f + transform[1];
 
 
-	if (objectVertices4f[2] > Blocks::xMax - 2.5f)
+	if (objectVertices4f[2] >= Blocks::xMax - 2.5f)
 	{
 		transform[0] -= objectVertices4f[2] - Blocks::xMax + 2.5f;
 		velocity[0] = 0;
-
 	}
-	else if (objectVertices4f[0] < Blocks::xMin + 2.5f)
+	else if (objectVertices4f[0] <= Blocks::xMin + 2.5f)
 	{
 		transform[0] -= objectVertices4f[0]- Blocks::xMin - 2.5f;
 		velocity[0] = 0;
+
 	}
-	if (objectVertices4f[1] > Blocks::yMax - 2.5f)
+	if (objectVertices4f[1] >= Blocks::yMax - 2.5f)
 	{
 		transform[1] -= objectVertices4f[1] - Blocks::yMax + 2.5f;
 		velocity[1] = 0;
+
 	}
-	else if (objectVertices4f[3] < Blocks::yMin + 2.5f)
+	else if (objectVertices4f[3] <= Blocks::yMin + 2.5f)
 	{
 		transform[1] -= objectVertices4f[3] - Blocks::yMin - 2.5f;
 		velocity[1] = 0;
 		floorHit = true;
+		return true;
 
 	}
+	return false;
 }
 
 unsigned char DynamicSquereHitbox(float deltaTime, float* transform, float* velocity, float* objectVertices4f, std::vector<std::vector<Block>>& hitbox, bool& leftWallHit, bool& rightWallHit, bool& floorHit, bool& ceilHit)

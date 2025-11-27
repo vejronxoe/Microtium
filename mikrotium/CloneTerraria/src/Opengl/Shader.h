@@ -18,7 +18,8 @@ public:
 	unsigned int GetUniformLocation(const char* name);
 	void SetUniform4f(unsigned int location, float v0, float v1, float v2, float v3);
 	void SetUniform1f(unsigned int location, float v);
-	void SetUniform1i(unsigned int location, float v);
+	void SetUniform1i(unsigned int location, int v);
+	void SetUniform1b(unsigned int location, bool v);
 	void SetUniformMat4(unsigned int location, float* v);
 	void Bind();
 	void Unbind();
