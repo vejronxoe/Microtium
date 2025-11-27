@@ -14,6 +14,7 @@ unsigned int CreateCursorDrawData(unsigned int* CursorTextures, unsigned int eob
 	CursorTextures[canPickaxeIt] = CreateTextureRGBA("res/textures/canPickAxeIt.png");
 	CursorTextures[canAxeIt] = CreateTextureRGBA("res/textures/canAxeIt.png");
 	CursorTextures[canHammerIt] = CreateTextureRGBA("res/textures/canHammerIt.png");
+	CursorTextures[canPutBin] = CreateTextureRGBA("res/textures/canPutItInBin.png");
 	return drawData;
 }
 void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, unsigned int blockDrawData, Shader& basicSh, Shader& fontSh, unsigned int shadowLocation, unsigned int transformLocation, float* transform, unsigned int cameraLocation, unsigned int fontDrawData, unsigned int numberLocation, unsigned int fontTransformLocation, unsigned int fontscaleLocation, unsigned int numberTexture, Player& player, float* cameraCoordinates)
@@ -68,7 +69,14 @@ void DrawCursor(unsigned int* CursorTextures, unsigned int cursorDrawData, unsig
 	}
 	else if (canClickOn)
 	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
+		if (Input::CtrlHold)
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canPutBin]));
+		}
+		else
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
+		}
 	}
 	else if (player.m_CursorOnMinableBlock)
 	{

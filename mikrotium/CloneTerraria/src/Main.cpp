@@ -119,7 +119,7 @@ int main()
 
 
 
-	unsigned int cursorTextures[5];
+	unsigned int cursorTextures[6];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
 	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);

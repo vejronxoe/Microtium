@@ -36,4 +36,22 @@ C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\
               _Objty=DroppedItem
           ]
   
+  cursor.cpp
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(23,43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(23,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(24,43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(24,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(27,22): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(27,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(33,54): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(33,25): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(35,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(35,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(50,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(51,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(52,57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(63,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(64,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\glfw\cursor.cpp(65,57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe

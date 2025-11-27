@@ -9,6 +9,7 @@ enum cursor
 	canPickaxeIt,
 	canAxeIt,
 	canHammerIt,
+	canPutBin,
 };
 
 unsigned int CreateCursorDrawData(unsigned int* CursorTextures, unsigned int eob);
