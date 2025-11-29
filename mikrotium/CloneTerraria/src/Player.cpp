@@ -7,7 +7,6 @@
 #include"glfw/window.h"
 #include"math/matrix.h"
 #include"NumberRender.h"
-
 void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 {
 	m_AllItemTextures[i_CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
@@ -21,7 +20,30 @@ void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
 }									   
+bool findElementWithY(int y, std::vector<Block>& blocks)
+{
+	for (int i = 0; i < blocks.size(); i++)
+	{
+		if (y == blocks.at(i).m_Transform[1])
+		{
+			return true;
+			
+		}
+	}
+	return false;
+}
+bool findElementWithY(int y, std::vector<wall>& walls)
+{
+	for (int i = 0; i < walls.size(); i++)
+	{
+		if (y == walls.at(i).m_Transform[1])
+		{
+			return true;
 
+		}
+	}
+	return false;
+}
 Player::Player(unsigned int eob, unsigned int HUDTransformLocatin, unsigned int HUDScaleLocatin, float& yLocationOfFirstSlot, float& xLocationOfFirstSlot, unsigned int* texturesIDs)
 	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 0 }
 {	
@@ -336,12 +358,12 @@ void Player::MovementEveryFrame(float deltaTime, std::vector<std::vector<Block>>
 	case(b_Slippery):
 		m_Acceleration = 12.0f;
 		m_Friction = 8;
-		m_MaxMovementSpeed = 14;
+		m_MaxMovementSpeed = 15;
 		break;
 	case(b_Asphalt):
 		m_Acceleration = 30.0f;
 		m_Friction = 70;
-		m_MaxMovementSpeed = 20;
+		m_MaxMovementSpeed = 25;
 		break;
 	case(b_BasicSolid):
 		m_Acceleration = 25.0f;
@@ -601,29 +623,30 @@ void Player::IventoryEveryFrame(float deltaTime, std::vector<DroppedItem>& dropp
 		m_AddNextFrame = 0;
 	}
 }
-void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<std::vector<wall>>& walls, std::vector<DamagedBlock>& damageblocks, std::vector<DamagedBlock>& damagedWalls, float* CameraCoordinates, unsigned int* texturesIDs,float* VerticesPlayer, std::vector<DroppedItem>& droppedItems)
+void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>& blocks, std::vector<std::vector<wall>>& walls, std::vector<DamagedBlock>& damageblocks, std::vector<DamagedBlock>& damagedWalls, float* CameraCoordinates, unsigned int* texturesIDs, float* VerticesPlayer, std::vector<DroppedItem>& droppedItems)
 {
-	float playerVertices[4] = { VerticesPlayer[0], VerticesPlayer[1], VerticesPlayer[2], VerticesPlayer[3]};
+	float playerVertices[4] = { VerticesPlayer[0], VerticesPlayer[1], VerticesPlayer[2], VerticesPlayer[3] };
 
 	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
 	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
 
 	int blockIndex = 0;
-	int wallIndex = 0;
+	int wallIndex = -1;
+	bool inBlock = false;
 
 	int rangeX = Input::XMousePos + CameraCoordinates[0] - m_Transform[0];
 	int rangeY = Input::YMousePos + CameraCoordinates[1] - m_Transform[1];
 
-	if (Input::TPress && m_PlayerSlots[0] != i_Nothing && m_UseSlot == 0 )
+	if (Input::TPress && m_PlayerSlots[0] != i_Nothing && m_UseSlot == 0)
 	{
 		droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
 		m_PlayerSlots[0] = 0;
 		m_PlayerSlots[m_HUDUseSlot] = 0;
 		m_AmountInSlots[0] = 0;
 		m_AmountInSlots[m_HUDUseSlot] = 0;
-		SwapItemStats();	
+		SwapItemStats();
 	}
-	else if(Input::RightMousePress && m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0 && !m_AimingAtSlot)
+	else if (Input::RightMousePress && m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0 && !m_AimingAtSlot)
 	{
 		droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
 		m_PlayerSlots[0] = 0;
@@ -665,58 +688,56 @@ void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>&
 				playerVertices[2] = roundf(playerVertices[2]);
 			}
 
-			bool inBlock = false;
-			bool youCanbuild = false;
 			if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 			{
 				for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 				{
-
 					if (y == blocks.at(x).at(blockIndex).m_Transform[1])
 					{
 						inBlock = true;
-						break;
+						m_CursorOnPlaceableSpot = true;
 					}
 					else if (y + 1 == blocks.at(x).at(blockIndex).m_Transform[1] || y - 1 == blocks.at(x).at(blockIndex).m_Transform[1])
 					{
-						youCanbuild = true;
+						m_CursorOnPlaceableSpot = true;
 					}
 				}
-				if (!inBlock && youCanbuild)
+				for (int i = 0; i < walls.at(x).size(); i++)
 				{
-					m_CursorOnPlaceableSpot = true;
-				}
-				else if (!inBlock)
-				{
-
-
-					for (blockIndex = 0; blockIndex < blocks.at(x - 1).size(); blockIndex++)
+					if (y == walls.at(x).at(i).m_Transform[1])
 					{
-						if (y == blocks.at(x - 1).at(blockIndex).m_Transform[1])
-						{
-							youCanbuild = true;
-							break;
-						}
+						wallIndex = i;
+						m_CursorOnPlaceableSpot = true;
+						break;
 					}
-					if (youCanbuild)
+					else if (y + 1 == walls.at(x).at(i).m_Transform[1] || y - 1 == walls.at(x).at(i).m_Transform[1])
 					{
 						m_CursorOnPlaceableSpot = true;
 					}
-					else
-					{
-						for (blockIndex = 0; blockIndex < blocks.at(x + 1).size(); blockIndex++)
-						{
-							if (y == blocks.at(x + 1).at(blockIndex).m_Transform[1])
-							{
-								m_CursorOnPlaceableSpot = true;
-								break;
-							}
-						}
-					}
+				}
+				if (!m_CursorOnPlaceableSpot)
+				{
+					m_CursorOnPlaceableSpot = findElementWithY(y, blocks.at(x + 1));
+				}
+				if (!m_CursorOnPlaceableSpot)
+				{
+					m_CursorOnPlaceableSpot = findElementWithY(y, blocks.at(x - 1));
+				}
+				if (!m_CursorOnPlaceableSpot)
+				{
+					m_CursorOnPlaceableSpot = findElementWithY(y, walls.at(x - 1));
+				}
+				if (!m_CursorOnPlaceableSpot)
+				{
+					m_CursorOnPlaceableSpot = findElementWithY(y, walls.at(x + 1));
+				}
+				if (inBlock && !(m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce) || wallIndex != -1 && m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
+				{
+					m_CursorOnPlaceableSpot = false;
 				}
 			}
 		}
-		else if(m_PickaxeStreanght)
+		else if (m_PickaxeStreanght)
 		{
 			for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 			{
@@ -748,10 +769,10 @@ void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>&
 	}
 
 
+
+
 	if (Input::LeftMouseHold)
 	{
-
-
 		if (m_UseItemTimer > m_CooldownToUse)
 		{
 			if (m_CursorOnMinableBlock)
@@ -774,12 +795,28 @@ void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>&
 						droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 						damageblocks.erase(damageblocks.begin() + damageIndex);
 						blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
+						for (int i = 0; i < walls.at(x).size(); i++)
+						{
+							if (walls.at(x).at(i).m_Transform[1] == y)
+							{
+								walls.at(x).at(i).m_Render = true;
+								break;
+							}
+						}
 					}
 				}
 				else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 				{
 					droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 					blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
+					for (int i = 0; i < walls.at(x).size(); i++)
+					{
+						if (walls.at(x).at(i).m_Transform[1] == y)
+						{
+							walls.at(x).at(i).m_Render = true;
+							break;
+						}
+					}
 				}
 				else
 				{
@@ -790,29 +827,61 @@ void Player::ItemUseEveryframe(float deltaTime, std::vector<std::vector<Block>>&
 			}
 			else if (m_CursorOnPlaceableSpot)
 			{
-				CreateBlock(x, y, m_PlayerSlots[0], blocks, texturesIDs);
-				if (m_UseSlot)
+				if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 				{
-					m_AmountInSlots[0]--;
-					if (!m_AmountInSlots[0])
+					createWall(x, y, !inBlock, m_PlayerSlots[0], walls, texturesIDs);
+					if (m_UseSlot)
 					{
-						m_UseSlot = 0;
-						m_PlayerSlots[0] = i_Nothing;
-						SwapItemStats();
+						m_AmountInSlots[0]--;
+						if (!m_AmountInSlots[0])
+						{
+							m_UseSlot = 0;
+							m_PlayerSlots[0] = i_Nothing;
+							SwapItemStats();
+						}
 					}
-				}
-				else
-				{
-					m_AmountInSlots[m_HUDUseSlot]--;
-					if (m_AmountInSlots[m_HUDUseSlot] <= 0)
+					else
 					{
-						m_AmountInSlots[0] = 0;
-						m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
-						m_PlayerSlots[0] = i_Nothing;
-						SwapItemStats();
+						m_AmountInSlots[m_HUDUseSlot]--;
+						if (m_AmountInSlots[m_HUDUseSlot] <= 0)
+						{
+							m_AmountInSlots[0] = 0;
+							m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+							m_PlayerSlots[0] = i_Nothing;
+							SwapItemStats();
+						}
 					}
 				}
 
+				else
+				{
+					if (wallIndex != -1)
+					{
+						walls.at(x).at(wallIndex).m_Render = false;
+					}
+					CreateBlock(x, y, m_PlayerSlots[0], blocks, texturesIDs);
+					if (m_UseSlot)
+					{
+						m_AmountInSlots[0]--;
+						if (!m_AmountInSlots[0])
+						{
+							m_UseSlot = 0;
+							m_PlayerSlots[0] = i_Nothing;
+							SwapItemStats();
+						}
+					}
+					else
+					{
+						m_AmountInSlots[m_HUDUseSlot]--;
+						if (m_AmountInSlots[m_HUDUseSlot] <= 0)
+						{
+							m_AmountInSlots[0] = 0;
+							m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+							m_PlayerSlots[0] = i_Nothing;
+							SwapItemStats();
+						}
+					}
+				}
 			}
 			else if (m_CursorOnMinableWall)
 			{
