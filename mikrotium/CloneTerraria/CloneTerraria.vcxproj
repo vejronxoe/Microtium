@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\flora.cpp" />
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Blocks.cpp" />
     <ClCompile Include="src\DroppedItems.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Blocks.h" />
     <ClInclude Include="src\DroppedItems.h" />
+    <ClInclude Include="src\flora.h" />
     <ClInclude Include="src\glfw\cursor.h" />
     <ClInclude Include="src\glfw\input.h" />
     <ClInclude Include="src\ItemList.h" />

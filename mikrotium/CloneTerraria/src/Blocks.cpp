@@ -19,15 +19,23 @@ namespace Blocks
 	int yMax;
 	int yMin;
 };
-Block::Block(unsigned int tex, int x, int y, unsigned char behavior, unsigned char hardness, unsigned short int itemDrop)
+Block::Block(unsigned int tex
+	, int x
+	, int y
+	, unsigned char behavior
+	, unsigned char hardness
+	, unsigned short int itemDrop)
 	: m_te(tex), m_Transform{ x,y }, m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
 {}
-void SetupBlockDrawData(unsigned int& blocksDrawData, unsigned int eob)
+void SetupBlockDrawData(unsigned int& blocksDrawData
+	, unsigned int eob)
 {
 	blocksDrawData = CreateDrawData(eob,0.5f,-0.5,-0.5f, 0.5f,1,0,0,1);
 }
 
-void Block::DrawBlock( Shader& basicShader, unsigned int location, float* transform)
+void Block::DrawBlock(Shader& basicShader
+	, unsigned int location
+	, float* transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	basicShader.SetUniformMat4(location, transform);
@@ -61,7 +69,10 @@ void CreateAllBlockTextures(unsigned int* IDs)
 }
 
 
-unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs, std::vector<std::string>& lines, int i , int j)
+unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs
+	, std::vector<std::string>& lines
+	, int i 
+	, int j)
 {
 	if (lines.at(i - 1).at(j) == ' ')
 	{
@@ -149,7 +160,12 @@ unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs, std::vector<st
 		return TexturesIDs[t_Dirt];
 	}
 }
-void CreateBlock(int x, int y, unsigned short int IDOfItemBlock, std::vector<std::vector<Block>>& blocks, unsigned int* texturesIDs)
+
+void CreateBlock(int x
+	, int y
+	, unsigned short int IDOfItemBlock
+	, std::vector<std::vector<Block>>& blocks
+	, unsigned int* texturesIDs)
 {
 	switch (IDOfItemBlock)
 	{
@@ -168,7 +184,14 @@ void CreateBlock(int x, int y, unsigned short int IDOfItemBlock, std::vector<std
 	}
 	
 }
-void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int minX, int maxX, int minY, int maxY, unsigned int* texturesIDs)
+
+void LoadMap(const char* filepath
+	, std::vector<std::vector<Block>>& blocks
+	, int minX
+	, int maxX
+	, int minY
+	, int maxY
+	, unsigned int* texturesIDs)
 {
 	Blocks::xMax = maxX;
 	Blocks::xMin = minX;
@@ -242,7 +265,10 @@ void LoadMap(const char* filepath, std::vector<std::vector<Block>>& blocks, int 
 	}
 }
 
-void DamagedBlock::DrawDamage(Shader& basicShader, unsigned int location, float* transform, unsigned int* texture)
+void DamagedBlock::DrawDamage(Shader& basicShader
+	, unsigned int location
+	, float* transform
+	, unsigned int* texture)
 {
 
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
@@ -250,11 +276,22 @@ void DamagedBlock::DrawDamage(Shader& basicShader, unsigned int location, float*
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
-DamagedBlock::DamagedBlock(int x, int y, char HP)
+
+DamagedBlock::DamagedBlock(int x
+	, int y
+	, char HP)
 	:m_Transform{ x, y }, m_HP(HP)
 {}
 
-void drawBlocks(std::vector<std::vector<Block>>& blocks, std::vector<DamagedBlock>& damagedBlocks, float* cameraCoordinate, Shader& basicSh, unsigned int *damageTexture, unsigned int transformLocation, float* transform, unsigned int cameraLocation, float* camera)
+void drawBlocks(std::vector<std::vector<Block>>& blocks
+	, std::vector<DamagedBlock>& damagedBlocks
+	, float* cameraCoordinate
+	, Shader& basicSh
+	, unsigned int *damageTexture
+	, unsigned int transformLocation
+	, float* transform
+	, unsigned int cameraLocation
+	, float* camera)
 {
 	basicSh.Bind();
 	basicSh.SetUniformMat4(cameraLocation, camera);

@@ -116,36 +116,40 @@ int main()
 	unsigned int shadowTransformLocation = shadowSh.GetUniformLocation("transform");
 	unsigned int shadowCameraLocation = shadowSh.GetUniformLocation("camera");
 	unsigned int shadowLocation = shadowSh.GetUniformLocation("shadow");
+	float camera[16];
+	float scale[16];
+	float transform[16];
+	CreateScale(1, 1, scale);
+	HUDSh.Bind();
+	CreateCamera(0, Window::width, 0, Window::height, camera);
+	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), camera);
+
+	fontSh.Bind();
+	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), camera);
+	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
 
 
+	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorTextures[6];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
 	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
-	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	CreateAllBlockTextures(blockTextures);
 	unsigned int blocksDrawData;
 	SetupBlockDrawData(blocksDrawData, eob);
 	unsigned int damageTexture[2] = {CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png")};
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
+
 	float MoveLeft;
 	float MoveUp;
 
 	Player player(eob, HUDTransformLocation, HUDScaleLocation, MoveUp, MoveLeft, blockTextures);
-
-	float transform[16];
 	HUDSh.Bind();
-	CreateCamera(0, Window::width, 0, Window::height, player.m_Camera);
-	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), player.m_Camera);
 	CreateTransform(MoveLeft, MoveUp, transform);
 	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDBasicLocation"), transform);
-	fontSh.Bind();
-	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), player.m_Camera);
-	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, player.m_Camera);
 
-		
 
 
 	std::vector<DroppedItem> dropItems;
@@ -197,7 +201,7 @@ int main()
 
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
-		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], player.m_Camera);
+		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
 		
 		
 	
@@ -205,8 +209,8 @@ int main()
 		
 
 		ErrorGL(glBindVertexArray(blocksDrawData));
-		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, player.m_Camera);
-		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, player.m_Camera, shadowTransformLocation, transform, CameraCoordinates);
+		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, camera);
+		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
 		ErrorGL(glBindVertexArray(itemDD));
 		shadowSh.SetUniform1i(shadowLocation, 0);
 		for (int i = 0; i < dropItems.size(); i++)
@@ -222,9 +226,9 @@ int main()
 			}
 		}
 		basicSh.Bind();
-		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
+		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
-		DrawCursor(cursorTextures, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
+		DrawCursor(cursorTextures, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
 		
 
 		Input::EndOfLoop();
