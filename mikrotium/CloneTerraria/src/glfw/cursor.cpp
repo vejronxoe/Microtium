@@ -106,6 +106,10 @@ void DrawCursor(unsigned int* CursorTextures
 	{
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canHammerIt]));
 	}
+	else if (player.m_CursorOnMinableWood)
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canAxeIt]));
+	}
 	else
 	{
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canNotDoIt]));

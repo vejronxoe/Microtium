@@ -1,5 +1,8 @@
 #include"matrix.h"
 
+#include<math.h>
+#define PI 3.14159265358979323846
+
 void CreateCamera(float Xmin, float Xmax, float Ymin, float Ymax, float* matrix4x4f)
 {
 	matrix4x4f[0] = 2.0f / ((Xmax - Xmin)); matrix4x4f[4] = 0.0f; matrix4x4f[8] = 0.0f; matrix4x4f[12] = -(Xmax + Xmin) / (Xmax - Xmin);
@@ -36,4 +39,18 @@ void ChangeScale(float x, float y, float* matrix4x4f)
 {
 	matrix4x4f[0] = x;
 	matrix4x4f[5] = y;
+}
+void ChangeRotation(float a, float* matrix4x4f)
+{
+	double angle = a * PI / 180;
+	matrix4x4f[0] = cos(angle); matrix4x4f[4] = -sin(angle);
+	matrix4x4f[1] = sin(angle); matrix4x4f[5] = cos(angle);
+}
+void CreateRotation(float a, float* matrix4x4f)
+{
+	double angle = a * PI / 180;
+	matrix4x4f[0] = cos(angle); matrix4x4f[4] = -sin(angle); matrix4x4f[8] = 0.0f; matrix4x4f[12] = 0.0f;
+	matrix4x4f[1] = sin(angle); matrix4x4f[5] = cos(angle); matrix4x4f[9] = 0.0f; matrix4x4f[13] = 0.0f;
+	matrix4x4f[2] = 0.0f; matrix4x4f[6] = 0.0f;  matrix4x4f[10] = 1.0f; matrix4x4f[14] = 0.0f;
+	matrix4x4f[3] = 0.0f; matrix4x4f[7] = 0.0f;  matrix4x4f[11] = 0.0f; matrix4x4f[15] = 1.0f;
 }

@@ -8,7 +8,7 @@
 #include"DroppedItems.h"
 #include"ItemList.h"
 #include"walls.h"
-
+#include"flora.h"
 
 class Player
 {
@@ -48,6 +48,7 @@ public:
 		, std::vector<DamagedBlock>& damagedWalls
 		, float* CameraCoordinates
 		, unsigned int* texturesIDs
+		, std::vector<tree>& trees
 		, std::vector<DroppedItem>& droppedItems);
 
 	void DrawPlayer(Shader& basicSh
@@ -95,10 +96,11 @@ public:
 	float m_UseItemTimer;
 	bool m_CursorOnMinableBlock;
 	bool m_CursorOnMinableWall;
+	bool m_CursorOnMinableWood;
 	bool m_CursorOnPlaceableSpot;
 	float m_CooldownToUse;
 	unsigned char m_PickaxeStreanght;
-	unsigned char m_AxeSteanght;
+	unsigned char m_AxeStreanght;
 	unsigned char m_HammerStreanght;
 	unsigned char m_Range;
 	short int m_Damage;

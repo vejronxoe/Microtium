@@ -21,6 +21,7 @@
 #include"NumberRender.h"
 #include"DroppedItems.h"
 #include"walls.h"
+#include"flora.h"
 
 
 
@@ -116,10 +117,20 @@ int main()
 	unsigned int shadowTransformLocation = shadowSh.GetUniformLocation("transform");
 	unsigned int shadowCameraLocation = shadowSh.GetUniformLocation("camera");
 	unsigned int shadowLocation = shadowSh.GetUniformLocation("shadow");
+	Shader treeSh("res/shaders/vertexShaderTree.txt", "res/shaders/fragmentShaderBasic.txt");
+	treeSh.Bind();
+	unsigned int treeTransformLocation = treeSh.GetUniformLocation("treeTransform");
+	unsigned int treeCameraLocation = treeSh.GetUniformLocation("treeCamera");
+	unsigned int treeRotationLocation = treeSh.GetUniformLocation("treeRotation");
 	float camera[16];
 	float scale[16];
 	float transform[16];
+	float rotation[16];
+	CreateRotation(0, rotation);
+	treeSh.SetUniformMat4(treeRotationLocation, rotation);
+
 	CreateScale(1, 1, scale);
+	CreateRotation(0, rotation);
 	HUDSh.Bind();
 	CreateCamera(0, Window::width, 0, Window::height, camera);
 	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), camera);
@@ -129,7 +140,14 @@ int main()
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
 
-
+	unsigned int treeTextures[3];
+	unsigned int treeDD[3];
+	treeDD[p_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
+	treeDD[p_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 2.5f, -2.5f);
+	treeDD[p_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+	treeTextures[p_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
+	treeTextures[p_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
+	treeTextures[p_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorTextures[6];
@@ -160,7 +178,32 @@ int main()
 	LoadMap("res/save/mapBlocks.txt", blocks, 0, 200, -100, 100, blockTextures);
 	std::vector<std::vector<wall>> walls;
 	std::vector<DamagedBlock> damagedWalls;
+	std::vector<tree> trees;
 	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
+
+
+	trees.emplace_back(treeTextures[p_Crown], treeDD[p_Crown], i_Nothing, 35, p_Crown, 40, 5, 0.0f);
+	trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], i_Nothing, 35, p_SmallCrown, 38, 2, 90.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 39, 2, 90.0f);
+	trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], i_Nothing, 35, p_SmallCrown, 42, -3, -90.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 41, -3, -90.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 4, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 3, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 2, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 1, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 0, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -1, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -2, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -3, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -4, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -5, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -6, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -7, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -8, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -9, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -10, 0.0f);
+
+
 
 	float deltaTime;
 	float timer = 0;
@@ -189,7 +232,7 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
 
-		player.EveryFrame(deltaTime, blocks, walls, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures,dropItems);
+		player.EveryFrame(deltaTime, blocks, walls, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees,dropItems);
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -211,6 +254,14 @@ int main()
 		ErrorGL(glBindVertexArray(blocksDrawData));
 		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, camera);
 		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
+		treeSh.Bind();
+		treeSh.SetUniformMat4(treeCameraLocation, camera);
+		
+		for (int i = 0; i < trees.size(); i++)
+		{
+			trees.at(i).drawTree(treeSh, treeTransformLocation, treeRotationLocation, CameraCoordinates, transform, rotation);	
+		}
+		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(itemDD));
 		shadowSh.SetUniform1i(shadowLocation, 0);
 		for (int i = 0; i < dropItems.size(); i++)

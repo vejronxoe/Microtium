@@ -87,7 +87,7 @@ Player::Player(unsigned int eob
 	m_UseItemTimer = 0;
 	m_CooldownToUse = 0;
 	m_PickaxeStreanght = 0;
-	m_AxeSteanght = 0;
+	m_AxeStreanght = 0;
 	m_HammerStreanght = 0;
 	m_Range = 0;
 	m_Damage = 0;
@@ -131,7 +131,7 @@ void Player::SwapItemStats()
 {
 	m_CooldownToUse = 0.1f;
 	m_PickaxeStreanght = 0;
-	m_AxeSteanght = 0;
+	m_AxeStreanght = 0;
 	m_HammerStreanght = 0;
 	m_Range = 4;
 	m_Damage = 0;
@@ -151,7 +151,7 @@ void Player::SwapItemStats()
 		
 		case(i_CooperAxe):
 			m_CooldownToUse = 0.5;
-			m_AxeSteanght = 35;
+			m_AxeStreanght = 35;
 			m_Damage = 1;
 			m_Placeable = false;
 		break;
@@ -290,6 +290,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DamagedBlock>& damagedWalls
 	, float* CameraCoordinates
 	, unsigned int* texturesIDs
+	, std::vector<tree>& trees
 	, std::vector<DroppedItem>& droppedItems)
 {
 
@@ -543,6 +544,7 @@ void Player::EveryFrame(float deltaTime
 
 		int blockIndex = 0;
 		int wallIndex = -1;
+		int woodIndex = 0;
 		bool inBlock = false;
 
 		int rangeX = Input::XMousePos + CameraCoordinates[0] - m_Transform[0];
@@ -567,6 +569,7 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnPlaceableSpot = false;
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
+		m_CursorOnMinableWood = false;
 		if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
 
@@ -656,7 +659,6 @@ void Player::EveryFrame(float deltaTime
 					{
 						if (m_PickaxeStreanght >= blocks.at(x).at(blockIndex).m_Hardness)
 						{
-
 							m_CursorOnMinableBlock = true;
 						}
 						break;
@@ -677,8 +679,21 @@ void Player::EveryFrame(float deltaTime
 					}
 				}
 			}
+			else if (m_AxeStreanght)
+			{
+				for (woodIndex = 0; woodIndex < trees.size(); woodIndex++)
+				{
+					if (y == trees.at(woodIndex).m_Transform[1] && x == trees.at(woodIndex).m_Transform[0])
+					{
+						if (trees.at(woodIndex).m_PartOfTree == p_Log && m_AxeStreanght >= trees.at(woodIndex).m_Hardness)
+						{
+							m_CursorOnMinableWood = true;
+						}
+						break;
+					}
+				}
+			}
 		}
-
 
 
 
@@ -834,6 +849,46 @@ void Player::EveryFrame(float deltaTime
 					}
 
 				}
+				else if (m_CursorOnMinableWall)
+				{
+					bool damaged = false;
+					int damageIndex;
+					for (damageIndex = 0; damageIndex < damagedWalls.size(); damageIndex++)
+					{
+						if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == walls.at(x).at(wallIndex).m_Transform[1])
+						{
+							damaged = true;
+							break;
+						}
+					}
+					if (damaged)
+					{
+						damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness);
+						if (0 >= damagedWalls.at(damageIndex).m_HP)
+						{
+							if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+							{
+								droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+							}
+							damagedWalls.erase(damagedWalls.begin() + damageIndex);
+							walls.at(x).erase(walls.at(x).begin() + wallIndex);
+						}
+					}
+					else if (0 >= ((float)walls.at(x).at(wallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
+					{
+						if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+						{
+							droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+						}
+						walls.at(x).erase(walls.at(x).begin() + wallIndex);
+					}
+					else
+					{
+
+						damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Transform[1], ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
+					}
+
+					}
 				m_UseItemTimer = 0;
 
 			}
@@ -844,117 +899,116 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 
+
+	m_CoyoteTimer += deltaTime;
+	if (Input::DHold)
 	{
-		m_CoyoteTimer += deltaTime;
-		if (Input::DHold)
-		{
-			m_DirectionLook = 1;
-		}
-		if (Input::AHold)
-		{
-			m_DirectionLook = -1;
-		}
+		m_DirectionLook = 1;
+	}
+	if (Input::AHold)
+	{
+		m_DirectionLook = -1;
+	}
 
-		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
+	if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
+	{
+		m_Velocity[0] += m_Acceleration * deltaTime;
+	}
+	else if (m_Velocity[0] > 0)
+	{
+		float velocity = m_Velocity[0] - m_Friction * deltaTime;
+		if (velocity < 0)
 		{
-			m_Velocity[0] += m_Acceleration * deltaTime;
-		}
-		else if (m_Velocity[0] > 0)
-		{
-			float velocity = m_Velocity[0] - m_Friction * deltaTime;
-			if (velocity < 0)
-			{
-				m_Velocity[0] = 0;
-			}
-			else
-			{
-				m_Velocity[0] = velocity;
-			}
-		}
-		if (Input::AHold && m_Velocity[0] >= -m_MaxMovementSpeed)
-		{
-			m_Velocity[0] += -m_Acceleration * deltaTime;
-		}
-		else if (m_Velocity[0] < 0)
-		{
-			float velocity = m_Velocity[0] + m_Friction * deltaTime;
-			if (velocity > 0)
-			{
-				m_Velocity[0] = 0;
-			}
-			else
-			{
-				m_Velocity[0] = velocity;
-			}
-		}
-
-		if (Input::SpacePress && m_CanJump)
-		{
-			m_Velocity[1] += m_JumpPower;
-			m_CanJump = false;
-			m_JumpTimer += deltaTime;
-		}
-		else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f)
-		{
-			m_Velocity[1] -= (m_JumpPower / 2) * deltaTime;
-			m_JumpTimer += deltaTime;
+			m_Velocity[0] = 0;
 		}
 		else
 		{
-			m_Velocity[1] += m_Gravity * deltaTime;
-			if (30 < m_Gravity)
-			{
-				m_Gravity = 30;
-			}
-			m_JumpTimer = 0;
+			m_Velocity[0] = velocity;
 		}
-
-		m_FloorHit = false;
-		m_CeilHit = false;
-		m_WallHit = false;
-
-
-		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
-		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
-		{
-			moveBehavior = b_BasicSolid;
-		}
-
-		switch (moveBehavior)
-		{
-		case(b_Air):
-			m_Acceleration = 5.0f;
-			m_Friction = 4;
-			m_MaxMovementSpeed = 12;
-			break;
-		case(b_Slippery):
-			m_Acceleration = 12.0f;
-			m_Friction = 8;
-			m_MaxMovementSpeed = 15;
-			break;
-		case(b_Asphalt):
-			m_Acceleration = 30.0f;
-			m_Friction = 70;
-			m_MaxMovementSpeed = 25;
-			break;
-		case(b_BasicSolid):
-			m_Acceleration = 25.0f;
-			m_Friction = 40;
-			m_MaxMovementSpeed = 10;
-			break;
-		}
-		if (m_FloorHit)
-		{
-			m_CanJump = true;
-			m_CoyoteTimer = 0.0f;
-		}
-		if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.125f)
-		{
-			m_CanJump = false;
-			m_CoyoteTimer = 0.0f;
-		}
-
 	}
+	if (Input::AHold && m_Velocity[0] >= -m_MaxMovementSpeed)
+	{
+		m_Velocity[0] += -m_Acceleration * deltaTime;
+	}
+	else if (m_Velocity[0] < 0)
+	{
+		float velocity = m_Velocity[0] + m_Friction * deltaTime;
+		if (velocity > 0)
+		{
+			m_Velocity[0] = 0;
+		}
+		else
+		{
+			m_Velocity[0] = velocity;
+		}
+	}
+
+	if (Input::SpacePress && m_CanJump)
+	{
+		m_Velocity[1] += m_JumpPower;
+		m_CanJump = false;
+		m_JumpTimer += deltaTime;
+	}
+	else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f)
+	{
+		m_Velocity[1] -= (m_JumpPower / 2) * deltaTime;
+		m_JumpTimer += deltaTime;
+	}
+	else
+	{
+		m_Velocity[1] += m_Gravity * deltaTime;
+		if (30 < m_Gravity)
+		{
+			m_Gravity = 30;
+		}
+		m_JumpTimer = 0;
+	}
+
+	m_FloorHit = false;
+	m_CeilHit = false;
+	m_WallHit = false;
+
+
+	unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+	if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
+	{
+		moveBehavior = b_BasicSolid;
+	}
+
+	switch (moveBehavior)
+	{
+	case(b_Air):
+		m_Acceleration = 5.0f;
+		m_Friction = 4;
+		m_MaxMovementSpeed = 12;
+		break;
+	case(b_Slippery):
+		m_Acceleration = 12.0f;
+		m_Friction = 8;
+		m_MaxMovementSpeed = 15;
+		break;
+	case(b_Asphalt):
+		m_Acceleration = 30.0f;
+		m_Friction = 70;
+		m_MaxMovementSpeed = 25;
+		break;
+	case(b_BasicSolid):
+		m_Acceleration = 25.0f;
+		m_Friction = 40;
+		m_MaxMovementSpeed = 10;
+		break;
+	}
+	if (m_FloorHit)
+	{
+		m_CanJump = true;
+		m_CoyoteTimer = 0.0f;
+	}
+	if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.125f)
+	{
+		m_CanJump = false;
+		m_CoyoteTimer = 0.0f;
+	}
+
 	for (int i = 0; i < droppedItems.size(); i++)
 	{
 		if (droppedItems.at(i).EveryFrame(deltaTime, blocks, m_Transform, HavePlayerSpace(droppedItems.at(i).m_Item)))

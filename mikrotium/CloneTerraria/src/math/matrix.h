@@ -5,3 +5,5 @@ void ChangeTransform(float x, float y, float* matrix4x4f);
 void CreateTransform(float x, float y, float* matrix4x4f);
 void ChangeScale(float x, float y, float* matrix4x4f);
 void CreateScale(float x, float y, float* matrix4x4f);
+void ChangeRotation(float a, float* matrix4x4f);
+void CreateRotation(float a, float* matrix4x4f);
