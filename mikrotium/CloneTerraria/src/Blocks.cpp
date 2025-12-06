@@ -178,6 +178,9 @@ void CreateBlock(int x
 	case i_Ice:
 		blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 15, i_Ice);
 		break;
+	case i_ForestPlank:
+		blocks.at(x).emplace_back(texturesIDs[t_ForestPlank], x, y, b_BasicSolid, 20, i_ForestPlank);
+		break;
 	}
 	
 }

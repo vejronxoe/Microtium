@@ -13,7 +13,11 @@ public:
 	int m_BlockY;
 	int m_BlockIndex;
 	bool m_GoToPlayer;
-	bool EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks,  float* playerTransfor, bool doesPlayerHaveSpace);
+	bool EveryFrame(float deltaTime
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<DroppedItem>& dropItems
+		,  float* playerTransfor
+		, bool doesPlayerHaveSpace);
 	void DrawItem(unsigned int* textureIDs, Shader& basicSh, unsigned int transformLocation, float* transform);
 };
 

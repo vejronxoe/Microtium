@@ -1062,7 +1062,7 @@ void Player::EveryFrame(float deltaTime
 
 	for (int i = 0; i < droppedItems.size(); i++)
 	{
-		if (droppedItems.at(i).EveryFrame(deltaTime, blocks, m_Transform, HavePlayerSpace(droppedItems.at(i).m_Item)))
+		if (droppedItems.at(i).EveryFrame(deltaTime, blocks, droppedItems, m_Transform, HavePlayerSpace(droppedItems.at(i).m_Item)))
 		{
 			unsigned short int itemSwapCheck;
 			if (m_UseSlot == 0)

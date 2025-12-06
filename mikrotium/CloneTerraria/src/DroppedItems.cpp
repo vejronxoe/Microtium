@@ -8,7 +8,12 @@
 #define FlyDistance 6.0f
 
 
-DroppedItem::DroppedItem(float x, float y, int looksOnWhatCoordinates, unsigned short int item, unsigned short int amount, bool canPlayerPickUpIt)
+DroppedItem::DroppedItem(float x
+	, float y
+	, int looksOnWhatCoordinates
+	, unsigned short int item
+	, unsigned short int amount
+	, bool canPlayerPickUpIt)
 	:m_Transform{ x,y }, m_Velocity{looksOnWhatCoordinates * FlyDistance, 4},m_Item(item),m_Amount(amount), m_Timer(0), m_BlockY(0), m_BlockIndex(-1),m_GoToPlayer(false)
 {
 	if (canPlayerPickUpIt)
@@ -16,7 +21,11 @@ DroppedItem::DroppedItem(float x, float y, int looksOnWhatCoordinates, unsigned 
 		m_Timer = 4;
 	}
 }
-bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& blocks, float* playerTransform, bool doesPlayerHaveSpace)
+bool DroppedItem::EveryFrame(float deltaTime
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<DroppedItem>& dropItems
+	, float* playerTransform
+	, bool doesPlayerHaveSpace)
 {
 	float itemVertices[4] = { m_Transform[0] - 0.45f ,m_Transform[1] + 0.45f,m_Transform[0] + 0.45f,m_Transform[1] - 0.45f };
 
@@ -29,11 +38,21 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	}
 	float distanceToPlayer = Pyt2D(playerTransform[0] - m_Transform[0], playerTransform[1] - m_Transform[1]);
 
+	for (int i = 0; i < dropItems.size(); i++)
+	{
+		float a = Pyt2D(m_Transform[0] - dropItems.at(i).m_Transform[0], dropItems.at(i).m_Transform[1] - m_Transform[1]);
+		if (2 > a && dropItems.at(i).m_Item == m_Item && &(dropItems.at(i)) != this)
+		{
+			m_Amount += dropItems.at(i).m_Amount;
+			dropItems.erase(dropItems.begin() + i);
+		}
+	}
+
 	if (m_Timer >= PickUpTime)
 	{
 		if (doesPlayerHaveSpace && distanceToPlayer < 5)
 		{
-			if (distanceToPlayer < 1.5f)
+			if (distanceToPlayer < 2)
 			{
 				return true;
 			}
@@ -49,9 +68,13 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	{
 		m_Velocity[0] += playerTransform[0] - m_Transform[0];
 		m_Velocity[1] += playerTransform[1] - m_Transform[1];
+		if (m_Velocity[0] < 1)
+		{
+			m_Velocity[0] = 0;
+		}
 		NormalizeVector(m_Velocity);
-		m_Velocity[0] *= 25 * (m_Timer - PickUpTime) / distanceToPlayer;
-		m_Velocity[1] *= 25 * (m_Timer - PickUpTime) / distanceToPlayer;
+		m_Velocity[0] *= 40 * (m_Timer - PickUpTime) / distanceToPlayer;
+		m_Velocity[1] *= 40 * (m_Timer - PickUpTime) / distanceToPlayer;
 	}
 	else if (m_Velocity[0] == 0 && m_Velocity[0] <= 0)
 	{
@@ -59,6 +82,7 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	}
 	else
 	{
+	
 		bool floorHit = false;
 		unsigned char behavior =  DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, itemVertices, blocks,hit, hit, floorHit, hit);
 		
@@ -91,7 +115,10 @@ bool DroppedItem::EveryFrame(float deltaTime, std::vector<std::vector<Block>>& b
 	AddVelocityToTransform(itemVertices, m_Transform, m_Velocity, hit, deltaTime);
 	return false;
 }
-void DroppedItem::DrawItem(unsigned int* textureIDs, Shader& basicSh, unsigned int transformLocation, float* transform)
+void DroppedItem::DrawItem(unsigned int* textureIDs
+	, Shader& basicSh
+	, unsigned int transformLocation
+	, float* transform)
 {
 	
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
