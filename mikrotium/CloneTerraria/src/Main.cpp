@@ -141,13 +141,19 @@ int main()
 
 
 	unsigned int treeTextures[3];
+	unsigned int CutTextures[4];
+	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
+	CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
+	CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
+	CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
 	unsigned int treeDD[3];
 	treeDD[p_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
-	treeDD[p_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 2.5f, -2.5f);
+	treeDD[p_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
 	treeDD[p_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 	treeTextures[p_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[p_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[p_Log] = CreateTextureRGBA("res/textures/woodLog.png");
+
 	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorTextures[6];
@@ -179,6 +185,7 @@ int main()
 	std::vector<std::vector<wall>> walls;
 	std::vector<DamagedBlock> damagedWalls;
 	std::vector<tree> trees;
+	std::vector<damagedWood> damagedTrees;
 	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
 
 
@@ -232,7 +239,7 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
 
-		player.EveryFrame(deltaTime, blocks, walls, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees,dropItems);
+		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees,dropItems);
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -256,10 +263,13 @@ int main()
 		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
 		treeSh.Bind();
 		treeSh.SetUniformMat4(treeCameraLocation, camera);
-		
 		for (int i = 0; i < trees.size(); i++)
 		{
 			trees.at(i).drawTree(treeSh, treeTransformLocation, treeRotationLocation, CameraCoordinates, transform, rotation);	
+		}
+		for (int i = 0; i < damagedTrees.size(); i++)
+		{
+			damagedTrees.at(i).DrawCut(treeSh, treeTransformLocation, treeRotationLocation, rotation, transform, CutTextures);
 		}
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(itemDD));

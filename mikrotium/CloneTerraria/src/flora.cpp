@@ -44,9 +44,40 @@ tree::tree(unsigned int texture
 	, float rotation)
 	: m_Transform{ x, y }
 	, m_PartOfTree(partOfTree)
-	, m_DropItem(itemDrop)
+	, m_ItemDrop(itemDrop)
 	, m_Hardness(hardness)
 	, m_texture(texture)
 	, m_DrawData(drawData)
 	, m_Rotation(rotation)
 {}
+damagedWood::damagedWood(int x
+	, int y
+	, int rotation
+	, char HP)
+:m_Transform{x,y}, m_Rotation(rotation), m_HP(HP)
+{}
+
+void damagedWood::DrawCut(Shader& sh
+	, unsigned int transformLocation
+	, unsigned int rotationLocation
+	, float* rotation
+	, float* transform
+	, unsigned int* texture)
+{
+
+	if (m_Rotation != 0)
+	{
+		ChangeRotation(m_Rotation, rotation);
+		sh.SetUniformMat4(rotationLocation, rotation);
+	}
+	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	sh.SetUniformMat4(transformLocation, transform);
+	int index = m_HP / 3;
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[index]));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	if (m_Rotation != 0)
+	{
+		ChangeRotation(0, rotation);
+		sh.SetUniformMat4(rotationLocation, rotation);
+	}
+}

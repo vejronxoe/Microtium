@@ -144,13 +144,13 @@ void Player::SwapItemStats()
 			m_Placeable = false;
 		break;
 		case(i_CooperSword):
-			m_CooldownToUse = 0.5;
+			m_CooldownToUse = 0.4;
 			m_Damage = 2;
 			m_Placeable = false;
 		break;
 		
 		case(i_CooperAxe):
-			m_CooldownToUse = 0.5;
+			m_CooldownToUse = 0.4;
 			m_AxeStreanght = 35;
 			m_Damage = 1;
 			m_Placeable = false;
@@ -158,14 +158,14 @@ void Player::SwapItemStats()
 		
 
 		case(i_CooperPickaxe):
-			m_CooldownToUse = 0.5;
+			m_CooldownToUse = 0.4;
 			m_PickaxeStreanght = 35;
 			m_Damage = 1;
 			m_Placeable = false;
 		break;
 		
 		case(i_CooperHammer):
-			m_CooldownToUse = 0.5;
+			m_CooldownToUse = 0.4;
 			m_HammerStreanght = 35;
 			m_Damage = 1;
 			m_Placeable = false;
@@ -286,6 +286,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
 	, float* CameraCoordinates
@@ -707,7 +708,7 @@ void Player::EveryFrame(float deltaTime
 					int damageIndex;
 					for (damageIndex = 0; damageIndex < damageblocks.size(); damageIndex++)
 					{
-						if (damageblocks.at(damageIndex).m_Transform[0] == x && damageblocks.at(damageIndex).m_Transform[1] == blocks.at(x).at(blockIndex).m_Transform[1])
+						if (damageblocks.at(damageIndex).m_Transform[0] == x && damageblocks.at(damageIndex).m_Transform[1] == y)
 						{
 							damaged = true;
 							break;
@@ -815,7 +816,7 @@ void Player::EveryFrame(float deltaTime
 					int damageIndex;
 					for (damageIndex = 0; damageIndex < damagedWalls.size(); damageIndex++)
 					{
-						if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == walls.at(x).at(wallIndex).m_Transform[1])
+						if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == y)
 						{
 							damaged = true;
 							break;
@@ -849,13 +850,13 @@ void Player::EveryFrame(float deltaTime
 					}
 
 				}
-				else if (m_CursorOnMinableWall)
+				else if (m_CursorOnMinableWood)
 				{
 					bool damaged = false;
 					int damageIndex;
-					for (damageIndex = 0; damageIndex < damagedWalls.size(); damageIndex++)
+					for (damageIndex = 0; damageIndex < damagedWoods.size(); damageIndex++)
 					{
-						if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == walls.at(x).at(wallIndex).m_Transform[1])
+						if (damagedWoods.at(damageIndex).m_Transform[0] == x && damagedWoods.at(damageIndex).m_Transform[1] == y)
 						{
 							damaged = true;
 							break;
@@ -863,32 +864,34 @@ void Player::EveryFrame(float deltaTime
 					}
 					if (damaged)
 					{
-						damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness);
-						if (0 >= damagedWalls.at(damageIndex).m_HP)
+						damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness);
+						if (0 >= damagedWoods.at(damageIndex).m_HP)
 						{
-							if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+							if (trees.at(woodIndex).m_ItemDrop != i_Nothing)
 							{
-								droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+								droppedItems.emplace_back(trees.at(woodIndex).m_Transform[0], trees.at(woodIndex).m_Transform[1], 0, trees.at(woodIndex).m_ItemDrop, 1, true);
 							}
-							damagedWalls.erase(damagedWalls.begin() + damageIndex);
-							walls.at(x).erase(walls.at(x).begin() + wallIndex);
+							damagedWoods.erase(damagedWoods.begin() + damageIndex);
+							trees.erase(trees.begin() + woodIndex);
+
 						}
 					}
-					else if (0 >= ((float)walls.at(x).at(wallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
+					else if (0 >= ((float)trees.at(woodIndex).m_Hardness) - ((float)m_AxeStreanght / 12.0f))
 					{
-						if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+						if (trees.at(woodIndex).m_ItemDrop != i_Nothing)
 						{
-							droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+							droppedItems.emplace_back(trees.at(woodIndex).m_Transform[0], trees.at(woodIndex).m_Transform[1], 0, trees.at(woodIndex).m_ItemDrop, 1, true);
 						}
-						walls.at(x).erase(walls.at(x).begin() + wallIndex);
+						trees.erase(trees.begin() + woodIndex);
+
 					}
 					else
 					{
 
-						damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Transform[1], ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
+						damagedWoods.emplace_back(x, trees.at(woodIndex).m_Transform[1], trees.at(woodIndex).m_Rotation, ceilf(12.0f - ((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness)));
 					}
 
-					}
+				}
 				m_UseItemTimer = 0;
 
 			}
