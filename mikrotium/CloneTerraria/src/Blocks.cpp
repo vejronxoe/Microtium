@@ -27,11 +27,6 @@ Block::Block(unsigned int tex
 	, unsigned short int itemDrop)
 	: m_te(tex), m_Transform{ x,y }, m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
 {}
-void SetupBlockDrawData(unsigned int& blocksDrawData
-	, unsigned int eob)
-{
-	blocksDrawData = CreateDrawData(eob,0.5f,-0.5,-0.5f, 0.5f,1,0,0,1);
-}
 
 void Block::DrawBlock(Shader& basicShader
 	, unsigned int location
@@ -66,6 +61,8 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Ice] = CreateTextureRGBA("res/textures/ice.png");
 	IDs[t_Asphalt] = CreateTextureRGBA("res/textures/Asphalt.png");
 	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
+	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
+	IDs[t_ForestPlank] = CreateTextureRGBA("res/textures/forestPlank.png");
 }
 
 

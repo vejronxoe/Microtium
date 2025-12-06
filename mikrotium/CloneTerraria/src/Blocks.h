@@ -30,7 +30,7 @@ enum TexturesOfBlocks
 	t_Ice,
 	t_Asphalt,
 	t_Platform,
-
+	t_ForestPlank
 };
 enum BlockBehavior
 {
@@ -91,9 +91,6 @@ void LoadMap(const char* filepath
 	, unsigned int* texturesIDs);
 
 void CreateAllBlockTextures(unsigned int* IDs);
-
-void SetupBlockDrawData(unsigned int& blocksDrawData
-	, unsigned int eob);
 
 void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, std::vector<DamagedBlock>& damagedBlocks

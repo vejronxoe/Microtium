@@ -154,14 +154,14 @@ int main()
 	treeTextures[p_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[p_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 
-	unsigned int blockTextures[19];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int blockTextures[20];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorTextures[6];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
 	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
-	unsigned int blocksDrawData;
-	SetupBlockDrawData(blocksDrawData, eob);
+	unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
+
 	unsigned int damageTexture[2] = {CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png")};
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
@@ -189,26 +189,26 @@ int main()
 	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
 
 
-	trees.emplace_back(treeTextures[p_Crown], treeDD[p_Crown], i_Nothing, 35, p_Crown, 40, 5, 0.0f);
+	trees.emplace_back(treeTextures[p_Crown], treeDD[p_Crown], i_ForestPlank, 35, p_Crown, 40, 5, 0.0f);
 	trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], i_Nothing, 35, p_SmallCrown, 38, 2, 90.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 39, 2, 90.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 39, 2, 90.0f);
 	trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], i_Nothing, 35, p_SmallCrown, 42, -3, -90.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 41, -3, -90.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 4, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 3, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 2, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 1, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, 0, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -1, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -2, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -3, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -4, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -5, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -6, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -7, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -8, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -9, 0.0f);
-	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_Nothing, 35, p_Log, 40, -10, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 41, -3, -90.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, 4, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, 3, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, 2, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, 1, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, 0, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -1, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -2, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -3, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -4, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -5, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -6, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -7, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -8, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -9, 0.0f);
+	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 40, -10, 0.0f);
 
 
 
