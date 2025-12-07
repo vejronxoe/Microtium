@@ -606,6 +606,14 @@ void Player::EveryFrame(float deltaTime
 
 				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 				{
+					for (int i = 0; i < trees.size();i++)
+					{
+						if (trees.at(i).m_Transform[1] == y && trees.at(i).m_Transform[0] == x)
+						{
+							inBlock = true;
+							break;
+						}
+					}
 					for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 					{
 						if (y == blocks.at(x).at(blockIndex).m_Transform[1])
@@ -926,11 +934,58 @@ void Player::EveryFrame(float deltaTime
 					}
 					else if (0 >= ((float)trees.at(woodIndex).m_Hardness) - ((float)m_AxeStreanght / 12.0f))
 					{
-						if (trees.at(woodIndex).m_ItemDrop != i_Nothing)
+						while (woodIndex != -1)
 						{
-							droppedItems.emplace_back(trees.at(woodIndex).m_Transform[0], trees.at(woodIndex).m_Transform[1], 0, trees.at(woodIndex).m_ItemDrop, 1, true);
+							int specialIndex = -1;
+							int destroy[5] = { -1, -1, -1, -1, -1 };
+							for (int i = 0; i < trees.size(); i++)
+							{
+								if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
+								{
+									specialIndex = i;
+								}
+								else if (trees.at(woodIndex).m_Transform[1] == trees.at(i).m_Transform[1] && trees.at(i).m_Transform[0] <= trees.at(woodIndex).m_Transform[0] + 2 && trees.at(i).m_Transform[0] >= trees.at(woodIndex).m_Transform[0] - 2 && trees.at(i).m_Transform[0] != trees.at(woodIndex).m_Transform[0])
+								{
+									int j;
+									for (j = 0; destroy[j] != -1; j++) {}
+									destroy[j] = i;
+								}
+							}
+							{
+								int j;
+								for (j = 0; destroy[j] != -1; j++) {}
+								destroy[j] = woodIndex;
+								for (int i = 0; i < 5; i++)
+								{
+									for (int j = 1; j < 5; j++)
+									{
+										if (destroy[j - 1] < destroy[j])
+										{
+											int holder = destroy[j - 1];
+											destroy[j - 1] = destroy[j];
+											destroy[j] = holder;
+										}
+									}
+								}
+							}
+							for (int i = 0; i < 5; i++)
+							{
+								if (destroy[i] < specialIndex && destroy[i] != -1)
+								{
+									specialIndex--;
+								}
+							}
+							woodIndex = specialIndex;
+							for (int j = 0; destroy[j] != -1; j++)
+							{
+								if (trees.at(destroy[j]).m_ItemDrop != i_Nothing)
+								{
+									droppedItems.emplace_back(trees.at(destroy[j]).m_Transform[0], trees.at(destroy[j]).m_Transform[1], 0, trees.at(destroy[j]).m_ItemDrop, 1, true);
+
+								}
+								trees.erase(trees.begin() + destroy[j]);
+							}
 						}
-						trees.erase(trees.begin() + woodIndex);
 
 					}
 					else
