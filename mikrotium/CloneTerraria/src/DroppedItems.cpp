@@ -4,8 +4,8 @@
 #include"Collision.h"
 
 
-#define PickUpTime 4
-#define FlyDistance 6.0f
+#define PICKUPTIME 4
+#define FLYDISTANCE 6.0f
 
 
 DroppedItem::DroppedItem(float x
@@ -14,7 +14,7 @@ DroppedItem::DroppedItem(float x
 	, unsigned short int item
 	, unsigned short int amount
 	, bool canPlayerPickUpIt)
-	:m_Transform{ x,y }, m_Velocity{looksOnWhatCoordinates * FlyDistance, 4},m_Item(item),m_Amount(amount), m_Timer(0), m_BlockY(0), m_BlockIndex(-1),m_GoToPlayer(false)
+	:m_Transform{ x,y }, m_Velocity{looksOnWhatCoordinates * FLYDISTANCE, 4},m_Item(item),m_Amount(amount), m_Timer(0), m_BlockY(0), m_BlockIndex(-1),m_GoToPlayer(false)
 {
 	if (canPlayerPickUpIt)
 	{
@@ -48,7 +48,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 		}
 	}
 
-	if (m_Timer >= PickUpTime)
+	if (m_Timer >= PICKUPTIME)
 	{
 		if (doesPlayerHaveSpace && distanceToPlayer < 5)
 		{
@@ -61,20 +61,19 @@ bool DroppedItem::EveryFrame(float deltaTime
 		else
 		{
 			m_GoToPlayer = false;
-			m_Timer = PickUpTime;
+			m_Timer = PICKUPTIME;
 		}
 	}
 	if (m_GoToPlayer)
 	{
 		m_Velocity[0] += playerTransform[0] - m_Transform[0];
 		m_Velocity[1] += playerTransform[1] - m_Transform[1];
-		if (m_Velocity[0] < 1)
+		if (Pyt2D(m_Velocity) > 1)
 		{
-			m_Velocity[0] = 0;
+			NormalizeVector(m_Velocity);
 		}
-		NormalizeVector(m_Velocity);
-		m_Velocity[0] *= 40 * (m_Timer - PickUpTime) / distanceToPlayer;
-		m_Velocity[1] *= 40 * (m_Timer - PickUpTime) / distanceToPlayer;
+		m_Velocity[0] *= 40 * (m_Timer - PICKUPTIME);
+		m_Velocity[1] *= 40 * (m_Timer - PICKUPTIME);
 	}
 	else if (m_Velocity[0] == 0 && m_Velocity[0] <= 0)
 	{
@@ -91,19 +90,19 @@ bool DroppedItem::EveryFrame(float deltaTime
 		switch (behavior)
 		{
 		case(b_Slippery):
-			m_Velocity[0] -= deltaTime * FlyDistance * 1.5f * goingWay;
+			m_Velocity[0] -= deltaTime * FLYDISTANCE * 1.5f * goingWay;
 			break;
 
 		case(b_Asphalt):
-			m_Velocity[0] -= deltaTime * FlyDistance * 3 * goingWay;
+			m_Velocity[0] -= deltaTime * FLYDISTANCE * 3 * goingWay;
 			break;
 
 		case(b_Air):
-			m_Velocity[0] -= deltaTime * FlyDistance * goingWay;
+			m_Velocity[0] -= deltaTime * FLYDISTANCE * goingWay;
 			break;
 
 		default:
-			m_Velocity[0] -= deltaTime * FlyDistance * 2 * goingWay;
+			m_Velocity[0] -= deltaTime * FLYDISTANCE * 2 * goingWay;
 			break;
 		}
 		if (0 >= m_Velocity[0] * goingWay)

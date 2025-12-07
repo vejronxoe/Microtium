@@ -1,11 +1,11 @@
 ﻿  DroppedItems.cpp
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(41,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(89,49): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(133,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(134,34): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(134,34): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(134,60): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(134,60): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(141,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(145,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(88,49): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(132,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(133,34): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(133,34): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(133,60): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(133,60): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(140,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\DroppedItems.cpp(144,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\bin\Win32\Debug\mikrotium.exe
