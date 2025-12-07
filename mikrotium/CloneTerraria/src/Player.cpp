@@ -20,6 +20,7 @@ void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform];
 	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
+	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 }									   
 bool findElementWithY(int y
 	, std::vector<Block>& blocks)
@@ -80,11 +81,13 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[3] = i_CooperAxe;
 	m_PlayerSlots[4] = i_Dirt;
 	m_PlayerSlots[5] = i_CooperHammer;
+	m_PlayerSlots[6] = i_CooperHammer;
 	m_AmountInSlots[1] = 1;
 	m_AmountInSlots[2] = 1;
 	m_AmountInSlots[3] = 1;
 	m_AmountInSlots[4] = 9999;
 	m_AmountInSlots[5] = 1;
+	m_AmountInSlots[6] = 1;
 	m_UseItemTimer = 0;
 	m_CooldownToUse = 0;
 	m_PickaxeStreanght = 0;
@@ -130,47 +133,46 @@ Player::Player(unsigned int eob
 
 void Player::SwapItemStats()
 {
-	m_CooldownToUse = 0.1f;
+	m_CooldownToUse = 0.4;
 	m_PickaxeStreanght = 0;
 	m_AxeStreanght = 0;
 	m_HammerStreanght = 0;
 	m_Range = 4;
 	m_Damage = 0;
-	m_Placeable = true;
+	m_Placeable = false;
 	switch (m_PlayerSlots[0])
 	{
 		case(i_Nothing):
 			m_CooldownToUse = 0;
 			m_Range = 0;
-			m_Placeable = false;
 		break;
 		case(i_CooperSword):
-			m_CooldownToUse = 0.4;
 			m_Damage = 2;
-			m_Placeable = false;
 		break;
 		
 		case(i_CooperAxe):
-			m_CooldownToUse = 0.4;
 			m_AxeStreanght = 35;
 			m_Damage = 1;
-			m_Placeable = false;
 		break;
 		
 
 		case(i_CooperPickaxe):
-			m_CooldownToUse = 0.4;
 			m_PickaxeStreanght = 35;
 			m_Damage = 1;
-			m_Placeable = false;
 		break;
 		
 		case(i_CooperHammer):
-			m_CooldownToUse = 0.4;
 			m_HammerStreanght = 35;
 			m_Damage = 1;
-			m_Placeable = false;
 		break;
+		case(i_Sapling):
+			m_HammerStreanght = 35;
+			m_Damage = 1;
+			break;
+		default:
+			m_CooldownToUse = 0.1f;
+			m_Placeable = true;
+			break;
 	}
 
 
@@ -365,7 +367,7 @@ void Player::EveryFrame(float deltaTime
 				else
 				{
 					m_UseSlot = m_AimingAtSlot;
-					if (m_PlayerSlots[m_UseSlot] == m_PlayerSlots[0] && m_AmountInSlots[0] != 9999 && m_AmountInSlots[m_UseSlot] != 9999)
+					if (m_PlayerSlots[m_UseSlot] == m_PlayerSlots[0] && IsItStackble(m_PlayerSlots[0]) && m_AmountInSlots[0] != 9999 && m_AmountInSlots[m_UseSlot] != 9999)
 					{
 						if (m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] <= 9999)
 						{
@@ -702,6 +704,12 @@ void Player::EveryFrame(float deltaTime
 						break;
 					}
 				}
+			}
+			else if (m_LargePlaceable)
+			{
+
+
+
 			}
 		}
 

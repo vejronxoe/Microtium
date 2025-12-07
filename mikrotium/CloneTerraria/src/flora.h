@@ -33,6 +33,18 @@ public:
 };
 class seedling
 {
+public:
+	int m_Transform[2];
+	float m_Timer;
+	char m_Type;
+	unsigned int m_Texture;
+	seedling(char type
+		, int x
+		, int y
+		, unsigned int* structuresTextures);
+	void drawSeedling(Shader sh
+		, unsigned int transformLocation
+		, float* Transform);
 
 };
 class fragileFlowers

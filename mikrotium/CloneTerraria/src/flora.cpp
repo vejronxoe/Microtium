@@ -81,3 +81,24 @@ void damagedWood::DrawCut(Shader& sh
 		sh.SetUniformMat4(rotationLocation, rotation);
 	}
 }
+
+
+seedling::seedling(char type
+	, int x
+	, int y
+	, unsigned int* structuresTextures)
+	:m_Transform{x, y}
+	,m_Timer(0)
+	,m_Type(type)
+	,m_Texture(structuresTextures[type])
+{}
+void seedling::drawSeedling(Shader sh
+	, unsigned int transformLocation
+	, float* Transform)
+{
+	ChangeTransform(m_Transform[0], m_Transform[1], Transform);
+	sh.SetUniformMat4(transformLocation, Transform);
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+}

@@ -89,7 +89,7 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[12];
+	unsigned int m_AllItemTextures[13];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[52];
 	unsigned short int m_AmountInSlots[52];
 
@@ -106,4 +106,5 @@ public:
 	unsigned char m_Range;
 	short int m_Damage;
 	bool m_Placeable;
+	bool m_LargePlaceable;
 };
