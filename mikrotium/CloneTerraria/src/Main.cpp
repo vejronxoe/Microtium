@@ -246,7 +246,7 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
 
-		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees,dropItems);
+		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees, seedlings,dropItems);
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());

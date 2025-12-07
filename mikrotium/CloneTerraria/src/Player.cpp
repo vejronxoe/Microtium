@@ -81,7 +81,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[3] = i_CooperAxe;
 	m_PlayerSlots[4] = i_Dirt;
 	m_PlayerSlots[5] = i_CooperHammer;
-	m_PlayerSlots[6] = i_CooperHammer;
+	m_PlayerSlots[6] = i_Sapling;
 	m_AmountInSlots[1] = 1;
 	m_AmountInSlots[2] = 1;
 	m_AmountInSlots[3] = 1;
@@ -97,7 +97,7 @@ Player::Player(unsigned int eob
 	m_Damage = 0;
 	m_Placeable = 0;
 	m_AimingAtSlot = 0;
-
+	m_LargePlaceable = false;
 
 	m_Tex = CreateTextureRGBA("res/textures/player0.png");
 	CreateAllItemsTexture(texturesIDs);
@@ -166,8 +166,8 @@ void Player::SwapItemStats()
 			m_Damage = 1;
 		break;
 		case(i_Sapling):
-			m_HammerStreanght = 35;
-			m_Damage = 1;
+			m_CooldownToUse = 0.1f;
+			m_LargePlaceable = true;
 			break;
 		default:
 			m_CooldownToUse = 0.1f;
@@ -295,6 +295,7 @@ void Player::EveryFrame(float deltaTime
 	, float* CameraCoordinates
 	, unsigned int* texturesIDs
 	, std::vector<tree>& trees
+	, std::vector<seedling>& seedlings
 	, std::vector<DroppedItem>& droppedItems)
 {
 
@@ -570,6 +571,7 @@ void Player::EveryFrame(float deltaTime
 			m_AmountInSlots[0] = 0;
 			SwapItemStats();
 		}
+		m_CursorOnPlaceableForStructure = false;
 		m_CursorOnPlaceableSpot = false;
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
@@ -707,9 +709,41 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_LargePlaceable)
 			{
-
-
-
+				float vertices[4];
+				bool floors = true;
+				switch (m_PlayerSlots[0])
+				{
+				case i_Sapling:
+					vertices[0] = x;
+					vertices[1] = y + 1;
+					vertices[2] = x;
+					vertices[3] = y;
+					break;
+				}
+				for (int i = vertices[0]; i <= vertices[2]; i++)
+				{
+					floors = false;
+					for (int j = 0; j < blocks.at(i).size(); j++)
+					{
+						if ( blocks.at(i).at(j).m_Transform[1] <= vertices[1] && blocks.at(i).at(j).m_Transform[1] >= vertices[3])
+						{
+							inBlock = true;
+							break;
+						}
+						if (blocks.at(i).at(j).m_Transform[1] == vertices[3] - 1)
+						{
+							floors = true;
+						}
+					}
+					if (inBlock || !floors)
+					{
+						break;
+					}
+				}
+				if (!inBlock && floors)
+				{
+					m_CursorOnPlaceableForStructure = true;
+				}
 			}
 		}
 

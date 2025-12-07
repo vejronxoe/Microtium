@@ -50,6 +50,7 @@ public:
 		, float* CameraCoordinates
 		, unsigned int* texturesIDs
 		, std::vector<tree>& trees
+		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems);
 
 	void DrawPlayer(Shader& basicSh
@@ -98,6 +99,7 @@ public:
 	bool m_CursorOnMinableBlock;
 	bool m_CursorOnMinableWall;
 	bool m_CursorOnMinableWood;
+	bool m_CursorOnPlaceableForStructure;
 	bool m_CursorOnPlaceableSpot;
 	float m_CooldownToUse;
 	unsigned char m_PickaxeStreanght;
