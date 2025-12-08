@@ -20,23 +20,25 @@ unsigned int CreateCursorDrawData
 	return drawData;
 }
 void DrawCursor(unsigned int* CursorTextures
-, unsigned int cursorDrawData
-, unsigned int blockDrawData
-, Shader& basicSh
-, Shader& fontSh
-, unsigned int shadowLocation
-, unsigned int transformLocation
-, float* transform
-, float* camera
-, float* scale
-, unsigned int cameraLocation
-, unsigned int fontDrawData
-, unsigned int numberLocation
-, unsigned int fontTransformLocation
-, unsigned int fontscaleLocation
-, unsigned int numberTexture
-, Player& player
-, float* cameraCoordinates)
+	, unsigned int* structurteTextures
+	, unsigned int* structurteDD
+	, unsigned int cursorDrawData
+	, unsigned int blockDrawData
+	, Shader& basicSh
+	, Shader& fontSh
+	, unsigned int shadowLocation
+	, unsigned int transformLocation
+	, float* transform
+	, float* camera
+	, float* scale
+	, unsigned int cameraLocation
+	, unsigned int fontDrawData
+	, unsigned int numberLocation
+	, unsigned int fontTransformLocation
+	, unsigned int fontscaleLocation
+	, unsigned int numberTexture
+	, Player& player
+	, float* cameraCoordinates)
 {
 	basicSh.Bind();
 	int x = std::roundf(cameraCoordinates[0] + Input::XMousePos);
@@ -49,12 +51,32 @@ void DrawCursor(unsigned int* CursorTextures
 		ErrorGL(glBindVertexArray(blockDrawData));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
+	else if (player.m_CursorOnPlaceableForStructure)
+	{
+		ChangeTransform(x, y, transform);
+		basicSh.SetUniformMat4(transformLocation, transform);
+		basicSh.SetUniform1i(shadowLocation, -1);
+
+		switch (player.m_PlayerSlots[0])
+		{
+		case i_Sapling:
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Sapling]));
+			ErrorGL(glBindVertexArray(structurteDD[s_Sapling]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+			break;
+		}
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		basicSh.SetUniform1i(shadowLocation, 0);
+
+	}
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
 	basicSh.SetUniformMat4(transformLocation, transform);
 	ChangeCamera(0, Window::width, 0, Window::height, camera);
 	basicSh.SetUniformMat4(cameraLocation, camera);
 
 	bool canClickOn = player.m_AimingAtSlot;
+
 	if (player.m_UseSlot != 0 && player.m_PlayerSlots[0] != i_Nothing)
 	{
 		if (player.m_PlayerSlots[0] >= i_WallDirt && player.m_PlayerSlots[0] <= i_WallIce)

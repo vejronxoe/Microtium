@@ -7,6 +7,36 @@
 #include"glfw/window.h"
 #include"math/matrix.h"
 #include"NumberRender.h"
+void getStructureVerticesByInventoryID(int x
+	,int y 
+	,unsigned int ID
+	, float* vertices)
+{
+	switch (ID)
+	{
+	case i_Sapling:
+		vertices[0] = x;
+		vertices[1] = y + 1;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	}
+}
+void getStructureVerticesByStructureID(int x
+	,int y
+	, unsigned int ID
+	, float* vertices)
+{
+	switch (ID)
+	{
+	case s_Sapling:
+		vertices[0] = x;
+		vertices[1] = y + 1;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	}
+}
 void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 {
 	m_AllItemTextures[i_CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
@@ -294,6 +324,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DamagedBlock>& damagedWalls
 	, float* CameraCoordinates
 	, unsigned int* texturesIDs
+	, unsigned int* structuresTextures
 	, std::vector<tree>& trees
 	, std::vector<seedling>& seedlings
 	, std::vector<DroppedItem>& droppedItems)
@@ -610,7 +641,7 @@ void Player::EveryFrame(float deltaTime
 
 				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 				{
-					for (int i = 0; i < trees.size();i++)
+					for (int i = 0; i < trees.size(); i++)
 					{
 						if (trees.at(i).m_Transform[1] == y && trees.at(i).m_Transform[0] == x)
 						{
@@ -641,6 +672,21 @@ void Player::EveryFrame(float deltaTime
 						else if (y + 1 == walls.at(x).at(i).m_Transform[1] || y - 1 == walls.at(x).at(i).m_Transform[1])
 						{
 							m_CursorOnPlaceableSpot = true;
+						}
+					}
+					if (!inBlock)
+					{
+						for (int i = 0; i < seedlings.size(); i++)
+						{
+
+							float verticesStr[4];
+							getStructureVerticesByStructureID(seedlings.at(i).m_Transform[0], seedlings.at(i).m_Transform[1], seedlings.at(i).m_Type, verticesStr);
+							if (y <= verticesStr[1] && y >= verticesStr[3] && x >= verticesStr[0] && x <= verticesStr[2])
+							{
+								inBlock = true;
+								break;
+							}
+
 						}
 					}
 					if (!m_CursorOnPlaceableSpot)
@@ -711,15 +757,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				float vertices[4];
 				bool floors = true;
-				switch (m_PlayerSlots[0])
-				{
-				case i_Sapling:
-					vertices[0] = x;
-					vertices[1] = y + 1;
-					vertices[2] = x;
-					vertices[3] = y;
-					break;
-				}
+				getStructureVerticesByInventoryID(x, y, m_PlayerSlots[0], vertices);
 				for (int i = vertices[0]; i <= vertices[2]; i++)
 				{
 					floors = false;
@@ -735,9 +773,37 @@ void Player::EveryFrame(float deltaTime
 							floors = true;
 						}
 					}
-					if (inBlock || !floors)
+					if (!floors)
 					{
 						break;
+					}
+				}
+				if (!inBlock && floors)
+				{
+					for (int i = 0; i < trees.size(); i++)
+					{
+						if (inBlock)
+						{
+							break;
+						}
+						if (trees.at(i).m_Transform[1] <= vertices[1] && trees.at(i).m_Transform[1] >= vertices[3] && trees.at(i).m_Transform[0] >= vertices[0] && trees.at(i).m_Transform[1] <= vertices[2])
+						{
+							inBlock = true;
+							break;
+						}
+					}
+				}	
+				if (!inBlock && floors)
+				{
+					for (int i = 0; i < seedlings.size(); i++)
+					{
+
+						if (seedlings.at(i).m_Transform[1] <= vertices[1] && seedlings.at(i).m_Transform[1] >= vertices[3] && seedlings.at(i).m_Transform[0] >= vertices[0] && seedlings.at(i).m_Transform[0] <= vertices[2])
+						{
+							inBlock = true;
+							break;
+						}
+
 					}
 				}
 				if (!inBlock && floors)
@@ -1036,6 +1102,15 @@ void Player::EveryFrame(float deltaTime
 						damagedWoods.emplace_back(x, trees.at(woodIndex).m_Transform[1], trees.at(woodIndex).m_Rotation, ceilf(12.0f - ((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness)));
 					}
 
+				}
+				else if (m_CursorOnPlaceableForStructure)
+				{
+					switch (m_PlayerSlots[0])
+					{
+						case i_Sapling:
+							seedlings.emplace_back(s_Sapling, x, y, structuresTextures);
+						break;
+					}
 				}
 				m_UseItemTimer = 0;
 

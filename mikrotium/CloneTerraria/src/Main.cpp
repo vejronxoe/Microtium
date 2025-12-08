@@ -246,7 +246,7 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
 
-		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, trees, seedlings,dropItems);
+		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, structuresTextures, trees, seedlings,dropItems);
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -271,13 +271,13 @@ int main()
 
 		ErrorGL(glBindVertexArray(blocksDrawData));
 		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, camera);
+		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
+		basicSh.Bind();
 		ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
 		for (int i = 0; i < seedlings.size(); i++)
 		{
 			seedlings.at(i).drawSeedling(basicSh, transformLocation, transform);
 		}
-		ErrorGL(glBindVertexArray(blocksDrawData));
-		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
 		treeSh.Bind();
 		treeSh.SetUniformMat4(treeCameraLocation, camera);
 		
@@ -307,7 +307,7 @@ int main()
 		basicSh.Bind();
 		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
-		DrawCursor(cursorTextures, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
+		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
 		
 
 		Input::EndOfLoop();

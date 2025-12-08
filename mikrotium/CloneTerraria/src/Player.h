@@ -49,6 +49,7 @@ public:
 		, std::vector<DamagedBlock>& damagedWalls
 		, float* CameraCoordinates
 		, unsigned int* texturesIDs
+		, unsigned int* structuresTextures
 		, std::vector<tree>& trees
 		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems);
