@@ -38,15 +38,15 @@ enum BlockBehavior
 	b_Air,
 	b_Slippery,
 	b_Asphalt,
-	b_Platform
+	b_Platform,
+	b_Indestructible
 };
 
 
 class Block
 {
-private:
-	unsigned int m_te;
 public:
+	unsigned int m_te;
 	int m_Transform[2];
 	unsigned char m_BlockBehavior;
 	unsigned char m_Hardness;

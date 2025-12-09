@@ -7,6 +7,28 @@
 #include"glfw/window.h"
 #include"math/matrix.h"
 #include"NumberRender.h"
+unsigned int getBehaviorByTexture(unsigned int texture)
+{
+	switch (texture)
+	{
+	
+		case t_Ice:
+			return b_Slippery;
+			break;
+
+		case t_Asphalt:
+			return b_Asphalt;
+			break;
+
+		case t_Platform:
+			return b_Platform;
+			break;
+
+		default:
+			return b_BasicSolid;
+			break;
+	}
+}
 void getStructureVerticesByInventoryID(int x
 	,int y 
 	,unsigned int ID
@@ -717,7 +739,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (y == blocks.at(x).at(blockIndex).m_Transform[1])
 					{
-						if (m_PickaxeStreanght >= blocks.at(x).at(blockIndex).m_Hardness)
+						if (m_PickaxeStreanght >= blocks.at(x).at(blockIndex).m_Hardness && b_Indestructible != blocks.at(x).at(blockIndex).m_BlockBehavior)
 						{
 							m_CursorOnMinableBlock = true;
 						}
@@ -984,6 +1006,13 @@ void Player::EveryFrame(float deltaTime
 						damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness);
 						if (0 >= damagedWoods.at(damageIndex).m_HP)
 						{
+							for (int i = 0; i < blocks.at(x).size(); i++)
+							{
+								if (blocks.at(x).at(i).m_Transform[0] == x && blocks.at(x).at(i).m_Transform[1] == y - 1 )
+								{
+									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
+								}
+							}
 							while (woodIndex != -1)
 							{
 								int specialIndex = -1;

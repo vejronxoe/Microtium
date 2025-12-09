@@ -214,7 +214,13 @@ int main()
 	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 80, -8, 0.0f);
 	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 80, -9, 0.0f);
 	trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, 80, -10, 0.0f);
-
+	for (int i = 0; i < blocks.at(80).size(); i++)
+	{
+		if (blocks.at(80).at(i).m_Transform[0] == 80 && blocks.at(80).at(i).m_Transform[1] == -11)
+		{
+			blocks.at(80).at(i).m_BlockBehavior = b_Indestructible;
+		}
+	}
 
 	seedlings.emplace_back(s_Sapling, 90, -10, structuresTextures);
 

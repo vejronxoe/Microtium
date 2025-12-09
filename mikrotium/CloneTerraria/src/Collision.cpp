@@ -298,6 +298,10 @@ unsigned char DynamicSquereHitbox(float deltaTime, float* transform, float* velo
 		vertices[10] = objectVertices4f[0]; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
 		memoryDefender(vertices, 12);
 		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 2, 1, 0, 3, transform, velocity, closestVertices, floorHit, leftWallHit);
+		if(b_Indestructible == behavior)
+		{ 
+			return b_BasicSolid;
+		}
 		return behavior;
 	}
 	else if (velocity[0] < 0 && velocity[1] > 0)
@@ -321,6 +325,10 @@ unsigned char DynamicSquereHitbox(float deltaTime, float* transform, float* velo
 		vertices[10] = objectVertices4f[2] + velocity[0] * deltaTime; vertices[11] = objectVertices4f[3] + velocity[1] * deltaTime;
 		memoryDefender(vertices, 12);
 		unsigned int behavior = TwoDirectionCheck(vertices, objectVertices4f, hitbox, 0, 1, 2, 3, transform, velocity, closestVertices, floorHit, rightWallHit);
+		if (b_Indestructible == behavior)
+		{
+			return b_BasicSolid;
+		}
 		return behavior;
 
 	}
