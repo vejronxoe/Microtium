@@ -22,12 +22,13 @@
 #include"DroppedItems.h"
 #include"walls.h"
 #include"flora.h"
-
+#include<ctime>
 
 
 
 int main()
 {
+	srand(time(0));
 	if (!glfwInit())
 	{
 		std::cout << "GLFW DONT WORK" << std::endl;

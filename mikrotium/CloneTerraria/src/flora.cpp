@@ -1,9 +1,9 @@
 #include"flora.h"
 
-#include"Opengl/ErrorSystem.h"
-#include"math/matrix.h"
-#include"glfw/Window.h"
-
+#include "Opengl/ErrorSystem.h"
+#include "math/matrix.h"
+#include "glfw/Window.h"
+#define TIMETOGROW 10
 
 void tree::drawTree(Shader& sh
 	, unsigned int transformLocation
@@ -92,6 +92,53 @@ seedling::seedling(char type
 	,m_Type(type)
 	,m_Texture(structuresTextures[type])
 {}
+void seedling::everyFrame(float deltaTime
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<seedling>& seedling
+	, std::vector<tree>& trees)
+{
+	m_Timer += deltaTime;
+	if (m_Timer > TIMETOGROW)
+	{
+		int leangth = (rand() % 16) + 6;
+		bool inBlock = false;
+		for (int j = m_Transform[0] - 4; j < m_Transform[0] + 5; j++)
+		{
+			for (int i = 0; i < blocks.at(j).size(); i++)
+			{
+				if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + leangth)
+				{
+					inBlock = true;
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < trees.size(); i++)
+		{
+			if (trees.at(i).m_Transform[1] >= m_Transform[1] && trees.at(i).m_Transform[1] <= m_Transform[1] + leangth)
+			{
+				inBlock = true;
+				break;
+			}
+		}
+		if (inBlock)
+		{
+			m_Timer = 0;
+		}
+		else
+		{
+			int branchsMaxCount = floor(leangth / 3);
+			unsigned int leftBranchs = rand() % branchsMaxCount;
+			unsigned int rightBranchs = rand() % branchsMaxCount;
+			std::vector<int> leftHeight;
+			std::vector<int> rightHeight;
+			for (int i = 0; i < leftBranchs; i++)
+			{
+			
+			}
+		}
+	}
+}
 void seedling::drawSeedling(Shader sh
 	, unsigned int transformLocation
 	, float* Transform)

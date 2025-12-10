@@ -1,5 +1,8 @@
 #pragma once
 #include "Opengl/Shader.h"
+
+#include "Blocks.h"
+
 enum treeParts
 {
 	p_Log = 0,
@@ -38,10 +41,15 @@ public:
 	float m_Timer;
 	char m_Type;
 	unsigned int m_Texture;
+	int m_IndexOfGroundBlock;
 	seedling(char type
 		, int x
 		, int y
 		, unsigned int* structuresTextures);
+	void everyFrame(float deltaTime
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<seedling>& seedling
+		, std::vector<tree>& trees);
 	void drawSeedling(Shader sh
 		, unsigned int transformLocation
 		, float* Transform);
