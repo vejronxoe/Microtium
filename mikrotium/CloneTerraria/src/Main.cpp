@@ -273,7 +273,22 @@ int main()
 		{
 			damagedTrees.erase(damagedTrees.begin());
 		}
-		
+		for (int j = 0; j < damagedTrees.size(); j++)
+		{
+			bool ExistenceOfWood = false;
+			for (int i = 0; i < trees.size(); i++)
+			{
+				if (trees.at(i).m_Transform[0] == damagedTrees.at(j).m_Transform[0] && trees.at(i).m_Transform[1] == damagedTrees.at(j).m_Transform[1] )
+				{
+					ExistenceOfWood = true;
+					break;
+				}	
+			}
+			if (!ExistenceOfWood)
+			{
+				damagedTrees.erase(damagedTrees.begin() + j);
+			}
+		}
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
@@ -294,11 +309,11 @@ int main()
 		}
 		treeSh.Bind();
 		treeSh.SetUniformMat4(treeCameraLocation, camera);
-		
 		for (int i = 0; i < trees.size(); i++)
 		{
 			trees.at(i).drawTree(treeSh, treeTransformLocation, treeRotationLocation, CameraCoordinates, transform, rotation);	
 		}
+		ErrorGL(glBindVertexArray(blocksDrawData));
 		for (int i = 0; i < damagedTrees.size(); i++)
 		{
 			damagedTrees.at(i).DrawCut(treeSh, treeTransformLocation, treeRotationLocation, rotation, transform, CutTextures);
