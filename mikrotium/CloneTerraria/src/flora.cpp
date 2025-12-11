@@ -3,6 +3,7 @@
 #include "Opengl/ErrorSystem.h"
 #include "math/matrix.h"
 #include "glfw/Window.h"
+#include "ItemList.h"
 #define TIMETOGROW 10
 
 void tree::drawTree(Shader& sh
@@ -92,9 +93,11 @@ seedling::seedling(char type
 	,m_Type(type)
 	,m_Texture(structuresTextures[type])
 {}
-void seedling::everyFrame(float deltaTime
+bool seedling::everyFrame(float deltaTime
+	, unsigned int* treeTextures
+	, unsigned int* treeDD
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<seedling>& seedling
+	, std::vector<seedling>& seedlings 
 	, std::vector<tree>& trees)
 {
 	m_Timer += deltaTime;
@@ -102,20 +105,17 @@ void seedling::everyFrame(float deltaTime
 	{
 		int leangth = (rand() % 16) + 6;
 		bool inBlock = false;
-		for (int j = m_Transform[0] - 4; j < m_Transform[0] + 5; j++)
+		for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
 		{
-			for (int i = 0; i < blocks.at(j).size(); i++)
+			if (blocks.at(m_Transform[0]).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(m_Transform[0]).at(i).m_Transform[1] <= m_Transform[1] + leangth)
 			{
-				if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + leangth)
-				{
-					inBlock = true;
-					break;
-				}
+				inBlock = true;
+				break;
 			}
 		}
 		for (int i = 0; i < trees.size(); i++)
 		{
-			if (trees.at(i).m_Transform[1] >= m_Transform[1] && trees.at(i).m_Transform[1] <= m_Transform[1] + leangth)
+			if (trees.at(i).m_Transform[1] >= m_Transform[1] && trees.at(i).m_Transform[1] <= m_Transform[1] + leangth && trees.at(i).m_Transform[0] == m_Transform[0])
 			{
 				inBlock = true;
 				break;
@@ -127,17 +127,44 @@ void seedling::everyFrame(float deltaTime
 		}
 		else
 		{
+			
+			for (int i = m_Transform[1]; i < m_Transform[1] + leangth; i++)
+			{
+				trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0], i, 0);
+			}
+			int decider = rand() % 2;
+			if (decider)
+			{
+				decider = i_Sapling;
+			}
+			else
+			{
+				decider = i_Nothing;
+			}
+			trees.emplace_back(treeTextures[p_Crown], treeDD[p_Crown], decider, 35, p_Crown, m_Transform[0], m_Transform[1] + leangth, 0);
+
 			int branchsMaxCount = floor(leangth / 3);
 			unsigned int leftBranchs = rand() % branchsMaxCount;
 			unsigned int rightBranchs = rand() % branchsMaxCount;
-			std::vector<int> leftHeight;
-			std::vector<int> rightHeight;
-			for (int i = 0; i < leftBranchs; i++)
-			{
 			
+			std::vector<int> order;
+
+			for (int i = 0; i < branchsMaxCount; i++)
+			{
+				order.emplace_back(i);
 			}
+			
+			for (int i = 0; i < branchsMaxCount/2; i++)
+			{
+				int swapNumber = rand() % (branchsMaxCount - 1);
+				int holder = order.at(swapNumber);
+				order.at(swapNumber) = order.at(i);
+				order.at(i) = holder;
+			}
+			return true;
 		}
 	}
+	return false;
 }
 void seedling::drawSeedling(Shader sh
 	, unsigned int transformLocation

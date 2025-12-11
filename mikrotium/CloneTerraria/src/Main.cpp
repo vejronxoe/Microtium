@@ -251,7 +251,14 @@ int main()
 		float CameraCoordinates[2];
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+		for (int i = 0; i < seedlings.size(); i++)
+		{
+			if (seedlings.at(i).everyFrame(deltaTime, treeTextures, treeDD, blocks, seedlings, trees))
+			{
+				seedlings.erase(seedlings.begin() + i);
+			}
 
+		}
 
 		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, structuresTextures, trees, seedlings,dropItems);
 		if (damagedBlocks.size() > 20)
@@ -266,7 +273,7 @@ int main()
 		{
 			damagedTrees.erase(damagedTrees.begin());
 		}
-
+		
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);

@@ -192,6 +192,7 @@ void Player::SwapItemStats()
 	m_Range = 4;
 	m_Damage = 0;
 	m_Placeable = false;
+	m_LargePlaceable = false;
 	switch (m_PlayerSlots[0])
 	{
 		case(i_Nothing):
@@ -1016,7 +1017,7 @@ void Player::EveryFrame(float deltaTime
 							while (woodIndex != -1)
 							{
 								int specialIndex = -1;
-								int destroy[5] = { -1, -1, -1, -1, -1 };
+								int destroy[6] = { -1, -1, -1, -1, -1 , -1 };
 								for (int i = 0; i < trees.size(); i++)
 								{
 									if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])

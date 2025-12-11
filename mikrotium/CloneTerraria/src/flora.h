@@ -46,9 +46,11 @@ public:
 		, int x
 		, int y
 		, unsigned int* structuresTextures);
-	void everyFrame(float deltaTime
+	bool everyFrame(float deltaTime
+		, unsigned int* treeTextures
+		, unsigned int* treeDD
 		, std::vector<std::vector<Block>>& blocks
-		, std::vector<seedling>& seedling
+		, std::vector<seedling>& seedlings
 		, std::vector<tree>& trees);
 	void drawSeedling(Shader sh
 		, unsigned int transformLocation
