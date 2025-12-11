@@ -40,8 +40,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 
 	for (int i = 0; i < dropItems.size(); i++)
 	{
-		float a = Pyt2D(m_Transform[0] - dropItems.at(i).m_Transform[0], dropItems.at(i).m_Transform[1] - m_Transform[1]);
-		if (2 > a && dropItems.at(i).m_Item == m_Item && &(dropItems.at(i)) != this)
+		if (2 > Pyt2D(m_Transform[0] - dropItems.at(i).m_Transform[0], dropItems.at(i).m_Transform[1] - m_Transform[1]) && dropItems.at(i).m_Item == m_Item && &(dropItems.at(i)) != this)
 		{
 			m_Amount += dropItems.at(i).m_Amount;
 			dropItems.erase(dropItems.begin() + i);
@@ -66,8 +65,8 @@ bool DroppedItem::EveryFrame(float deltaTime
 	}
 	if (m_GoToPlayer)
 	{
-		m_Velocity[0] += playerTransform[0] - m_Transform[0];
-		m_Velocity[1] += playerTransform[1] - m_Transform[1];
+		m_Velocity[0] = playerTransform[0] - m_Transform[0];
+		m_Velocity[1] = playerTransform[1] - m_Transform[1];
 		if (Pyt2D(m_Velocity) > 1)
 		{
 			NormalizeVector(m_Velocity);
