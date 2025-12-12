@@ -6,6 +6,87 @@
 #include "ItemList.h"
 #define TIMETOGROW 10
 
+void createBranchs(unsigned int* treeTextures
+	, unsigned int* treeDD
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<seedling>& seedlings
+	, std::vector<tree>& trees
+	, std::vector<int>& order
+	, int* m_Transform
+	, unsigned int& leftBranchs
+	, bool& inBlock)
+{
+	while (leftBranchs != 0 && order.size())
+	{
+		inBlock = false;
+		for (int j = m_Transform[0] - 4; j < m_Transform[0]; j++)
+		{
+			for (int i = 0; i < blocks.at(j).size(); i++)
+			{
+				if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1
+					&& blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1
+					&& blocks.at(j).at(i).m_Transform[0] != m_Transform[0] - 1)
+				{
+					inBlock = true;
+					break;
+				}
+				else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] - 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+				{
+					inBlock = true;
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < trees.size(); i++)
+		{
+			if (trees.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && trees.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && trees.at(i).m_Transform[0] >= m_Transform[0] - 4 && trees.at(i).m_Transform[0] < m_Transform[0])
+			{
+				inBlock = true;
+				break;
+			}
+			else if (trees.at(i).m_Transform[0] == m_Transform[0] - 1 && trees.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+			{
+				inBlock = true;
+				break;
+			}
+		}
+		for (int i = 0; i < seedlings.size(); i++)
+		{
+			if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] >= m_Transform[0] - 4 && seedlings.at(i).m_Transform[0] < m_Transform[0])
+			{
+				inBlock = true;
+				break;
+			}
+			else if (seedlings.at(i).m_Transform[0] == m_Transform[0] - 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+			{
+				inBlock = true;
+				break;
+			}
+		}
+		if (inBlock)
+		{
+			order.erase(order.begin());
+		}
+		else
+		{
+			int decider = rand() % 3;
+			if (decider)
+			{
+				decider = i_Sapling;
+			}
+			else
+			{
+				decider = i_Nothing;
+			}
+			trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] - 1, m_Transform[1] + order.at(0), 90.0f);
+			trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] - 2, m_Transform[1] + order.at(0), 90.0f);
+			leftBranchs--;
+			order.erase(order.begin());
+		}
+
+	}
+}
+
 void tree::drawTree(Shader& sh
 	, unsigned int transformLocation
 	, unsigned int rotateLocation
@@ -149,18 +230,23 @@ bool seedling::everyFrame(float deltaTime
 			
 			std::vector<int> order;
 
-			for (int i = 0; i < branchsMaxCount; i++)
+			for (int i = 1; i < leangth - 1; i++)
 			{
 				order.emplace_back(i);
 			}
 			
-			for (int i = 0; i < branchsMaxCount/2; i++)
+			for (int i = 0; i < (leangth - 2); i++)
 			{
-				int swapNumber = rand() % (branchsMaxCount - 1);
+				int swapNumber = rand() % (leangth - 2);
 				int holder = order.at(swapNumber);
 				order.at(swapNumber) = order.at(i);
 				order.at(i) = holder;
 			}
+			
+			createBranchs(treeTextures, treeDD, blocks, seedlings, trees, order, m_Transform, leftBranchs, inBlock);
+			
+			createBranchs(treeTextures, treeDD, blocks, seedlings, trees, order, m_Transform, leftBranchs, inBlock);
+
 			return true;
 		}
 	}

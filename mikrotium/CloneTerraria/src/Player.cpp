@@ -1141,6 +1141,20 @@ void Player::EveryFrame(float deltaTime
 							seedlings.emplace_back(s_Sapling, x, y, structuresTextures);
 						break;
 					}
+					m_AmountInSlots[0]--;
+					if (m_UseSlot == 0)
+					{
+						m_AmountInSlots[m_HUDUseSlot]--;
+					}
+					if (m_AmountInSlots[0] <= 0)
+					{
+						m_PlayerSlots[0] = i_Nothing;
+						if (m_UseSlot == 0)
+						{
+							m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+						}
+						SwapItemStats();
+					}
 				}
 				m_UseItemTimer = 0;
 
