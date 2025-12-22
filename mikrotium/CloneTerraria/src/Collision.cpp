@@ -236,32 +236,34 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 }
 bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime)
 {
+	objectVertices4f[0] -= transform[0]; objectVertices4f[1] -= transform[1];
+	objectVertices4f[2] -= transform[0]; objectVertices4f[3] -= transform[1];
 	transform[0] += velocity[0] * deltaTime;
 	transform[1] += velocity[1] * deltaTime;
-	objectVertices4f[0] = -1.0f + transform[0]; objectVertices4f[1] = 1.5f + transform[1];
-	objectVertices4f[2] = 1.0f + transform[0]; objectVertices4f[3] = -1.5f + transform[1];
+	objectVertices4f[0] += transform[0]; objectVertices4f[1] += transform[1];
+	objectVertices4f[2] += transform[0]; objectVertices4f[3] += transform[1];
 
 
-	if (objectVertices4f[2] >= Blocks::xMax - 2.5f)
+	if (objectVertices4f[2] >= Blocks::xMax - SAFEDISTANCE)
 	{
-		transform[0] -= objectVertices4f[2] - Blocks::xMax + 2.5f;
+		transform[0] -= objectVertices4f[2] - Blocks::xMax + SAFEDISTANCE;
 		velocity[0] = 0;
 	}
-	else if (objectVertices4f[0] <= Blocks::xMin + 2.5f)
+	else if (objectVertices4f[0] <= Blocks::xMin + SAFEDISTANCE)
 	{
-		transform[0] -= objectVertices4f[0]- Blocks::xMin - 2.5f;
+		transform[0] -= objectVertices4f[0]- Blocks::xMin - SAFEDISTANCE;
 		velocity[0] = 0;
 
 	}
-	if (objectVertices4f[1] >= Blocks::yMax - 2.5f)
+	if (objectVertices4f[1] >= Blocks::yMax - SAFEDISTANCE)
 	{
-		transform[1] -= objectVertices4f[1] - Blocks::yMax + 2.5f;
+		transform[1] -= objectVertices4f[1] - Blocks::yMax + SAFEDISTANCE;
 		velocity[1] = 0;
 
 	}
-	else if (objectVertices4f[3] <= Blocks::yMin + 2.5f)
+	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE)
 	{
-		transform[1] -= objectVertices4f[3] - Blocks::yMin - 2.5f;
+		transform[1] -= objectVertices4f[3] - Blocks::yMin - SAFEDISTANCE;
 		velocity[1] = 0;
 		floorHit = true;
 		return true;
@@ -367,13 +369,13 @@ float CameraHitboxX(float x)
 {
 	float topX = x + Window::halfWidthOfGameTransform;
 	float downX = x - Window::halfWidthOfGameTransform;
-	if (topX > Blocks::xMax - 2.5f)
+	if (topX > Blocks::xMax - SAFEDISTANCE)
 	{
-		x -= topX - Blocks::xMax + 2.5f;
+		x -= topX - Blocks::xMax + SAFEDISTANCE;
 	}
-	else if (downX < Blocks::xMin + 2.5f)
+	else if (downX < Blocks::xMin + SAFEDISTANCE)
 	{
-		x -= downX - Blocks::xMin - 2.5f;
+		x -= downX - Blocks::xMin - SAFEDISTANCE;
 	}
 	return x;
 }
@@ -381,13 +383,13 @@ float CameraHitboxY(float y)
 {
 	float topY = y + Window::halfHeightOfGameTransform;
 	float downY = y - Window::halfHeightOfGameTransform;
-	if (topY > Blocks::yMax - 2.5f)
+	if (topY > Blocks::yMax - SAFEDISTANCE)
 	{
-		y -= topY - Blocks::yMax + 2.5f;
+		y -= topY - Blocks::yMax + SAFEDISTANCE;
 	}
-	else if (downY < Blocks::yMin + 2.5f)
+	else if (downY < Blocks::yMin + SAFEDISTANCE)
 	{
-		y -= downY - Blocks::yMin - 2.5f;
+		y -= downY - Blocks::yMin - SAFEDISTANCE;
 	}
 	return y;
 }

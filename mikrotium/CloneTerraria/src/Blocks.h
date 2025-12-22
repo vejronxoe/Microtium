@@ -2,6 +2,9 @@
 #include<vector>
 
 #include"Opengl/Shader.h"
+
+#define SAFEDISTANCE 2.5f
+
 namespace Blocks
 {
 	extern int xMax;

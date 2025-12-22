@@ -29,22 +29,8 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 			break;
 	}
 }
-void getStructureVerticesByInventoryID(int x
-	,int y 
-	,unsigned int ID
-	, float* vertices)
-{
-	switch (ID)
-	{
-	case i_Sapling:
-		vertices[0] = x;
-		vertices[1] = y + 1;
-		vertices[2] = x;
-		vertices[3] = y;
-		break;
-	}
-}
-void getStructureVerticesByStructureID(int x
+
+void getStructureVertices(int x
 	,int y
 	, unsigned int ID
 	, float* vertices)
@@ -139,7 +125,7 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[3] = 1;
 	m_AmountInSlots[4] = 9999;
 	m_AmountInSlots[5] = 1;
-	m_AmountInSlots[6] = 1;
+	m_AmountInSlots[6] = 20;
 	m_UseItemTimer = 0;
 	m_CooldownToUse = 0;
 	m_PickaxeStreanght = 0;
@@ -703,7 +689,7 @@ void Player::EveryFrame(float deltaTime
 						{
 
 							float verticesStr[4];
-							getStructureVerticesByStructureID(seedlings.at(i).m_Transform[0], seedlings.at(i).m_Transform[1], seedlings.at(i).m_Type, verticesStr);
+							getStructureVertices(seedlings.at(i).m_Transform[0], seedlings.at(i).m_Transform[1], seedlings.at(i).m_Type, verticesStr);
 							if (y <= verticesStr[1] && y >= verticesStr[3] && x >= verticesStr[0] && x <= verticesStr[2])
 							{
 								inBlock = true;
@@ -780,25 +766,53 @@ void Player::EveryFrame(float deltaTime
 			{
 				float vertices[4];
 				bool floors = true;
-				getStructureVerticesByInventoryID(x, y, m_PlayerSlots[0], vertices);
-				for (int i = vertices[0]; i <= vertices[2]; i++)
+				switch (m_PlayerSlots[0])
 				{
-					floors = false;
-					for (int j = 0; j < blocks.at(i).size(); j++)
+				case i_Sapling:
+					vertices[0] = x;
+					vertices[1] = y + 1;
+					vertices[2] = x;
+					vertices[3] = y;
+					break;
+				}
+				if (vertices[0] <= Blocks::xMin)
+				{
+					inBlock = true;
+				}
+				else if(vertices[1] >= Blocks::yMax)
+				{
+					inBlock = true;
+				}
+				else if (vertices[2] >= Blocks::xMax)
+				{
+					inBlock = true;
+
+				}
+				else if (vertices[3] <= Blocks::yMin)
+				{
+					inBlock = true;
+				}
+				if (!inBlock && floors)
+				{
+					for (int i = vertices[0]; i <= vertices[2]; i++)
 					{
-						if ( blocks.at(i).at(j).m_Transform[1] <= vertices[1] && blocks.at(i).at(j).m_Transform[1] >= vertices[3])
+						floors = false;
+						for (int j = 0; j < blocks.at(i).size(); j++)
 						{
-							inBlock = true;
+							if (blocks.at(i).at(j).m_Transform[1] <= vertices[1] && blocks.at(i).at(j).m_Transform[1] >= vertices[3])
+							{
+								inBlock = true;
+								break;
+							}
+							if (blocks.at(i).at(j).m_Transform[1] == vertices[3] - 1)
+							{
+								floors = true;
+							}
+						}
+						if (!floors)
+						{
 							break;
 						}
-						if (blocks.at(i).at(j).m_Transform[1] == vertices[3] - 1)
-						{
-							floors = true;
-						}
-					}
-					if (!floors)
-					{
-						break;
 					}
 				}
 				if (!inBlock && floors)

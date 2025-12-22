@@ -18,7 +18,7 @@ public:
 	unsigned char m_Hardness;
 	unsigned int m_texture;
 	unsigned int m_DrawData;
-	float m_Rotation;
+	int m_Rotation;
 	tree(unsigned int texture
 		, unsigned int drawData
 		, unsigned short int itemDrop
@@ -26,7 +26,7 @@ public:
 		, char partOfTree
 		, int x
 		, int y
-		, float rotation);
+		, int rotation);
 	void drawTree(Shader& sh
 		,unsigned int transformLocation
 		, unsigned int rotateLocation

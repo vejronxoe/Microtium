@@ -1,4 +1,5 @@
 #pragma once
+#define PI 3.14159265358979323846
 void ChangeCamera(float Xmin, float Xmax, float Ymin, float Ymax, float* matrix4x4f);
 void CreateCamera(float Xmin, float Xmax, float Ymin, float Ymax, float* matrix4x4f);
 void ChangeTransform(float x, float y, float* matrix4x4f);
