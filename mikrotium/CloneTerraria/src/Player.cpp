@@ -764,7 +764,7 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_LargePlaceable)
 			{
-				float vertices[4];
+				int  vertices[4];
 				bool floors = true;
 				switch (m_PlayerSlots[0])
 				{
@@ -823,7 +823,7 @@ void Player::EveryFrame(float deltaTime
 						{
 							break;
 						}
-						if (trees.at(i).m_Transform[1] <= vertices[1] && trees.at(i).m_Transform[1] >= vertices[3] && trees.at(i).m_Transform[0] >= vertices[0] && trees.at(i).m_Transform[1] <= vertices[2])
+						if (trees.at(i).m_Transform[1] <= vertices[1] && trees.at(i).m_Transform[1] >= vertices[3] && trees.at(i).m_Transform[0] >= vertices[0] && trees.at(i).m_Transform[0] <= vertices[2])
 						{
 							inBlock = true;
 							break;
