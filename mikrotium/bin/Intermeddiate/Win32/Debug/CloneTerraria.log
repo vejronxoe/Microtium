@@ -1,21 +1,21 @@
 ﻿  flora.cpp
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(12,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(32,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(32,93): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(33,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(33,91): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(47,47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(47,94): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(48,47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(48,92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(51,47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(51,94): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(52,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(52,90): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(55,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(55,90): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(56,47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(56,94): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(32,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(32,91): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(33,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(33,89): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(47,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(47,92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(48,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(48,90): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(51,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(51,92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(52,44): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(52,88): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(55,44): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(55,88): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(56,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(56,92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(90,20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(94,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(94,33): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
@@ -36,20 +36,30 @@ C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(201,2
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(234,24): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(251,22): warning C4018: '<': signed/unsigned mismatch
 C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(253,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(272,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,42): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,42): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,76): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,76): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,95): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,95): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,129): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(287,129): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(289,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(336,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(338,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(361,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(361,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(273,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,42): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,42): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,76): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,76): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,95): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,95): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,129): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(288,129): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(290,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(337,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(339,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(357,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,42): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,42): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,76): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,76): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,95): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,95): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,129): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(372,129): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(374,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(418,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(418,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244:         [
@@ -58,13 +68,13 @@ C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\
   (compiling source file 'src/flora.cpp')
       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103):
       the template instantiation context (the oldest one first) is
-          C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(317,12):
+          C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(318,12):
           see reference to function template instantiation 'void std::vector<tree,std::allocator<tree>>::emplace_back<unsigned int&,unsigned int&,Items,int,treeParts,int,_Ty,float>(unsigned int &,unsigned int &,Items &&,int &&,treeParts &&,int &&,_Ty &&,float &&)' being compiled
           with
           [
               _Ty=int
           ]
-              C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(317,24):
+              C:\Users\leosz\Desktop\Cpp\microtium\mikrotium\CloneTerraria\src\flora.cpp(318,24):
               see the first reference to 'std::vector<tree,std::allocator<tree>>::emplace_back' in 'seedling::everyFrame'
           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\vector(924,24):
           see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<unsigned int&,unsigned int&,Items,int,treeParts,int,int,float>(unsigned int &,unsigned int &,Items &&,int &&,treeParts &&,int &&,int &&,float &&)' being compiled

@@ -15,7 +15,7 @@ void checkTreesWithCrowns(std::vector<tree> trees
 		{
 			break;
 		}
-		float vertices4[4];
+		float vertices[4];
 		switch (trees.at(i).m_PartOfTree)
 		{
 
@@ -29,11 +29,11 @@ void checkTreesWithCrowns(std::vector<tree> trees
 			break;
 		case p_Crown:
 
-			vertices4[0] = trees.at(i).m_Transform[0] - 3; vertices4[1] = trees.at(i).m_Transform[1] + 3;
-			vertices4[2] = trees.at(i).m_Transform[0] + 3; vertices4[3] = trees.at(i).m_Transform[1];
-			if ((vertices4[1] >= objVertices4[1] || vertices4[1] >= objVertices4[3]) && (vertices4[3] <= objVertices4[1] || vertices4[3] <= objVertices4[3]))
+			vertices[0] = trees.at(i).m_Transform[0] - 3; vertices[1] = trees.at(i).m_Transform[1] + 3;
+			vertices[2] = trees.at(i).m_Transform[0] + 3; vertices[3] = trees.at(i).m_Transform[1];
+			if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
 			{
-				if ((vertices4[2] >= objVertices4[0] || vertices4[0] >= objVertices4[2]) && (vertices4[0] <= objVertices4[0] || vertices4[2] <= objVertices4[2]))
+				if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
 				{
 					inBlock = true;
 					break;
@@ -44,24 +44,24 @@ void checkTreesWithCrowns(std::vector<tree> trees
 			switch (trees.at(i).m_Rotation)
 			{
 			case 0:
-				vertices4[0] = trees.at(i).m_Transform[0] - 1; vertices4[1] = trees.at(i).m_Transform[1] + 2;
-				vertices4[2] = trees.at(i).m_Transform[0] + 1; vertices4[3] = trees.at(i).m_Transform[1];
+				vertices[0] = trees.at(i).m_Transform[0] - 1; vertices[1] = trees.at(i).m_Transform[1] + 2;
+				vertices[2] = trees.at(i).m_Transform[0] + 1; vertices[3] = trees.at(i).m_Transform[1];
 				break;
 			case 90:
-				vertices4[0] = trees.at(i).m_Transform[0] - 2; vertices4[1] = trees.at(i).m_Transform[1] + 1;
-				vertices4[2] = trees.at(i).m_Transform[0]; vertices4[3] = trees.at(i).m_Transform[1] - 1;
+				vertices[0] = trees.at(i).m_Transform[0] - 2; vertices[1] = trees.at(i).m_Transform[1] + 1;
+				vertices[2] = trees.at(i).m_Transform[0]; vertices[3] = trees.at(i).m_Transform[1] - 1;
 				break;
 			case -90:
-				vertices4[0] = trees.at(i).m_Transform[0]; vertices4[1] = trees.at(i).m_Transform[1] + 1;
-				vertices4[2] = trees.at(i).m_Transform[0] + 2; vertices4[3] = trees.at(i).m_Transform[1] - 1;
+				vertices[0] = trees.at(i).m_Transform[0]; vertices[1] = trees.at(i).m_Transform[1] + 1;
+				vertices[2] = trees.at(i).m_Transform[0] + 2; vertices[3] = trees.at(i).m_Transform[1] - 1;
 				break;
 			default:
 				printf("error in sapling everyFrame wrong Rotation : %d", trees.at(i).m_Rotation);
 				break;
 			}
-			if ((vertices4[1] >= objVertices4[1] || vertices4[1] >= objVertices4[3]) && (vertices4[3] <= objVertices4[1] || vertices4[3] <= objVertices4[3]))
+			if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
 			{
-				if ((vertices4[2] >= objVertices4[0] || vertices4[0] >= objVertices4[2]) && (vertices4[0] <= objVertices4[0] || vertices4[2] <= objVertices4[2]))
+				if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
 				{
 					inBlock = true;
 					break;
@@ -231,7 +231,7 @@ bool seedling::everyFrame(float deltaTime
 			}
 			trees.emplace_back(treeTextures[p_Crown], treeDD[p_Crown], decider, 35, p_Crown, m_Transform[0], m_Transform[1] + leangth, 0);
 
-			int branchsMaxCount = floor(leangth / 3);
+			int branchsMaxCount = floor(leangth / 4);
 			unsigned int leftBranchs = rand() % branchsMaxCount;
 			unsigned int rightBranchs = rand() % branchsMaxCount;
 			
@@ -260,6 +260,7 @@ bool seedling::everyFrame(float deltaTime
 						}
 
 						order.erase(order.begin() + i);
+						i--;
 					}
 				}
 			}
@@ -284,11 +285,11 @@ bool seedling::everyFrame(float deltaTime
 					}
 				}
 
-				float vertices[4] = { m_Transform[0] - 4 ,m_Transform[1] + order.at(0) + 2,m_Transform[0] - 1 ,m_Transform[1] + order.at(0) - 2 };
+				float vertices[4] = { m_Transform[0] - 4 ,m_Transform[1] + order.at(0) + 1,m_Transform[0] - 1 ,m_Transform[1] + order.at(0) - 1 };
 				checkTreesWithCrowns(trees, vertices, inBlock);
 				for (int i = 0; i < seedlings.size(); i++)
 				{
-					if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] >= m_Transform[0]  - 4 && seedlings.at(i).m_Transform[0] < m_Transform[0] + 1)
+					if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] >= m_Transform[0]  - 4 && seedlings.at(i).m_Transform[0] < m_Transform[0] - 1)
 					{
 						inBlock = true;
 						break;
@@ -305,7 +306,7 @@ bool seedling::everyFrame(float deltaTime
 				}
 				else
 				{
- 					int decider = rand() % 3;
+ 					int decider = rand() % 4;
 					if (decider)
 					{
 						decider = i_Sapling;
@@ -348,7 +349,63 @@ bool seedling::everyFrame(float deltaTime
 					}
 				}
 			}
-			//
+			while (rightBranchs != 0 && order.size())
+			{
+				inBlock = false;
+				for (int j = m_Transform[0]; j < m_Transform[0] + 4; j++)
+				{
+					for (int i = 0; i < blocks.at(j).size(); i++)
+					{
+						if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] + 1)
+						{
+							inBlock = true;
+							break;
+						}
+						else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] + 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+						{
+							inBlock = true;
+							break;
+						}
+					}
+				}
+
+				float vertices[4] = { m_Transform[0] + 4 ,m_Transform[1] + order.at(0) + 1,m_Transform[0] + 1 ,m_Transform[1] + order.at(0) - 1 };
+				checkTreesWithCrowns(trees, vertices, inBlock);
+				for (int i = 0; i < seedlings.size(); i++)
+				{
+					if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] <= m_Transform[0] + 4 && seedlings.at(i).m_Transform[0] > m_Transform[0] + 1)
+					{
+						inBlock = true;
+						break;
+					}
+					else if (seedlings.at(i).m_Transform[0] == m_Transform[0] + 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+					{
+						inBlock = true;
+						break;
+					}
+				}
+				if (inBlock)
+				{
+					order.erase(order.begin());
+				}
+				else
+				{
+					int decider = rand() % 4;
+					if (decider)
+					{
+						decider = i_Sapling;
+					}
+					else
+					{
+						decider = i_Nothing;
+					}
+					trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] + 1, m_Transform[1] + order.at(0), -90.0f);
+					trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] + 2, m_Transform[1] + order.at(0), -90.0f);
+					leftBranchs--;
+					order.erase(order.begin());
+				}
+
+			}
 			return true;
 		}
 	}
