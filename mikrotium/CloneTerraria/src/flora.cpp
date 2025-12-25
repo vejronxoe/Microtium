@@ -155,12 +155,22 @@ void damagedWood::DrawCut(Shader& sh
 seedling::seedling(char type
 	, int x
 	, int y
-	, unsigned int* structuresTextures)
-	:m_Transform{x, y}
-	,m_Timer(0)
-	,m_Type(type)
-	,m_Texture(structuresTextures[type])
-{}
+	, unsigned int* structuresTextures
+	, std::vector<std::vector<Block>>& blocks)
+:m_Transform{x, y}
+,m_Timer(0)
+,m_Type(type)
+,m_Texture(structuresTextures[type])
+{
+	for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
+	{	
+		if (blocks.at(m_Transform[0]).at(i).m_Transform[1] == m_Transform[1] - 1)
+		{
+			m_IndexOfGroundBlock = i;
+			break;
+		}
+	}
+}
 bool seedling::everyFrame(float deltaTime
 	, unsigned int* treeTextures
 	, unsigned int* treeDD
@@ -168,8 +178,25 @@ bool seedling::everyFrame(float deltaTime
 	, std::vector<seedling>& seedlings 
 	, std::vector<tree>& trees)
 {
+	bool noGround = true;
+	if (m_IndexOfGroundBlock < blocks.at(m_Transform[0]).size())
+	{
+		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Transform[1] == m_Transform[1] - 1);
+		if(noGround)
+		{
+			for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
+			{
+				if (blocks.at(m_Transform[0]).at(i).m_Transform[1] == m_Transform[1] - 1)
+				{
+					m_IndexOfGroundBlock = i;
+					noGround = false;
+					break;
+				}
+			}
+		}
+	}
 	m_Timer += deltaTime;
-	if (m_Timer > TIMETOGROW)
+	if (m_Timer > TIMETOGROW && !noGround)
 	{
 		int leangth = (rand() % 16) + 6;
 		bool inBlock = false;
@@ -215,7 +242,8 @@ bool seedling::everyFrame(float deltaTime
 		}
 		else
 		{
-			
+			blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_BlockBehavior = b_Indestructible;
+
 			for (int i = m_Transform[1]; i < m_Transform[1] + leangth; i++)
 			{
 				trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0], i, 0);
@@ -369,7 +397,7 @@ bool seedling::everyFrame(float deltaTime
 					}
 				}
 
-				float vertices[4] = { m_Transform[0] + 4 ,m_Transform[1] + order.at(0) + 1,m_Transform[0] + 1 ,m_Transform[1] + order.at(0) - 1 };
+				float vertices[4] = { m_Transform[0] + 1 ,m_Transform[1] + order.at(0) + 1,  m_Transform[0] + 4,m_Transform[1] + order.at(0) - 1 };
 				checkTreesWithCrowns(trees, vertices, inBlock);
 				for (int i = 0; i < seedlings.size(); i++)
 				{
@@ -409,7 +437,7 @@ bool seedling::everyFrame(float deltaTime
 			return true;
 		}
 	}
-	return false;
+	return noGround;
 }
 void seedling::drawSeedling(Shader sh
 	, unsigned int transformLocation

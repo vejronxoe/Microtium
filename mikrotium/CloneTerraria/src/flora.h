@@ -45,7 +45,8 @@ public:
 	seedling(char type
 		, int x
 		, int y
-		, unsigned int* structuresTextures);
+		, unsigned int* structuresTextures
+		, std::vector<std::vector<Block>>& blocks);
 	bool everyFrame(float deltaTime
 		, unsigned int* treeTextures
 		, unsigned int* treeDD

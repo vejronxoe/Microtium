@@ -1152,7 +1152,7 @@ void Player::EveryFrame(float deltaTime
 					switch (m_PlayerSlots[0])
 					{
 						case i_Sapling:
-							seedlings.emplace_back(s_Sapling, x, y, structuresTextures);
+							seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
 						break;
 					}
 					m_AmountInSlots[0]--;
