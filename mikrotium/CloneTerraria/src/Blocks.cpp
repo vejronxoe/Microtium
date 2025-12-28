@@ -64,6 +64,7 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
 	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
 	IDs[t_ForestPlank] = CreateTextureRGBA("res/textures/forestPlank.png");
+	IDs[t_Sand] = CreateTextureRGBA("res/textures/sand.png");
 }
 
 
@@ -181,6 +182,9 @@ void CreateBlock(int x
 		break;
 	case i_ForestPlank:
 		blocks.at(x).emplace_back(texturesIDs[t_ForestPlank], x, y, b_BasicSolid, 20, i_ForestPlank);
+		break;
+	case i_Sand:
+		blocks.at(x).emplace_back(texturesIDs[t_Sand], x, y, b_BasicSolid, 20, i_Sand);
 		break;
 	}
 	

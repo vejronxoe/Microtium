@@ -58,6 +58,7 @@ void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform];
 	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
+	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
 	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 }									   
 bool findElementWithY(int y
@@ -119,7 +120,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[3] = i_CooperAxe;
 	m_PlayerSlots[4] = i_Dirt;
 	m_PlayerSlots[5] = i_CooperHammer;
-	m_PlayerSlots[6] = i_Sapling;
+	m_PlayerSlots[6] = i_Sand;
 	m_AmountInSlots[1] = 1;
 	m_AmountInSlots[2] = 1;
 	m_AmountInSlots[3] = 1;

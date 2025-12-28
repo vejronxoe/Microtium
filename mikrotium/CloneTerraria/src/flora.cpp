@@ -9,66 +9,66 @@ void checkTreesWithCrowns(std::vector<tree> trees
 	, float* objVertices4
 	, bool& inBlock)
 {
-	for (int i = 0; i < trees.size(); i++)
+	if (!inBlock)
 	{
-		if (inBlock)
-		{
-			break;
-		}
-		float vertices[4];
-		switch (trees.at(i).m_PartOfTree)
+		for (int i = 0; i < trees.size(); i++)
 		{
 
-
-		case p_Log:
-			if (objVertices4[1] >= trees.at(i).m_Transform[1] && objVertices4[3] <= trees.at(i).m_Transform[1] && objVertices4[2] >= trees.at(i).m_Transform[0] && objVertices4[0] <= trees.at(i).m_Transform[0])
+			float vertices[4];
+			switch (trees.at(i).m_PartOfTree)
 			{
-				inBlock = true;
-				break;
-			}
-			break;
-		case p_Crown:
 
-			vertices[0] = trees.at(i).m_Transform[0] - 3; vertices[1] = trees.at(i).m_Transform[1] + 3;
-			vertices[2] = trees.at(i).m_Transform[0] + 3; vertices[3] = trees.at(i).m_Transform[1];
-			if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
-			{
-				if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+
+			case p_Log:
+				if (objVertices4[1] >= trees.at(i).m_Transform[1] && objVertices4[3] <= trees.at(i).m_Transform[1] && objVertices4[2] >= trees.at(i).m_Transform[0] && objVertices4[0] <= trees.at(i).m_Transform[0])
 				{
 					inBlock = true;
 					break;
 				}
-			}
-			break;
-		case p_SmallCrown:
-			switch (trees.at(i).m_Rotation)
-			{
-			case 0:
-				vertices[0] = trees.at(i).m_Transform[0] - 1; vertices[1] = trees.at(i).m_Transform[1] + 2;
-				vertices[2] = trees.at(i).m_Transform[0] + 1; vertices[3] = trees.at(i).m_Transform[1];
 				break;
-			case 90:
-				vertices[0] = trees.at(i).m_Transform[0] - 2; vertices[1] = trees.at(i).m_Transform[1] + 1;
-				vertices[2] = trees.at(i).m_Transform[0]; vertices[3] = trees.at(i).m_Transform[1] - 1;
-				break;
-			case -90:
-				vertices[0] = trees.at(i).m_Transform[0]; vertices[1] = trees.at(i).m_Transform[1] + 1;
-				vertices[2] = trees.at(i).m_Transform[0] + 2; vertices[3] = trees.at(i).m_Transform[1] - 1;
-				break;
-			default:
-				printf("error in sapling everyFrame wrong Rotation : %d", trees.at(i).m_Rotation);
-				break;
-			}
-			if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
-			{
-				if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+			case p_Crown:
+
+				vertices[0] = trees.at(i).m_Transform[0] - 3; vertices[1] = trees.at(i).m_Transform[1] + 3;
+				vertices[2] = trees.at(i).m_Transform[0] + 3; vertices[3] = trees.at(i).m_Transform[1];
+				if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
 				{
-					inBlock = true;
+					if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+					{
+						inBlock = true;
+						break;
+					}
+				}
+				break;
+			case p_SmallCrown:
+				switch (trees.at(i).m_Rotation)
+				{
+				case 0:
+					vertices[0] = trees.at(i).m_Transform[0] - 1; vertices[1] = trees.at(i).m_Transform[1] + 2;
+					vertices[2] = trees.at(i).m_Transform[0] + 1; vertices[3] = trees.at(i).m_Transform[1];
+					break;
+				case 90:
+					vertices[0] = trees.at(i).m_Transform[0] - 2; vertices[1] = trees.at(i).m_Transform[1] + 1;
+					vertices[2] = trees.at(i).m_Transform[0]; vertices[3] = trees.at(i).m_Transform[1] - 1;
+					break;
+				case -90:
+					vertices[0] = trees.at(i).m_Transform[0]; vertices[1] = trees.at(i).m_Transform[1] + 1;
+					vertices[2] = trees.at(i).m_Transform[0] + 2; vertices[3] = trees.at(i).m_Transform[1] - 1;
+					break;
+				default:
+					printf("error in sapling everyFrame wrong Rotation : %d", trees.at(i).m_Rotation);
 					break;
 				}
-			}
+				if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
+				{
+					if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+					{
+						inBlock = true;
+						break;
+					}
+				}
 
-			break;
+				break;
+			}
 		}
 	}
 
@@ -178,6 +178,7 @@ bool seedling::everyFrame(float deltaTime
 	, std::vector<seedling>& seedlings 
 	, std::vector<tree>& trees)
 {
+	
 	bool noGround = true;
 	if (m_IndexOfGroundBlock < blocks.at(m_Transform[0]).size())
 	{
@@ -199,41 +200,47 @@ bool seedling::everyFrame(float deltaTime
 	if (m_Timer > TIMETOGROW && !noGround)
 	{
 		int leangth = (rand() % 16) + 6;
-		bool inBlock = false;
-		for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
-		{
-			if (blocks.at(m_Transform[0]).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(m_Transform[0]).at(i).m_Transform[1] <= m_Transform[1] + leangth)
-			{
-				inBlock = true;
-				break;
-			}
-		}
+		float crownVertices[4];
+		crownVertices[0] = m_Transform[0] - 3; crownVertices[1] = m_Transform[1] + leangth + 3;
+		crownVertices[2] = m_Transform[0] + 3; crownVertices[3] = m_Transform[1] + leangth;
 		float vertices[4];
 		vertices[0] = m_Transform[0]; vertices[1] = m_Transform[1] + leangth;
 		vertices[2] = m_Transform[0]; vertices[3] = m_Transform[1];
+		bool inBlock = (Blocks::yMax <= crownVertices[1] || Blocks::xMax <= crownVertices[2] || Blocks::xMin >= crownVertices[0]);
+
+		if (!inBlock)
+		{
+			for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
+			{
+
+				if (blocks.at(m_Transform[0]).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(m_Transform[0]).at(i).m_Transform[1] <= m_Transform[1] + leangth)
+				{
+					inBlock = true;
+					break;
+				}
+			}
+		}
+		
 		checkTreesWithCrowns(trees, vertices, inBlock);
 		if (!inBlock)
 		{
-			float crownVertices[4];
-			crownVertices[0] = m_Transform[0] - 3; crownVertices[1] = m_Transform[1] + leangth + 3;
-			crownVertices[2] = m_Transform[0] + 3; crownVertices[3] = m_Transform[1] + leangth;
+			
 			checkTreesWithCrowns(trees, crownVertices, inBlock);
 
-			for (int j = crownVertices[0]; j < crownVertices[2] + 1; j++)
+			if (!inBlock)
 			{
-				if (inBlock)
+				for (int j = crownVertices[0]; j < crownVertices[2] + 1; j++)
 				{
-					break;
-				}
-				for (int i = 0; i < blocks.at(j).size(); i++)
-				{
-					if (crownVertices[1] >= blocks.at(j).at(i).m_Transform[1] && crownVertices[3] <= blocks.at(j).at(i).m_Transform[1])
+					for (int i = 0; i < blocks.at(j).size(); i++)
 					{
-						inBlock = true;
-						break;
+						if (crownVertices[1] >= blocks.at(j).at(i).m_Transform[1] && crownVertices[3] <= blocks.at(j).at(i).m_Transform[1])
+						{
+							inBlock = true;
+							break;
+						}
 					}
-				}
 
+				}
 			}
 		}
 		if (inBlock)
@@ -264,175 +271,180 @@ bool seedling::everyFrame(float deltaTime
 			unsigned int rightBranchs = rand() % branchsMaxCount;
 			
 			std::vector<int> order;
-
-			for (int i = 2; i < leangth - 2; i++)
+			if (Blocks::xMin < m_Transform[0] - 5)
 			{
-				order.emplace_back(i);
-			}
-			for (int i = 0; i < (leangth - 4); i++)
-			{
-				int swapNumber = rand() % (leangth - 4);
-				int holder = order.at(swapNumber);
-				order.at(swapNumber) = order.at(i);
-				order.at(i) = holder;
-			}
-			for (int j = 0; j < order.size(); j++ )
-			{
-				for (int i = 0; i < order.size(); i++)
+				for (int i = 2; i < leangth - 2; i++)
 				{
-					if (order.at(j) != order.at(i) && order.at(j) + 2 >= order.at(i) && order.at(j) - 2 <= order.at(i))
+					order.emplace_back(i);
+				}
+				for (int i = 0; i < (leangth - 4); i++)
+				{
+					int swapNumber = rand() % (leangth - 4);
+					int holder = order.at(swapNumber);
+					order.at(swapNumber) = order.at(i);
+					order.at(i) = holder;
+				}
+				for (int j = 0; j < order.size(); j++)
+				{
+					for (int i = 0; i < order.size(); i++)
 					{
-						if (i < j)
+						if (order.at(j) != order.at(i) && order.at(j) + 2 >= order.at(i) && order.at(j) - 2 <= order.at(i))
 						{
-							j--;
-						}
+							if (i < j)
+							{
+								j--;
+							}
 
-						order.erase(order.begin() + i);
-						i--;
+							order.erase(order.begin() + i);
+							i--;
+						}
 					}
 				}
-			}
 
-			while (leftBranchs != 0 && order.size())
-			{
-				inBlock = false;
-				for (int j = m_Transform[0] - 4; j < m_Transform[0]; j++)
+				while (leftBranchs != 0 && order.size())
 				{
-					for (int i = 0; i < blocks.at(j).size(); i++)
+					inBlock = false;
+					for (int j = m_Transform[0] - 4; j < m_Transform[0]; j++)
 					{
-						if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] - 1 )
+						for (int i = 0; i < blocks.at(j).size(); i++)
+						{
+							if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] - 1)
+							{
+								inBlock = true;
+								break;
+							}
+							else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] - 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+							{
+								inBlock = true;
+								break;
+							}
+						}
+					}
+
+					float vertices[4] = { m_Transform[0] - 4 ,m_Transform[1] + order.at(0) + 1,m_Transform[0] - 1 ,m_Transform[1] + order.at(0) - 1 };
+					checkTreesWithCrowns(trees, vertices, inBlock);
+					for (int i = 0; i < seedlings.size(); i++)
+					{
+						if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] >= m_Transform[0] - 4 && seedlings.at(i).m_Transform[0] < m_Transform[0] - 1)
 						{
 							inBlock = true;
 							break;
 						}
-						else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] - 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+						else if (seedlings.at(i).m_Transform[0] == m_Transform[0] - 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
 						{
 							inBlock = true;
 							break;
 						}
 					}
-				}
-
-				float vertices[4] = { m_Transform[0] - 4 ,m_Transform[1] + order.at(0) + 1,m_Transform[0] - 1 ,m_Transform[1] + order.at(0) - 1 };
-				checkTreesWithCrowns(trees, vertices, inBlock);
-				for (int i = 0; i < seedlings.size(); i++)
-				{
-					if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] >= m_Transform[0]  - 4 && seedlings.at(i).m_Transform[0] < m_Transform[0] - 1)
+					if (inBlock)
 					{
-						inBlock = true;
-						break;
-					}
-					else if (seedlings.at(i).m_Transform[0] == m_Transform[0] - 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
-					{
-						inBlock = true;
-						break;
-					}
-				}
-				if (inBlock)
-				{
-					order.erase(order.begin());
-				}
-				else
-				{
- 					int decider = rand() % 4;
-					if (decider)
-					{
-						decider = i_Sapling;
+						order.erase(order.begin());
 					}
 					else
 					{
-						decider = i_Nothing;
-					}
-					trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] - 1 , m_Transform[1] + order.at(0), 90.0f );
-					trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] - 2 , m_Transform[1] + order.at(0), 90.0f);
-					leftBranchs--;
-					order.erase(order.begin());
-				}
-
-			}
-			order.clear();
-			for (int i = 2; i < leangth - 2; i++)
-			{
-				order.emplace_back(i);
-			}
-			for (int i = 0; i < (leangth - 4); i++)
-			{
-				int swapNumber = rand() % (leangth - 4);
-				int holder = order.at(swapNumber);
-				order.at(swapNumber) = order.at(i);
-				order.at(i) = holder;
-			}
-			for (int j = 0; j < order.size(); j++)
-			{
-				for (int i = 0; i < order.size(); i++)
-				{
-					
-					if (order.at(j) != order.at(i) && order.at(j) + 2 >= order.at(i) && order.at(j) - 2 <= order.at(i))
-					{
-						if (i < j)
+						int decider = rand() % 4;
+						if (decider)
 						{
-							j--;
+							decider = i_Sapling;
 						}
-						order.erase(order.begin() + i);
+						else
+						{
+							decider = i_Nothing;
+						}
+						trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] - 1, m_Transform[1] + order.at(0), 90.0f);
+						trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] - 2, m_Transform[1] + order.at(0), 90.0f);
+						leftBranchs--;
+						order.erase(order.begin());
 					}
+
 				}
 			}
-			while (rightBranchs != 0 && order.size())
+			if (Blocks::xMax > m_Transform[0] + 5)
 			{
-				inBlock = false;
-				for (int j = m_Transform[0]; j < m_Transform[0] + 4; j++)
+				order.clear();
+				for (int i = 2; i < leangth - 2; i++)
 				{
-					for (int i = 0; i < blocks.at(j).size(); i++)
+					order.emplace_back(i);
+				}
+				for (int i = 0; i < (leangth - 4); i++)
+				{
+					int swapNumber = rand() % (leangth - 4);
+					int holder = order.at(swapNumber);
+					order.at(swapNumber) = order.at(i);
+					order.at(i) = holder;
+				}
+				for (int j = 0; j < order.size(); j++)
+				{
+					for (int i = 0; i < order.size(); i++)
 					{
-						if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] + 1)
+
+						if (order.at(j) != order.at(i) && order.at(j) + 2 >= order.at(i) && order.at(j) - 2 <= order.at(i))
+						{
+							if (i < j)
+							{
+								j--;
+							}
+							order.erase(order.begin() + i);
+						}
+					}
+				}
+				while (rightBranchs != 0 && order.size())
+				{
+					inBlock = false;
+					for (int j = m_Transform[0]; j < m_Transform[0] + 4; j++)
+					{
+						for (int i = 0; i < blocks.at(j).size(); i++)
+						{
+							if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] + 1)
+							{
+								inBlock = true;
+								break;
+							}
+							else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] + 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+							{
+								inBlock = true;
+								break;
+							}
+						}
+					}
+
+					float vertices[4] = { m_Transform[0] + 1 ,m_Transform[1] + order.at(0) + 1,  m_Transform[0] + 4,m_Transform[1] + order.at(0) - 1 };
+					checkTreesWithCrowns(trees, vertices, inBlock);
+					for (int i = 0; i < seedlings.size(); i++)
+					{
+						if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] <= m_Transform[0] + 4 && seedlings.at(i).m_Transform[0] > m_Transform[0] + 1)
 						{
 							inBlock = true;
 							break;
 						}
-						else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] + 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+						else if (seedlings.at(i).m_Transform[0] == m_Transform[0] + 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
 						{
 							inBlock = true;
 							break;
 						}
 					}
-				}
-
-				float vertices[4] = { m_Transform[0] + 1 ,m_Transform[1] + order.at(0) + 1,  m_Transform[0] + 4,m_Transform[1] + order.at(0) - 1 };
-				checkTreesWithCrowns(trees, vertices, inBlock);
-				for (int i = 0; i < seedlings.size(); i++)
-				{
-					if (seedlings.at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 2 && seedlings.at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && seedlings.at(i).m_Transform[0] <= m_Transform[0] + 4 && seedlings.at(i).m_Transform[0] > m_Transform[0] + 1)
+					if (inBlock)
 					{
-						inBlock = true;
-						break;
-					}
-					else if (seedlings.at(i).m_Transform[0] == m_Transform[0] + 1 && seedlings.at(i).m_Transform[1] == m_Transform[1] + order.at(0))
-					{
-						inBlock = true;
-						break;
-					}
-				}
-				if (inBlock)
-				{
-					order.erase(order.begin());
-				}
-				else
-				{
-					int decider = rand() % 4;
-					if (decider)
-					{
-						decider = i_Sapling;
+						order.erase(order.begin());
 					}
 					else
 					{
-						decider = i_Nothing;
+						int decider = rand() % 4;
+						if (decider)
+						{
+							decider = i_Sapling;
+						}
+						else
+						{
+							decider = i_Nothing;
+						}
+						trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] + 1, m_Transform[1] + order.at(0), -90.0f);
+						trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] + 2, m_Transform[1] + order.at(0), -90.0f);
+						leftBranchs--;
+						order.erase(order.begin());
 					}
-					trees.emplace_back(treeTextures[p_Log], treeDD[p_Log], i_ForestPlank, 35, p_Log, m_Transform[0] + 1, m_Transform[1] + order.at(0), -90.0f);
-					trees.emplace_back(treeTextures[p_SmallCrown], treeDD[p_SmallCrown], decider, 35, p_SmallCrown, m_Transform[0] + 2, m_Transform[1] + order.at(0), -90.0f);
-					leftBranchs--;
-					order.erase(order.begin());
-				}
 
+				}
 			}
 			return true;
 		}

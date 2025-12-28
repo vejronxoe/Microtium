@@ -159,7 +159,7 @@ int main()
 	treeTextures[p_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[p_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 
-	unsigned int blockTextures[20];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorTextures[6];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
@@ -186,12 +186,12 @@ int main()
 	
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;
-	LoadMap("res/save/mapBlocks.txt", blocks, 0, 200, -100, 100, blockTextures);
 	std::vector<std::vector<wall>> walls;
 	std::vector<DamagedBlock> damagedWalls;
 	std::vector<tree> trees;
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
+	LoadMap("res/save/mapBlocks.txt", blocks, 0, 200, -100, 100, blockTextures);
 	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
 
 

@@ -13,6 +13,7 @@ enum Items
 	,i_ForestPlank
 	,i_WallDirt
 	,i_WallIce
+	,i_Sand
 	,i_Sapling
 };
 enum Structures
