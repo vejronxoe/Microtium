@@ -51,7 +51,7 @@ class Block
 {
 public:
 	unsigned int m_te;
-	int m_Transform[2];
+	int m_Y;
 	unsigned char m_BlockBehavior;
 	unsigned char m_Hardness;
 	unsigned short m_ItemDrop;

@@ -12,6 +12,40 @@
 #include"ItemList.h"
 #include"glfw/Window.h"
 
+int FindBlock(std::vector<std::vector<Block>>& blocks,int x, int y)
+{
+	for (int i = 0; i < blocks.at(x).size(); i++)
+	{
+		if (blocks.at(x).at(i).m_Y == y)
+		{
+			return i;
+		}
+		if (blocks.at(x).at(i).m_Y < y)
+		{
+			break;
+		}
+	}
+	return -1;
+}
+bool inBlockCheckObj(std::vector<std::vector<Block>>& blocks, int* vertices)
+{
+	for (int j = vertices[0] ; j < vertices[2]; j++)
+	{
+		for (int i = 0; i < blocks.at(j).size(); i++)
+		{
+			if (blocks.at(j).at(i).m_Y < vertices[3])
+			{
+				break;
+			}
+			if (blocks.at(j).at(i).m_Y <= vertices[1])
+			{
+				return true;
+			}
+			
+		}
+	}
+	return false;
+}
 
 namespace Blocks
 {
@@ -166,25 +200,33 @@ void CreateBlock(int x
 	, std::vector<std::vector<Block>>& blocks
 	, unsigned int* texturesIDs)
 {
+	int indexToPlace = 0;
+	for (; indexToPlace < blocks.at(x).size(); indexToPlace++)
+	{
+		if (blocks.at(x).at(indexToPlace).m_Transform[1] < y)
+		{
+			break;
+		}
+	}
 	switch (IDOfItemBlock)
 	{
 	case i_Dirt:
-		blocks.at(x).emplace_back(texturesIDs[t_Dirt], x, y, b_BasicSolid, 15, i_Dirt);
+		blocks.at(x).emplace( blocks.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], x, y, b_BasicSolid, 15, i_Dirt);
 		break;
 	case i_Platform:
-		blocks.at(x).emplace_back(texturesIDs[t_Platform], x, y, b_Platform, 20, i_Platform);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Platform], x, y, b_Platform, 20, i_Platform);
 		break;
 	case i_Asphalt:
-		blocks.at(x).emplace_back(texturesIDs[t_Asphalt], x, y, b_Asphalt, 35, i_Asphalt);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Asphalt], x, y, b_Asphalt, 35, i_Asphalt);
 		break;
 	case i_Ice:
-		blocks.at(x).emplace_back(texturesIDs[t_Ice], x, y, b_Slippery, 15, i_Ice);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Ice], x, y, b_Slippery, 15, i_Ice);
 		break;
 	case i_ForestPlank:
-		blocks.at(x).emplace_back(texturesIDs[t_ForestPlank], x, y, b_BasicSolid, 20, i_ForestPlank);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], x, y, b_BasicSolid, 20, i_ForestPlank);
 		break;
 	case i_Sand:
-		blocks.at(x).emplace_back(texturesIDs[t_Sand], x, y, b_BasicSolid, 20, i_Sand);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], x, y, b_BasicSolid, 20, i_Sand);
 		break;
 	}
 	
