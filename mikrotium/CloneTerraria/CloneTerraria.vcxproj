@@ -36,6 +36,7 @@
     <ClCompile Include="src\Opengl\Texture.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
+    <ClCompile Include="src\projectile.cpp" />
     <ClCompile Include="src\walls.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +57,7 @@
     <ClInclude Include="src\Opengl\Texture.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
+    <ClInclude Include="src\projectile.h" />
     <ClInclude Include="src\walls.h" />
   </ItemGroup>
   <ItemGroup>
