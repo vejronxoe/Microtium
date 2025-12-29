@@ -55,19 +55,19 @@ namespace Blocks
 	int yMin;
 };
 Block::Block(unsigned int tex
-	, int x
 	, int y
 	, unsigned char behavior
 	, unsigned char hardness
 	, unsigned short int itemDrop)
-	: m_te(tex), m_Transform{ x,y }, m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
+	: m_te(tex), m_Y (y) , m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
 {}
 
 void Block::DrawBlock(Shader& basicShader
+	, int x
 	, unsigned int location
 	, float* transform)
 {
-	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	ChangeTransform(x, m_Y, transform);
 	basicShader.SetUniformMat4(location, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -203,7 +203,7 @@ void CreateBlock(int x
 	int indexToPlace = 0;
 	for (; indexToPlace < blocks.at(x).size(); indexToPlace++)
 	{
-		if (blocks.at(x).at(indexToPlace).m_Transform[1] < y)
+		if (blocks.at(x).at(indexToPlace).m_Y < y)
 		{
 			break;
 		}
@@ -211,22 +211,22 @@ void CreateBlock(int x
 	switch (IDOfItemBlock)
 	{
 	case i_Dirt:
-		blocks.at(x).emplace( blocks.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], x, y, b_BasicSolid, 15, i_Dirt);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Dirt],  y, b_BasicSolid, 15, i_Dirt);
 		break;
 	case i_Platform:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Platform], x, y, b_Platform, 20, i_Platform);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Platform],  y, b_Platform, 20, i_Platform);
 		break;
 	case i_Asphalt:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Asphalt], x, y, b_Asphalt, 35, i_Asphalt);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Asphalt],  y, b_Asphalt, 35, i_Asphalt);
 		break;
 	case i_Ice:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Ice], x, y, b_Slippery, 15, i_Ice);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Ice], y, b_Slippery, 15, i_Ice);
 		break;
 	case i_ForestPlank:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], x, y, b_BasicSolid, 20, i_ForestPlank);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], y, b_BasicSolid, 20, i_ForestPlank);
 		break;
 	case i_Sand:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], x, y, b_BasicSolid, 20, i_Sand);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_BasicSolid, 20, i_Sand);
 		break;
 	}
 	
@@ -290,7 +290,7 @@ void LoadMap(const char* filepath
 				switch (lines.at(i).at(x))
 				{
 				case'd':
-					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , x, y, b_BasicSolid, 25,i_Dirt);
+					blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x) , y, b_BasicSolid, 25,i_Dirt);
 					break;
 				case'p':
 					blockID = i_Platform;
@@ -334,7 +334,7 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, std::vector<DamagedBlock>& damagedBlocks
 	, float* cameraCoordinate
 	, Shader& basicSh
-	, unsigned int *damageTexture
+	, unsigned int* damageTexture
 	, unsigned int transformLocation
 	, float* transform
 	, unsigned int cameraLocation
@@ -342,23 +342,18 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 {
 	basicSh.Bind();
 	basicSh.SetUniformMat4(cameraLocation, camera);
-	for (int j = 0; j < blocks.size(); j++)
-	{
-		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform) < j)
-		{
-			break;
-		}
-		else if (floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform) <= j)
+
+	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
 		{
 			for (int i = 0; i < blocks.at(j).size(); i++)
 			{
-				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Transform[1])
+				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Y)
 				{
-					blocks.at(j).at(i).DrawBlock(basicSh, transformLocation, transform);
+					blocks.at(j).at(i).DrawBlock(basicSh, j , transformLocation, transform);
 				}
 			}
 		}
-	}
+
 	for (int i = 0; i < damagedBlocks.size(); i++)
 	{
 		damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);

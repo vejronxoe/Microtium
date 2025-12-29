@@ -66,7 +66,7 @@ bool findElementWithY(int y
 {
 	for (int i = 0; i < blocks.size(); i++)
 	{
-		if (y == blocks.at(i).m_Transform[1])
+		if (y == blocks.at(i).m_Y)
 		{
 			return true;
 			
@@ -661,12 +661,12 @@ void Player::EveryFrame(float deltaTime
 					}
 					for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 					{
-						if (y == blocks.at(x).at(blockIndex).m_Transform[1])
+						if (y == blocks.at(x).at(blockIndex).m_Y)
 						{
 							inBlock = true;
 							m_CursorOnPlaceableSpot = true;
 						}
-						else if (y + 1 == blocks.at(x).at(blockIndex).m_Transform[1] || y - 1 == blocks.at(x).at(blockIndex).m_Transform[1])
+						else if (y + 1 == blocks.at(x).at(blockIndex).m_Y || y - 1 == blocks.at(x).at(blockIndex).m_Y)
 						{
 							m_CursorOnPlaceableSpot = true;
 						}
@@ -725,7 +725,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
 				{
-					if (y == blocks.at(x).at(blockIndex).m_Transform[1])
+					if (y == blocks.at(x).at(blockIndex).m_Y)
 					{
 						if (m_PickaxeStreanght >= blocks.at(x).at(blockIndex).m_Hardness && b_Indestructible != blocks.at(x).at(blockIndex).m_BlockBehavior)
 						{
@@ -800,12 +800,12 @@ void Player::EveryFrame(float deltaTime
 						floors = false;
 						for (int j = 0; j < blocks.at(i).size(); j++)
 						{
-							if (blocks.at(i).at(j).m_Transform[1] <= vertices[1] && blocks.at(i).at(j).m_Transform[1] >= vertices[3])
+							if (blocks.at(i).at(j).m_Y <= vertices[1] && blocks.at(i).at(j).m_Y >= vertices[3])
 							{
 								inBlock = true;
 								break;
 							}
-							if (blocks.at(i).at(j).m_Transform[1] == vertices[3] - 1)
+							if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
 							{
 								floors = true;
 							}
@@ -874,7 +874,7 @@ void Player::EveryFrame(float deltaTime
 						damageblocks.at(damageIndex).m_HP -= floorf((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness);
 						if (0 >= damageblocks.at(damageIndex).m_HP)
 						{
-							droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
+							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 							damageblocks.erase(damageblocks.begin() + damageIndex);
 							blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 							for (int i = 0; i < walls.at(x).size(); i++)
@@ -889,7 +889,7 @@ void Player::EveryFrame(float deltaTime
 					}
 					else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 					{
-						droppedItems.emplace_back(blocks.at(x).at(blockIndex).m_Transform[0], blocks.at(x).at(blockIndex).m_Transform[1], 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
+						droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 						blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 						for (int i = 0; i < walls.at(x).size(); i++)
 						{
@@ -903,7 +903,7 @@ void Player::EveryFrame(float deltaTime
 					else
 					{
 
-						damageblocks.emplace_back(x, blocks.at(x).at(blockIndex).m_Transform[1], ceilf(3.0f - ((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness)));
+						damageblocks.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, ceilf(3.0f - ((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness)));
 					}
 
 				}
@@ -1024,7 +1024,7 @@ void Player::EveryFrame(float deltaTime
 						{
 							for (int i = 0; i < blocks.at(x).size(); i++)
 							{
-								if (blocks.at(x).at(i).m_Transform[0] == x && blocks.at(x).at(i).m_Transform[1] == y - 1 )
+								if (blocks.at(x).at(i).m_Y == y - 1 )
 								{
 									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
 								}

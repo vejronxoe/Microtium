@@ -57,15 +57,15 @@ public:
 	unsigned short m_ItemDrop;
 
 	Block(unsigned int tex
-		, int x
 		, int y
 		, unsigned char Behavior
 		, unsigned char hardness
 		, unsigned short int itemDrop);
 
 	void DrawBlock( Shader& basicShader
+		, int x
 		, unsigned int location 
-		,float* transform);
+		, float* transform);
 };
 struct DamagedBlock
 {

@@ -21,4 +21,3 @@ public:
 	void DrawItem(unsigned int* textureIDs, Shader& basicSh, unsigned int transformLocation, float* transform);
 };
 
-void ItemHitBox(DroppedItem& dropItem, std::vector<std::vector<Block>>& hitbox, float* itemVertices, float deltaTime);

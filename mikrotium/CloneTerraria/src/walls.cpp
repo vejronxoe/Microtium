@@ -76,7 +76,7 @@ void LoadMapWall(const char* filepath, std::vector<std::vector<Block>>& blocks, 
 				case'd':
 					for (int j = 0; j < blocks.at(x).size(); j++)
 					{
-						render = !(blocks.at(x).at(j).m_Transform[1] == y);
+						render = !(blocks.at(x).at(j).m_Y == y);
 						if (!render)
 						{
 							break;
@@ -87,7 +87,7 @@ void LoadMapWall(const char* filepath, std::vector<std::vector<Block>>& blocks, 
 				case'i':
 					for (int j = 0; j < blocks.at(x).size(); j++)
 					{
-						render = !(blocks.at(x).at(j).m_Transform[1] == y);
+						render = !(blocks.at(x).at(j).m_Y == y);
 						if (!render)
 						{
 							break;

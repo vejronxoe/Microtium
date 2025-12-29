@@ -164,7 +164,7 @@ seedling::seedling(char type
 {
 	for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
 	{	
-		if (blocks.at(m_Transform[0]).at(i).m_Transform[1] == m_Transform[1] - 1)
+		if (blocks.at(m_Transform[0]).at(i).m_Y == m_Transform[1] - 1)
 		{
 			m_IndexOfGroundBlock = i;
 			break;
@@ -182,12 +182,12 @@ bool seedling::everyFrame(float deltaTime
 	bool noGround = true;
 	if (m_IndexOfGroundBlock < blocks.at(m_Transform[0]).size())
 	{
-		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Transform[1] == m_Transform[1] - 1);
+		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Y == m_Transform[1] - 1);
 		if(noGround)
 		{
 			for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
 			{
-				if (blocks.at(m_Transform[0]).at(i).m_Transform[1] == m_Transform[1] - 1)
+				if (blocks.at(m_Transform[0]).at(i).m_Y == m_Transform[1] - 1)
 				{
 					m_IndexOfGroundBlock = i;
 					noGround = false;
@@ -213,7 +213,7 @@ bool seedling::everyFrame(float deltaTime
 			for (int i = 0; i < blocks.at(m_Transform[0]).size(); i++)
 			{
 
-				if (blocks.at(m_Transform[0]).at(i).m_Transform[1] >= m_Transform[1] && blocks.at(m_Transform[0]).at(i).m_Transform[1] <= m_Transform[1] + leangth)
+				if (blocks.at(m_Transform[0]).at(i).m_Y >= m_Transform[1] && blocks.at(m_Transform[0]).at(i).m_Y <= m_Transform[1] + leangth)
 				{
 					inBlock = true;
 					break;
@@ -233,7 +233,7 @@ bool seedling::everyFrame(float deltaTime
 				{
 					for (int i = 0; i < blocks.at(j).size(); i++)
 					{
-						if (crownVertices[1] >= blocks.at(j).at(i).m_Transform[1] && crownVertices[3] <= blocks.at(j).at(i).m_Transform[1])
+						if (crownVertices[1] >= blocks.at(m_Transform[0]).at(i).m_Y && crownVertices[3] <= blocks.at(m_Transform[0]).at(i).m_Y)
 						{
 							inBlock = true;
 							break;
@@ -308,12 +308,12 @@ bool seedling::everyFrame(float deltaTime
 					{
 						for (int i = 0; i < blocks.at(j).size(); i++)
 						{
-							if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] - 1)
+							if (blocks.at(m_Transform[0]).at(i).m_Y >= m_Transform[1] + order.at(0) - 1 && blocks.at(m_Transform[0]).at(i).m_Y <= m_Transform[1] + order.at(0) + 1 && j != m_Transform[0] - 1)
 							{
 								inBlock = true;
 								break;
 							}
-							else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] - 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+							else if (j == m_Transform[0] - 1 && blocks.at(m_Transform[0]).at(i).m_Y == m_Transform[1] + order.at(0))
 							{
 								inBlock = true;
 								break;
@@ -395,12 +395,12 @@ bool seedling::everyFrame(float deltaTime
 					{
 						for (int i = 0; i < blocks.at(j).size(); i++)
 						{
-							if (blocks.at(j).at(i).m_Transform[1] >= m_Transform[1] + order.at(0) - 1 && blocks.at(j).at(i).m_Transform[1] <= m_Transform[1] + order.at(0) + 1 && blocks.at(j).at(i).m_Transform[0] != m_Transform[0] + 1)
+							if (blocks.at(m_Transform[0]).at(i).m_Y >= m_Transform[1] + order.at(0) - 1 && blocks.at(m_Transform[0]).at(i).m_Y <= m_Transform[1] + order.at(0) + 1 && j != m_Transform[0] + 1)
 							{
 								inBlock = true;
 								break;
 							}
-							else if (blocks.at(j).at(i).m_Transform[0] == m_Transform[0] + 1 && blocks.at(j).at(i).m_Transform[1] == m_Transform[1] + order.at(0))
+							else if (j == m_Transform[0] + 1 && blocks.at(m_Transform[0]).at(i).m_Y == m_Transform[1] + order.at(0))
 							{
 								inBlock = true;
 								break;

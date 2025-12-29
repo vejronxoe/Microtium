@@ -196,14 +196,6 @@ int main()
 
 
 
-	for (int i = 0; i < blocks.at(80).size(); i++)
-	{
-		if (blocks.at(80).at(i).m_Transform[0] == 80 && blocks.at(80).at(i).m_Transform[1] == -11)
-		{
-			blocks.at(80).at(i).m_BlockBehavior = b_Indestructible;
-		}
-	}
-
 
 
 	float deltaTime;

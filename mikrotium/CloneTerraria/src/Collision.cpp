@@ -52,16 +52,16 @@ unsigned int OneDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	{
 		for (int i = 0; i < hitbox.at(j).size(); i++)
 		{
-			float blockTop = hitbox.at(j).at(i).m_Transform[1] + 0.5f;
+			float blockTop = hitbox.at(j).at(i).m_Y + 0.5f;
 			if (hitbox.at(j).at(i).m_BlockBehavior != b_Platform || hitbox.at(j).at(i).m_BlockBehavior == b_Platform && (objectVertices4f[3] > blockTop || objectVertices4f[3] == blockTop && !Input::SHold))
 			{
-				float x = hitbox.at(j).at(i).m_Transform[0];
-				float y = hitbox.at(j).at(i).m_Transform[1];
+				float x = j;
+				float y = hitbox.at(j).at(i).m_Y;
 
 				if (y <= vertices[1] && y >= vertices[3])
 				{
 					float corners[4];
-					GetCorners(hitbox.at(j).at(i).m_Transform[0], hitbox.at(j).at(i).m_Transform[1], corners);
+					GetCorners(j, hitbox.at(j).at(i).m_Y, corners);
 					if (sideHit)
 					{
 						if (abs(closestVertice - objectVertices4f[playerIndex]) > abs(corners[blockIndex] - objectVertices4f[playerIndex]))
@@ -120,18 +120,18 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 	{
 		for (int i = 0; i < hitbox.at(j).size(); i++)
 		{
-			float blockTop = hitbox.at(j).at(i).m_Transform[1] + 0.5f;
+			float blockTop = hitbox.at(j).at(i).m_Y + 0.5f;
 			if ( hitbox.at(j).at(i).m_BlockBehavior != b_Platform || hitbox.at(j).at(i).m_BlockBehavior == b_Platform && (objectVertices4f[3] > blockTop || objectVertices4f[3] == blockTop && !Input::SHold))
 			{
 				bool xHit = false;
 				bool yHit = false;
-				float x = hitbox.at(j).at(i).m_Transform[0];
-				float y = hitbox.at(j).at(i).m_Transform[1];
+				float x = j;
+				float y = hitbox.at(j).at(i).m_Y;
 
 				if (x >= vertices[0] && y <= vertices[1] && x <= vertices[2] && y >= vertices[3])
 				{
 					float corners[4];
-					GetCorners(hitbox.at(j).at(i).m_Transform[0], hitbox.at(j).at(i).m_Transform[1], corners);
+					GetCorners(j, hitbox.at(j).at(i).m_Y, corners);
 					if (wallHit)
 					{
 						if (abs(closestVertice[0] - objectVertices4f[XplayerIndex]) > abs(corners[XHitboxIndex] - objectVertices4f[XplayerIndex]))
@@ -151,7 +151,7 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 				if (x >= vertices[4] && y <= vertices[5] && x <= vertices[6] && y >= vertices[7])
 				{
 					float corners[4];
-					GetCorners(hitbox.at(j).at(i).m_Transform[0], hitbox.at(j).at(i).m_Transform[1], corners);
+					GetCorners(j, hitbox.at(j).at(i).m_Y, corners);
 					if (floorHit)
 					{
 						if (abs(closestVertice[1] - objectVertices4f[YplayerIndex]) > abs(corners[YHitboxIndex] - objectVertices4f[YplayerIndex]))
@@ -173,7 +173,7 @@ unsigned int TwoDirectionCheck(float* vertices, float* objectVertices4f, std::ve
 					if (x >= vertices[8] && y <= vertices[9] && x <= vertices[10] && y >= vertices[11])
 					{
 						float corners[4];
-						GetCorners(hitbox.at(j).at(i).m_Transform[0], hitbox.at(j).at(i).m_Transform[1], corners);
+						GetCorners(j, hitbox.at(j).at(i).m_Y, corners);
 						if (edgehit)
 						{
 

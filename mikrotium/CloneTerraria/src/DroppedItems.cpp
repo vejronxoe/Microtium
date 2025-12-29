@@ -74,10 +74,6 @@ bool DroppedItem::EveryFrame(float deltaTime
 		m_Velocity[0] *= 40 * (m_Timer - PICKUPTIME);
 		m_Velocity[1] *= 40 * (m_Timer - PICKUPTIME);
 	}
-	else if (m_Velocity[0] == 0 && m_Velocity[0] <= 0)
-	{
-		ItemHitBox( *(this), blocks, itemVertices, deltaTime);
-	}
 	else
 	{
 	
@@ -126,46 +122,3 @@ void DroppedItem::DrawItem(unsigned int* textureIDs
 
 }
 
-void ItemHitBox(DroppedItem& dropItem, std::vector<std::vector<Block>>& hitbox, float* itemVertices, float deltaTime)
-{
-	int x = roundf(dropItem.m_Transform[0]);
-	int hitboxVertices[2] = { roundf(itemVertices[3]) , roundf(dropItem.m_Velocity[1] * deltaTime + itemVertices[3]) };
-	if (dropItem.m_BlockIndex != -1 && hitbox.at(x).at(dropItem.m_BlockIndex).m_Transform[0] == dropItem.m_BlockY)
-	{
-		return;
-	}
-	float closestVertice;
-	bool hit = false;
-	for (int i = 0; i < hitbox.at(x).size(); i++)
-	{
-		float blockTop = hitbox.at(x).at(i).m_Transform[1] + 0.5f;
-
-		float y = hitbox.at(x).at(i).m_Transform[1];
-
-		if (y <= hitboxVertices[0] && y >= hitboxVertices[1])
-		{
-			if (hit)
-			{
-				if (y + 0.5f > closestVertice)
-				{
-					dropItem.m_BlockY = hitbox.at(x).at(i).m_Transform[1];
-					dropItem.m_BlockIndex = i;
-					closestVertice = y + 0.5f;
-				}
-			}
-			else
-			{
-				dropItem.m_BlockY = hitbox.at(x).at(i).m_Transform[1];
-				dropItem.m_BlockIndex = i;
-				closestVertice = y + 0.5f;
-				hit = true;
-			}
-		}
-	}
-	if (hit)
-	{
-		dropItem.m_Velocity[1] = 0;
-		dropItem.m_Transform[1] += closestVertice - itemVertices[3];
-
-	}
-}
