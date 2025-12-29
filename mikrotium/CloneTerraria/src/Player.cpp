@@ -80,7 +80,7 @@ bool findElementWithY(int y
 {
 	for (int i = 0; i < walls.size(); i++)
 	{
-		if (y == walls.at(i).m_Transform[1])
+		if (y == walls.at(i).m_Y)
 		{
 			return true;
 
@@ -673,13 +673,13 @@ void Player::EveryFrame(float deltaTime
 					}
 					for (int i = 0; i < walls.at(x).size(); i++)
 					{
-						if (y == walls.at(x).at(i).m_Transform[1])
+						if (y == walls.at(x).at(i).m_Y)
 						{
 							wallIndex = i;
 							m_CursorOnPlaceableSpot = true;
 							break;
 						}
-						else if (y + 1 == walls.at(x).at(i).m_Transform[1] || y - 1 == walls.at(x).at(i).m_Transform[1])
+						else if (y + 1 == walls.at(x).at(i).m_Y || y - 1 == walls.at(x).at(i).m_Y)
 						{
 							m_CursorOnPlaceableSpot = true;
 						}
@@ -739,7 +739,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				for (wallIndex = 0; wallIndex < walls.at(x).size(); wallIndex++)
 				{
-					if (y == walls.at(x).at(wallIndex).m_Transform[1])
+					if (y == walls.at(x).at(wallIndex).m_Y)
 					{
 						if (m_HammerStreanght >= walls.at(x).at(blockIndex).m_Hardness)
 						{
@@ -879,7 +879,7 @@ void Player::EveryFrame(float deltaTime
 							blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 							for (int i = 0; i < walls.at(x).size(); i++)
 							{
-								if (walls.at(x).at(i).m_Transform[1] == y)
+								if (walls.at(x).at(i).m_Y == y)
 								{
 									walls.at(x).at(i).m_Render = true;
 									break;
@@ -893,7 +893,7 @@ void Player::EveryFrame(float deltaTime
 						blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
 						for (int i = 0; i < walls.at(x).size(); i++)
 						{
-							if (walls.at(x).at(i).m_Transform[1] == y)
+							if (walls.at(x).at(i).m_Y == y)
 							{
 								walls.at(x).at(i).m_Render = true;
 								break;
@@ -984,7 +984,7 @@ void Player::EveryFrame(float deltaTime
 						{
 							if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
 							{
-								droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+								droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
 							}
 							damagedWalls.erase(damagedWalls.begin() + damageIndex);
 							walls.at(x).erase(walls.at(x).begin() + wallIndex);
@@ -994,14 +994,14 @@ void Player::EveryFrame(float deltaTime
 					{
 						if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
 						{
-							droppedItems.emplace_back(walls.at(x).at(wallIndex).m_Transform[0], walls.at(x).at(wallIndex).m_Transform[1], 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+							droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
 						}
 						walls.at(x).erase(walls.at(x).begin() + wallIndex);
 					}
 					else
 					{
 
-						damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Transform[1], ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
+						damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Y, ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
 					}
 
 				}
@@ -1313,6 +1313,7 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 }
+
 void Player::DrawPlayer(Shader& basicSh
 	, Shader& HUDSh
 	, Shader& fontSh

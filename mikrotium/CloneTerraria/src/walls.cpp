@@ -9,21 +9,65 @@
 #include"ItemList.h"
 #include"glfw/Window.h"
 
+int FindWall(std::vector<std::vector<wall>>& walls, int x, int y)
+{
+	for (int i = 0; i < walls.at(x).size(); i++)
+	{
+		if (walls.at(x).at(i).m_Y == y)
+		{
+			return i;
+		}
+		if (walls.at(x).at(i).m_Y < y)
+		{
+			break;
+		}
+	}
+	return -1;
+}
+bool inWallCheckObj(std::vector<std::vector<wall>>& walls, int* vertices)
+{
+	for (int j = vertices[0]; j < vertices[2]; j++)
+	{
+		for (int i = 0; i < walls.at(j).size(); i++)
+		{
+			if (walls.at(j).at(i).m_Y < vertices[3])
+			{
+				break;
+			}
+			if (walls.at(j).at(i).m_Y <= vertices[1])
+			{
+				return true;
+			}
 
-wall::wall(unsigned int texture, bool render, unsigned short int itemDrop, int x, int y, unsigned char hardness)
-	:m_Texture(texture),m_Render(render), m_ItemDrop(itemDrop), m_Transform{x,y}, m_Hardness(hardness)
+		}
+	}
+	return false;
+}
+
+wall::wall(unsigned int texture
+	, bool render
+	, unsigned short int itemDrop
+	, int y
+	, unsigned char hardness)
+	:m_Texture(texture),m_Render(render), m_ItemDrop(itemDrop), m_Y(y), m_Hardness(hardness)
 {}
-void wall::drawWalls(Shader& wallSh, float* transform, unsigned int transformLocation)
+void wall::drawWalls(Shader& wallSh
+	, int x
+	, float* transform
+	, unsigned int transformLocation)
 {
 	if (m_Render)
 	{
-		ChangeTransform(m_Transform[0], m_Transform[1], transform);
+		ChangeTransform(x, m_Y, transform);
 		wallSh.SetUniformMat4(transformLocation, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 }
-void LoadMapWall(const char* filepath, std::vector<std::vector<Block>>& blocks, std::vector<std::vector<wall>>& walls, unsigned int* texturesIDs)
+void LoadMapWall(const char* filepath
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, unsigned int* texturesIDs)
 {
 
 	for (int i = Blocks::xMin; i <= Blocks::xMax; i++)
@@ -102,20 +146,34 @@ void LoadMapWall(const char* filepath, std::vector<std::vector<Block>>& blocks, 
 		}
 	}
 }
-void createWall(int x, int y, bool render, unsigned short int IDOfItemWall, std::vector<std::vector<wall>>& walls, unsigned int* texturesIDs)
+void createWall(int x
+	, int y
+	, bool render
+	, unsigned short int IDOfItemWall
+	, std::vector<std::vector<wall>>& walls
+	, unsigned int* texturesIDs)
 {
 	switch (IDOfItemWall)
 	{
 	case i_WallDirt:
-		walls.at(x).emplace_back(texturesIDs[t_Dirt], render, i_WallDirt, x, y, 20);
+		walls.at(x).emplace_back(texturesIDs[t_Dirt], render, i_WallDirt, y, 20);
 		break;
 	case i_WallIce:
-		walls.at(x).emplace_back(texturesIDs[t_Ice], render, i_WallIce, x, y, 15);
+		walls.at(x).emplace_back(texturesIDs[t_Ice], render, i_WallIce, y, 15);
 		break;
 	}
 }
 
-void drawWalls(std::vector<DamagedBlock> damagedWalls, unsigned int* damageTextures,std::vector<std::vector<wall>>& walls,Shader& wallsSh, unsigned int shadowLocation , unsigned int wallsCameraLocation,float* camera, unsigned int wallsTransformLocation, float* transform, float* cameraCoordinate)
+void drawWalls(std::vector<DamagedBlock> damagedWalls
+	, unsigned int* damageTextures
+	,std::vector<std::vector<wall>>& walls
+	,Shader& wallsSh
+	, unsigned int shadowLocation
+	, unsigned int wallsCameraLocation
+	,float* camera
+	, unsigned int wallsTransformLocation
+	, float* transform
+	, float* cameraCoordinate)
 { 
 	wallsSh.Bind();
 	wallsSh.SetUniform1i(shadowLocation, 1);
@@ -130,9 +188,9 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls, unsigned int* damageTextu
 		{
 			for (int i = 0; i < walls.at(j).size(); i++)
 			{
-				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= walls.at(j).at(i).m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls.at(j).at(i).m_Transform[1])
+				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= walls.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls.at(j).at(i).m_Y)
 				{
-					walls.at(j).at(i).drawWalls(wallsSh, transform, wallsTransformLocation);
+					walls.at(j).at(i).drawWalls(wallsSh, j ,transform, wallsTransformLocation);
 
 				}
 			}

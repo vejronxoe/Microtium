@@ -7,7 +7,6 @@
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/Texture.h"
-#include"Opengl/drawData.h"
 #include"math/matrix.h"
 #include"ItemList.h"
 #include"glfw/Window.h"
@@ -344,15 +343,15 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	basicSh.SetUniformMat4(cameraLocation, camera);
 
 	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
+	{
+		for (int i = 0; i < blocks.at(j).size(); i++)
 		{
-			for (int i = 0; i < blocks.at(j).size(); i++)
+			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Y)
 			{
-				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Y)
-				{
-					blocks.at(j).at(i).DrawBlock(basicSh, j , transformLocation, transform);
-				}
+				blocks.at(j).at(i).DrawBlock(basicSh, j, transformLocation, transform);
 			}
 		}
+	}
 
 	for (int i = 0; i < damagedBlocks.size(); i++)
 	{
