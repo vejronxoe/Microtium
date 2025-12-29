@@ -121,12 +121,15 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[4] = i_Dirt;
 	m_PlayerSlots[5] = i_CooperHammer;
 	m_PlayerSlots[6] = i_Sand;
+	m_PlayerSlots[6] = i_Sand;
+	m_PlayerSlots[7] = i_Sapling;
 	m_AmountInSlots[1] = 1;
 	m_AmountInSlots[2] = 1;
 	m_AmountInSlots[3] = 1;
 	m_AmountInSlots[4] = 9999;
 	m_AmountInSlots[5] = 1;
 	m_AmountInSlots[6] = 20;
+	m_AmountInSlots[7] = 20;
 	m_UseItemTimer = 0;
 	m_CooldownToUse = 0;
 	m_PickaxeStreanght = 0;
@@ -755,7 +758,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (y == trees.at(woodIndex).m_Transform[1] && x == trees.at(woodIndex).m_Transform[0])
 					{
-						if (trees.at(woodIndex).m_PartOfTree == p_Log && m_AxeStreanght >= trees.at(woodIndex).m_Hardness)
+						if (trees.at(woodIndex).m_PartOfTree == part_Log && m_AxeStreanght >= trees.at(woodIndex).m_Hardness)
 						{
 							m_CursorOnMinableWood = true;
 						}

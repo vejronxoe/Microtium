@@ -105,3 +105,12 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, float* transform
 	, unsigned int cameraLocation
 	, float* camera);
+int FindBlock(std::vector<std::vector<Block>>& blocks
+	, int x
+	, int y);
+bool blockInArea(std::vector<std::vector<Block>>& blocks
+	, int* vertices);
+int allBlockInArea(std::vector<std::vector<Block>>& blocks
+	, int* vertices
+	, std::vector<Block>& blocksInArea
+	, std::vector<int>& blocksXInArea);

@@ -152,12 +152,12 @@ int main()
 	CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 	CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
 	unsigned int treeDD[3];
-	treeDD[p_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
-	treeDD[p_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
-	treeDD[p_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
-	treeTextures[p_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
-	treeTextures[p_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
-	treeTextures[p_Log] = CreateTextureRGBA("res/textures/woodLog.png");
+	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
+	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
+	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
+	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);

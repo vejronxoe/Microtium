@@ -9,7 +9,9 @@
 #include"ItemList.h"
 #include"glfw/Window.h"
 
-int FindWall(std::vector<std::vector<wall>>& walls, int x, int y)
+int FindWall(std::vector<std::vector<wall>>& walls
+	, int x
+	, int y)
 {
 	for (int i = 0; i < walls.at(x).size(); i++)
 	{
@@ -24,7 +26,8 @@ int FindWall(std::vector<std::vector<wall>>& walls, int x, int y)
 	}
 	return -1;
 }
-bool inWallCheckObj(std::vector<std::vector<wall>>& walls, int* vertices)
+bool inWallCheckObj(std::vector<std::vector<wall>>& walls
+	, int* vertices)
 {
 	for (int j = vertices[0]; j < vertices[2]; j++)
 	{

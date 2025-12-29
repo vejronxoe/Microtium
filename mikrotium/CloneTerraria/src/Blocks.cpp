@@ -11,7 +11,9 @@
 #include"ItemList.h"
 #include"glfw/Window.h"
 
-int FindBlock(std::vector<std::vector<Block>>& blocks,int x, int y)
+int FindBlock(std::vector<std::vector<Block>>& blocks
+	,int x
+	, int y)
 {
 	for (int i = 0; i < blocks.at(x).size(); i++)
 	{
@@ -26,7 +28,8 @@ int FindBlock(std::vector<std::vector<Block>>& blocks,int x, int y)
 	}
 	return -1;
 }
-bool inBlockCheckObj(std::vector<std::vector<Block>>& blocks, int* vertices)
+bool blockInArea(std::vector<std::vector<Block>>& blocks
+	, int* vertices)
 {
 	for (int j = vertices[0] ; j < vertices[2]; j++)
 	{
@@ -44,6 +47,31 @@ bool inBlockCheckObj(std::vector<std::vector<Block>>& blocks, int* vertices)
 		}
 	}
 	return false;
+}
+int allBlockInArea(std::vector<std::vector<Block>>& blocks
+	, int* vertices
+	, std::vector<Block>& blocksInArea
+	, std::vector<int>& blocksXInArea)
+{
+	int count = 0;
+	for (int j = vertices[0]; j < vertices[2]; j++)
+	{
+		for (int i = 0; i < blocks.at(j).size(); i++)
+		{
+			if (blocks.at(j).at(i).m_Y < vertices[3])
+			{
+				break;
+			}
+			if (blocks.at(j).at(i).m_Y <= vertices[1])
+			{
+				blocksInArea.emplace_back(blocks.at(j).at(i));
+				blocksXInArea.emplace_back(j);
+				count++;
+			}
+
+		}
+	}
+	return count;
 }
 
 namespace Blocks
@@ -300,6 +328,10 @@ void LoadMap(const char* filepath
 				case'i':
 					blockID = i_Ice;
 					break;
+				case's':
+					blockID = i_Sand;
+					break;
+				
 				}
 				if (blockID)
 				{

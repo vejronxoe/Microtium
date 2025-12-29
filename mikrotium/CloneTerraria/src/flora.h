@@ -3,11 +3,12 @@
 
 #include "Blocks.h"
 
+
 enum treeParts
 {
-	p_Log = 0,
-	p_SmallCrown,
-	p_Crown,
+	part_Log = 0,
+	part_SmallCrown,
+	part_Crown,
 };
 class tree
 {
@@ -79,3 +80,6 @@ public:
 		, float* transform
 		, unsigned int* texture);
 };
+int FindWood(std::vector<tree> woods
+	, int x
+	, int y);
