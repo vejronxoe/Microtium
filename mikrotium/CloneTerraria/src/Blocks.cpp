@@ -31,7 +31,7 @@ int FindBlock(std::vector<std::vector<Block>>& blocks
 bool blockInArea(std::vector<std::vector<Block>>& blocks
 	, int* vertices)
 {
-	for (int j = vertices[0] ; j < vertices[2]; j++)
+	for (int j = vertices[0] ; j <= vertices[2]; j++)
 	{
 		for (int i = 0; i < blocks.at(j).size(); i++)
 		{
@@ -54,7 +54,7 @@ int allBlockInArea(std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& blocksXInArea)
 {
 	int count = 0;
-	for (int j = vertices[0]; j < vertices[2]; j++)
+	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
 		for (int i = 0; i < blocks.at(j).size(); i++)
 		{

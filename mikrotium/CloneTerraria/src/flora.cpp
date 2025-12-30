@@ -54,9 +54,12 @@ bool SeedlingInArea(std::vector<seedling>& seedlings
 {
 	for (int i = 0; i < seedlings.size(); i++)
 	{
-		if (vertices[0] <= seedlings.at(i).m_Transform[0]  && vertices[2] >= seedlings.at(i).m_Transform[0] && (vertices[3] <= seedlings.at(i).m_Transform[1] && vertices[1] >= seedlings.at(i).m_Transform[1] || vertices[3] <= 1 + seedlings.at(i).m_Transform[1] && vertices[1] >= 1 + seedlings.at(i).m_Transform[1]))
+		if (vertices[0] <= seedlings.at(i).m_Transform[0] && vertices[2] >= seedlings.at(i).m_Transform[0])
 		{
-			return true;
+			if ( vertices[3] <= seedlings.at(i).m_Transform[1] + 1 && vertices[1] >= seedlings.at(i).m_Transform[1])
+			{
+				return true;
+			}
 		}
 	}
 	return false;
@@ -87,14 +90,14 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 
 				vertices[0] = trees.at(i).m_Transform[0] - 3; vertices[1] = trees.at(i).m_Transform[1] + 3;
 				vertices[2] = trees.at(i).m_Transform[0] + 3; vertices[3] = trees.at(i).m_Transform[1];
-				if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
+				if ( vertices[1] >= objVertices4[3] && vertices[3] <= objVertices4[1])
 				{
-					if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+					if (vertices[2] >= objVertices4[0] && vertices[0] <= objVertices4[2])
 					{
 						inBlock = true;
 						break;
 					}
-				}
+				} 
 				break;
 			case part_SmallCrown:
 				switch (trees.at(i).m_Rotation)
@@ -112,12 +115,12 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 					vertices[2] = trees.at(i).m_Transform[0] + 2; vertices[3] = trees.at(i).m_Transform[1] - 1;
 					break;
 				default:
-					printf("error in sapling everyFrame wrong Rotation : %d", trees.at(i).m_Rotation);
+					printf("error in sapling everyFrame wrong Rotation : %d\n", trees.at(i).m_Rotation);
 					break;
 				}
-				if ((vertices[1] >= objVertices4[1] || vertices[1] >= objVertices4[3]) && (vertices[3] <= objVertices4[1] || vertices[3] <= objVertices4[3]))
+				if (vertices[1] >= objVertices4[3] && vertices[3] <= objVertices4[1])
 				{
-					if ((vertices[2] >= objVertices4[0] || vertices[2] >= objVertices4[2]) && (vertices[0] <= objVertices4[0] || vertices[0] <= objVertices4[2]))
+					if (vertices[2] >= objVertices4[0] && vertices[0] <= objVertices4[2])
 					{
 						inBlock = true;
 						break;
@@ -289,8 +292,9 @@ void createBranchs(std::vector <std::vector<Block>>& blocks
 			{
 				decider = i_Nothing;
 			}
-			trees.emplace_back(treeTextures[part_Log], treeDD[part_Log], i_ForestPlank, 35, part_Log, m_Transform[0] - 1, m_Transform[1] + order.at(0), 90.0f);
-			trees.emplace_back(treeTextures[part_SmallCrown], treeDD[part_SmallCrown], decider, 35, part_SmallCrown, m_Transform[0] - 2, m_Transform[1] + order.at(0), 90.0f);
+			int side = abs(branchVertices[0] - m_Transform[0])/ (branchVertices[0] - m_Transform[0]);
+			trees.emplace_back(treeTextures[part_Log], treeDD[part_Log], i_ForestPlank, 35, part_Log, m_Transform[0] + 1 * side, m_Transform[1] + order.at(0), side * -90.0f);
+			trees.emplace_back(treeTextures[part_SmallCrown], treeDD[part_SmallCrown], decider, 35, part_SmallCrown, m_Transform[0] + 2 * side , m_Transform[1] + order.at(0), side * -90.0f);
 			countBranchs--;
 			order.erase(order.begin());
 		}
@@ -312,7 +316,7 @@ bool seedling::everyFrame(float deltaTime
 		if (noGround)
 		{
 			m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1);
-			noGround = m_IndexOfGroundBlock + 1;
+			noGround = !(m_IndexOfGroundBlock + 1);
 		}
 	}
 	m_Timer += deltaTime;

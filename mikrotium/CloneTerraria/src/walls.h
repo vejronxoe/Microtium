@@ -44,5 +44,5 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 int FindWall(std::vector<std::vector<wall>>& walls
 	, int x
 	, int y);
-bool inWallCheckObj(std::vector<std::vector<wall>>& walls
+bool WallInArea(std::vector<std::vector<wall>>& walls
 	, int* vertices);

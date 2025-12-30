@@ -26,10 +26,10 @@ int FindWall(std::vector<std::vector<wall>>& walls
 	}
 	return -1;
 }
-bool inWallCheckObj(std::vector<std::vector<wall>>& walls
+bool WallInArea(std::vector<std::vector<wall>>& walls
 	, int* vertices)
 {
-	for (int j = vertices[0]; j < vertices[2]; j++)
+	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
 		for (int i = 0; i < walls.at(j).size(); i++)
 		{
