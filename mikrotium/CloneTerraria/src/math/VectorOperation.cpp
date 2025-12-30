@@ -17,12 +17,3 @@ void NormalizeVector(float* vector2D)
 	vector2D[0] = vector2D[0] / lenght;
 	vector2D[1] = vector2D[1] / lenght;
 }
-int PlusMinusOneOrZero(int number)
-{
-	int result = 0;
-	if (number != 0)
-	{
-		result = abs(number) / number;
-	}
-	return result;
-}

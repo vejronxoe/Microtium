@@ -48,31 +48,6 @@ bool blockInArea(std::vector<std::vector<Block>>& blocks
 	}
 	return false;
 }
-int allBlockInArea(std::vector<std::vector<Block>>& blocks
-	, int* vertices
-	, std::vector<Block>& blocksInArea
-	, std::vector<int>& blocksXInArea)
-{
-	int count = 0;
-	for (int j = vertices[0]; j <= vertices[2]; j++)
-	{
-		for (int i = 0; i < blocks.at(j).size(); i++)
-		{
-			if (blocks.at(j).at(i).m_Y < vertices[3])
-			{
-				break;
-			}
-			if (blocks.at(j).at(i).m_Y <= vertices[1])
-			{
-				blocksInArea.emplace_back(blocks.at(j).at(i));
-				blocksXInArea.emplace_back(j);
-				count++;
-			}
-
-		}
-	}
-	return count;
-}
 
 namespace Blocks
 {

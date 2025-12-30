@@ -83,11 +83,13 @@ public:
 int FindWood(std::vector<tree>& woods
 	, int x
 	, int y);
+
 bool IsThereSeedling(std::vector<seedling>& seedlings
 	, int x
 	, int y);
+
 bool SeedlingInArea(std::vector<seedling>& seedlings
 	, int* vertices);
-void checkTreesWithCrowns(std::vector<tree>& trees
-	, int* objVertices4
-	, bool& inBlock);
+
+bool WoodInArea(std::vector<tree>& woods
+	, int* vertices);

@@ -38,12 +38,13 @@ enum TexturesOfBlocks
 };
 enum BlockBehavior
 {
-	b_BasicSolid = 0,
-	b_Air,
-	b_Slippery,
-	b_Asphalt,
-	b_Platform,
-	b_Indestructible
+	b_Air = 0
+	, b_Platform
+	, b_Indestructible
+	, b_BasicSolid
+	, b_Slippery
+	, b_Asphalt
+
 };
 
 

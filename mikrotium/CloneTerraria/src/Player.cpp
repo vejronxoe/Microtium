@@ -783,7 +783,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					inBlock = true;
 				}
-				else if(vertices[1] >= Blocks::yMax)
+				else if (vertices[1] >= Blocks::yMax)
 				{
 					inBlock = true;
 				}
@@ -833,7 +833,7 @@ void Player::EveryFrame(float deltaTime
 							break;
 						}
 					}
-				}	
+				}
 				if (!inBlock && floors)
 				{
 					for (int i = 0; i < seedlings.size(); i++)
@@ -1027,7 +1027,7 @@ void Player::EveryFrame(float deltaTime
 						{
 							for (int i = 0; i < blocks.at(x).size(); i++)
 							{
-								if (blocks.at(x).at(i).m_Y == y - 1 )
+								if (blocks.at(x).at(i).m_Y == y - 1)
 								{
 									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
 								}
@@ -1052,7 +1052,7 @@ void Player::EveryFrame(float deltaTime
 								{
 									int j;
 									for (j = 0; destroy[j] != -1; j++) {}
-									destroy[j] = woodIndex; 
+									destroy[j] = woodIndex;
 									for (int i = 0; i < 5; i++)
 									{
 										for (int j = 1; j < 5; j++)
@@ -1155,8 +1155,8 @@ void Player::EveryFrame(float deltaTime
 				{
 					switch (m_PlayerSlots[0])
 					{
-						case i_Sapling:
-							seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
+					case i_Sapling:
+						seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
 						break;
 					}
 					m_AmountInSlots[0]--;
@@ -1183,117 +1183,117 @@ void Player::EveryFrame(float deltaTime
 			m_UseItemTimer += deltaTime;
 		}
 	}
-
-
 	m_CoyoteTimer += deltaTime;
-	if (Input::DHold)
 	{
-		m_DirectionLook = 1;
-	}
-	if (Input::AHold)
-	{
-		m_DirectionLook = -1;
-	}
-
-	if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
-	{
-		m_Velocity[0] += m_Acceleration * deltaTime;
-	}
-	else if (m_Velocity[0] > 0)
-	{
-		float velocity = m_Velocity[0] - m_Friction * deltaTime;
-		if (velocity < 0)
+		if (Input::DHold)
 		{
-			m_Velocity[0] = 0;
+			m_DirectionLook = 1;
+		}
+		if (Input::AHold)
+		{
+			m_DirectionLook = -1;
+		}
+
+		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
+		{
+			m_Velocity[0] += m_Acceleration * deltaTime;
+		}
+		else if (m_Velocity[0] > 0)
+		{
+			float velocity = m_Velocity[0] - m_Friction * deltaTime;
+			if (velocity < 0)
+			{
+				m_Velocity[0] = 0;
+			}
+			else
+			{
+				m_Velocity[0] = velocity;
+			}
+		}
+		if (Input::AHold && m_Velocity[0] >= -m_MaxMovementSpeed)
+		{
+			m_Velocity[0] += -m_Acceleration * deltaTime;
+		}
+		else if (m_Velocity[0] < 0)
+		{
+			float velocity = m_Velocity[0] + m_Friction * deltaTime;
+			if (velocity > 0)
+			{
+				m_Velocity[0] = 0;
+			}
+			else
+			{
+				m_Velocity[0] = velocity;
+			}
+		}
+
+		if (Input::SpacePress && m_CanJump)
+		{
+			m_Velocity[1] += m_JumpPower;
+			m_CanJump = false;
+			m_JumpTimer += deltaTime;
+		}
+		else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f)
+		{
+			m_Velocity[1] -= (m_JumpPower / 2) * deltaTime;
+			m_JumpTimer += deltaTime;
 		}
 		else
 		{
-			m_Velocity[0] = velocity;
+			m_Velocity[1] += m_Gravity * deltaTime;
+			if (30 < m_Gravity)
+			{
+				m_Gravity = 30;
+			}
+			m_JumpTimer = 0;
 		}
-	}
-	if (Input::AHold && m_Velocity[0] >= -m_MaxMovementSpeed)
-	{
-		m_Velocity[0] += -m_Acceleration * deltaTime;
-	}
-	else if (m_Velocity[0] < 0)
-	{
-		float velocity = m_Velocity[0] + m_Friction * deltaTime;
-		if (velocity > 0)
+
+		m_FloorHit = false;
+		m_CeilHit = false;
+		m_WallHit = false;
+
+
+		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
+		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
 		{
-			m_Velocity[0] = 0;
+			moveBehavior = b_BasicSolid;
 		}
-		else
+
+		switch (moveBehavior)
 		{
-			m_Velocity[0] = velocity;
+		case(b_Air):
+			m_Acceleration = 5.0f;
+			m_Friction = 4;
+			m_MaxMovementSpeed = 12;
+			break;
+		case(b_Slippery):
+			m_Acceleration = 12.0f;
+			m_Friction = 8;
+			m_MaxMovementSpeed = 15;
+			break;
+		case(b_Asphalt):
+			m_Acceleration = 30.0f;
+			m_Friction = 70;
+			m_MaxMovementSpeed = 25;
+			break;
+		case(b_BasicSolid):
+		case(b_Platform):
+			m_Acceleration = 25.0f;
+			m_Friction = 40;
+			m_MaxMovementSpeed = 10;
+			break;
 		}
-	}
-
-	if (Input::SpacePress && m_CanJump)
-	{
-		m_Velocity[1] += m_JumpPower;
-		m_CanJump = false;
-		m_JumpTimer += deltaTime;
-	}
-	else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f)
-	{
-		m_Velocity[1] -= (m_JumpPower / 2) * deltaTime;
-		m_JumpTimer += deltaTime;
-	}
-	else
-	{
-		m_Velocity[1] += m_Gravity * deltaTime;
-		if (30 < m_Gravity)
+		if (m_FloorHit)
 		{
-			m_Gravity = 30;
+			m_CanJump = true;
+			m_CoyoteTimer = 0.0f;
 		}
-		m_JumpTimer = 0;
+		if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.125f)
+		{
+			m_CanJump = false;
+			m_CoyoteTimer = 0.0f;
+		}
 	}
-
-	m_FloorHit = false;
-	m_CeilHit = false;
-	m_WallHit = false;
-
-
-	unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
-	if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
-	{
-		moveBehavior = b_BasicSolid;
-	}
-
-	switch (moveBehavior)
-	{
-	case(b_Air):
-		m_Acceleration = 5.0f;
-		m_Friction = 4;
-		m_MaxMovementSpeed = 12;
-		break;
-	case(b_Slippery):
-		m_Acceleration = 12.0f;
-		m_Friction = 8;
-		m_MaxMovementSpeed = 15;
-		break;
-	case(b_Asphalt):
-		m_Acceleration = 30.0f;
-		m_Friction = 70;
-		m_MaxMovementSpeed = 25;
-		break;
-	case(b_BasicSolid):
-		m_Acceleration = 25.0f;
-		m_Friction = 40;
-		m_MaxMovementSpeed = 10;
-		break;
-	}
-	if (m_FloorHit)
-	{
-		m_CanJump = true;
-		m_CoyoteTimer = 0.0f;
-	}
-	if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.125f)
-	{
-		m_CanJump = false;
-		m_CoyoteTimer = 0.0f;
-	}
-
 	for (int i = 0; i < droppedItems.size(); i++)
 	{
 		if (droppedItems.at(i).EveryFrame(deltaTime, blocks, droppedItems, m_Transform, HavePlayerSpace(droppedItems.at(i).m_Item)))
