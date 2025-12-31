@@ -5,18 +5,7 @@
 
 #include"glfw/input.h"
 #include"glfw/Window.h"
-int RoundFiveDown(float x)
-{
-	float decider = x - floorf(x);
-	if (decider == 0.5f)
-	{
-		return x - 0.5f * (x / abs(x));
-	}
-	else
-	{
-		return roundf(x);
-	}
-}
+
 bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	, float* objVertices
 	, int* vertices
@@ -70,7 +59,38 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	return count;
 }
 
+int RoundFiveUp(float x)
+{
 
+	float decider = x - floorf(x);
+	if (decider == 0.5f)
+	{
+		return ceilf(x);
+
+	}
+	else
+	{
+		return roundf(x);
+	}
+
+}
+
+int RoundFiveDown(float x)
+{
+	float decider = x - floor(x);
+	if (decider == 0.5f)
+	{
+		if (0 < x)
+		{
+			return floorf(x);
+		}
+		
+	}
+	else
+	{
+		return roundf(x);
+	}
+}
 void memoryDefender(int* vertices
 	, int lenghtOfArray)
 {
@@ -235,10 +255,6 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	, bool& floorHit
 	, bool& ceilHit)
 {
-	float a1 = objectVertices4f[0];
-	float a2 = objectVertices4f[1];
-	float a3 = objectVertices4f[2];
-	float a4 = objectVertices4f[3];
 	if (velocity[0] == 0 && velocity[1] == 0)
 		return b_Air;
 	float closestVertices[2];
@@ -248,12 +264,14 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		int floorVertices[4];
 		int edgeVertices[4];
 
-		wallVertices[0] = RoundFiveDown(objectVertices4f[2]); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
-		wallVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); wallVertices[3] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[0] = RoundFiveDown(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
-		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveDown(objectVertices4f[1]);
-		edgeVertices[0] = RoundFiveDown(objectVertices4f[2]); edgeVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); edgeVertices[3] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[0] = RoundFiveUp(objectVertices4f[2]); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); wallVertices[3] = RoundFiveUp(objectVertices4f[3]);
+
+		floorVertices[0] = RoundFiveUp(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
+		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveUp(objectVertices4f[1]);
+
+		edgeVertices[0] = RoundFiveUp(objectVertices4f[2]); edgeVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
+		edgeVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); edgeVertices[3] = RoundFiveUp(objectVertices4f[1]);
 		memoryDefender(wallVertices, 4);
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
@@ -265,12 +283,14 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		int floorVertices[4];
 		int edgeVertices[4];
 
-		wallVertices[0] = RoundFiveDown(objectVertices4f[0] + velocity[0] * deltaTime); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
-		wallVertices[2] = RoundFiveDown(objectVertices4f[0]); wallVertices[3] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[0] = RoundFiveDown(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveDown(objectVertices4f[3] + velocity[1] * deltaTime);
-		edgeVertices[0] = RoundFiveDown(objectVertices4f[0] + velocity[0] * deltaTime); edgeVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[0]); edgeVertices[3] = RoundFiveDown(objectVertices4f[3] + velocity[1] * deltaTime);
+		wallVertices[0] = RoundFiveUp(objectVertices4f[0] + velocity[0] * deltaTime); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[2] = RoundFiveDown(objectVertices4f[0]); wallVertices[3] = RoundFiveUp(objectVertices4f[3]);
+
+		floorVertices[0] = RoundFiveUp(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[3]);
+		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
+
+		edgeVertices[0] = RoundFiveUp(objectVertices4f[0] + velocity[0] * deltaTime); edgeVertices[1] = RoundFiveDown(objectVertices4f[3]);
+		edgeVertices[2] = RoundFiveDown(objectVertices4f[0]); edgeVertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
 		memoryDefender(wallVertices, 4);
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
@@ -283,12 +303,14 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		int floorVertices[4];
 		int edgeVertices[4];
 
-		wallVertices[0] = RoundFiveDown(objectVertices4f[0] + velocity[0] * deltaTime); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
-		wallVertices[2] = RoundFiveDown(objectVertices4f[0]); wallVertices[3] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[0] = RoundFiveDown(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
-		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveDown(objectVertices4f[1]);
-		edgeVertices[0] = RoundFiveDown(objectVertices4f[0] + velocity[0] * deltaTime); edgeVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[0]); edgeVertices[3] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[0] = RoundFiveUp(objectVertices4f[0] + velocity[0] * deltaTime); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[2] = RoundFiveDown(objectVertices4f[0]); wallVertices[3] = RoundFiveUp(objectVertices4f[3]);
+
+		floorVertices[0] = RoundFiveUp(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
+		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveUp(objectVertices4f[1]);
+
+		edgeVertices[0] = RoundFiveUp(objectVertices4f[0] + velocity[0] * deltaTime); edgeVertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
+		edgeVertices[2] = RoundFiveDown(objectVertices4f[0]); edgeVertices[3] = RoundFiveUp(objectVertices4f[1]);
 		memoryDefender(wallVertices, 4);
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
@@ -300,12 +322,14 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		int floorVertices[4];
 		int edgeVertices[4]; 
 
-		wallVertices[0] = RoundFiveDown(objectVertices4f[2]); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
-		wallVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); wallVertices[3] = RoundFiveDown(objectVertices4f[3] );
-		floorVertices[0] = RoundFiveDown(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveDown(objectVertices4f[3] + velocity[1] * deltaTime);
-		edgeVertices[0] = RoundFiveDown(objectVertices4f[2]); edgeVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); edgeVertices[3] = RoundFiveDown(objectVertices4f[3] + velocity[1] * deltaTime);
+		wallVertices[0] = RoundFiveUp(objectVertices4f[2]); wallVertices[1] = RoundFiveDown(objectVertices4f[1]);
+		wallVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); wallVertices[3] = RoundFiveUp(objectVertices4f[3]);
+
+		floorVertices[0] = RoundFiveUp(objectVertices4f[0]); floorVertices[1] = RoundFiveDown(objectVertices4f[3]);
+		floorVertices[2] = RoundFiveDown(objectVertices4f[2]); floorVertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
+
+		edgeVertices[0] = RoundFiveUp(objectVertices4f[2]); edgeVertices[1] = RoundFiveDown(objectVertices4f[3]);
+		edgeVertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); edgeVertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
 		memoryDefender(wallVertices, 4);
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
@@ -317,16 +341,16 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	if (velocity[1] > 0)
 	{
 		int vertices[4];
-		vertices[0] = RoundFiveDown(objectVertices4f[0]); vertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
-		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveDown(objectVertices4f[1]);
+		vertices[0] = RoundFiveUp(objectVertices4f[0]); vertices[1] = RoundFiveDown(objectVertices4f[1] + velocity[1] * deltaTime);
+		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveUp(objectVertices4f[1]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], ceilHit);
 	}
 	else if (velocity[1] < 0)
 	{
 		int vertices[4];
-		vertices[0] = RoundFiveDown(objectVertices4f[0]); vertices[1] = RoundFiveDown(objectVertices4f[3]);
-		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveDown(objectVertices4f[3] + velocity[1] * deltaTime);
+		vertices[0] = RoundFiveUp(objectVertices4f[0]); vertices[1] = RoundFiveDown(objectVertices4f[3]);
+		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 1, 3, transform[1], velocity[1], floorHit);
 		return behavior;
@@ -334,16 +358,16 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	else if (velocity[0] > 0)
 	{
 		int vertices[4];
-		vertices[0] = RoundFiveDown(objectVertices4f[2]); vertices[1] = RoundFiveDown(objectVertices4f[1]);
-		vertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); vertices[3] = RoundFiveDown(objectVertices4f[3]);
+		vertices[0] = RoundFiveUp(objectVertices4f[2]); vertices[1] = RoundFiveDown(objectVertices4f[1]);
+		vertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); vertices[3] = RoundFiveUp(objectVertices4f[3]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], leftWallHit);
 	}
 	else if(velocity[0] < 0)
 	{
 		int vertices[4];
-		vertices[0] = RoundFiveDown(objectVertices4f[0] + velocity[0] * deltaTime); vertices[1] = RoundFiveDown(objectVertices4f[1]);
-		vertices[2] = RoundFiveDown(objectVertices4f[0]); vertices[3] = RoundFiveDown(objectVertices4f[3]);
+		vertices[0] = RoundFiveUp(objectVertices4f[0] + velocity[0] * deltaTime); vertices[1] = RoundFiveDown(objectVertices4f[1]);
+		vertices[2] = RoundFiveDown(objectVertices4f[0]); vertices[3] = RoundFiveUp(objectVertices4f[3]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], rightWallHit);
 	}

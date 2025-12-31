@@ -583,8 +583,8 @@ void Player::EveryFrame(float deltaTime
 			m_AddNextFrame = 0;
 		}
 	}
-	float verticesPlayer[4] = { m_Transform[0] - 0.8f ,m_Transform[1] + 1.3f,m_Transform[0] + 0.8f,m_Transform[1] - 1.5f };
 
+	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
 
