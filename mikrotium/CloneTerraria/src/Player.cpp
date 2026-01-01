@@ -607,7 +607,7 @@ void Player::EveryFrame(float deltaTime
 				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 				{
 					bool inWall;
-					FindWall(walls, x, y, inWall);
+					wallIndex = FindWall(walls, x, y, inWall);
 					m_CursorOnPlaceableSpot = inWall;
 					FindWood(trees, x, y, inBlock);
 					
@@ -617,7 +617,7 @@ void Player::EveryFrame(float deltaTime
 					}
 					if (!inBlock)
 					{
-						FindBlock(blocks, x, y, m_CursorOnPlaceableSpot);
+						FindBlock(blocks, x, y, inBlock);
 					}
 					
 					if (!m_CursorOnPlaceableSpot)
@@ -665,24 +665,24 @@ void Player::EveryFrame(float deltaTime
 			else if (m_PickaxeStreanght)
 			{
 
-				int index = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
-				if (m_CursorOnMinableBlock && (blocks.at(x).at(index).m_BlockBehavior != b_Indestructible || blocks.at(x).at(index).m_Hardness >= m_PickaxeStreanght))
+				blockIndex = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
+				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
 				{
 					m_CursorOnMinableBlock = false;
 				}
 			}
 			else if (m_HammerStreanght)
 			{
-				int index = FindWall(walls, x, y, m_CursorOnMinableWall);
-				if (m_CursorOnMinableBlock && walls.at(x).at(index).m_Hardness >= m_HammerStreanght)
+				wallIndex = FindWall(walls, x, y, m_CursorOnMinableWall);
+				if (m_CursorOnMinableBlock && walls.at(x).at(wallIndex).m_Hardness > m_HammerStreanght)
 				{
 					m_CursorOnMinableBlock = false;
 				}
 			}
 			else if (m_AxeStreanght)
 			{
-				int index = FindWood(trees, x, y, m_CursorOnMinableWood);
-				if (m_CursorOnMinableWood && trees.at(index).m_Hardness >= m_AxeStreanght)
+				woodIndex = FindWood(trees, x, y, m_CursorOnMinableWood);
+				if (m_CursorOnMinableWood && trees.at(woodIndex).m_Hardness > m_AxeStreanght)
 				{
 					m_CursorOnMinableWood = false;
 				}
@@ -732,8 +732,10 @@ void Player::EveryFrame(float deltaTime
 								{
 									floors = true;
 								}
-								
-
+								if (blocks.at(i).at(j).m_Y < vertices[3] - 1)
+								{
+									break;
+								}
 							}
 							if (!floors)
 							{
