@@ -11,12 +11,15 @@
 
 int FindWall(std::vector<std::vector<wall>>& walls
 	, int x
-	, int y)
+	, int y
+	, bool& found)
 {
+	found = false;
 	for (int i = 0; i < walls.at(x).size(); i++)
 	{
 		if (walls.at(x).at(i).m_Y == y)
 		{
+			found = true;
 			return i;
 		}
 		if (walls.at(x).at(i).m_Y < y)
@@ -156,13 +159,21 @@ void createWall(int x
 	, std::vector<std::vector<wall>>& walls
 	, unsigned int* texturesIDs)
 {
+	int indexToPlace = 0;
+	for (; indexToPlace < walls.at(x).size(); indexToPlace++)
+	{
+		if (walls.at(x).at(indexToPlace).m_Y < y)
+		{
+			break;
+		}
+	}
 	switch (IDOfItemWall)
 	{
 	case i_WallDirt:
-		walls.at(x).emplace_back(texturesIDs[t_Dirt], render, i_WallDirt, y, 20);
+		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], render, i_WallDirt, y, 20);
 		break;
 	case i_WallIce:
-		walls.at(x).emplace_back(texturesIDs[t_Ice], render, i_WallIce, y, 15);
+		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Ice], render, i_WallIce, y, 15);
 		break;
 	}
 }

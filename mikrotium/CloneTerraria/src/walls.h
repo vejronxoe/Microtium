@@ -43,6 +43,8 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 	, float* cameraCoordinate);
 int FindWall(std::vector<std::vector<wall>>& walls
 	, int x
-	, int y);
+	, int y
+	, bool& found);
+
 bool WallInArea(std::vector<std::vector<wall>>& walls
 	, int* vertices);

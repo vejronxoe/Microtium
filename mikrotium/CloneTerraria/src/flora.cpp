@@ -7,14 +7,17 @@
 #define TIMETOGROW 10
 int FindWood(std::vector<tree>& woods
 	, int x
-	, int y)
+	, int y
+	, bool& found)
 {
+	found = false;
 	for (int i = 0; i < woods.size(); i++)
 	{
 		if (woods.at(i).m_PartOfTree == part_Log)
 		{
 			if (woods.at(i).m_Transform[0] == x && woods.at(i).m_Transform[1] == y)
 			{
+				found = true;
 				return i;
 			}
 		}
@@ -222,7 +225,8 @@ seedling::seedling(char type
 ,m_Type(type)
 ,m_Texture(structuresTextures[type])
 {
-	m_IndexOfGroundBlock = FindBlock(blocks,x,y - 1);
+	bool fill;
+	m_IndexOfGroundBlock = FindBlock(blocks,x,y - 1, fill);
 }
 void createBranchs(std::vector <std::vector<Block>>& blocks
 	, std::vector<tree>& trees
@@ -315,8 +319,8 @@ bool seedling::everyFrame(float deltaTime
 		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Y == m_Transform[1] - 1);
 		if (noGround)
 		{
-			m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1);
-			noGround = !(m_IndexOfGroundBlock + 1);
+			m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, noGround);
+			noGround = !noGround;
 		}
 	}
 	m_Timer += deltaTime;

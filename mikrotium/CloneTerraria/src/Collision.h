@@ -7,3 +7,5 @@ unsigned char DynamicSquereHitbox(float deltaTime, float* transform, float* velo
 float CameraHitboxY(float y);
 float CameraHitboxX(float x);
 bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime);
+int RoundFiveDown(float x);
+int RoundFiveUp(float x);

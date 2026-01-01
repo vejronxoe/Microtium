@@ -61,33 +61,6 @@ void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
 	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 }									   
-bool findElementWithY(int y
-	, std::vector<Block>& blocks)
-{
-	for (int i = 0; i < blocks.size(); i++)
-	{
-		if (y == blocks.at(i).m_Y)
-		{
-			return true;
-			
-		}
-	}
-	return false;
-}
-
-bool findElementWithY(int y
-	, std::vector<wall>& walls)
-{
-	for (int i = 0; i < walls.size(); i++)
-	{
-		if (y == walls.at(i).m_Y)
-		{
-			return true;
-
-		}
-	}
-	return false;
-}
 
 Player::Player(unsigned int eob
 	, unsigned int HUDTransformLocatin
@@ -626,99 +599,64 @@ void Player::EveryFrame(float deltaTime
 			if (m_Placeable)
 			{
 
-				playerVertices[0] = roundf(playerVertices[0]);
-				if ((playerVertices[3] - std::floorf(playerVertices[3])) == 0.5f)
-				{
-					playerVertices[3] = std::ceilf(playerVertices[3]);
-				}
-				else
-				{
-					playerVertices[3] = roundf(playerVertices[3]);
-				}
-				if ((playerVertices[1] - std::floorf(playerVertices[1])) == 0.5f)
-				{
-					playerVertices[1] = std::floorf(playerVertices[1]);
-				}
-				else
-				{
-					playerVertices[1] = roundf(playerVertices[1]);
-				}
-				if ((playerVertices[2] - std::floorf(playerVertices[2])) == 0.5f)
-				{
-					playerVertices[2] = std::floorf(playerVertices[2]);
-				}
-				else
-				{
-					playerVertices[2] = roundf(playerVertices[2]);
-				}
+				playerVertices[0] = RoundFiveUp(playerVertices[0]);
+				playerVertices[1] = RoundFiveDown(playerVertices[1]);
+				playerVertices[2] = RoundFiveDown(playerVertices[2]);
+				playerVertices[3] = RoundFiveUp(playerVertices[3]);
 
 				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
 				{
-					for (int i = 0; i < trees.size(); i++)
+					bool inWall;
+					FindWall(walls, x, y, inWall);
+					m_CursorOnPlaceableSpot = inWall;
+					FindWood(trees, x, y, inBlock);
+					
+					if (!inBlock)
 					{
-						if (trees.at(i).m_Transform[1] == y && trees.at(i).m_Transform[0] == x)
-						{
-							inBlock = true;
-							break;
-						}
-					}
-					for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
-					{
-						if (y == blocks.at(x).at(blockIndex).m_Y)
-						{
-							inBlock = true;
-							m_CursorOnPlaceableSpot = true;
-						}
-						else if (y + 1 == blocks.at(x).at(blockIndex).m_Y || y - 1 == blocks.at(x).at(blockIndex).m_Y)
-						{
-							m_CursorOnPlaceableSpot = true;
-						}
-					}
-					for (int i = 0; i < walls.at(x).size(); i++)
-					{
-						if (y == walls.at(x).at(i).m_Y)
-						{
-							wallIndex = i;
-							m_CursorOnPlaceableSpot = true;
-							break;
-						}
-						else if (y + 1 == walls.at(x).at(i).m_Y || y - 1 == walls.at(x).at(i).m_Y)
-						{
-							m_CursorOnPlaceableSpot = true;
-						}
+						inBlock = IsThereSeedling(seedlings, x, y);
 					}
 					if (!inBlock)
 					{
-						for (int i = 0; i < seedlings.size(); i++)
-						{
-
-							float verticesStr[4];
-							getStructureVertices(seedlings.at(i).m_Transform[0], seedlings.at(i).m_Transform[1], seedlings.at(i).m_Type, verticesStr);
-							if (y <= verticesStr[1] && y >= verticesStr[3] && x >= verticesStr[0] && x <= verticesStr[2])
-							{
-								inBlock = true;
-								break;
-							}
-
-						}
+						FindBlock(blocks, x, y, m_CursorOnPlaceableSpot);
+					}
+					
+					if (!m_CursorOnPlaceableSpot)
+					{
+						m_CursorOnPlaceableSpot = inBlock;
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						m_CursorOnPlaceableSpot = findElementWithY(y, blocks.at(x + 1));
+						FindBlock(blocks, x + 1, y, m_CursorOnPlaceableSpot);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						m_CursorOnPlaceableSpot = findElementWithY(y, blocks.at(x - 1));
+						FindBlock(blocks, x - 1, y, m_CursorOnPlaceableSpot);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						m_CursorOnPlaceableSpot = findElementWithY(y, walls.at(x - 1));
+						FindBlock(blocks, x, y + 1, m_CursorOnPlaceableSpot);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						m_CursorOnPlaceableSpot = findElementWithY(y, walls.at(x + 1));
+						FindBlock(blocks, x, y - 1, m_CursorOnPlaceableSpot);
 					}
-					if (inBlock && !(m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce) || wallIndex != -1 && m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
+					if (!m_CursorOnPlaceableSpot)
+					{
+						FindWall(walls, x + 1, y, m_CursorOnPlaceableSpot);
+					}
+					if (!m_CursorOnPlaceableSpot)
+					{
+						FindWall(walls, x, y - 1, m_CursorOnPlaceableSpot);
+					}
+					if (!m_CursorOnPlaceableSpot)
+					{
+						FindWall(walls, x - 1, y, m_CursorOnPlaceableSpot);
+					}
+					if (!m_CursorOnPlaceableSpot)
+					{
+						FindWall(walls, x, y + 1, m_CursorOnPlaceableSpot);
+					}
+					if (inBlock && !(m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce) || inWall && m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 					{
 						m_CursorOnPlaceableSpot = false;
 					}
@@ -726,44 +664,27 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_PickaxeStreanght)
 			{
-				for (blockIndex = 0; blockIndex < blocks.at(x).size(); blockIndex++)
+
+				int index = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
+				if (m_CursorOnMinableBlock && (blocks.at(x).at(index).m_BlockBehavior != b_Indestructible || blocks.at(x).at(index).m_Hardness >= m_PickaxeStreanght))
 				{
-					if (y == blocks.at(x).at(blockIndex).m_Y)
-					{
-						if (m_PickaxeStreanght >= blocks.at(x).at(blockIndex).m_Hardness && b_Indestructible != blocks.at(x).at(blockIndex).m_BlockBehavior)
-						{
-							m_CursorOnMinableBlock = true;
-						}
-						break;
-					}
+					m_CursorOnMinableBlock = false;
 				}
 			}
 			else if (m_HammerStreanght)
 			{
-				for (wallIndex = 0; wallIndex < walls.at(x).size(); wallIndex++)
+				int index = FindWall(walls, x, y, m_CursorOnMinableWall);
+				if (m_CursorOnMinableBlock && walls.at(x).at(index).m_Hardness >= m_HammerStreanght)
 				{
-					if (y == walls.at(x).at(wallIndex).m_Y)
-					{
-						if (m_HammerStreanght >= walls.at(x).at(blockIndex).m_Hardness)
-						{
-							m_CursorOnMinableWall = true;
-						}
-						break;
-					}
+					m_CursorOnMinableBlock = false;
 				}
 			}
 			else if (m_AxeStreanght)
 			{
-				for (woodIndex = 0; woodIndex < trees.size(); woodIndex++)
+				int index = FindWood(trees, x, y, m_CursorOnMinableWood);
+				if (m_CursorOnMinableWood && trees.at(index).m_Hardness >= m_AxeStreanght)
 				{
-					if (y == trees.at(woodIndex).m_Transform[1] && x == trees.at(woodIndex).m_Transform[0])
-					{
-						if (trees.at(woodIndex).m_PartOfTree == part_Log && m_AxeStreanght >= trees.at(woodIndex).m_Hardness)
-						{
-							m_CursorOnMinableWood = true;
-						}
-						break;
-					}
+					m_CursorOnMinableWood = false;
 				}
 			}
 			else if (m_LargePlaceable)
@@ -796,60 +717,45 @@ void Player::EveryFrame(float deltaTime
 				{
 					inBlock = true;
 				}
-				if (!inBlock && floors)
+				
+				if (!inBlock)
 				{
-					for (int i = vertices[0]; i <= vertices[2]; i++)
+					inBlock = blockInArea(blocks, vertices);
+					if (!inBlock)
 					{
-						floors = false;
-						for (int j = 0; j < blocks.at(i).size(); j++)
+						for (int i = vertices[0]; i <= vertices[2]; i++)
 						{
-							if (blocks.at(i).at(j).m_Y <= vertices[1] && blocks.at(i).at(j).m_Y >= vertices[3])
+							floors = false;
+							for (int j = 0; j < blocks.at(i).size(); i++)
 							{
-								inBlock = true;
+								if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
+								{
+									floors = true;
+								}
+								
+
+							}
+							if (!floors)
+							{
 								break;
 							}
-							if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
-							{
-								floors = true;
-							}
-						}
-						if (!floors)
-						{
-							break;
 						}
 					}
 				}
-				if (!inBlock && floors)
+				if (floors)
 				{
-					for (int i = 0; i < trees.size(); i++)
+					if (!inBlock)
 					{
-						if (inBlock)
-						{
-							break;
-						}
-						if (trees.at(i).m_Transform[1] <= vertices[1] && trees.at(i).m_Transform[1] >= vertices[3] && trees.at(i).m_Transform[0] >= vertices[0] && trees.at(i).m_Transform[0] <= vertices[2])
-						{
-							inBlock = true;
-							break;
-						}
+						inBlock = WoodInArea(trees, vertices);
 					}
-				}
-				if (!inBlock && floors)
-				{
-					for (int i = 0; i < seedlings.size(); i++)
+					if (!inBlock )
 					{
-
-						if (seedlings.at(i).m_Transform[1] <= vertices[1] && seedlings.at(i).m_Transform[1] >= vertices[3] && seedlings.at(i).m_Transform[0] >= vertices[0] && seedlings.at(i).m_Transform[0] <= vertices[2])
-						{
-							inBlock = true;
-							break;
-						}
-
+						inBlock = SeedlingInArea(seedlings, vertices);
 					}
-				}
-				if (!inBlock && floors)
-				{
-					m_CursorOnPlaceableForStructure = true;
+					if (!inBlock)
+					{
+						m_CursorOnPlaceableForStructure = true;
+					}
 				}
 			}
 		}

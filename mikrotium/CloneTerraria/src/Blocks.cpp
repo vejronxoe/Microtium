@@ -11,14 +11,18 @@
 #include"ItemList.h"
 #include"glfw/Window.h"
 
+
 int FindBlock(std::vector<std::vector<Block>>& blocks
 	,int x
-	, int y)
+	, int y
+	, bool& found)
 {
+	found = false;
 	for (int i = 0; i < blocks.at(x).size(); i++)
 	{
 		if (blocks.at(x).at(i).m_Y == y)
 		{
+			found = true;
 			return i;
 		}
 		if (blocks.at(x).at(i).m_Y < y)

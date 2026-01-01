@@ -91,6 +91,7 @@ int RoundFiveDown(float x)
 		return roundf(x);
 	}
 }
+
 void memoryDefender(int* vertices
 	, int lenghtOfArray)
 {

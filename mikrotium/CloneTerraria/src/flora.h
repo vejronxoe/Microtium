@@ -82,7 +82,8 @@ public:
 };
 int FindWood(std::vector<tree>& woods
 	, int x
-	, int y);
+	, int y
+	, bool& found);
 
 bool IsThereSeedling(std::vector<seedling>& seedlings
 	, int x
