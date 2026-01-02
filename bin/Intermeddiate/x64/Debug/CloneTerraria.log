@@ -1,0 +1,70 @@
+﻿  flora.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/flora.cpp')
+  
+  Collision.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Collision.cpp')
+  
+  Blocks.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Blocks.cpp')
+  
+  DroppedItems.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/DroppedItems.cpp')
+  
+  cursor.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/glfw/cursor.cpp')
+  
+  Input.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\input.h(3,9): error C1083: Cannot open include file: 'GLFW/glfw3.h': No such file or directory
+  (compiling source file 'src/glfw/Input.cpp')
+  
+  DrawData.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\ErrorSystem.h(3,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Opengl/DrawData.cpp')
+  
+  ErrorSystem.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\ErrorSystem.h(3,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Opengl/ErrorSystem.cpp')
+  
+  Main.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(1,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  matrix.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(45,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(45,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(46,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(46,49): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(51,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(51,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(52,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp(52,49): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  NumberRender.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/NumberRender.cpp')
+  
+  Shader.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Opengl/Shader.cpp')
+  
+  Texture.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Texture.cpp(3,9): error C1083: Cannot open include file: 'gl/glew.h': No such file or directory
+  Player.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/Player.cpp')
+  
+  Window.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Window.h(3,9): error C1083: Cannot open include file: 'GLFW/glfw3.h': No such file or directory
+  (compiling source file 'src/glfw/Window.cpp')
+  
+  projectile.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/projectile.cpp')
+  
+  walls.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.h(2,9): error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  (compiling source file 'src/walls.cpp')
+  
+  Generating Code...

@@ -1,2 +1,4 @@
-# microtium 
-I try to learn opengl by creating terraria clone 
+# microtium
+
+I try to learn opengl and get better at C++ by creating terraria clone
+
