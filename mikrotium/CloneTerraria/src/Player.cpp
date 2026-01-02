@@ -70,6 +70,7 @@ Player::Player(unsigned int eob
 	, unsigned int* texturesIDs)
 	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 0 }
 {	
+
 	m_HUDTransformLocation = HUDTransformLocatin;
 	m_HUDScaleLocation = HUDScaleLocatin;
 	m_InventoryDrawData = 0;
@@ -113,6 +114,7 @@ Player::Player(unsigned int eob
 	m_Placeable = 0;
 	m_AimingAtSlot = 0;
 	m_LargePlaceable = false;
+	
 
 	m_Tex = CreateTextureRGBA("res/textures/player0.png");
 	CreateAllItemsTexture(texturesIDs);
@@ -557,7 +559,7 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 
-	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
+	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
 
@@ -1403,4 +1405,5 @@ void Player::DrawPlayer(Shader& basicSh
 			drawNumber(Window::height - m_SlotVertices[3], left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
 		}
 	}
+
 }

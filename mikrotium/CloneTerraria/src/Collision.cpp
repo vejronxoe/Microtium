@@ -29,7 +29,7 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 					int chooser[4] = { j, blocks.at(j).at(i).m_Y, j, blocks.at(j).at(i).m_Y };
 					if (count)
 					{
-						if (abs(closest - vertices[index]) < abs(chooser[index] - vertices[index]))
+						if (abs(closest - vertices[index]) > abs(chooser[index] - vertices[index]))
 						{
 							closest = chooser[index];
 							if (behavior < blocks.at(j).at(i).m_BlockBehavior)
@@ -80,10 +80,7 @@ int RoundFiveDown(float x)
 	float decider = x - floor(x);
 	if (decider == 0.5f)
 	{
-		if (0 < x)
-		{
-			return floorf(x);
-		}
+		return floorf(x);
 		
 	}
 	else
@@ -165,7 +162,7 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 	edgehit[1] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, YHitboxIndex, behavior[1], closest[3]);
 	float couner[4] = { -0.5, 0.5, 0.5, -0.5 };
 
-	if(!wallHit && !floorHit &&(edgehit[0] || edgehit[1]))
+	if (!wallHit && !floorHit && (edgehit[0] || edgehit[1]))
 	{
 		if (abs(velocity[0]) < abs(velocity[1]) && edgehit[1] || edgehit[1] && !edgehit[0])
 		{
@@ -177,33 +174,38 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 		{
 			velocity[0] = 0;
 			transform[0] += closest[3] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
+			floorHit = true;
+			return behavior[1];
+		}
+	}
+	else if(wallHit && floorHit && edgehit[1] && edgehit[0] && abs(closest[0] - objectVertices4f[XplayerIndex]) > abs(closest[2] - objectVertices4f[XplayerIndex]) && abs(closest[1] - objectVertices4f[YplayerIndex]) > abs(closest[3] - objectVertices4f[YplayerIndex]))
+	{
+		if (abs(velocity[0]) < abs(velocity[1]) && edgehit[1] || edgehit[1] && !edgehit[0])
+		{
+			velocity[1] = 0;
+			transform[1] += closest[2] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
+			wallHit = true;
+		}
+		else
+		{
+			velocity[0] = 0;
+			transform[0] += closest[3] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
+			floorHit = true;
 			return behavior[1];
 		}
 	}
 	else
 	{
-		if (wallHit && edgehit[0] && abs(closest[0] - objectVertices4f[XplayerIndex]) > abs(closest[2] - objectVertices4f[XplayerIndex]))
-		{
-			velocity[0] = 0;
-			transform[0] += closest[2] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
-		}
-		else if (wallHit)
+		
+		if (wallHit)
 		{
 			velocity[0] = 0;
 			transform[0] += closest[0] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
 		}
-		
-		if (floorHit && edgehit[1] && abs(closest[1] - objectVertices4f[YplayerIndex]) > abs(closest[3] - objectVertices4f[YplayerIndex]))
-		{
-			velocity[1] = 0;
-			transform[1] += closest[3] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
-			return behavior[1];
-		}
-		else if (floorHit)
+		if (floorHit)
 		{
 			velocity[1] = 0;
 			transform[1] += closest[1] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
-			
 		}
 	}
 	return behavior[0];
@@ -258,7 +260,6 @@ unsigned char DynamicSquereHitbox(float deltaTime
 {
 	if (velocity[0] == 0 && velocity[1] == 0)
 		return b_Air;
-	float closestVertices[2];
 	if (velocity[0] > 0 && velocity[1] > 0)
 	{
 		int wallVertices[4];
@@ -296,6 +297,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
 		unsigned int behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 1, 0, 3, transform, velocity, floorHit, leftWallHit);
+		
 		return behavior;
 	}
 	else if (velocity[0] < 0 && velocity[1] > 0)
@@ -316,6 +318,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
 		unsigned int behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 3, 0, 1, transform, velocity,  ceilHit, leftWallHit);
+		
 	}
 	else if (velocity[0] > 0 && velocity[1] < 0)
 	{
@@ -335,6 +338,11 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		memoryDefender(floorVertices, 4);
 		memoryDefender(edgeVertices, 4);
 		unsigned int behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 1, 2, 3, transform, velocity, floorHit, rightWallHit);
+		float x1 = objectVertices4f[0];
+		float y1 = objectVertices4f[1];
+		float x2 = objectVertices4f[2];
+		float y2 = objectVertices4f[3];
+		
 		return behavior;
 
 	}
@@ -346,6 +354,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveUp(objectVertices4f[1]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], ceilHit);
+	
 	}
 	else if (velocity[1] < 0)
 	{
@@ -354,7 +363,9 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		vertices[2] = RoundFiveDown(objectVertices4f[2]); vertices[3] = RoundFiveUp(objectVertices4f[3] + velocity[1] * deltaTime);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 1, 3, transform[1], velocity[1], floorHit);
+
 		return behavior;
+
 	}
 	else if (velocity[0] > 0)
 	{
@@ -363,6 +374,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		vertices[2] = RoundFiveDown(objectVertices4f[2] + velocity[0] * deltaTime); vertices[3] = RoundFiveUp(objectVertices4f[3]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], leftWallHit);
+	
 	}
 	else if(velocity[0] < 0)
 	{
@@ -371,6 +383,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 		vertices[2] = RoundFiveDown(objectVertices4f[0]); vertices[3] = RoundFiveUp(objectVertices4f[3]);
 		memoryDefender(vertices, 4);
 		unsigned int behavior = OneDirectionCheck(vertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], rightWallHit);
+	
 	}
 	return b_Air;
 }

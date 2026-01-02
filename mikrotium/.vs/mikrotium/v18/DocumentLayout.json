@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
@@ -23,27 +19,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Player.cpp",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.cpp",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Player.cpp",
-              "RelativeToolTip": "CloneTerraria\\src\\Player.cpp",
-              "ViewState": "AgIAAJICAAAAAAAAAAAmwKgCAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-28T07:52:22.337Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Main.cpp",
               "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Main.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\microtium\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Main.cpp",
-              "ViewState": "AgIAAHYAAAAAAAAAAADgv50AAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAB0BAAAAAAAAAAAswDABAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-11-27T20:57:46.594Z"
+              "WhenOpened": "2025-11-27T20:57:46.594Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -85,6 +85,7 @@ private:
 	void CreateAllItemsTexture(unsigned int* texturesIDs);
 
 public:
+	
 	float m_SlotVertices[4];
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;
