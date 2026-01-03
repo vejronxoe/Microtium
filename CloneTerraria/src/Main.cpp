@@ -1,9 +1,6 @@
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<string>
+
 #include<vector>
 
 #include"Opengl/ErrorSystem.h"
@@ -17,10 +14,9 @@
 #include"glfw/input.h"
 #include"player.h"
 #include"Collision.h"
-#include"Blocks.h"
+#include"BlocksAndWalls.h"
 #include"NumberRender.h"
 #include"DroppedItems.h"
-#include"walls.h"
 #include"flora.h"
 #include<ctime>
 
@@ -184,6 +180,7 @@ int main()
 	std::vector<DroppedItem> dropItems;
 	dropItems.emplace_back(124, 0, 1, i_Ice, 1, true);
 	
+	std::vector<bool> isSandOnX;
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;
 	std::vector<std::vector<wall>> walls;
@@ -191,9 +188,8 @@ int main()
 	std::vector<tree> trees;
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
-	LoadMap("res/save/mapBlocks.txt", blocks, 0, 200, -100, 100, blockTextures);
-	LoadMapWall("res/save/mapWalls.txt", blocks, walls, blockTextures);
-
+	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks, 0, 200, -100, 100, blockTextures);
+	
 
 
 

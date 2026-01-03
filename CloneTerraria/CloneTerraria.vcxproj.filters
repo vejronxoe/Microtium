@@ -33,7 +33,7 @@
     <ClCompile Include="src\math\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Blocks.cpp">
+    <ClCompile Include="src\BlocksAndWalls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Player.cpp">
@@ -63,9 +63,6 @@
     <ClCompile Include="src\math\VectorOperation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\walls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\flora.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -89,7 +86,7 @@
     <ClInclude Include="src\math\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Blocks.h">
+    <ClInclude Include="src\BlocksAndWalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Player.h">
@@ -120,9 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ItemList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\walls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\flora.h">

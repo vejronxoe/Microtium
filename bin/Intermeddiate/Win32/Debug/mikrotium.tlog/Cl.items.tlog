@@ -1,6 +1,6 @@
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\flora.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\flora.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Collision.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Collision.obj
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Blocks.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Blocks.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\BlocksAndWalls.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\BlocksAndWalls.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\DroppedItems.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\DroppedItems.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\cursor.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\cursor.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Input.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Input.obj
@@ -16,4 +16,3 @@ C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Texture.cpp;C:\Use
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Player.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Window.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Window.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\projectile.obj
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\walls.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\walls.obj

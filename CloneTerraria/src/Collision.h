@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
 
-#include"Blocks.h"
+#include"BlocksAndWalls.h"
 
 unsigned char DynamicSquereHitbox(float deltaTime
 	, float* transform

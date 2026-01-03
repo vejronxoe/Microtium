@@ -1,7 +1,7 @@
 #pragma once
 #include "Opengl/Shader.h"
 
-#include "Blocks.h"
+#include "BlocksAndWalls.h"
 
 
 enum treeParts

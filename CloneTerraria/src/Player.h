@@ -2,12 +2,12 @@
 
 #include<vector>
 
-#include"Blocks.h"
+
 #include"Opengl/Shader.h"
 #include"Collision.h"
 #include"DroppedItems.h"
 #include"ItemList.h"
-#include"walls.h"
+#include"BlocksAndWalls.h"
 #include"flora.h"
 
 class Player

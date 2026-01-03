@@ -1,5 +1,5 @@
 #pragma once
-#include "Blocks.h"
+#include "BlocksAndWalls.h"
 enum ProjectilesTypes
 {
 	p_Sand = 0
