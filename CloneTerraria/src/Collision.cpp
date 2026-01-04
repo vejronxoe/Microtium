@@ -212,12 +212,17 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 }
 bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime)
 {
-	objectVertices4f[0] -= transform[0]; objectVertices4f[1] -= transform[1];
-	objectVertices4f[2] -= transform[0]; objectVertices4f[3] -= transform[1];
+	objectVertices4f[0] -= transform[0]; 
+	objectVertices4f[2] -= transform[0];
 	transform[0] += velocity[0] * deltaTime;
+	objectVertices4f[0] += transform[0]; 
+	objectVertices4f[2] += transform[0]; 
+
+	objectVertices4f[1] -= transform[1];
+	objectVertices4f[3] -= transform[1];
 	transform[1] += velocity[1] * deltaTime;
-	objectVertices4f[0] += transform[0]; objectVertices4f[1] += transform[1];
-	objectVertices4f[2] += transform[0]; objectVertices4f[3] += transform[1];
+	objectVertices4f[1] += transform[1];
+	objectVertices4f[3] += transform[1];
 
 
 	if (objectVertices4f[2] >= Blocks::xMax - SAFEDISTANCE)
@@ -239,7 +244,10 @@ bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* ve
 	}
 	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE)
 	{
+		float x = transform[1];
+		float y = objectVertices4f[3];
 		transform[1] -= objectVertices4f[3] - Blocks::yMin - SAFEDISTANCE;
+		float z = transform[1];
 		velocity[1] = 0;
 		floorHit = true;
 		return true;

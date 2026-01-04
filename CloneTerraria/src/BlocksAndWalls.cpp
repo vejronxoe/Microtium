@@ -502,7 +502,7 @@ void CreateBlock(int x
 		break;
 	case i_Sand:
 		isThereSandOnX.at(x) = true;
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_BasicSolid, 20, i_Sand);
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_Sand, 20, i_Sand);
 		break;
 	}
 

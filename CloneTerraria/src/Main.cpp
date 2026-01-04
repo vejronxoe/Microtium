@@ -2,6 +2,7 @@
 #include<GLFW/glfw3.h>
 
 #include<vector>
+#include<ctime>
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/shader.h"
@@ -18,8 +19,7 @@
 #include"NumberRender.h"
 #include"DroppedItems.h"
 #include"flora.h"
-#include<ctime>
-
+#include"projectile.h"
 
 
 int main()
@@ -136,34 +136,35 @@ int main()
 	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
-	unsigned int structuresDD[1];
-	unsigned int structuresTextures[1];
-	structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
-	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
-
+	unsigned int projectileTextures[1];
+	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int cursorTextures[6];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
+	unsigned int structuresTextures[1];
+	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
 	CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 	CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 	CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
-	unsigned int treeDD[3];
-	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
-	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
-	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+	structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
 	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
+	projectileTextures[p_Sand] = CreateTextureRGBA("res/textures/proSand.png");
+	unsigned int treeDD[3];
+	unsigned int structuresDD[1];
+	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
+	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
-	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	CreateAllBlockTextures(blockTextures);
-	unsigned int cursorTextures[6];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
 	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
 	unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
 
-	unsigned int damageTexture[2] = {CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png")};
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 
@@ -180,7 +181,6 @@ int main()
 	std::vector<DroppedItem> dropItems;
 	dropItems.emplace_back(124, 0, 1, i_Ice, 1, true);
 	
-	std::vector<bool> isSandOnX;
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;
 	std::vector<std::vector<wall>> walls;
@@ -188,6 +188,10 @@ int main()
 	std::vector<tree> trees;
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
+	std::vector<bool> isSandOnX;
+
+	std::vector<Projectile> projectiles;
+
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 200, -100, 100, blockTextures);
 	
 
@@ -229,6 +233,17 @@ int main()
 		}
 
 		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, structuresTextures, trees, seedlings,dropItems);
+		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
+		
+		for (int i = 0; i < projectiles.size(); i++)
+		{
+			if (projectiles.at(i).EveryFrame(deltaTime, blocks, walls, isSandOnX, blockTextures))
+			{
+				projectiles.erase(projectiles.begin() + i);
+			}
+
+		}
+
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -304,6 +319,11 @@ int main()
 			}
 		}
 		basicSh.Bind();
+
+		for (int i = 0; i < projectiles.size(); i++)
+		{
+			projectiles.at(i).Draw(basicSh, transformLocation, transform);
+		}
 		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
 
 		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
