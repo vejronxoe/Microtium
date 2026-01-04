@@ -307,6 +307,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<bool>& isThereSandOnX
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
@@ -571,8 +572,8 @@ void Player::EveryFrame(float deltaTime
 		int woodIndex = 0;
 		bool inBlock = false;
 
-		int rangeX = Input::XMousePos + CameraCoordinates[0] - m_Transform[0];
-		int rangeY = Input::YMousePos + CameraCoordinates[1] - m_Transform[1];
+		int rangeX = x - m_Transform[0];
+		int rangeY = y - m_Transform[1];
 
 		if (Input::TPress && m_PlayerSlots[0] != i_Nothing && m_UseSlot == 0)
 		{
@@ -789,33 +790,16 @@ void Player::EveryFrame(float deltaTime
 						{
 							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
 							damageblocks.erase(damageblocks.begin() + damageIndex);
-							blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
-							for (int i = 0; i < walls.at(x).size(); i++)
-							{
-								if (walls.at(x).at(i).m_Y == y)
-								{
-									walls.at(x).at(i).m_Render = true;
-									break;
-								}
-							}
+							DestroyBlock(blocks, walls, isThereSandOnX, x, y);
 						}
 					}
 					else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 					{
 						droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
-						blocks.at(x).erase(blocks.at(x).begin() + blockIndex);
-						for (int i = 0; i < walls.at(x).size(); i++)
-						{
-							if (walls.at(x).at(i).m_Y == y)
-							{
-								walls.at(x).at(i).m_Render = true;
-								break;
-							}
-						}
+						DestroyBlock(blocks, walls, isThereSandOnX, x, y);
 					}
 					else
 					{
-
 						damageblocks.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, ceilf(3.0f - ((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness)));
 					}
 
@@ -824,7 +808,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 					{
-						createWall(x, y, !inBlock, m_PlayerSlots[0], walls, texturesIDs);
+						createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);
 						if (m_UseSlot)
 						{
 							m_AmountInSlots[0]--;
@@ -850,11 +834,7 @@ void Player::EveryFrame(float deltaTime
 
 					else
 					{
-						if (wallIndex != -1)
-						{
-							walls.at(x).at(wallIndex).m_Render = false;
-						}
-						CreateBlock(x, y, m_PlayerSlots[0], blocks, texturesIDs);
+						CreateBlock(x, y, m_PlayerSlots[0], walls, blocks, isThereSandOnX, texturesIDs);
 						if (m_UseSlot)
 						{
 							m_AmountInSlots[0]--;

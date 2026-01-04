@@ -188,7 +188,7 @@ int main()
 	std::vector<tree> trees;
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
-	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks, 0, 200, -100, 100, blockTextures);
+	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 200, -100, 100, blockTextures);
 	
 
 
@@ -228,7 +228,7 @@ int main()
 
 		}
 
-		player.EveryFrame(deltaTime, blocks, walls, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, structuresTextures, trees, seedlings,dropItems);
+		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blockTextures, structuresTextures, trees, seedlings,dropItems);
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -267,8 +267,10 @@ int main()
 		
 
 		ErrorGL(glBindVertexArray(blocksDrawData));
+		drawWalls(damagedWalls, damageTexture, walls, shadowSh, shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
+		basicSh.Bind();
 		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, camera);
-		drawWalls(damagedWalls, damageTexture, walls, shadowSh,shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
+	
 		basicSh.Bind();
 		ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
 		for (int i = 0; i < seedlings.size(); i++)

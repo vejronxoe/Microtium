@@ -201,36 +201,13 @@ unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs
 }
 
 
-void DestroyBlock(std::vector<std::vector<Block>> blocks
-	, std::vector<bool> isThereSandOnX
-	, int x
-	, int y)
-{
-	int index;
-	bool blockExistence = false;
-	for (index = 0; index < blocks.size(); index++)
-	{
-		if (blocks.at(x).at(index).m_Y == y)
-		{
-			blockExistence = true;
-			break;
-		}
-	}
-	if (blockExistence)
-	{
-		if (blocks.at(x).at(index).m_BlockBehavior == b_Sand)
-		{
-			isThereSandOnX.at(x) = false;
-		}
-		
-	}
-}
 
 
 void LoadMapBlocksAndWalls(const char* filePathWalls
 	, const char* filePathBlocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
+	, std::vector<bool>& isThereSandOnX
 	, int minX
 	, int maxX
 	, int minY
@@ -243,13 +220,12 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 	Blocks::yMin = minY;
 	for (int i = minX; i <= maxX; i++)
 	{
-		std::vector<Block> emptyVector;
-		blocks.push_back(emptyVector);
-	}
-	for (int i = Blocks::xMin; i <= Blocks::xMax; i++)
-	{
-		std::vector<wall> emptyVector;
-		walls.push_back(emptyVector);
+		std::vector<Block> emptyVectorBlocks;
+		blocks.push_back(emptyVectorBlocks);
+	
+		std::vector<wall> emptyVectorWalls;
+		walls.push_back(emptyVectorWalls);
+		isThereSandOnX.push_back(false);
 	}
 	{
 		std::ifstream map(filePathBlocks);
@@ -311,7 +287,7 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 					}
 					if (blockID)
 					{
-						CreateBlock(x, y, blockID, blocks, texturesIDs);
+						CreateBlock(x, y, blockID, walls, blocks,  isThereSandOnX, texturesIDs);
 					}
 				}
 				y--;
@@ -357,7 +333,6 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 				for (int x = Blocks::xMin; x <= Blocks::xMax && x < lines.at(i).length(); x++)
 				{
 
-					bool render = true;
 					unsigned short int wallID = 0;
 					switch (lines.at(i).at(x))
 					{
@@ -368,7 +343,7 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 						wallID = i_WallIce;
 						break;
 					}
-					createWall(x, y, render, wallID, walls, texturesIDs);
+					createWall(x, y, wallID, walls, blocks, texturesIDs);
 				}
 				y--;
 			}
@@ -408,7 +383,7 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	}
 
 }
-void drawWalls(std::vector<DamagedBlock> damagedWalls
+void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	, unsigned int* damageTextures
 	, std::vector<std::vector<wall>>& walls
 	, Shader& wallsSh
@@ -449,9 +424,9 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 
 void createWall(int x
 	, int y
-	, bool render
 	, unsigned short int IDOfItemWall
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Block>>& blocks
 	, unsigned int* texturesIDs)
 {
 	int indexToPlace = 0;
@@ -462,13 +437,22 @@ void createWall(int x
 			break;
 		}
 	}
+	bool isThereBlock;
+	int blockIndex = FindBlock(blocks, x, y, isThereBlock);
+	if (isThereBlock)
+	{
+		if (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Platform)
+		{
+			isThereBlock = false;
+		}
+	}
 	switch (IDOfItemWall)
 	{
 	case i_WallDirt:
-		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], render, i_WallDirt, y, 20);
+		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], !isThereBlock, i_WallDirt, y, 20);
 		break;
 	case i_WallIce:
-		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Ice], render, i_WallIce, y, 15);
+		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Ice], !isThereBlock, i_WallIce, y, 15);
 		break;
 	}
 }
@@ -476,8 +460,9 @@ void createWall(int x
 void CreateBlock(int x
 	, int y
 	, unsigned short int IDOfItemBlock
+	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
-	//, std::vector<bool> isThereSandOnX
+	, std::vector<bool>& isThereSandOnX
 	, unsigned int* texturesIDs)
 {
 	int indexToPlace = 0;
@@ -489,6 +474,15 @@ void CreateBlock(int x
 		}
 	}
 
+	bool isThereWall;
+	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
+	if (i_Platform != IDOfItemBlock)
+	{
+		if (isThereWall)
+		{
+			walls.at(x).at(indexOfTheWall).m_Render = false;
+		}
+	}
 	switch (IDOfItemBlock)
 	{
 	case i_Dirt:
@@ -507,11 +501,47 @@ void CreateBlock(int x
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], y, b_BasicSolid, 20, i_ForestPlank);
 		break;
 	case i_Sand:
-//		isThereSandOnX.at(x) = true;
+		isThereSandOnX.at(x) = true;
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_BasicSolid, 20, i_Sand);
 		break;
 	}
 
+}
+
+void DestroyBlock(std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<bool>& isThereSandOnX
+	, int x
+	, int y)
+{
+	bool isThererBlock = false;
+	int index = FindBlock(blocks, x, y, isThererBlock);
+
+	if (isThererBlock)
+	{
+		if (blocks.at(x).at(index).m_BlockBehavior != b_Platform)
+		{
+			bool isThereWall;
+			int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
+			if (isThereWall)
+			{
+				walls.at(x).at(indexOfTheWall).m_Render = true;
+			}
+		}
+		if (blocks.at(x).at(index).m_BlockBehavior == b_Sand)
+		{
+
+			isThereSandOnX.at(x) = false;
+			for (int i = 0; i < blocks.at(x).size(); i++)
+			{
+				if (blocks.at(x).at(i).m_BlockBehavior == b_Sand && blocks.at(x).at(i).m_Y != y)
+				{
+					isThereSandOnX.at(x) = true;
+				}
+			}
+		}
+		blocks.at(x).erase(blocks.at(x).begin() + index);
+	}
 }
 
 int FindBlock(std::vector<std::vector<Block>>& blocks

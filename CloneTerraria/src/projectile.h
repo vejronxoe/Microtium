@@ -18,7 +18,9 @@ struct Projectile
 		, float velocityY
 		, unsigned int projectileTexture);
 	bool EveryFrame(float deltaTime
-		, std::vector<std::vector<Block>> blocks
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<std::vector<wall>>& walls
+		, std::vector<bool>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader sh
 		, unsigned int transformLocation

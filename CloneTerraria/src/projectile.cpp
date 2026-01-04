@@ -14,7 +14,9 @@ Projectile::Projectile(unsigned char projectileType
 	:m_Transform{ x, y }, m_Velocity{ velocityX, velocityY}, m_ProjectileType{projectileType}, m_Texture{ projectileTexture}
 {}
 bool Projectile::EveryFrame(float deltaTime
-	, std::vector<std::vector<Block>> blocks
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<bool>& isSandOnX
 	, unsigned int* blockTextures)
 {
 	switch (m_ProjectileType)
@@ -29,7 +31,7 @@ bool Projectile::EveryFrame(float deltaTime
 
 		if (hit[0] || hit[1])
 		{
-			CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, blocks, blockTextures);
+			CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
 			return true;
 		}
 		break;

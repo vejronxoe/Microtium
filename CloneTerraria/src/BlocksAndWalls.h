@@ -109,13 +109,14 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 	, const char* filePathBlocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
+	, std::vector<bool>& isThereSandOnX
 	, int minX
 	, int maxX
 	, int minY
 	, int maxY
 	, unsigned int* texturesIDs);
 
-void drawWalls(std::vector<DamagedBlock> damagedWalls
+void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	, unsigned int* damageTextures
 	, std::vector<std::vector<wall>>& walls
 	, Shader& wallsSh
@@ -137,15 +138,22 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 
 void createWall(int x
 	, int y
-	, bool render
 	, unsigned short int IDOfItemWall
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Block>>& blocks
 	, unsigned int* texturesIDs);
 void CreateBlock(int x
 	, int y
 	, unsigned short int IDOfItemBlock
+	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
+	, std::vector<bool>& isThereSandOnX
 	, unsigned int* texturesIDs);
+void DestroyBlock(std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<bool>& isThereSandOnX
+	, int x
+	, int y);
 
 int FindBlock(std::vector<std::vector<Block>>& blocks
 	, int x

@@ -44,6 +44,7 @@ public:
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
+		, std::vector<bool>& isThereSandOnX
 		, std::vector<damagedWood>& damagedWood
 		, std::vector<DamagedBlock>& damageblocks
 		, std::vector<DamagedBlock>& damagedWalls
