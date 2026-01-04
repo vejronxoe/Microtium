@@ -1,0 +1,18 @@
+#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 texCoord;
+
+uniform mat4 treeCamera;
+uniform mat4 treeTransform;
+uniform mat4 treeRotation;
+
+void main()
+{
+	texCoord = aTexCoord;
+	gl_Position = treeCamera * treeTransform * treeRotation *  vec4(aPos.x, aPos.y, 0.0f, 1.0f);
+}
+
+
+
