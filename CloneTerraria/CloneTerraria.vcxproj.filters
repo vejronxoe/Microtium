@@ -137,5 +137,6 @@
     <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\shaders\fragmentShaderShadow.txt" />
     <Text Include="res\shaders\vertexShaderTree.txt" />
+    <Text Include="res\shaders\vertexShaderAnimation.txt" />
   </ItemGroup>
 </Project>

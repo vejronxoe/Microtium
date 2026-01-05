@@ -13,8 +13,10 @@
 class Player
 {
 private:
-	unsigned int m_PlayerDrawData;
-	unsigned int m_Tex;
+	unsigned int m_LegsDD;
+	unsigned int m_WalkingTex;
+	float m_WalkingTimer;
+	char m_WalkingPhase;
 	bool m_FloorHit;
 	bool m_CeilHit;
 	bool m_WallHit;
@@ -58,15 +60,20 @@ public:
 	void DrawPlayer(Shader& basicSh
 		, Shader& HUDSh
 		, Shader& fontSh
+		, Shader& animSh
 		, unsigned int shadowLocation
 		, unsigned int transformLocation
 		, float* transform
 		, float* scale
-		, int fontDrawData
-		, int numberLocation
-		, int fontTransformLocation
-		, int fontscaleLocation
-		, int numberTexture);
+		, unsigned int fontDrawData
+		, unsigned int numberLocation
+		, unsigned int fontTransformLocation
+		, unsigned int fontscaleLocation
+		, unsigned int numberTexture
+		, unsigned int animTransformLocation
+		, unsigned int animScaleLocation
+		, unsigned int animNumberLocation
+		, unsigned int animLeangthLocation);
 
 	bool HavePlayerSpace(unsigned short int item);
 

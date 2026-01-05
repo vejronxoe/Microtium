@@ -64,6 +64,7 @@
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragmentShaderShadow.txt" />
     <Text Include="res\shaders\fragmentShaderTest.txt" />
+    <Text Include="res\shaders\vertexShaderAnimation.txt" />
     <Text Include="res\shaders\vertexShaderBasic.txt" />
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
     <Text Include="res\shaders\vertexShaderFont.txt" />

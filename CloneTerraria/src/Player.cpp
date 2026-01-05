@@ -68,9 +68,10 @@ Player::Player(unsigned int eob
 	, float& yLocationOfFirstSlot
 	, float& xLocationOfFirstSlot
 	, unsigned int* texturesIDs)
-	:m_PlayerDrawData(0), m_Tex(0), m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 0 }
+	:m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 0 }
 {	
-
+	m_WalkingTimer = 0;
+	m_WalkingPhase = 0;
 	m_HUDTransformLocation = HUDTransformLocatin;
 	m_HUDScaleLocation = HUDScaleLocatin;
 	m_InventoryDrawData = 0;
@@ -116,10 +117,10 @@ Player::Player(unsigned int eob
 	m_LargePlaceable = false;
 	
 
-	m_Tex = CreateTextureRGBA("res/textures/player0.png");
+	m_WalkingTex = CreateTextureRGBA("res/textures/walkAnimationDefault.png");
 	CreateAllItemsTexture(texturesIDs);
 	
-	m_PlayerDrawData = CreateDrawData(eob, 1.5f, -1.5f, 1.0f, -1.0f);
+	m_LegsDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 3.0f, 0);
 
 
 	unsigned int inventoryVertexBuffer;
@@ -1083,7 +1084,62 @@ void Player::EveryFrame(float deltaTime
 		{
 			m_DirectionLook = -1;
 		}
+		if (m_FloorHit)
+		{
+			m_WalkingTimer += deltaTime;
 
+			if (0 < m_Velocity[0])
+			{
+				if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (8.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else if (0 > m_Velocity[0])
+			{
+				if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (8.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else
+			{
+				m_WalkingPhase = 0;
+			}
+		}
+		
 		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
 		{
 			m_Velocity[0] += m_Acceleration * deltaTime;
@@ -1168,6 +1224,7 @@ void Player::EveryFrame(float deltaTime
 			break;
 		case(b_BasicSolid):
 		case(b_Platform):
+		case(b_Sand):
 			m_Acceleration = 25.0f;
 			m_Friction = 40;
 			m_MaxMovementSpeed = 10;
@@ -1210,20 +1267,30 @@ void Player::EveryFrame(float deltaTime
 void Player::DrawPlayer(Shader& basicSh
 	, Shader& HUDSh
 	, Shader& fontSh
+	, Shader& animSh
 	, unsigned int shadowLocation
 	, unsigned int transformLocation
 	, float* transform
 	, float* scale
-	, int fontDrawData
-	, int numberLocation
-	, int fontTransformLocation
-	, int fontscaleLocation
-	, int numberTexture)
+	, unsigned int fontDrawData
+	, unsigned int numberLocation
+	, unsigned int fontTransformLocation
+	, unsigned int fontscaleLocation
+	, unsigned int numberTexture
+	, unsigned int animTransformLocation
+	, unsigned int animScaleLocation
+	, unsigned int animNumberLocation
+	, unsigned int animLeangthLocation)
 {
+	animSh.Bind();
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	basicSh.SetUniformMat4(transformLocation, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex));
-	ErrorGL(glBindVertexArray(m_PlayerDrawData));
+	animSh.SetUniformMat4(animTransformLocation, transform);
+	ChangeScale( m_DirectionLook, 1, scale);
+	animSh.SetUniformMat4(animScaleLocation, scale);
+	animSh.SetUniform1i(animLeangthLocation, 3);
+	animSh.SetUniform1i(animNumberLocation, m_WalkingPhase);
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_WalkingTex));
+	ErrorGL(glBindVertexArray(m_LegsDD));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_InventoryDrawData));

@@ -119,6 +119,14 @@ int main()
 	unsigned int treeTransformLocation = treeSh.GetUniformLocation("treeTransform");
 	unsigned int treeCameraLocation = treeSh.GetUniformLocation("treeCamera");
 	unsigned int treeRotationLocation = treeSh.GetUniformLocation("treeRotation");
+	Shader animSh("res/shaders/vertexShaderAnimation.txt", "res/shaders/fragmentShaderBasic.txt ");
+	animSh.Bind();
+	unsigned int animTransformLocation = animSh.GetUniformLocation("animTransform");
+	unsigned int animCameraLocation = animSh.GetUniformLocation("animCamera");
+	unsigned int animNumberOfAnimLocation = animSh.GetUniformLocation("animNumber");
+	unsigned int animLeangthLocation = animSh.GetUniformLocation("animLeangth");
+	unsigned int animScaleLocation = animSh.GetUniformLocation("animScale");
+
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -244,6 +252,8 @@ int main()
 
 		}
 
+		
+		
 		if (damagedBlocks.size() > 20)
 		{
 			damagedBlocks.erase(damagedBlocks.begin());
@@ -255,6 +265,15 @@ int main()
 		else if (damagedTrees.size() > 20)
 		{
 			damagedTrees.erase(damagedTrees.begin());
+		}
+		for (int i = 0; i < damagedBlocks.size(); i++)
+		{
+			bool ExistenceOfBlock = false;
+			FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1], ExistenceOfBlock);
+			if (!ExistenceOfBlock)
+			{
+				damagedBlocks.erase(damagedBlocks.begin() + i);
+			}
 		}
 		for (int j = 0; j < damagedTrees.size(); j++)
 		{
@@ -275,12 +294,11 @@ int main()
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+		animSh.Bind();
+		animSh.SetUniformMat4(animCameraLocation, camera);
 		
 		
-	
-		
-		
-
+		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
 		drawWalls(damagedWalls, damageTexture, walls, shadowSh, shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
 		basicSh.Bind();
@@ -324,7 +342,7 @@ int main()
 		{
 			projectiles.at(i).Draw(basicSh, transformLocation, transform);
 		}
-		player.DrawPlayer(basicSh, HUDSh, fontSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture);
+		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture,animTransformLocation, animScaleLocation,animNumberOfAnimLocation, animLeangthLocation);
 
 		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
 		
