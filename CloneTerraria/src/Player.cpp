@@ -1156,7 +1156,11 @@ void Player::EveryFrame(float deltaTime
 
 			if (0 < m_Velocity[0])
 			{
-				if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
 				}
@@ -1191,7 +1195,11 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (0 > m_Velocity[0])
 			{
-				if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
 				}
@@ -1228,6 +1236,10 @@ void Player::EveryFrame(float deltaTime
 			{
 				m_WalkingPhase = 0;
 			}
+		}
+		else
+		{
+			m_WalkingPhase = 1;
 		}
 
 		switch (moveBehavior)
