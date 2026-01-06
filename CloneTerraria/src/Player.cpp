@@ -120,7 +120,7 @@ Player::Player(unsigned int eob
 	m_WalkingTex = CreateTextureRGBA("res/textures/walkAnimationDefault.png");
 	CreateAllItemsTexture(texturesIDs);
 	
-	m_LegsDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 3.0f, 0);
+	m_LegsDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 5.0f, 0);
 
 
 	unsigned int inventoryVertexBuffer;
@@ -1084,61 +1084,7 @@ void Player::EveryFrame(float deltaTime
 		{
 			m_DirectionLook = -1;
 		}
-		if (m_FloorHit)
-		{
-			m_WalkingTimer += deltaTime;
-
-			if (0 < m_Velocity[0])
-			{
-				if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 1;
-				}
-				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (8.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 2;
-				}
-				else
-				{
-					m_WalkingTimer = 0;
-				}
-			}
-			else if (0 > m_Velocity[0])
-			{
-				if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 1;
-				}
-				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (8.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 2;
-				}
-				else
-				{
-					m_WalkingTimer = 0;
-				}
-			}
-			else
-			{
-				m_WalkingPhase = 0;
-			}
-		}
+		
 		
 		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
 		{
@@ -1203,6 +1149,85 @@ void Player::EveryFrame(float deltaTime
 		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
 		{
 			moveBehavior = b_BasicSolid;
+		}
+		if (m_FloorHit)
+		{
+			m_WalkingTimer += deltaTime;
+
+			if (0 < m_Velocity[0])
+			{
+				if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (3.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (5.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 4;
+				}
+				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else if (7.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else if (0 > m_Velocity[0])
+			{
+				if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (3.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (5.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 4;
+				}
+				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else if (7.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else
+			{
+				m_WalkingPhase = 0;
+			}
 		}
 
 		switch (moveBehavior)
@@ -1287,7 +1312,7 @@ void Player::DrawPlayer(Shader& basicSh
 	animSh.SetUniformMat4(animTransformLocation, transform);
 	ChangeScale( m_DirectionLook, 1, scale);
 	animSh.SetUniformMat4(animScaleLocation, scale);
-	animSh.SetUniform1i(animLeangthLocation, 3);
+	animSh.SetUniform1i(animLeangthLocation, 5);
 	animSh.SetUniform1i(animNumberLocation, m_WalkingPhase);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_WalkingTex));
 	ErrorGL(glBindVertexArray(m_LegsDD));
