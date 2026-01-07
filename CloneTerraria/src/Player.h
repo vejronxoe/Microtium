@@ -12,11 +12,8 @@
 
 class Player
 {
+
 private:
-	unsigned int m_LegsDD;
-	unsigned int m_WalkingTex;
-	float m_WalkingTimer;
-	char m_WalkingPhase;
 	bool m_FloorHit;
 	bool m_CeilHit;
 	bool m_WallHit;
@@ -78,7 +75,13 @@ public:
 	bool HavePlayerSpace(unsigned short int item);
 
 	void SwapItemStats();
-
+private:
+	unsigned int m_BottomAnimDD;
+	unsigned int m_WalkingTex;
+	float m_WalkingTimer;
+	char m_WalkingPhase;
+	unsigned int m_BootsAnimTex;
+	unsigned int m_LegAnimTex;
 private:
 	unsigned int m_InventoryDrawData;
 	unsigned int m_SlotTexture;

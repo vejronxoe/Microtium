@@ -117,10 +117,11 @@ Player::Player(unsigned int eob
 	m_LargePlaceable = false;
 	
 
-	m_WalkingTex = CreateTextureRGBA("res/textures/walkAnimationDefault.png");
+	m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
+	m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
 	CreateAllItemsTexture(texturesIDs);
 	
-	m_LegsDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 5.0f, 0);
+	m_BottomAnimDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 5.0f, 0);
 
 
 	unsigned int inventoryVertexBuffer;
@@ -560,7 +561,6 @@ void Player::EveryFrame(float deltaTime
 			m_AddNextFrame = 0;
 		}
 	}
-
 	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
@@ -1150,97 +1150,7 @@ void Player::EveryFrame(float deltaTime
 		{
 			moveBehavior = b_BasicSolid;
 		}
-		if (m_FloorHit)
-		{
-			m_WalkingTimer += deltaTime;
 
-			if (0 < m_Velocity[0])
-			{
-				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 1;
-				}
-				else if (3.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (5.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 4;
-				}
-				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 2;
-				}
-				else if (7.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else
-				{
-					m_WalkingTimer = 0;
-				}
-			}
-			else if (0 > m_Velocity[0])
-			{
-				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (1.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (2.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 1;
-				}
-				else if (3.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (5.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 4;
-				}
-				else if (6.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 2;
-				}
-				else if (7.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else
-				{
-					m_WalkingTimer = 0;
-				}
-			}
-			else
-			{
-				m_WalkingPhase = 0;
-			}
-		}
-		else
-		{
-			m_WalkingPhase = 1;
-		}
 
 		switch (moveBehavior)
 		{
@@ -1299,6 +1209,101 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
+	{
+		if (m_FloorHit)
+		{
+			m_WalkingTimer += deltaTime;
+
+			if (0 < m_Velocity[0])
+			{
+				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (0.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (1.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (2.4f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (3.2f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 4;
+				}
+				else if (4.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else if (5.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else if (0 > m_Velocity[0])
+			{
+
+				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (0.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (1.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 1;
+				}
+				else if (2.4f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 3;
+				}
+				else if (3.2f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 4;
+				}
+				else if (4.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 2;
+				}
+				else if (5.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				{
+					m_WalkingPhase = 0;
+				}
+				else
+				{
+					m_WalkingTimer = 0;
+				}
+			}
+			else
+			{
+				m_WalkingPhase = 0;
+			}
+		}
+		else
+		{
+			m_WalkingPhase = 1;
+		}
+	}
+	
 }
 
 void Player::DrawPlayer(Shader& basicSh
@@ -1325,9 +1330,11 @@ void Player::DrawPlayer(Shader& basicSh
 	ChangeScale( m_DirectionLook, 1, scale);
 	animSh.SetUniformMat4(animScaleLocation, scale);
 	animSh.SetUniform1i(animLeangthLocation, 5);
+	ErrorGL(glBindVertexArray(m_BottomAnimDD));
 	animSh.SetUniform1i(animNumberLocation, m_WalkingPhase);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_WalkingTex));
-	ErrorGL(glBindVertexArray(m_LegsDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BootsAnimTex));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_LegAnimTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_InventoryDrawData));
