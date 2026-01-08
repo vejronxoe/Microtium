@@ -7,6 +7,15 @@
 #include"glfw/window.h"
 #include"math/matrix.h"
 #include"NumberRender.h"
+#define SPEEDOFANIM 0.8f
+
+enum ArmBehaviour
+{
+	ArmStanding = 0
+	,ArmUsing
+	,ArmRun
+	
+};
 unsigned int getBehaviorByTexture(unsigned int texture)
 {
 	switch (texture)
@@ -105,6 +114,7 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[5] = 1;
 	m_AmountInSlots[6] = 20;
 	m_AmountInSlots[7] = 20;
+	m_ArmTimer = 0;
 	m_UseItemTimer = 0;
 	m_CooldownToUse = 0;
 	m_PickaxeStreanght = 0;
@@ -115,13 +125,17 @@ Player::Player(unsigned int eob
 	m_Placeable = 0;
 	m_AimingAtSlot = 0;
 	m_LargePlaceable = false;
-	
+
 
 	m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
 	m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
+	m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
+	m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 	CreateAllItemsTexture(texturesIDs);
 	
 	m_BottomAnimDD = CreateDrawData(eob, -0.2, -1.5f, 1.0f, -1.0f, 1, 0, 1.0f / 5.0f, 0);
+	m_BodyAnimDD = CreateDrawData(eob, 1.5, -0.3f, 1, -1, 1, 0, 1.0f / 5.0f, 0);
+	m_HeadDD = CreateDrawData(eob, 1.5, -0.3f, 1, -1);
 
 
 	unsigned int inventoryVertexBuffer;
@@ -1210,83 +1224,96 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 	{
+		if (m_ArmsBehaviour == ArmStanding)
+		{
+			m_ArmPhase = 0;
+		}
 		if (m_FloorHit)
 		{
 			m_WalkingTimer += deltaTime;
 
-			if (0 < m_Velocity[0])
+			if (m_Velocity[0] != 0)
 			{
+				if (m_ArmTimer > 0.1f && m_ArmsBehaviour == ArmStanding)
+				{
+					m_ArmsBehaviour = ArmRun;
+					m_ArmTimer = 0;
+				}
+				else if (m_ArmsBehaviour == ArmStanding)
+				{
+					m_ArmTimer += deltaTime;
+				}
 				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 2;
+					}
 				}
-				else if (0.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 3;
+					}
 				}
-				else if (1.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 2 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 1;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 3;
+					}
 				}
-				else if (2.4f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 3 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 2;
+					}
 				}
-				else if (3.2f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 4 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 2;
+					}
 				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 5 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 4;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 1;
+					}
 				}
-				else if (4.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 6 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 2;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 1;
+					}
 				}
-				else if (5.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else
-				{
-					m_WalkingTimer = 0;
-				}
-			}
-			else if (0 > m_Velocity[0])
-			{
-
-				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (0.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (1.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 1;
-				}
-				else if (2.4f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 3;
-				}
-				else if (3.2f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 0;
-				}
-				else if (4.0f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 7 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 4;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 2;
+					}
 				}
-				else if (4.8f / abs(m_Velocity[0]) >= m_WalkingTimer)
-				{
-					m_WalkingPhase = 2;
-				}
-				else if (5.6f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 8 / abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
+					if (m_ArmsBehaviour == ArmRun)
+					{
+						m_ArmPhase = 2;
+					}
 				}
 				else
 				{
@@ -1295,6 +1322,15 @@ void Player::EveryFrame(float deltaTime
 			}
 			else
 			{
+				if (m_ArmTimer > 0.5 && m_ArmsBehaviour == ArmRun)
+				{
+					m_ArmsBehaviour = ArmStanding;
+					m_ArmTimer = 0;
+				}
+				else if(m_ArmsBehaviour == ArmRun)
+				{
+					m_ArmTimer += deltaTime;
+				}
 				m_WalkingPhase = 0;
 			}
 		}
@@ -1330,12 +1366,26 @@ void Player::DrawPlayer(Shader& basicSh
 	ChangeScale( m_DirectionLook, 1, scale);
 	animSh.SetUniformMat4(animScaleLocation, scale);
 	animSh.SetUniform1i(animLeangthLocation, 5);
-	ErrorGL(glBindVertexArray(m_BottomAnimDD));
 	animSh.SetUniform1i(animNumberLocation, m_WalkingPhase);
+	ErrorGL(glBindVertexArray(m_BottomAnimDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BootsAnimTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_LegAnimTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	if (m_WalkingPhase == 0)
+	{
+		ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+		animSh.SetUniformMat4(animTransformLocation, transform);
+	}
+	animSh.SetUniform1i(animNumberLocation, m_ArmPhase);
+	ErrorGL(glBindVertexArray(m_BodyAnimDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	animSh.SetUniform1i(animNumberLocation, 0);
+	ErrorGL(glBindVertexArray(m_HeadDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HeadTex));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_InventoryDrawData));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));

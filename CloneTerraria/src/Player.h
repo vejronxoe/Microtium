@@ -76,12 +76,18 @@ public:
 
 	void SwapItemStats();
 private:
-	unsigned int m_BottomAnimDD;
-	unsigned int m_WalkingTex;
+	float m_ArmTimer;
+	char m_ArmPhase;
+	char m_ArmsBehaviour;
 	float m_WalkingTimer;
 	char m_WalkingPhase;
+	unsigned int m_BottomAnimDD;
+	unsigned int m_BodyAnimDD;
+	unsigned int m_HeadDD;
 	unsigned int m_BootsAnimTex;
 	unsigned int m_LegAnimTex;
+	unsigned int m_BodyAnimTex;
+	unsigned int m_HeadTex;
 private:
 	unsigned int m_InventoryDrawData;
 	unsigned int m_SlotTexture;
