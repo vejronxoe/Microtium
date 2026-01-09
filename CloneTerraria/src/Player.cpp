@@ -125,8 +125,9 @@ Player::Player(unsigned int eob
 	m_Placeable = 0;
 	m_AimingAtSlot = 0;
 	m_LargePlaceable = false;
-
-
+	m_ArmPhase = 0;
+	m_ArmsBehaviour = ArmStanding;
+	m_ArmTimer = 0;
 	m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
 	m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
 	m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
@@ -1224,10 +1225,6 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 	{
-		if (m_ArmsBehaviour == ArmStanding)
-		{
-			m_ArmPhase = 0;
-		}
 		if (m_FloorHit)
 		{
 			m_WalkingTimer += deltaTime;
@@ -1325,6 +1322,7 @@ void Player::EveryFrame(float deltaTime
 				if (m_ArmTimer > 0.5 && m_ArmsBehaviour == ArmRun)
 				{
 					m_ArmsBehaviour = ArmStanding;
+					m_ArmPhase = 0;
 					m_ArmTimer = 0;
 				}
 				else if(m_ArmsBehaviour == ArmRun)

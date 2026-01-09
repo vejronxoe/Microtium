@@ -131,6 +131,7 @@ int main()
 	float scale[16];
 	float transform[16];
 	float rotation[16];
+	treeSh.Bind();
 	CreateRotation(0, rotation);
 	treeSh.SetUniformMat4(treeRotationLocation, rotation);
 
