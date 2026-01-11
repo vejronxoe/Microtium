@@ -126,7 +126,13 @@ int main()
 	unsigned int animNumberOfAnimLocation = animSh.GetUniformLocation("animNumber");
 	unsigned int animLeangthLocation = animSh.GetUniformLocation("animLeangth");
 	unsigned int animScaleLocation = animSh.GetUniformLocation("animScale");
-
+	Shader handSh("res/shaders/vertexShaderHand.txt", "res/shaders/fragmentShaderBasic.txt");
+	handSh.Bind();
+	unsigned int handBeginTransformLocation = handSh.GetUniformLocation("beginTransform");
+	unsigned int handTransformLocation = handSh.GetUniformLocation("transform");
+	unsigned int handScaleLocation = handSh.GetUniformLocation("scale");
+	unsigned int handCameraLocation = handSh.GetUniformLocation("camera");
+	unsigned int handRotationLocation = handSh.GetUniformLocation("rotation");
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -297,7 +303,8 @@ int main()
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
 		animSh.Bind();
 		animSh.SetUniformMat4(animCameraLocation, camera);
-		
+		handSh.Bind();
+		handSh.SetUniformMat4(handCameraLocation,camera);
 		
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
@@ -343,7 +350,7 @@ int main()
 		{
 			projectiles.at(i).Draw(basicSh, transformLocation, transform);
 		}
-		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, HUDShadowLocation, transformLocation, transform, scale, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture,animTransformLocation, animScaleLocation,animNumberOfAnimLocation, animLeangthLocation);
+		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, handSh, HUDShadowLocation, transformLocation, transform, scale, rotation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture,animTransformLocation, animScaleLocation,animNumberOfAnimLocation, animLeangthLocation, handTransformLocation, handBeginTransformLocation, handRotationLocation, handScaleLocation);
 
 		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
 		

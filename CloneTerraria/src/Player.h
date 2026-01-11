@@ -58,10 +58,12 @@ public:
 		, Shader& HUDSh
 		, Shader& fontSh
 		, Shader& animSh
+		, Shader& handSh
 		, unsigned int shadowLocation
 		, unsigned int transformLocation
 		, float* transform
 		, float* scale
+		, float* rotation
 		, unsigned int fontDrawData
 		, unsigned int numberLocation
 		, unsigned int fontTransformLocation
@@ -70,7 +72,11 @@ public:
 		, unsigned int animTransformLocation
 		, unsigned int animScaleLocation
 		, unsigned int animNumberLocation
-		, unsigned int animLeangthLocation);
+		, unsigned int animLeangthLocation
+		, unsigned int advancedTransformLocation
+		, unsigned int advancedBeginTransformLocation
+		, unsigned int advancedRotationLocation
+		, unsigned int advancedScaleLocation);
 
 	bool HavePlayerSpace(unsigned short int item);
 
@@ -81,10 +87,15 @@ private:
 	char m_ArmsBehaviour;
 	float m_WalkingTimer;
 	char m_WalkingPhase;
+	float m_ArmRotation;
+	
 	unsigned int m_BottomAnimDD;
+	unsigned int m_HandDD;
 	unsigned int m_BodyAnimDD;
 	unsigned int m_HeadDD;
 	unsigned int m_BootsAnimTex;
+	unsigned int m_ItemInHandDD;
+	unsigned int m_HandTex;
 	unsigned int m_LegAnimTex;
 	unsigned int m_BodyAnimTex;
 	unsigned int m_HeadTex;

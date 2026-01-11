@@ -69,6 +69,7 @@
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
     <Text Include="res\shaders\vertexShaderFont.txt" />
     <Text Include="res\shaders\vertexShaderHUD.txt" />
+    <Text Include="res\shaders\vertexShaderHand.txt" />
     <Text Include="res\shaders\vertexShaderTree.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

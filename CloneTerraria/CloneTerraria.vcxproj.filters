@@ -138,5 +138,6 @@
     <Text Include="res\shaders\fragmentShaderShadow.txt" />
     <Text Include="res\shaders\vertexShaderTree.txt" />
     <Text Include="res\shaders\vertexShaderAnimation.txt" />
+    <Text Include="res\shaders\vertexShaderHand.txt" />
   </ItemGroup>
 </Project>
