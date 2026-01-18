@@ -26,16 +26,10 @@ void DrawCursor(unsigned int* CursorTextures
 	, unsigned int blockDrawData
 	, Shader& basicSh
 	, Shader& fontSh
-	, unsigned int shadowLocation
-	, unsigned int transformLocation
 	, float* transform
 	, float* camera
 	, float* scale
-	, unsigned int cameraLocation
 	, unsigned int fontDrawData
-	, unsigned int numberLocation
-	, unsigned int fontTransformLocation
-	, unsigned int fontscaleLocation
 	, unsigned int numberTexture
 	, Player& player
 	, float* cameraCoordinates)
@@ -46,7 +40,7 @@ void DrawCursor(unsigned int* CursorTextures
 	if (player.m_CursorOnPlaceableSpot)
 	{
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4(transformLocation, transform);
+		basicSh.SetUniformMat4(basicTranform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_UseSlotTexture));
 		ErrorGL(glBindVertexArray(blockDrawData));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -54,8 +48,8 @@ void DrawCursor(unsigned int* CursorTextures
 	else if (player.m_CursorOnPlaceableForStructure)
 	{
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4(transformLocation, transform);
-		basicSh.SetUniform1i(shadowLocation, -1);
+		basicSh.SetUniformMat4( basicTranform, transform);
+		basicSh.SetUniform1i(basicSize + ShadowLocation, -1);
 
 		switch (player.m_PlayerSlots[0])
 		{
@@ -67,13 +61,13 @@ void DrawCursor(unsigned int* CursorTextures
 			break;
 		}
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		basicSh.SetUniform1i(shadowLocation, 0);
+		basicSh.SetUniform1i(basicSize + ShadowLocation, 0);
 
 	}
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
-	basicSh.SetUniformMat4(transformLocation, transform);
+	basicSh.SetUniformMat4(basicTranform, transform);
 	ChangeCamera(0, Window::width, 0, Window::height, camera);
-	basicSh.SetUniformMat4(cameraLocation, camera);
+	basicSh.SetUniformMat4(basicCamera, camera);
 
 	bool canClickOn = player.m_AimingAtSlot;
 
@@ -81,7 +75,7 @@ void DrawCursor(unsigned int* CursorTextures
 	{
 		if (player.m_PlayerSlots[0] >= i_WallDirt && player.m_PlayerSlots[0] <= i_WallIce)
 		{
-			basicSh.SetUniform1i(shadowLocation, 1);
+			basicSh.SetUniform1i( basicSize + ShadowLocation, 1);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_AllItemTextures[player.m_PlayerSlots[0]]));
 			ErrorGL(glBindVertexArray(cursorDrawData));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -90,11 +84,11 @@ void DrawCursor(unsigned int* CursorTextures
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 			float right = player.m_SlotVertices[2] + Input::XRawMousePos;
 			float left = player.m_SlotVertices[0] + Input::XRawMousePos;
-			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
+			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
 		}
 		else
 		{
-			basicSh.SetUniform1i(shadowLocation, 0);
+			basicSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_AllItemTextures[player.m_PlayerSlots[0]]));
 			ErrorGL(glBindVertexArray(cursorDrawData));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -103,7 +97,7 @@ void DrawCursor(unsigned int* CursorTextures
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 			float right = player.m_SlotVertices[2] + Input::XRawMousePos;
 			float left = player.m_SlotVertices[0] + Input::XRawMousePos;
-			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
+			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
 
 		}
 		return;

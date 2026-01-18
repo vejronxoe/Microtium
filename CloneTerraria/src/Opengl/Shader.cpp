@@ -24,14 +24,17 @@ std::string Shader::fileShaderRead(std::string filePath)
 	shaderFile.close();
 	return shader;
 }
-unsigned int Shader::GetUniformLocation(const char* name)
+void Shader::GetUniformLocation(const char* name)
 {
 	 unsigned int location = glGetUniformLocation(m_ID, name);
 	if (location == -1)
 	{
 		std::cout << "can not find uniform named "<< name << " or your dont bind shader" << std::endl;
 	}
-	return location;
+	else
+	{
+		m_Locations.emplace_back(location);
+	}
 }
 
 Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentShader)
@@ -46,24 +49,24 @@ Shader::Shader(const char* filePathVertexShader, const char* filePathFragmentSha
 
 void Shader::SetUniform4f(unsigned int location,float v0, float v1, float v2, float v3)
 {
-	ErrorGL(glUniform4f(location, v0, v1, v2, v3));
+	ErrorGL(glUniform4f(m_Locations.at(location), v0, v1, v2, v3));
 }
 void Shader::SetUniform1f(unsigned int location, float v)
 {
-	ErrorGL(glUniform1f(location, v));
+	ErrorGL(glUniform1f(m_Locations.at(location), v));
 }
 
 void Shader::SetUniform1i(unsigned int location, int v)
 {
-	ErrorGL(glUniform1i(location, v));
+	ErrorGL(glUniform1i(m_Locations.at(location), v));
 }
 void Shader::SetUniform1b(unsigned int location, bool v)
 {
-	ErrorGL(glUniform1d(location, v));
+	ErrorGL(glUniform1d(m_Locations.at(location), v));
 }
 void Shader::SetUniformMat4(unsigned int location, float* v)
 {
-	ErrorGL(glUniformMatrix4fv(location, 1, GL_FALSE, v));
+	ErrorGL(glUniformMatrix4fv(m_Locations.at(location), 1, GL_FALSE, v));
 }
 
 

@@ -31,8 +31,6 @@ public:
 	float m_Transform[2];
 	float m_Velocity[2];
 	Player(unsigned int eob
-		, unsigned int HUDTransformLocatin
-		, unsigned int HUDScaleLocatin
 		, float& yLocationOfFirstSlot
 		, float& xLocationOfFirstSlot
 		, unsigned int* texturesIDs);
@@ -59,24 +57,11 @@ public:
 		, Shader& fontSh
 		, Shader& animSh
 		, Shader& handSh
-		, unsigned int shadowLocation
-		, unsigned int transformLocation
 		, float* transform
 		, float* scale
 		, float* rotation
-		, unsigned int fontDrawData
-		, unsigned int numberLocation
-		, unsigned int fontTransformLocation
-		, unsigned int fontscaleLocation
-		, unsigned int numberTexture
-		, unsigned int animTransformLocation
-		, unsigned int animScaleLocation
-		, unsigned int animNumberLocation
-		, unsigned int animLeangthLocation
-		, unsigned int advancedTransformLocation
-		, unsigned int advancedBeginTransformLocation
-		, unsigned int advancedRotationLocation
-		, unsigned int advancedScaleLocation);
+		, unsigned int fontDD
+		, unsigned int numberTexture);
 
 	bool HavePlayerSpace(unsigned short int item);
 
@@ -104,8 +89,6 @@ private:
 	unsigned int m_SlotTexture;
 	unsigned int m_TrashCanSlotTexture;
 	float m_SlotGap;
-	unsigned int m_HUDTransformLocation;
-	unsigned int m_HUDScaleLocation;
 	float m_TimerSplitingItem;
 	float m_AddNextFrame;
 	bool IsItStackble(unsigned short int item);

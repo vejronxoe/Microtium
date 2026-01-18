@@ -138,8 +138,6 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 }
 
 void tree::drawTree(Shader& sh
-	, unsigned int transformLocation
-	, unsigned int rotateLocation
 	, float* cameraCoordinate
 	, float* transform
 	, float* rotation)
@@ -151,17 +149,17 @@ void tree::drawTree(Shader& sh
 			if (m_Rotation != 0)
 			{
 				ChangeRotation(m_Rotation, rotation);
-				sh.SetUniformMat4(rotateLocation, rotation);
+				sh.SetUniformMat4(treeRotation, rotation);
 			}
 			ErrorGL(glBindVertexArray(m_DrawData));
 			ChangeTransform(m_Transform[0], m_Transform[1], transform);
-			sh.SetUniformMat4(transformLocation, transform);
+			sh.SetUniformMat4(treeTransform, transform);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_texture));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			if (m_Rotation != 0)
 			{
 				ChangeRotation(0, rotation);
-				sh.SetUniformMat4(rotateLocation, rotation);
+				sh.SetUniformMat4(treeRotation, rotation);
 			}
 		}
 	}
@@ -190,8 +188,6 @@ damagedWood::damagedWood(int x
 {}
 
 void damagedWood::DrawCut(Shader& sh
-	, unsigned int transformLocation
-	, unsigned int rotationLocation
 	, float* rotation
 	, float* transform
 	, unsigned int* texture)
@@ -200,17 +196,17 @@ void damagedWood::DrawCut(Shader& sh
 	if (m_Rotation != 0)
 	{
 		ChangeRotation(m_Rotation, rotation);
-		sh.SetUniformMat4(rotationLocation, rotation);
+		sh.SetUniformMat4(treeRotation, rotation);
 	}
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	sh.SetUniformMat4(transformLocation, transform);
+	sh.SetUniformMat4(treeTransform, transform);
 	int index = m_HP / 3;
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[index]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	if (m_Rotation != 0)
 	{
 		ChangeRotation(0, rotation);
-		sh.SetUniformMat4(rotationLocation, rotation);
+		sh.SetUniformMat4( treeRotation, rotation);
 	}
 }
 
@@ -400,11 +396,10 @@ bool seedling::everyFrame(float deltaTime
 	return noGround;
 }
 void seedling::drawSeedling(Shader sh
-	, unsigned int transformLocation
 	, float* Transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], Transform);
-	sh.SetUniformMat4(transformLocation, Transform);
+	sh.SetUniformMat4(basicTranform, Transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 

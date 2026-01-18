@@ -29,8 +29,6 @@ public:
 		, int y
 		, int rotation);
 	void drawTree(Shader& sh
-		,unsigned int transformLocation
-		, unsigned int rotateLocation
 		, float* cameraCoordinate
 		, float* transform
 		, float* rotation);
@@ -55,7 +53,6 @@ public:
 		, std::vector<seedling>& seedlings
 		, std::vector<tree>& trees);
 	void drawSeedling(Shader sh
-		, unsigned int transformLocation
 		, float* Transform);
 
 };
@@ -74,8 +71,6 @@ public:
 		, int rotation
 		, char HP);
 	void DrawCut(Shader& Sh
-		, unsigned int transformLocation
-		, unsigned int rotationLocation
 		, float* rotation
 		, float* transform
 		, unsigned int* texture);

@@ -46,11 +46,10 @@ bool Projectile::EveryFrame(float deltaTime
 	return false;
 }
 void Projectile::Draw(Shader& sh
-	, unsigned int transformLocation
 	, float* transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	sh.SetUniformMat4(transformLocation, transform);
+	sh.SetUniformMat4(basicTranform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 	ErrorGL(glBindVertexArray(m_DD));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));

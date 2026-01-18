@@ -97,58 +97,61 @@ int main()
 
 	Shader basicSh("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBasic.txt");
 	basicSh.Bind();
-	unsigned int transformLocation = basicSh.GetUniformLocation("transform");
-	unsigned int cameraLocation = basicSh.GetUniformLocation("camera");
+	basicSh.GetUniformLocation("camera");
+	basicSh.GetUniformLocation("transform");
 	Shader fontSh("res/shaders/vertexShaderfont.txt", "res/shaders/fragmentShaderBasic.txt");
 	fontSh.Bind();
-	unsigned int fontTransformLocation = fontSh.GetUniformLocation("fontTransform");
-	unsigned int fontscaleLocation = fontSh.GetUniformLocation("fontScale");
-	unsigned int fontLetterLocation = fontSh.GetUniformLocation("fontLetter");
+	fontSh.GetUniformLocation("fontCamera");
+	fontSh.GetUniformLocation("fontTransform");
+	fontSh.GetUniformLocation("fontScale");
+	fontSh.GetUniformLocation("fontLetter");
 	Shader HUDSh("res/shaders/vertexShaderHUD.txt", "res/shaders/fragmentShaderShadow.txt ");
 	HUDSh.Bind();
-	unsigned int HUDTransformLocation = HUDSh.GetUniformLocation("HUDTransform");
-	unsigned int HUDScaleLocation = HUDSh.GetUniformLocation("HUDScale");
-	unsigned int HUDShadowLocation = HUDSh.GetUniformLocation("shadow");
+	HUDSh.GetUniformLocation("HUDCamera");
+	HUDSh.GetUniformLocation("HUDTransform");
+	HUDSh.GetUniformLocation("HUDScale");
+	HUDSh.GetUniformLocation("HUDBasicLocation");
+	HUDSh.GetUniformLocation("shadow");
 	Shader shadowSh("res/shaders/vertexShaderbasic.txt", "res/shaders/fragmentShaderShadow.txt ");
 	shadowSh.Bind();
-	unsigned int shadowTransformLocation = shadowSh.GetUniformLocation("transform");
-	unsigned int shadowCameraLocation = shadowSh.GetUniformLocation("camera");
-	unsigned int shadowLocation = shadowSh.GetUniformLocation("shadow");
+	shadowSh.GetUniformLocation("camera");
+	shadowSh.GetUniformLocation("transform");
+	shadowSh.GetUniformLocation("shadow");
 	Shader treeSh("res/shaders/vertexShaderTree.txt", "res/shaders/fragmentShaderBasic.txt");
 	treeSh.Bind();
-	unsigned int treeTransformLocation = treeSh.GetUniformLocation("treeTransform");
-	unsigned int treeCameraLocation = treeSh.GetUniformLocation("treeCamera");
-	unsigned int treeRotationLocation = treeSh.GetUniformLocation("treeRotation");
+	treeSh.GetUniformLocation("treeCamera");
+	treeSh.GetUniformLocation("treeTransform");
+	treeSh.GetUniformLocation("treeRotation");
 	Shader animSh("res/shaders/vertexShaderAnimation.txt", "res/shaders/fragmentShaderBasic.txt ");
 	animSh.Bind();
-	unsigned int animTransformLocation = animSh.GetUniformLocation("animTransform");
-	unsigned int animCameraLocation = animSh.GetUniformLocation("animCamera");
-	unsigned int animNumberOfAnimLocation = animSh.GetUniformLocation("animNumber");
-	unsigned int animLeangthLocation = animSh.GetUniformLocation("animLeangth");
-	unsigned int animScaleLocation = animSh.GetUniformLocation("animScale");
+	animSh.GetUniformLocation("animCamera");
+	animSh.GetUniformLocation("animTransform");
+	animSh.GetUniformLocation("animScale");
+	animSh.GetUniformLocation("animNumber");
+	animSh.GetUniformLocation("animLeangth");
 	Shader handSh("res/shaders/vertexShaderHand.txt", "res/shaders/fragmentShaderBasic.txt");
 	handSh.Bind();
-	unsigned int handBeginTransformLocation = handSh.GetUniformLocation("beginTransform");
-	unsigned int handTransformLocation = handSh.GetUniformLocation("transform");
-	unsigned int handScaleLocation = handSh.GetUniformLocation("scale");
-	unsigned int handCameraLocation = handSh.GetUniformLocation("camera");
-	unsigned int handRotationLocation = handSh.GetUniformLocation("rotation");
+	handSh.GetUniformLocation("camera");
+	handSh.GetUniformLocation("transform");
+	handSh.GetUniformLocation("scale");
+	handSh.GetUniformLocation("rotation");
+	handSh.GetUniformLocation("beginTransform");
 	float camera[16];
 	float scale[16];
 	float transform[16];
 	float rotation[16];
-	treeSh.Bind();
-	CreateRotation(0, rotation);
-	treeSh.SetUniformMat4(treeRotationLocation, rotation);
-
 	CreateScale(1, 1, scale);
 	CreateRotation(0, rotation);
+	treeSh.Bind();
+	treeSh.SetUniformMat4( treeRotation, rotation);
+
+
 	HUDSh.Bind();
 	CreateCamera(0, Window::width, 0, Window::height, camera);
-	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDCamera"), camera);
+	HUDSh.SetUniformMat4( HUDCamera, camera);
 
 	fontSh.Bind();
-	fontSh.SetUniformMat4(fontSh.GetUniformLocation("fontCamera"), camera);
+	fontSh.SetUniformMat4(fontCamera, camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
 	unsigned int projectileTextures[1];
@@ -186,10 +189,10 @@ int main()
 	float MoveLeft;
 	float MoveUp;
 
-	Player player(eob, HUDTransformLocation, HUDScaleLocation, MoveUp, MoveLeft, blockTextures);
+	Player player(eob, MoveUp, MoveLeft, blockTextures);
 	HUDSh.Bind();
 	CreateTransform(MoveLeft, MoveUp, transform);
-	HUDSh.SetUniformMat4(HUDSh.GetUniformLocation("HUDBasicLocation"), transform);
+	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
 
 
 
@@ -302,57 +305,57 @@ int main()
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 		ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
 		animSh.Bind();
-		animSh.SetUniformMat4(animCameraLocation, camera);
+		animSh.SetUniformMat4(animCamera, camera);
 		handSh.Bind();
-		handSh.SetUniformMat4(handCameraLocation,camera);
+		handSh.SetUniformMat4(handCamera, camera);
 		
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
-		drawWalls(damagedWalls, damageTexture, walls, shadowSh, shadowLocation, shadowCameraLocation, camera, shadowTransformLocation, transform, CameraCoordinates);
+		drawWalls(damagedWalls, damageTexture, walls, shadowSh, camera, transform, CameraCoordinates);
 		basicSh.Bind();
-		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transformLocation, transform, cameraLocation, camera);
+		drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transform, camera);
 	
 		basicSh.Bind();
 		ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
 		for (int i = 0; i < seedlings.size(); i++)
 		{
-			seedlings.at(i).drawSeedling(basicSh, transformLocation, transform);
+			seedlings.at(i).drawSeedling(basicSh, transform);
 		}
 		treeSh.Bind();
-		treeSh.SetUniformMat4(treeCameraLocation, camera);
+		treeSh.SetUniformMat4( treeCamera, camera);
 		for (int i = 0; i < trees.size(); i++)
 		{
-			trees.at(i).drawTree(treeSh, treeTransformLocation, treeRotationLocation, CameraCoordinates, transform, rotation);	
+			trees.at(i).drawTree(treeSh, CameraCoordinates, transform, rotation);	
 		}
 		ErrorGL(glBindVertexArray(blocksDrawData));
 		for (int i = 0; i < damagedTrees.size(); i++)
 		{
-			damagedTrees.at(i).DrawCut(treeSh, treeTransformLocation, treeRotationLocation, rotation, transform, CutTextures);
+			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
 		shadowSh.Bind();
-		shadowSh.SetUniform1i(shadowLocation, 0);
+		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 		ErrorGL(glBindVertexArray(itemDD));
 		for (int i = 0; i < dropItems.size(); i++)
 		{
 			if (dropItems.at(i).m_Item >= i_WallDirt && dropItems.at(i).m_Item <= i_WallIce)
 			{
-				shadowSh.SetUniform1i(shadowLocation, 1);
+				shadowSh.SetUniform1i(basicSize + ShadowLocation, 1);
 			}
-			dropItems.at(i).DrawItem(player.m_AllItemTextures, shadowSh, shadowTransformLocation, transform);
+			dropItems.at(i).DrawItem(player.m_AllItemTextures, shadowSh, basicTranform, transform);
 			if (dropItems.at(i).m_Item >= i_WallDirt && dropItems.at(i).m_Item <= i_WallIce)
 			{
-				shadowSh.SetUniform1i(shadowLocation, 0);
+				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			}
 		}
 		basicSh.Bind();
 
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			projectiles.at(i).Draw(basicSh, transformLocation, transform);
+			projectiles.at(i).Draw(basicSh, transform);
 		}
-		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, handSh, HUDShadowLocation, transformLocation, transform, scale, rotation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation,numberTexture,animTransformLocation, animScaleLocation,animNumberOfAnimLocation, animLeangthLocation, handTransformLocation, handBeginTransformLocation, handRotationLocation, handScaleLocation);
+		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, handSh, transform, scale, rotation, fontDrawData, numberTexture);
 
-		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, shadowLocation, shadowTransformLocation, transform, camera, scale, shadowCameraLocation, fontDrawData, fontLetterLocation, fontTransformLocation, fontscaleLocation, numberTexture, player, CameraCoordinates);
+		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 		
 
 		Input::EndOfLoop();

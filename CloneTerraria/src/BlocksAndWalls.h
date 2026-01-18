@@ -67,7 +67,6 @@ public:
 
 	void DrawBlock( Shader& basicShader
 		, int x
-		, unsigned int location 
 		, float* transform);
 };
 class wall
@@ -86,8 +85,7 @@ public:
 
 	void drawWalls(Shader& wallSh
 		, int x
-		, float* transform
-		, unsigned int transformLocation);
+		, float* transform);
 };
 struct DamagedBlock
 {
@@ -97,7 +95,6 @@ struct DamagedBlock
 	int m_Transform[2];
 	char m_HP;
 	void DrawDamage(Shader& basicShader
-		, unsigned int location
 		, float* transform
 		, unsigned int* texture);
 };
@@ -120,10 +117,7 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	, unsigned int* damageTextures
 	, std::vector<std::vector<wall>>& walls
 	, Shader& wallsSh
-	, unsigned int shadowLocation
-	, unsigned int wallsCameraLocation
 	, float* camera
-	, unsigned int wallsTransformLocation
 	, float* transform
 	, float* cameraCoordinate);
 void drawBlocks(std::vector<std::vector<Block>>& blocks
@@ -131,9 +125,7 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, float* cameraCoordinate
 	, Shader& basicSh
 	, unsigned int* damageTexture
-	, unsigned int transformLocation
 	, float* transform
-	, unsigned int cameraLocation
 	, float* camera);
 
 void createWall(int x

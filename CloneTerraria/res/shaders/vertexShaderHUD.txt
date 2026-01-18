@@ -6,8 +6,8 @@ out vec2 texCoord;
 
 uniform mat4 HUDCamera;
 uniform mat4 HUDTransform;
-uniform mat4 HUDBasicLocation;
 uniform mat4 HUDScale;
+uniform mat4 HUDBasicLocation;
 
 void main()
 {

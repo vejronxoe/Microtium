@@ -26,13 +26,12 @@ DamagedBlock::DamagedBlock(int x
 {
 }
 void DamagedBlock::DrawDamage(Shader& basicShader
-	, unsigned int location
 	, float* transform
 	, unsigned int* texture)
 {
 
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	basicShader.SetUniformMat4(location, transform);
+	basicShader.SetUniformMat4(basicTranform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
@@ -49,11 +48,10 @@ Block::Block(unsigned int tex
 
 void Block::DrawBlock(Shader& basicShader
 	, int x
-	, unsigned int location
 	, float* transform)
 {
 	ChangeTransform(x, m_Y, transform);
-	basicShader.SetUniformMat4(location, transform);
+	basicShader.SetUniformMat4( basicTranform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
@@ -68,13 +66,12 @@ wall::wall(unsigned int texture
 }
 void wall::drawWalls(Shader& wallSh
 	, int x
-	, float* transform
-	, unsigned int transformLocation)
+	, float* transform)
 {
 	if (m_Render)
 	{
 		ChangeTransform(x, m_Y, transform);
-		wallSh.SetUniformMat4(transformLocation, transform);
+		wallSh.SetUniformMat4(basicTranform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
@@ -358,13 +355,11 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, float* cameraCoordinate
 	, Shader& basicSh
 	, unsigned int* damageTexture
-	, unsigned int transformLocation
 	, float* transform
-	, unsigned int cameraLocation
 	, float* camera)
 {
 	basicSh.Bind();
-	basicSh.SetUniformMat4(cameraLocation, camera);
+	basicSh.SetUniformMat4(basicCamera, camera);
 
 	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
 	{
@@ -372,14 +367,14 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 		{
 			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Y)
 			{
-				blocks.at(j).at(i).DrawBlock(basicSh, j, transformLocation, transform);
+				blocks.at(j).at(i).DrawBlock(basicSh, j, transform);
 			}
 		}
 	}
 
 	for (int i = 0; i < damagedBlocks.size(); i++)
 	{
-		damagedBlocks.at(i).DrawDamage(basicSh, transformLocation, transform, damageTexture);
+		damagedBlocks.at(i).DrawDamage(basicSh, transform, damageTexture);
 	}
 
 }
@@ -387,16 +382,13 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	, unsigned int* damageTextures
 	, std::vector<std::vector<wall>>& walls
 	, Shader& wallsSh
-	, unsigned int shadowLocation
-	, unsigned int wallsCameraLocation
 	, float* camera
-	, unsigned int wallsTransformLocation
 	, float* transform
 	, float* cameraCoordinate)
 {
 	wallsSh.Bind();
-	wallsSh.SetUniform1i(shadowLocation, 1);
-	wallsSh.SetUniformMat4(wallsCameraLocation, camera);
+	wallsSh.SetUniform1i(basicSize + ShadowLocation, 1);
+	wallsSh.SetUniformMat4(basicCamera, camera);
 	for (int j = 0; j < walls.size(); j++)
 	{
 		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform) < j)
@@ -409,7 +401,7 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 			{
 				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= walls.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls.at(j).at(i).m_Y)
 				{
-					walls.at(j).at(i).drawWalls(wallsSh, j, transform, wallsTransformLocation);
+					walls.at(j).at(i).drawWalls(wallsSh, j, transform);
 
 				}
 			}
@@ -417,7 +409,7 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	}
 	for (int i = 0; i < damagedWalls.size(); i++)
 	{
-		damagedWalls.at(i).DrawDamage(wallsSh, wallsTransformLocation, transform, damageTextures);
+		damagedWalls.at(i).DrawDamage(wallsSh, transform, damageTextures);
 	}
 
 }

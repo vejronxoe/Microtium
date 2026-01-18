@@ -25,7 +25,6 @@ struct Projectile
 		, std::vector<bool>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh
-		, unsigned int transformLocation
 		, float* transform);
 };
 

@@ -72,8 +72,6 @@ void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
 }									   
 
 Player::Player(unsigned int eob
-	, unsigned int HUDTransformLocatin
-	, unsigned int HUDScaleLocatin
 	, float& yLocationOfFirstSlot
 	, float& xLocationOfFirstSlot
 	, unsigned int* texturesIDs)
@@ -81,8 +79,6 @@ Player::Player(unsigned int eob
 {	
 	m_WalkingTimer = 0;
 	m_WalkingPhase = 0;
-	m_HUDTransformLocation = HUDTransformLocatin;
-	m_HUDScaleLocation = HUDScaleLocatin;
 	m_InventoryDrawData = 0;
 	m_SlotTexture = 0;
 	m_UseSlotTexture = 0;
@@ -135,7 +131,7 @@ Player::Player(unsigned int eob
 	m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 	m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
 	CreateAllItemsTexture(texturesIDs);
-
+	m_ItemInHandDD = CreateDrawData(eob, 2.5f, 1, -1.5f, 0, 1, 0, 0, 1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
 	m_BodyAnimDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1.0f / 5.0f);
@@ -753,7 +749,7 @@ void Player::EveryFrame(float deltaTime
 							for (int i = vertices[0]; i <= vertices[2]; i++)
 							{
 								floors = false;
-								for (int j = 0; j < blocks.at(i).size(); i++)
+								for (int j = 0; j < blocks.at(i).size(); j++)
 								{
 									if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
 									{
@@ -1377,32 +1373,19 @@ void Player::DrawPlayer(Shader& basicSh
 	, Shader& fontSh
 	, Shader& animSh
 	, Shader& handSh
-	, unsigned int shadowLocation
-	, unsigned int transformLocation
 	, float* transform
 	, float* scale
 	, float* rotation
-	, unsigned int fontDrawData
-	, unsigned int numberLocation
-	, unsigned int fontTransformLocation
-	, unsigned int fontscaleLocation
-	, unsigned int numberTexture
-	, unsigned int animTransformLocation
-	, unsigned int animScaleLocation
-	, unsigned int animNumberLocation
-	, unsigned int animLeangthLocation
-	, unsigned int handTransformLocation
-	, unsigned int handBeginTransformLocation
-	, unsigned int handRotationLocation
-	, unsigned int handScaleLocation)
+	, unsigned int fontDD
+	, unsigned int numberTexture)
 {
 	animSh.Bind();
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	animSh.SetUniformMat4(animTransformLocation, transform);
+	animSh.SetUniformMat4(animTransform, transform);
 	ChangeScale( m_DirectionLook, 1, scale);
-	animSh.SetUniformMat4(animScaleLocation, scale);
-	animSh.SetUniform1i(animLeangthLocation, 5);
-	animSh.SetUniform1i(animNumberLocation, m_WalkingPhase);
+	animSh.SetUniformMat4(animScale, scale);
+	animSh.SetUniform1i( animLeangth, 5);
+	animSh.SetUniform1i(animNumber, m_WalkingPhase);
 	ErrorGL(glBindVertexArray(m_BottomAnimDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BootsAnimTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -1411,9 +1394,9 @@ void Player::DrawPlayer(Shader& basicSh
 	if (m_WalkingPhase == 0)
 	{
 		ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
-		animSh.SetUniformMat4(animTransformLocation, transform);
+		animSh.SetUniformMat4(animTransform, transform);
 	}
-	animSh.SetUniform1i(animNumberLocation, 0);
+	animSh.SetUniform1i( animNumber, 0);
 	ErrorGL(glBindVertexArray(m_HeadDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HeadTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -1424,30 +1407,32 @@ void Player::DrawPlayer(Shader& basicSh
 		{
 
 		default:
-			animSh.SetUniform1i(animNumberLocation, 4);
+			animSh.SetUniform1i(animNumber, 4);
 			ErrorGL(glBindVertexArray(m_BodyAnimDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			animSh.SetUniform1i(animNumberLocation, 0);
+			animSh.SetUniform1i(animNumber, 0);
 
 			handSh.Bind();
-			handSh.SetUniformMat4(handTransformLocation, transform);
+			handSh.SetUniformMat4(handTransform, transform);
 			ChangeTransform(-0.5f,0.65f, transform);
-			handSh.SetUniformMat4(handBeginTransformLocation, transform);
-			handSh.SetUniformMat4(handScaleLocation,scale);
+			handSh.SetUniformMat4(handBeginTransform, transform);
+			handSh.SetUniformMat4(handScale,scale);
 			ChangeRotation(m_ArmRotation, rotation);
-			handSh.SetUniformMat4(handRotationLocation, rotation);
+			handSh.SetUniformMat4(handRotation, rotation);
+			ErrorGL(glBindVertexArray(m_ItemInHandDD));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			ErrorGL(glBindVertexArray(m_HandDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		
 			break;
 		}
 		
 	}
 	else
 	{
-		animSh.SetUniform1i(animNumberLocation, m_ArmPhase);
+		animSh.SetUniform1i(animNumber, m_ArmPhase);
 		ErrorGL(glBindVertexArray(m_BodyAnimDD));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -1457,8 +1442,8 @@ void Player::DrawPlayer(Shader& basicSh
 	ErrorGL(glBindVertexArray(m_InventoryDrawData));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 	ChangeScale(1, 1, scale);
-	HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
-	HUDSh.SetUniform1i(shadowLocation, 0);
+	HUDSh.SetUniformMat4( HUDScale, scale);
+	HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
 
 	if (m_IsInventoryOpen)
 	{
@@ -1471,25 +1456,25 @@ void Player::DrawPlayer(Shader& basicSh
 				if (i == 0 && j + 1 == m_HUDUseSlot && m_UseSlot == 0)
 				{
 					ChangeScale(1.2f, 1.2f, scale);
-					HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+					HUDSh.SetUniformMat4(HUDScale, scale);
 					ChangeTransform(j * m_SlotGap, 0, transform);
-					HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+					HUDSh.SetUniformMat4( HUDTransform, transform);
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_UseSlotTexture));
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 					ChangeScale(1, 1, scale);
-					HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+					HUDSh.SetUniformMat4( HUDScale, scale);
 				}
 				else
 				{
 					ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
-					HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+					HUDSh.SetUniformMat4( HUDTransform, transform);
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				}
 
 			}
 			ChangeScale(0.8f, 0.8f, scale);
-			HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+			HUDSh.SetUniformMat4(HUDScale, scale);
 
 			for (int j = 0; j < 10; j++)
 			{
@@ -1498,42 +1483,42 @@ void Player::DrawPlayer(Shader& basicSh
 				{
 					if (m_PlayerSlots[(i * 10) + (j + 1)] >= i_WallDirt && m_PlayerSlots[(i * 10) + (j + 1)] <= i_WallIce)
 					{
-						HUDSh.SetUniform1i(shadowLocation, 1);
+						HUDSh.SetUniform1i(HUDSize + ShadowLocation, 1);
 						ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
-						HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+						HUDSh.SetUniformMat4(HUDTransform, transform);
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[(i * 10) + (j + 1)]]));
 						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 					}
 					else
 					{
-						HUDSh.SetUniform1i(shadowLocation, 0);
+						HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
 						ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
-						HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+						HUDSh.SetUniformMat4(HUDTransform, transform);
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[(i * 10) + (j + 1)]]));
 						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 					}
 				}
 			}
-			HUDSh.SetUniform1i(shadowLocation, 0);
+			HUDSh.SetUniform1i( HUDSize + ShadowLocation, 0);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 			ChangeScale(1, 1, scale);
-			HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+			HUDSh.SetUniformMat4(HUDScale, scale);
 		}
 	
 		ChangeTransform(9 * m_SlotGap, -5 * m_SlotGap, transform);
-		HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+		HUDSh.SetUniformMat4(HUDTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_TrashCanSlotTexture));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		if (m_PlayerSlots[51] != i_Nothing)
 		{
 			ChangeScale(0.8f, 0.8f, scale);
-			HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+			HUDSh.SetUniformMat4(HUDScale, scale);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[51]]));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		fontSh.Bind();
-		ErrorGL(glBindVertexArray(fontDrawData));
+		ErrorGL(glBindVertexArray(fontDD));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 		
 		for (int i = 0; i < 5; i++)
@@ -1542,13 +1527,13 @@ void Player::DrawPlayer(Shader& basicSh
 			{
 				float right = (m_SlotVertices[2] + j * m_SlotGap);
 				float left = (m_SlotVertices[0] + j * m_SlotGap);
-				drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
+				drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDD, scale, transform, fontSh);
 			}
 		}
 		
 		float right = (m_SlotVertices[2] + 9 * m_SlotGap);
 		float left = (m_SlotVertices[0] + 9 * m_SlotGap);
-		drawNumber(Window::height - m_SlotVertices[3] - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
+		drawNumber(Window::height - m_SlotVertices[3] - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
 
 	}
 	else
@@ -1558,59 +1543,59 @@ void Player::DrawPlayer(Shader& basicSh
 			if (i + 1 == m_HUDUseSlot)
 			{
 				ChangeScale(1.2f, 1.2f, scale);
-				HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+				HUDSh.SetUniformMat4(HUDScale, scale);
 				ChangeTransform(i * m_SlotGap, 0, transform);
-				HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+				HUDSh.SetUniformMat4( HUDTransform, transform);
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_UseSlotTexture));
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 				ChangeScale(1, 1, scale);
-				HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+				HUDSh.SetUniformMat4(HUDScale, scale);
 			}
 			else
 			{
 				ChangeTransform(i * m_SlotGap, 0, transform);
-				HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+				HUDSh.SetUniformMat4(HUDTransform, transform);
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 			}
 
 		}
 		ChangeScale(0.8f, 0.8f, scale);
-		HUDSh.SetUniformMat4(m_HUDScaleLocation, scale);
+		HUDSh.SetUniformMat4(HUDScale, scale);
 		for (int i = 0; i < 10; i++)
 		{
 			if (m_PlayerSlots[i + 1] != i_Nothing)
 			{
 				if (m_PlayerSlots[i + 1] >= i_WallDirt && m_PlayerSlots[i + 1] <= i_WallIce)
 				{
-					HUDSh.SetUniform1i(shadowLocation, 1);
-					ChangeTransform(i * m_SlotGap, 0, transform);
-					HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+					HUDSh.SetUniform1i( HUDSize + ShadowLocation, 1);
+					ChangeTransform(i* m_SlotGap, 0, transform);
+					HUDSh.SetUniformMat4( HUDTransform, transform);
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1]]));
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				}
 				else
 				{
-					HUDSh.SetUniform1i(shadowLocation, 0);
-					ChangeTransform(i* m_SlotGap, 0, transform);
-					HUDSh.SetUniformMat4(m_HUDTransformLocation, transform);
+					HUDSh.SetUniform1i( HUDSize + ShadowLocation, 0);
+					ChangeTransform(i * m_SlotGap, 0, transform);
+					HUDSh.SetUniformMat4(HUDTransform, transform);
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1]]));
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 				}
-				HUDSh.SetUniform1i(shadowLocation, 0);
+				HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
 
 			}
 		}
 		fontSh.Bind();
-		ErrorGL(glBindVertexArray(fontDrawData));
+		ErrorGL(glBindVertexArray(fontDD));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 		for (int j = 0; j < 10; j++)
 		{
 			float right = (m_SlotVertices[2] + j * m_SlotGap);
 			float left = (m_SlotVertices[0] + j * m_SlotGap);
-			drawNumber(Window::height - m_SlotVertices[3], left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDrawData, numberLocation, fontTransformLocation, fontscaleLocation, scale, transform, fontSh);
+			drawNumber(Window::height - m_SlotVertices[3], left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDD, scale, transform, fontSh);
 		}
 	}
 
