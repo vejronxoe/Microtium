@@ -241,6 +241,7 @@ void Player::SwapItemStats()
 			m_LargePlaceable = true;
 			break;
 		case i_WoodBow:
+			m_Range = 0;
 			m_WeaponType = weaponBow;
 			m_CooldownToUse = 0.8;
 			break;
@@ -701,9 +702,9 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableWood = false;
 		if (m_AimingAtSlot == 0  )
 		{
+			
 			if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 			{
-
 				if (m_Placeable)
 				{
 
@@ -868,36 +869,37 @@ void Player::EveryFrame(float deltaTime
 						}
 					}
 				}
-				else if(m_WeaponType)
-				{
-					unsigned char arrows[3] = { i_BasicArrow, i_BleedArrow, i_FireArrow };
-					switch (m_WeaponType)
-					{
-					case weaponBow:
-					case weaponBow + weaponAutomatic:
-						if (m_LocationAmmunition != -1)
-						{
-							if (m_PlayerSlots[m_LocationAmmunition] == i_BasicArrow ||
-								m_PlayerSlots[m_LocationAmmunition] == i_BleedArrow ||
-								m_PlayerSlots[m_LocationAmmunition] == i_FireArrow)
-							{
-								break;
-							}
-						}
-						m_LocationAmmunition = FindOneOfItemsInInv(arrows, 3);
-							break;					    
-					case weaponCanon:
-					case weaponCanon + weaponAutomatic:
-
-						break;
-					case weaponGun:
-					case weaponGun + weaponAutomatic:
-
-						break;
-					}
-
-				}
 			}
+			else if (m_WeaponType)
+			{
+				unsigned char arrows[3] = { i_BasicArrow, i_BleedArrow, i_FireArrow };
+				switch (m_WeaponType)
+				{
+				case weaponBow:
+				case weaponBow + weaponAutomatic:
+					if (m_LocationAmmunition != -1)
+					{
+						if (m_PlayerSlots[m_LocationAmmunition] == i_BasicArrow ||
+							m_PlayerSlots[m_LocationAmmunition] == i_BleedArrow ||
+							m_PlayerSlots[m_LocationAmmunition] == i_FireArrow)
+						{
+							break;
+						}
+					}
+					m_LocationAmmunition = FindOneOfItemsInInv(arrows, 3);
+					break;
+				case weaponCanon:
+				case weaponCanon + weaponAutomatic:
+
+					break;
+				case weaponGun:
+				case weaponGun + weaponAutomatic:
+
+					break;
+				}
+
+			}
+	
 
 			if (m_UseItemTimer > m_CooldownToUse)
 			{
@@ -941,7 +943,7 @@ void Player::EveryFrame(float deltaTime
 						m_UseItemTimer = 0;
 					}
 				}
-				else if (Input::LeftMouseHold)
+				else if (Input::LeftMouseHold && m_WeaponType == weaponNot)
 				{
 
 
