@@ -15,6 +15,11 @@ enum Items
 	,i_WallIce
 	,i_Sand
 	,i_Sapling
+	,i_WoodBow
+	,i_FireArrow
+	,i_BleedArrow
+	,i_BasicArrow
+
 };
 enum Structures
 {

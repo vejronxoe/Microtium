@@ -1,14 +1,24 @@
 #include"Player.h"
 
-
 #include"Opengl/Texture.h"
 #include"Opengl/drawData.h"
 #include"glfw/Input.h"
 #include"glfw/window.h"
 #include"math/matrix.h"
+#include"math/VectorOperation.h"
 #include"NumberRender.h"
-#define SPEEDOFANIM 0.8f
 
+#define SPEEDOFANIM 0.8f
+enum RangeWeaponTypes
+{
+	weaponNot = 0
+	, weaponMelee
+	, weaponBow
+	, weaponCanon
+	, weaponGun
+	, weaponAutomatic
+	
+};
 enum ArmBehaviour
 {
 	ArmStanding = 0
@@ -38,7 +48,6 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 			break;
 	}
 }
-
 void getStructureVertices(int x
 	,int y
 	, unsigned int ID
@@ -54,39 +63,39 @@ void getStructureVertices(int x
 		break;
 	}
 }
-void Player::CreateAllItemsTexture(unsigned int* texturesIDs)
-{
-	m_AllItemTextures[i_CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
-	m_AllItemTextures[i_CooperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
-	m_AllItemTextures[i_CooperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
-	m_AllItemTextures[i_CooperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
-	m_AllItemTextures[i_ForestPlank] = texturesIDs[t_ForestPlank];
-	m_AllItemTextures[i_Dirt] = texturesIDs[t_Dirt];
-	m_AllItemTextures[i_Ice] = texturesIDs[t_Ice];         
-	m_AllItemTextures[i_Asphalt] = texturesIDs[t_Asphalt];
-	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform];
-	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
-	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
-	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
-	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
-}									   
-
 Player::Player(unsigned int eob
 	, float& yLocationOfFirstSlot
 	, float& xLocationOfFirstSlot
 	, unsigned int* texturesIDs)
-	:m_FloorHit(false), m_CeilHit(false), m_WallHit(false), m_CoyoteTimer(0), m_JumpTimer(0), m_CanJump(false), m_JumpPower(20), m_Gravity(-60.0f), m_Acceleration(25.0f), m_Friction(30), m_MaxMovementSpeed(10), m_Velocity{ 0,0 }, m_Transform{ 128, 0 }
 {	
+	m_FloorHit = false;
+	m_CeilHit = false;
+	m_WallHit = false;
+	m_CoyoteTimer = 0;
+	m_JumpTimer = 0;
+	m_CanJump = false;
+	m_DirectionLook = -1;
+	m_JumpPower = 12;
+	m_Gravity = -40;
+	m_Acceleration = 0;
+	m_Friction = 0;
+	m_MaxMovementSpeed = 0;
+	m_Transform[0] = 150;
+	m_Transform[1] = 10;
+	m_Velocity[0] = 0;
+	m_Velocity[1] = -2;
+	m_ArmTimer = 0;
+	m_ArmPhase = 0;
+	m_ArmsBehaviour = 0;
 	m_WalkingTimer = 0;
 	m_WalkingPhase = 0;
-	m_InventoryDrawData = 0;
-	m_SlotTexture = 0;
-	m_UseSlotTexture = 0;
-	m_SlotGap = 0;
-	m_IsInventoryOpen = 0;
-	m_HUDUseSlot = 1;
+	m_ArmRotation = 0;
+	m_IsInventoryOpen = false;
+	m_TimerSplitingItem = 0;
+	m_AddNextFrame = 0;
 	m_UseSlot = 0;
-	m_DirectionLook = -1;
+	m_HUDUseSlot = 1;
+	m_AimingAtSlot = -1;
 	for (int i = 0; i < 52; i++)
 	{
 		m_PlayerSlots[i] = i_Nothing;
@@ -95,42 +104,75 @@ Player::Player(unsigned int eob
 	{
 		m_AmountInSlots[i] = 0;
 	}
-	m_PlayerSlots[1] = i_CooperSword;
-	m_PlayerSlots[2] = i_CooperPickaxe;
-	m_PlayerSlots[3] = i_CooperAxe;
-	m_PlayerSlots[4] = i_Dirt;
-	m_PlayerSlots[5] = i_CooperHammer;
-	m_PlayerSlots[6] = i_Sand;
-	m_PlayerSlots[6] = i_Sand;
-	m_PlayerSlots[7] = i_Sapling;
-	m_AmountInSlots[1] = 1;
-	m_AmountInSlots[2] = 1;
-	m_AmountInSlots[3] = 1;
-	m_AmountInSlots[4] = 9999;
-	m_AmountInSlots[5] = 1;
-	m_AmountInSlots[6] = 20;
-	m_AmountInSlots[7] = 20;
-	m_ArmTimer = 0;
 	m_UseItemTimer = 0;
-	m_CooldownToUse = 0;
+	m_CursorOnMinableBlock = false;
+	m_CursorOnMinableWall = false;
+	m_CursorOnMinableWood = false;
+	m_CursorOnPlaceableForStructure = false;
+	m_CursorOnPlaceableSpot = false;
+	m_CooldownToUse = 6;
+	m_WeaponType = weaponNot;
 	m_PickaxeStreanght = 0;
 	m_AxeStreanght = 0;
 	m_HammerStreanght = 0;
 	m_Range = 0;
 	m_Damage = 0;
 	m_Placeable = 0;
-	m_AimingAtSlot = 0;
-	m_LargePlaceable = false;
-	m_ArmPhase = 0;
-	m_ArmsBehaviour = ArmStanding;
-	m_ArmRotation = 0;
-	m_ArmTimer = 0;
+	m_LargePlaceable = 0;
+	m_LocationAmmunition = -1;
+
+	m_PlayerSlots[0] = i_CooperSword;
+	m_PlayerSlots[1] = i_CooperSword;
+	m_PlayerSlots[2] = i_WoodBow;
+	m_PlayerSlots[3] = i_CooperPickaxe;
+	m_PlayerSlots[4] = i_CooperAxe;
+	m_PlayerSlots[5] = i_CooperHammer;
+	m_PlayerSlots[6] = i_Dirt;
+	m_PlayerSlots[7] = i_Sand;
+	m_PlayerSlots[8] = i_Sapling;
+	m_PlayerSlots[9] = i_FireArrow;
+	m_PlayerSlots[10] = i_BleedArrow;
+	m_AmountInSlots[0] = 1;
+	m_AmountInSlots[1] = 1;
+	m_AmountInSlots[2] = 1;
+	m_AmountInSlots[3] = 1;
+	m_AmountInSlots[4] = 1;
+	m_AmountInSlots[5] = 1;
+	m_AmountInSlots[6] = 9999;
+	m_AmountInSlots[7] = 20;
+	m_AmountInSlots[8] = 20;
+	m_AmountInSlots[9] = 10;
+	m_AmountInSlots[10] = 10;
+
+
 	m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
 	m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
 	m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
 	m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 	m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
-	CreateAllItemsTexture(texturesIDs);
+
+	m_AllItemTextures[i_CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
+	m_AllItemTextures[i_CooperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
+	m_AllItemTextures[i_CooperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
+	m_AllItemTextures[i_CooperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
+	m_AllItemTextures[i_ForestPlank] = texturesIDs[t_ForestPlank];
+	m_AllItemTextures[i_Dirt] = texturesIDs[t_Dirt];
+	m_AllItemTextures[i_Ice] = texturesIDs[t_Ice];
+	m_AllItemTextures[i_Asphalt] = texturesIDs[t_Asphalt];
+	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform]; 
+	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
+	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
+	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
+	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
+	m_AllItemTextures[i_WoodBow] = CreateTextureRGBA("res/textures/bowInINV.png");
+	m_AllItemTextures[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
+	m_AllItemTextures[i_BleedArrow] = CreateTextureRGBA("res/textures/bleedArrow.png");
+	m_AllItemTextures[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
+
+
+
+
+
 	m_ItemInHandDD = CreateDrawData(eob, 2.5f, 1, -1.5f, 0, 1, 0, 0, 1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
@@ -159,9 +201,8 @@ Player::Player(unsigned int eob
 	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
 	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
-
+	SwapItemStats();
 }
-
 void Player::SwapItemStats()
 {
 	m_CooldownToUse = 0.4;
@@ -170,13 +211,11 @@ void Player::SwapItemStats()
 	m_HammerStreanght = 0;
 	m_Range = 4;
 	m_Damage = 0;
+	m_WeaponType = weaponNot;
 	m_Placeable = false;
 	m_LargePlaceable = false;
 	switch (m_PlayerSlots[0])
 	{
-		case(i_Nothing):
-			m_CooldownToUse = 0;
-			m_Range = 0;
 		break;
 		case(i_CooperSword):
 			m_Damage = 2;
@@ -201,6 +240,17 @@ void Player::SwapItemStats()
 			m_CooldownToUse = 0.1f;
 			m_LargePlaceable = true;
 			break;
+		case i_WoodBow:
+			m_WeaponType = weaponBow;
+			m_CooldownToUse = 0.8;
+			break;
+		case i_FireArrow:
+		case i_BleedArrow:
+		case i_BasicArrow:
+		case(i_Nothing):
+			m_CooldownToUse = 0;
+			m_Range = 0;
+			break;
 		default:
 			m_CooldownToUse = 0.1f;
 			m_Placeable = true;
@@ -214,23 +264,40 @@ bool Player::IsItStackble(unsigned short int item)
 	bool isItStackble = true;
 	switch (item)
 	{
-	case(i_CooperPickaxe):
-		isItStackble = false;
-		break;
-
-	case(i_CooperAxe):
-		isItStackble = false;
-		break;
-
-	case(i_CooperHammer):
-		isItStackble = false;
-		break;
-
-	case(i_CooperSword):
+	case i_CooperHammer:
+	case i_CooperPickaxe:
+	case i_CooperAxe:
+	case i_CooperSword:
+	case i_WoodBow:
 		isItStackble = false;
 		break;
 	}
 	return isItStackble;
+}
+char Player::FindItemInInv(unsigned char item)
+{
+	for (int i = 0; i < 52; i++)
+	{
+		if (m_PlayerSlots[i] == item)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+char Player::FindOneOfItemsInInv(unsigned char* items, int sizeOfArray)
+{
+	for (int i = 0; i < 52; i++)
+	{
+		for (int j = 0; j < sizeOfArray; j++)
+		{
+			if (m_PlayerSlots[i] == items[j])
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 bool Player::HavePlayerSpace(unsigned short int item)
 {
@@ -316,8 +383,6 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 	}
 	return isItDone;
 }
-
-
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
@@ -326,35 +391,55 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
 	, float* CameraCoordinates
+	, unsigned int blockDD
 	, unsigned int* texturesIDs
 	, unsigned int* structuresTextures
 	, std::vector<tree>& trees
 	, std::vector<seedling>& seedlings
-	, std::vector<DroppedItem>& droppedItems)
+	, std::vector<DroppedItem>& droppedItems
+	, std::vector<Projectile>& projectiles)
 {
 	
 	{
 		if (m_ArmsBehaviour != ArmUsing)
 		{
 			m_AimingAtSlot = 0;
-			for (int i = 0; i < 5; i++)
+			if (m_IsInventoryOpen)
 			{
-				for (int j = 0; j < 10; j++)
+				for (int i = 0; i < 5; i++)
 				{
-					if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != i_Nothing)
+					for (int j = 0; j < 10; j++)
 					{
-						if (m_SlotGap * j + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * j + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * i + m_SlotVertices[3] > Input::YRawMousePos)
+						if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != i_Nothing)
 						{
-							m_AimingAtSlot = i * 10 + j + 1;
+							if (m_SlotGap * j + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * j + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * i + m_SlotVertices[3] > Input::YRawMousePos)
+							{
+								m_AimingAtSlot = i * 10 + j + 1;
+							}
+						}
+					}
+				}
+				if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[51] != i_Nothing)
+				{
+					if (m_SlotGap * 9 + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * 5 + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + m_SlotVertices[3] > Input::YRawMousePos)
+					{
+						m_AimingAtSlot = 51;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i] != i_Nothing)
+					{
+						if (m_SlotGap * i + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[2] > Input::XRawMousePos && + m_SlotVertices[1] < Input::YRawMousePos && + m_SlotVertices[3] > Input::YRawMousePos)
+						{
+							m_AimingAtSlot = i + 1;
 						}
 					}
 				}
 			}
-			if (m_SlotGap * 9 + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * 5 + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + m_SlotVertices[3] > Input::YRawMousePos)
-			{
-				m_AimingAtSlot = 51;
-			}
-
 			if (Input::LeftMousePress && m_AimingAtSlot)
 			{
 				if (m_IsInventoryOpen)
@@ -783,15 +868,83 @@ void Player::EveryFrame(float deltaTime
 						}
 					}
 				}
+				else if(m_WeaponType)
+				{
+					unsigned char arrows[3] = { i_BasicArrow, i_BleedArrow, i_FireArrow };
+					switch (m_WeaponType)
+					{
+					case weaponBow:
+					case weaponBow + weaponAutomatic:
+						if (m_LocationAmmunition != -1)
+						{
+							if (m_PlayerSlots[m_LocationAmmunition] == i_BasicArrow ||
+								m_PlayerSlots[m_LocationAmmunition] == i_BleedArrow ||
+								m_PlayerSlots[m_LocationAmmunition] == i_FireArrow)
+							{
+								break;
+							}
+						}
+						m_LocationAmmunition = FindOneOfItemsInInv(arrows, 3);
+							break;					    
+					case weaponCanon:
+					case weaponCanon + weaponAutomatic:
+
+						break;
+					case weaponGun:
+					case weaponGun + weaponAutomatic:
+
+						break;
+					}
+
+				}
 			}
 
-
-
-			if (Input::LeftMouseHold)
+			if (m_UseItemTimer > m_CooldownToUse)
 			{
-
-				if (m_UseItemTimer > m_CooldownToUse)
+				if (m_WeaponType > weaponAutomatic && Input::LeftMouseHold || m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMousePress )
 				{
+					if (m_LocationAmmunition != -1)
+					{
+
+						switch (m_PlayerSlots[0])
+						{
+						case weaponMelee:
+							m_ArmsBehaviour = ArmUsing;
+							break;
+						case i_WoodBow:
+							float velocity[2] = { x - m_Transform[0], y - m_Transform[1] };
+							NormalizeVector(velocity);
+
+							switch (m_PlayerSlots[m_LocationAmmunition])
+							{
+
+							case i_BasicArrow:
+
+								projectiles.emplace_back(p_BasicArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								break;
+							case i_BleedArrow:
+								projectiles.emplace_back(p_BleedArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								break;
+							case i_FireArrow:
+								projectiles.emplace_back(p_FireArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								break;
+							}
+							m_AmountInSlots[m_LocationAmmunition]--;
+							if (m_AmountInSlots[m_LocationAmmunition] <= 0)
+							{
+								m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
+								m_LocationAmmunition = -1;
+							}
+							break;
+						}
+						m_ArmsBehaviour = ArmUsing;
+						m_UseItemTimer = 0;
+					}
+				}
+				else if (Input::LeftMouseHold)
+				{
+
+
 
 					switch (m_PlayerSlots[0])
 					{
@@ -1097,6 +1250,7 @@ void Player::EveryFrame(float deltaTime
 					}
 					m_UseItemTimer = 0;
 
+
 				}
 			}
 		}
@@ -1107,15 +1261,17 @@ void Player::EveryFrame(float deltaTime
 	}
 	m_CoyoteTimer += deltaTime;
 	{
-		if (Input::DHold)
+		if (m_ArmsBehaviour != ArmUsing)
 		{
-			m_DirectionLook = 1;
+			if (Input::DHold)
+			{
+				m_DirectionLook = 1;
+			}
+			if (Input::AHold)
+			{
+				m_DirectionLook = -1;
+			}
 		}
-		if (Input::AHold)
-		{
-			m_DirectionLook = -1;
-		}
-		
 		
 		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
 		{
@@ -1156,7 +1312,7 @@ void Player::EveryFrame(float deltaTime
 			m_CanJump = false;
 			m_JumpTimer += deltaTime;
 		}
-		else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.25f)
+		else if (Input::SpaceHold && m_JumpTimer > 0 && m_JumpTimer < 0.3f)
 		{
 			m_Velocity[1] -= (m_JumpPower / 2) * deltaTime;
 			m_JumpTimer += deltaTime;
@@ -1164,9 +1320,9 @@ void Player::EveryFrame(float deltaTime
 		else
 		{
 			m_Velocity[1] += m_Gravity * deltaTime;
-			if (30 < m_Gravity)
+			if (-30 > m_Velocity[1])
 			{
-				m_Gravity = 30;
+				m_Velocity[1] = -30;
 			}
 			m_JumpTimer = 0;
 		}
@@ -1367,7 +1523,6 @@ void Player::EveryFrame(float deltaTime
 	}
 	
 }
-
 void Player::DrawPlayer(Shader& basicSh
 	, Shader& HUDSh
 	, Shader& fontSh

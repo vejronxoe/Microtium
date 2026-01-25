@@ -9,6 +9,7 @@
 #include"ItemList.h"
 #include"BlocksAndWalls.h"
 #include"flora.h"
+#include"projectile.h"
 
 class Player
 {
@@ -46,11 +47,13 @@ public:
 		, std::vector<DamagedBlock>& damageblocks
 		, std::vector<DamagedBlock>& damagedWalls
 		, float* CameraCoordinates
+		, unsigned int blockDD
 		, unsigned int* texturesIDs
 		, unsigned int* structuresTextures
 		, std::vector<tree>& trees
 		, std::vector<seedling>& seedlings
-		, std::vector<DroppedItem>& droppedItems);
+		, std::vector<DroppedItem>& droppedItems
+		, std::vector<Projectile>& projectiles);
 
 	void DrawPlayer(Shader& basicSh
 		, Shader& HUDSh
@@ -92,9 +95,8 @@ private:
 	float m_TimerSplitingItem;
 	float m_AddNextFrame;
 	bool IsItStackble(unsigned short int item);
-
-	void CreateAllItemsTexture(unsigned int* texturesIDs);
-
+	char FindItemInInv(unsigned char item);
+	char FindOneOfItemsInInv(unsigned char* items,int sizeOfArray);
 public:
 	
 	float m_SlotVertices[4];
@@ -103,7 +105,7 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[14];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[18];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[52];
 	unsigned short int m_AmountInSlots[52];
 
@@ -114,7 +116,9 @@ public:
 	bool m_CursorOnMinableWood;
 	bool m_CursorOnPlaceableForStructure;
 	bool m_CursorOnPlaceableSpot;
+	char m_LocationAmmunition;
 	float m_CooldownToUse;
+	unsigned char m_WeaponType;
 	unsigned char m_PickaxeStreanght;
 	unsigned char m_AxeStreanght;
 	unsigned char m_HammerStreanght;

@@ -3,7 +3,9 @@
 enum ProjectilesTypes
 {
 	p_Sand = 0
-	, 
+	, p_FireArrow
+	, p_BleedArrow
+	, p_BasicArrow
 };
 struct Projectile
 {

@@ -19,26 +19,62 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<bool>& isSandOnX
 	, unsigned int* blockTextures)
 {
+	float vertices[4];
+	float velocity[2];
+	velocity[0] = m_Velocity[0];
+	velocity[1] = m_Velocity[1];
+	bool hit[5];
+	hit[0] = false;
+	hit[1] = false;
+	hit[2] = false;
+	hit[3] = false;
+	hit[4] = false;
 	switch (m_ProjectileType)
 	{
 	case p_Sand:
 		m_Velocity[1] -= 2 * deltaTime;
-
-		float vertices[4];
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		bool hit[5];
-		hit[0] = false;
-		hit[1] = false;
-		hit[2] = false;
-		hit[3] = false;
-		hit[4] = false;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[4], deltaTime);
+		break;
+	case p_BasicArrow:
+	case p_BleedArrow:
+	case p_FireArrow:
+		
+			m_Velocity[1] -= 1 * deltaTime;
+		if (m_Velocity[1] < -30)
+			{
+				m_Velocity[1] = -30;
+			}
+			vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+			vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		break;
+	}
+	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[4], deltaTime);
+	switch (m_ProjectileType)
+	{
+	case p_Sand:
 
-		if(hit[0] || hit[1] || hit[2] || hit[3] || hit[4])
+		if (hit[2] || hit[4])
 		{
+
 			CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
+			return true;
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		break;
+	case p_BasicArrow:
+	case p_BleedArrow:
+	case p_FireArrow:
+		if (hit[0] || hit[1] || hit[2] || hit[3] || hit[4])
+		{
 			return true;
 		}
 		break;
