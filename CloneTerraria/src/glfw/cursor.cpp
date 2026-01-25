@@ -40,7 +40,7 @@ void DrawCursor(unsigned int* CursorTextures
 	if (player.m_CursorOnPlaceableSpot)
 	{
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4(basicTranform, transform);
+		basicSh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_UseSlotTexture));
 		ErrorGL(glBindVertexArray(blockDrawData));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -48,7 +48,7 @@ void DrawCursor(unsigned int* CursorTextures
 	else if (player.m_CursorOnPlaceableForStructure)
 	{
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4( basicTranform, transform);
+		basicSh.SetUniformMat4( basicTransform, transform);
 		basicSh.SetUniform1i(basicSize + ShadowLocation, -1);
 
 		switch (player.m_PlayerSlots[0])
@@ -65,7 +65,7 @@ void DrawCursor(unsigned int* CursorTextures
 
 	}
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
-	basicSh.SetUniformMat4(basicTranform, transform);
+	basicSh.SetUniformMat4(basicTransform, transform);
 	ChangeCamera(0, Window::width, 0, Window::height, camera);
 	basicSh.SetUniformMat4(basicCamera, camera);
 

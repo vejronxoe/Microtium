@@ -82,10 +82,25 @@ bool Projectile::EveryFrame(float deltaTime
 	return false;
 }
 void Projectile::Draw(Shader& sh
-	, float* transform)
+	, float* transform
+	, float* scale
+	, float* rotation)
 {
+
+	double angle = atan2(m_Velocity[0], m_Velocity[1]) * 180.0 / PI;
+	ChangeRotation(-abs(angle), rotation);
+	sh.SetUniformMat4(advancedRotation, rotation);
+	if (angle)
+	{
+		ChangeScale(angle/abs(angle),1, scale);
+	}
+	else
+	{
+		ChangeScale(1, 1, scale);
+	}
+	sh.SetUniformMat4(advancedScale, scale);
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	sh.SetUniformMat4(basicTranform, transform);
+	sh.SetUniformMat4(advancedTransform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 	ErrorGL(glBindVertexArray(m_DD));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));

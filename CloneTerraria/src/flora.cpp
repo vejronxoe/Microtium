@@ -399,7 +399,7 @@ void seedling::drawSeedling(Shader sh
 	, float* Transform)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], Transform);
-	sh.SetUniformMat4(basicTranform, Transform);
+	sh.SetUniformMat4(basicTransform, Transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 

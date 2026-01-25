@@ -27,7 +27,9 @@ struct Projectile
 		, std::vector<bool>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh
-		, float* transform);
+		, float* transform
+		, float* scale
+		, float* rotation);
 };
 
 void SandEveryFrame(std::vector<bool>& isSandOnX

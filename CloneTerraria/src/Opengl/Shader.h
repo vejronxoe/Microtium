@@ -22,7 +22,7 @@ enum AnimationVertexSh
 enum BasicVertexSh
 {
 	basicCamera = 0
-	, basicTranform
+	, basicTransform
 	, basicSize
 };
 enum FontVertexSh
@@ -56,6 +56,14 @@ enum TreeVertexSh
 	, treeTransform
 	, treeRotation
 	, treeSize
+};
+enum advancedVertexSh
+{
+	advancedCamera = 0
+	, advancedTransform
+	, advancedScale
+	, advancedRotation
+	, advancedSize
 };
 class Shader
 {

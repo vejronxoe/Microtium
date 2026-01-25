@@ -31,7 +31,7 @@ void DamagedBlock::DrawDamage(Shader& basicShader
 {
 
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	basicShader.SetUniformMat4(basicTranform, transform);
+	basicShader.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
@@ -51,7 +51,7 @@ void Block::DrawBlock(Shader& basicShader
 	, float* transform)
 {
 	ChangeTransform(x, m_Y, transform);
-	basicShader.SetUniformMat4( basicTranform, transform);
+	basicShader.SetUniformMat4( basicTransform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
@@ -71,7 +71,7 @@ void wall::drawWalls(Shader& wallSh
 	if (m_Render)
 	{
 		ChangeTransform(x, m_Y, transform);
-		wallSh.SetUniformMat4(basicTranform, transform);
+		wallSh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}

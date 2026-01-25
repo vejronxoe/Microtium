@@ -136,6 +136,13 @@ int main()
 	handSh.GetUniformLocation("scale");
 	handSh.GetUniformLocation("rotation");
 	handSh.GetUniformLocation("beginTransform");
+	Shader advancedSh("res/shaders/vertexShaderAdvanced.txt", "res/shaders/fragmentShaderBasic.txt");
+	advancedSh.Bind();
+	advancedSh.GetUniformLocation("camera");
+	advancedSh.GetUniformLocation("transform");
+	advancedSh.GetUniformLocation("scale");
+	advancedSh.GetUniformLocation("rotation");
+
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -308,7 +315,11 @@ int main()
 		animSh.SetUniformMat4(animCamera, camera);
 		handSh.Bind();
 		handSh.SetUniformMat4(handCamera, camera);
+		advancedSh.Bind();
+		advancedSh.SetUniformMat4(advancedCamera, camera);
 		
+
+
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
 		drawWalls(damagedWalls, damageTexture, walls, shadowSh, camera, transform, CameraCoordinates);
@@ -341,17 +352,16 @@ int main()
 			{
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 1);
 			}
-			dropItems.at(i).DrawItem(player.m_AllItemTextures, shadowSh, basicTranform, transform);
+			dropItems.at(i).DrawItem(player.m_AllItemTextures, shadowSh, basicTransform, transform);
 			if (dropItems.at(i).m_Item >= i_WallDirt && dropItems.at(i).m_Item <= i_WallIce)
 			{
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			}
 		}
-		basicSh.Bind();
-
+		advancedSh.Bind();
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			projectiles.at(i).Draw(basicSh, transform);
+			projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 		}
 		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, handSh, transform, scale, rotation, fontDrawData, numberTexture);
 
