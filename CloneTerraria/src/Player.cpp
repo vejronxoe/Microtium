@@ -26,6 +26,12 @@ enum ArmBehaviour
 	,ArmRun
 	
 };
+enum InHandDDTex
+{
+	InHandBow = 0 
+	, InHandCanon
+	, InHandPistol
+};
 unsigned int getBehaviorByTexture(unsigned int texture)
 {
 	switch (texture)
@@ -170,10 +176,14 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
 
 
+	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 2, 1, 1, -1);
+	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
+	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
+	m_ItemsInHandTexture[InHandCanon] = CreateTextureRGBA("res/textures/bowInHand.png");
+	m_ItemsInHandDD[InHandPistol] = CreateDrawData(eob, 2.5f, 1, 1.5f, -1.5f);
+	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/bowInHand.png");
 
-
-
-	m_ItemInHandDD = CreateDrawData(eob, 2.5f, 1, -1.5f, 0, 1, 0, 0, 1);
+	m_ItemInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
 	m_BodyAnimDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1.0f / 5.0f);
@@ -663,12 +673,12 @@ void Player::EveryFrame(float deltaTime
 		
 	}
 	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
+	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
+	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
 
-		int x = roundf(Input::XMousePos + CameraCoordinates[0]);
-		int y = roundf(Input::YMousePos + CameraCoordinates[1]);
-
+		
 		int blockIndex = 0;
 		int wallIndex = -1;
 		int woodIndex = 0;
@@ -903,7 +913,7 @@ void Player::EveryFrame(float deltaTime
 
 			if (m_UseItemTimer > m_CooldownToUse)
 			{
-				if (m_WeaponType > weaponAutomatic && Input::LeftMouseHold || m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMousePress )
+				if (m_WeaponType > weaponAutomatic && Input::LeftMouseHold || m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMouseRelease)
 				{
 					if (m_LocationAmmunition != -1)
 					{
@@ -939,9 +949,14 @@ void Player::EveryFrame(float deltaTime
 							}
 							break;
 						}
-						m_ArmsBehaviour = ArmUsing;
+						m_ArmsBehaviour = ArmStanding;
 						m_UseItemTimer = 0;
 					}
+					
+				}
+				else if (m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMouseHold)
+				{
+					m_ArmsBehaviour = ArmUsing;
 				}
 				else if (Input::LeftMouseHold && m_WeaponType == weaponNot)
 				{
@@ -1512,14 +1527,28 @@ void Player::EveryFrame(float deltaTime
 		}
 		if (m_ArmsBehaviour == ArmUsing)
 		{
-			m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
-			if (m_UseItemTimer > m_CooldownToUse)
+			switch (m_PlayerSlots[0])
 			{
-				if (!Input::LeftMousePress)
+
+			case i_WoodBow:
+				m_ArmRotation = atan2f(x - m_Transform[0], y - m_Transform[1]) * 180.0 / PI;
+				if (m_ArmRotation)
 				{
-					m_ArmsBehaviour = ArmStanding;
+					m_DirectionLook = m_ArmRotation / abs(m_ArmRotation);
 				}
-				m_ArmRotation = 0;
+				m_ArmRotation = -abs(m_ArmRotation);
+				break;
+			default:
+				m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
+				if (m_UseItemTimer > m_CooldownToUse)
+				{
+					if (!Input::LeftMousePress)
+					{
+						m_ArmsBehaviour = ArmStanding;
+					}
+					m_ArmRotation = 0;
+				}
+				break;
 			}
 		}
 	}
@@ -1560,32 +1589,34 @@ void Player::DrawPlayer(Shader& basicSh
 
 	if (m_ArmsBehaviour == ArmUsing)
 	{
+		animSh.SetUniform1i(animNumber, 4);
+		ErrorGL(glBindVertexArray(m_BodyAnimDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		animSh.SetUniform1i(animNumber, 0);
+
+		handSh.Bind();
+		handSh.SetUniformMat4(handTransform, transform);
+		handSh.SetUniformMat4(handScale, scale);
+		ChangeRotation(m_ArmRotation, rotation);
+		handSh.SetUniformMat4(handRotation, rotation);
 		switch (m_PlayerSlots[0])
 		{
 
+		case i_WoodBow:
+			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandBow]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandBow]));
+			break;
 		default:
-			animSh.SetUniform1i(animNumber, 4);
-			ErrorGL(glBindVertexArray(m_BodyAnimDD));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			animSh.SetUniform1i(animNumber, 0);
 
-			handSh.Bind();
-			handSh.SetUniformMat4(handTransform, transform);
-			ChangeTransform(-0.5f,0.65f, transform);
-			handSh.SetUniformMat4(handBeginTransform, transform);
-			handSh.SetUniformMat4(handScale,scale);
-			ChangeRotation(m_ArmRotation, rotation);
-			handSh.SetUniformMat4(handRotation, rotation);
 			ErrorGL(glBindVertexArray(m_ItemInHandDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			ErrorGL(glBindVertexArray(m_HandDD));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			break;
 		}
-		
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glBindVertexArray(m_HandDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 	else
 	{

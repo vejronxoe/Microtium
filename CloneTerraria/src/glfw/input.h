@@ -12,6 +12,7 @@ namespace Input
 	extern char MouseWheel;
 	extern bool LeftMouseHold;
 	extern bool LeftMousePress;
+	extern bool LeftMouseRelease;
 	extern bool RightMouseHold;
 	extern bool RightMousePress;
 	extern bool WHold;

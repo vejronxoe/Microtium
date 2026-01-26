@@ -13,6 +13,7 @@ namespace Input
 	char MouseWheel;
 	bool LeftMouseHold = false;
 	bool LeftMousePress = false;
+	bool LeftMouseRelease = false;
 	bool RightMouseHold = false;
 	bool RightMousePress = false;
 	bool WHold = false;
@@ -41,6 +42,7 @@ namespace Input
 		DPress = false;
 		APress = false;
 		TPress = false;
+		LeftMouseRelease = false;
 		SpacePress = false;
 		for (int i = 0; i < 10; i++)
 		{
@@ -191,6 +193,7 @@ namespace Input
 		}
 		else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 		{
+			LeftMouseRelease = true;
 			LeftMouseHold = false;
 		}
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)

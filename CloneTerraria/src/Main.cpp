@@ -149,14 +149,15 @@ int main()
 	float rotation[16];
 	CreateScale(1, 1, scale);
 	CreateRotation(0, rotation);
+	CreateTransform(-0.5f, 0.65f, transform);
+	CreateCamera(0, Window::width, 0, Window::height, camera);
+
+	handSh.Bind();
+	handSh.SetUniformMat4(handBeginTransform, transform);
 	treeSh.Bind();
 	treeSh.SetUniformMat4( treeRotation, rotation);
-
-
 	HUDSh.Bind();
-	CreateCamera(0, Window::width, 0, Window::height, camera);
 	HUDSh.SetUniformMat4( HUDCamera, camera);
-
 	fontSh.Bind();
 	fontSh.SetUniformMat4(fontCamera, camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
@@ -198,7 +199,7 @@ int main()
 
 	Player player(eob, MoveUp, MoveLeft, blockTextures);
 	HUDSh.Bind();
-	CreateTransform(MoveLeft, MoveUp, transform);
+	ChangeTransform(MoveLeft, MoveUp, transform);
 	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
 
 
