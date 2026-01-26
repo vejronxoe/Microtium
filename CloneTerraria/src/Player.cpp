@@ -922,13 +922,13 @@ void Player::EveryFrame(float deltaTime
 
 							case i_BasicArrow:
 
-								projectiles.emplace_back(p_BasicArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								projectiles.emplace_back(p_BasicArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 								break;
 							case i_BleedArrow:
-								projectiles.emplace_back(p_BleedArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								projectiles.emplace_back(p_BleedArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 								break;
 							case i_FireArrow:
-								projectiles.emplace_back(p_FireArrow, m_Transform[0], m_Transform[1], velocity[0] * 25, velocity[1] * 25, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								projectiles.emplace_back(p_FireArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 								break;
 							}
 							m_AmountInSlots[m_LocationAmmunition]--;
@@ -1335,7 +1335,7 @@ void Player::EveryFrame(float deltaTime
 
 
 		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
-		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, deltaTime))
+		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, m_WallHit, m_WallHit, m_CeilHit, deltaTime))
 		{
 			moveBehavior = b_BasicSolid;
 		}

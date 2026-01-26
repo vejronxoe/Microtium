@@ -23,16 +23,15 @@ bool Projectile::EveryFrame(float deltaTime
 	float velocity[2];
 	velocity[0] = m_Velocity[0];
 	velocity[1] = m_Velocity[1];
-	bool hit[5];
+	bool hit[4];
 	hit[0] = false;
 	hit[1] = false;
 	hit[2] = false;
 	hit[3] = false;
-	hit[4] = false;
 	switch (m_ProjectileType)
 	{
 	case p_Sand:
-		m_Velocity[1] -= 2 * deltaTime;
+		m_Velocity[1] -= 16 * deltaTime;
 		if (m_Velocity[1] < -30)
 		{
 			m_Velocity[1] = -30;
@@ -44,7 +43,7 @@ bool Projectile::EveryFrame(float deltaTime
 	case p_BleedArrow:
 	case p_FireArrow:
 		
-			m_Velocity[1] -= 1 * deltaTime;
+			m_Velocity[1] -= 8 * deltaTime;
 		if (m_Velocity[1] < -30)
 			{
 				m_Velocity[1] = -30;
@@ -54,12 +53,12 @@ bool Projectile::EveryFrame(float deltaTime
 		break;
 	}
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[4], deltaTime);
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity , hit[0], hit[1], hit[2], hit[3], deltaTime);
 	switch (m_ProjectileType)
 	{
 	case p_Sand:
 
-		if (hit[2] || hit[4])
+		if (hit[2])
 		{
 
 			CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
@@ -73,7 +72,7 @@ bool Projectile::EveryFrame(float deltaTime
 	case p_BasicArrow:
 	case p_BleedArrow:
 	case p_FireArrow:
-		if (hit[0] || hit[1] || hit[2] || hit[3] || hit[4])
+		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			return true;
 		}

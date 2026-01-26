@@ -14,6 +14,13 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	, bool& ceilHit);
 float CameraHitboxY(float y);
 float CameraHitboxX(float x);
-bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime);
+bool AddVelocityToTransform(float* objectVertices4f
+	, float* transform
+	, float* velocity
+	, bool& floorHit
+	, bool& rightHit
+	, bool& leftHit
+	, bool& ceilHit
+	, float deltaTime);
 int RoundFiveDown(float x);
 int RoundFiveUp(float x);

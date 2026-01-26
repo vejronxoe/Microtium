@@ -78,6 +78,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 	{
 	
 		bool floorHit = false;
+		AddVelocityToTransform(itemVertices, m_Transform, m_Velocity , floorHit, hit, hit, hit, deltaTime);
 		unsigned char behavior =  DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, itemVertices, blocks,hit, hit, floorHit, hit);
 		int goingWay;
 		if (m_Velocity[0])
@@ -113,7 +114,6 @@ bool DroppedItem::EveryFrame(float deltaTime
 		}
 
 	}
-	AddVelocityToTransform(itemVertices, m_Transform, m_Velocity, hit, deltaTime);
 	return false;
 }
 void DroppedItem::DrawItem(unsigned int* textureIDs

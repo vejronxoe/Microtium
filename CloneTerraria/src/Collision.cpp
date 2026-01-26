@@ -210,7 +210,14 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 	}
 	return behavior[0];
 }
-bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* velocity, bool& floorHit, float deltaTime)
+bool AddVelocityToTransform(float* objectVertices4f
+	, float* transform
+	, float* velocity
+	, bool& floorHit
+	, bool& rightHit
+	, bool& leftHit
+	, bool& ceilHit
+	, float deltaTime)
 {
 	objectVertices4f[0] -= transform[0]; 
 	objectVertices4f[2] -= transform[0];
@@ -229,18 +236,19 @@ bool AddVelocityToTransform(float* objectVertices4f, float* transform, float* ve
 	{
 		transform[0] -= objectVertices4f[2] - Blocks::xMax + SAFEDISTANCE;
 		velocity[0] = 0;
+		leftHit = true;
 	}
 	else if (objectVertices4f[0] <= Blocks::xMin + SAFEDISTANCE)
 	{
 		transform[0] -= objectVertices4f[0]- Blocks::xMin - SAFEDISTANCE;
 		velocity[0] = 0;
-
+		rightHit = true;
 	}
 	if (objectVertices4f[1] >= Blocks::yMax - SAFEDISTANCE)
 	{
 		transform[1] -= objectVertices4f[1] - Blocks::yMax + SAFEDISTANCE;
 		velocity[1] = 0;
-
+		ceilHit = true;
 	}
 	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE)
 	{
