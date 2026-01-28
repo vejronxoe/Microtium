@@ -6,6 +6,7 @@ enum ProjectilesTypes
 	, p_FireArrow
 	, p_BleedArrow
 	, p_BasicArrow
+	, p_BasicCannonBall
 };
 struct Projectile
 {

@@ -2,10 +2,10 @@
 enum Items
 {
 	i_Nothing = 0
-	,i_CooperPickaxe
-	,i_CooperAxe
-	,i_CooperHammer
-	,i_CooperSword
+	,i_CopperPickaxe
+	,i_CopperAxe
+	,i_CopperHammer
+	,i_CopperSword
 	,i_Dirt
 	,i_Ice
 	,i_Asphalt
@@ -19,6 +19,16 @@ enum Items
 	,i_FireArrow
 	,i_BleedArrow
 	,i_BasicArrow
+	,i_Canon
+	,i_BasicCannonBall
+	,i_BleedCannonBall
+	,i_FireCannonBall
+	,i_BouncingCannonBall
+	,i_Pistol
+	,i_BasicBullet
+	,i_BleedBullet
+	,i_FireBullet
+	,i_BouncingBullet
 
 };
 enum Structures

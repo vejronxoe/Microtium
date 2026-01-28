@@ -127,16 +127,16 @@ Player::Player(unsigned int eob
 	m_LargePlaceable = 0;
 	m_LocationAmmunition = -1;
 
-	m_PlayerSlots[0] = i_CooperSword;
-	m_PlayerSlots[1] = i_CooperSword;
-	m_PlayerSlots[2] = i_WoodBow;
-	m_PlayerSlots[3] = i_CooperPickaxe;
-	m_PlayerSlots[4] = i_CooperAxe;
-	m_PlayerSlots[5] = i_CooperHammer;
+	m_PlayerSlots[0] = i_CopperSword;
+	m_PlayerSlots[1] = i_CopperSword;
+	m_PlayerSlots[2] = i_Canon;
+	m_PlayerSlots[3] = i_CopperPickaxe;
+	m_PlayerSlots[4] = i_CopperAxe;
+	m_PlayerSlots[5] = i_CopperHammer;
 	m_PlayerSlots[6] = i_Dirt;
 	m_PlayerSlots[7] = i_Sand;
 	m_PlayerSlots[8] = i_Sapling;
-	m_PlayerSlots[9] = i_FireArrow;
+	m_PlayerSlots[9] = i_BasicCannonBall;
 	m_PlayerSlots[10] = i_BleedArrow;
 	m_AmountInSlots[0] = 1;
 	m_AmountInSlots[1] = 1;
@@ -157,10 +157,10 @@ Player::Player(unsigned int eob
 	m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 	m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
 
-	m_AllItemTextures[i_CooperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
-	m_AllItemTextures[i_CooperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
-	m_AllItemTextures[i_CooperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
-	m_AllItemTextures[i_CooperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
+	m_AllItemTextures[i_CopperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
+	m_AllItemTextures[i_CopperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
+	m_AllItemTextures[i_CopperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
+	m_AllItemTextures[i_CopperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
 	m_AllItemTextures[i_ForestPlank] = texturesIDs[t_ForestPlank];
 	m_AllItemTextures[i_Dirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_Ice] = texturesIDs[t_Ice];
@@ -174,14 +174,18 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
 	m_AllItemTextures[i_BleedArrow] = CreateTextureRGBA("res/textures/bleedArrow.png");
 	m_AllItemTextures[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
+	m_AllItemTextures[i_Canon] = CreateTextureRGBA("res/textures/canonInv.png");
+	m_AllItemTextures[i_BasicCannonBall] = CreateTextureRGBA("res/textures/basicCanonBall.png");
+	m_AllItemTextures[i_Pistol] = CreateTextureRGBA("res/textures/pistolInv.png");
 
 
 	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 2, 1, 1, -1);
 	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
 	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
-	m_ItemsInHandTexture[InHandCanon] = CreateTextureRGBA("res/textures/bowInHand.png");
+	m_ItemsInHandTexture[InHandCanon] = CreateTextureRGBA("res/textures/canonHand.png");
 	m_ItemsInHandDD[InHandPistol] = CreateDrawData(eob, 2.5f, 1, 1.5f, -1.5f);
-	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/bowInHand.png");
+	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/pistolHand.png");
+
 
 	m_ItemInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
@@ -227,22 +231,22 @@ void Player::SwapItemStats()
 	switch (m_PlayerSlots[0])
 	{
 		break;
-		case(i_CooperSword):
+		case(i_CopperSword):
 			m_Damage = 2;
 		break;
 		
-		case(i_CooperAxe):
+		case(i_CopperAxe):
 			m_AxeStreanght = 35;
 			m_Damage = 1;
 		break;
 		
 
-		case(i_CooperPickaxe):
+		case(i_CopperPickaxe):
 			m_PickaxeStreanght = 35;
 			m_Damage = 1;
 		break;
 		
-		case(i_CooperHammer):
+		case(i_CopperHammer):
 			m_HammerStreanght = 35;
 			m_Damage = 1;
 		break;
@@ -255,9 +259,15 @@ void Player::SwapItemStats()
 			m_WeaponType = weaponBow;
 			m_CooldownToUse = 0.8;
 			break;
+		case i_Canon:
+			m_Range = 0;
+			m_WeaponType = weaponCanon;
+			m_CooldownToUse = 1.2;
+			break;
 		case i_FireArrow:
 		case i_BleedArrow:
 		case i_BasicArrow:
+		case i_BasicCannonBall:
 		case(i_Nothing):
 			m_CooldownToUse = 0;
 			m_Range = 0;
@@ -275,10 +285,10 @@ bool Player::IsItStackble(unsigned short int item)
 	bool isItStackble = true;
 	switch (item)
 	{
-	case i_CooperHammer:
-	case i_CooperPickaxe:
-	case i_CooperAxe:
-	case i_CooperSword:
+	case i_CopperHammer:
+	case i_CopperPickaxe:
+	case i_CopperAxe:
+	case i_CopperSword:
 	case i_WoodBow:
 		isItStackble = false;
 		break;
@@ -883,6 +893,7 @@ void Player::EveryFrame(float deltaTime
 			else if (m_WeaponType)
 			{
 				unsigned char arrows[3] = { i_BasicArrow, i_BleedArrow, i_FireArrow };
+				unsigned char canonBalls[1] = {i_BasicCannonBall};
 				switch (m_WeaponType)
 				{
 				case weaponBow:
@@ -901,6 +912,17 @@ void Player::EveryFrame(float deltaTime
 				case weaponCanon:
 				case weaponCanon + weaponAutomatic:
 
+					if (m_LocationAmmunition != -1)
+					{
+						if (m_PlayerSlots[m_LocationAmmunition] == i_BasicCannonBall ||
+							m_PlayerSlots[m_LocationAmmunition] == i_BleedCannonBall ||
+							m_PlayerSlots[m_LocationAmmunition] == i_BasicCannonBall)
+						{
+							break;
+						}
+					}
+					m_LocationAmmunition = FindOneOfItemsInInv(canonBalls, 1);
+					break;
 					break;
 				case weaponGun:
 				case weaponGun + weaponAutomatic:
@@ -917,37 +939,56 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (m_LocationAmmunition != -1)
 					{
-
+						float velocity[2] = { x - m_Transform[0], y - m_Transform[1] };
+						NormalizeVector(velocity);
+						unsigned char typeOfProjectile;
 						switch (m_PlayerSlots[0])
 						{
 						case weaponMelee:
 							m_ArmsBehaviour = ArmUsing;
 							break;
 						case i_WoodBow:
-							float velocity[2] = { x - m_Transform[0], y - m_Transform[1] };
-							NormalizeVector(velocity);
-
 							switch (m_PlayerSlots[m_LocationAmmunition])
 							{
 
 							case i_BasicArrow:
-
-								projectiles.emplace_back(p_BasicArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								typeOfProjectile = p_BasicArrow;
 								break;
 							case i_BleedArrow:
-								projectiles.emplace_back(p_BleedArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								typeOfProjectile = p_BleedArrow;
 								break;
 							case i_FireArrow:
-								projectiles.emplace_back(p_FireArrow, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								typeOfProjectile = p_FireArrow;
+								break;
+							default:
+								std::cout << "Error player.cpp Dont know this Ammo: " << m_PlayerSlots[m_LocationAmmunition] << std::endl;
 								break;
 							}
-							m_AmountInSlots[m_LocationAmmunition]--;
-							if (m_AmountInSlots[m_LocationAmmunition] <= 0)
-							{
-								m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
-								m_LocationAmmunition = -1;
-							}
+							projectiles.emplace_back(typeOfProjectile, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+
 							break;
+						case i_Canon:
+
+							switch (m_PlayerSlots[m_LocationAmmunition])
+							{
+							case i_BasicCannonBall:
+								typeOfProjectile = p_BasicCannonBall;
+								break;
+							default:
+								std::cout << "Error player.cpp Dont know this Ammo: " << m_PlayerSlots[m_LocationAmmunition] << std::endl;
+								break;
+							}
+							projectiles.emplace_back(p_BasicCannonBall, m_Transform[0], m_Transform[1], velocity[0] * 15, velocity[1] * 15, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							break;
+						default:
+							std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;
+							break;
+						}
+						m_AmountInSlots[m_LocationAmmunition]--;
+						if (m_AmountInSlots[m_LocationAmmunition] <= 0)
+						{
+							m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
+							m_LocationAmmunition = -1;
 						}
 						m_ArmsBehaviour = ArmStanding;
 						m_UseItemTimer = 0;
@@ -1531,6 +1572,7 @@ void Player::EveryFrame(float deltaTime
 			{
 
 			case i_WoodBow:
+			case i_Canon:
 				m_ArmRotation = atan2f(x - m_Transform[0], y - m_Transform[1]) * 180.0 / PI;
 				if (m_ArmRotation)
 				{
@@ -1600,6 +1642,9 @@ void Player::DrawPlayer(Shader& basicSh
 		handSh.SetUniformMat4(handScale, scale);
 		ChangeRotation(m_ArmRotation, rotation);
 		handSh.SetUniformMat4(handRotation, rotation);
+		ErrorGL(glBindVertexArray(m_HandDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		switch (m_PlayerSlots[0])
 		{
 
@@ -1607,15 +1652,21 @@ void Player::DrawPlayer(Shader& basicSh
 			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandBow]));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandBow]));
 			break;
+		case i_Canon:
+			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandCanon]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandCanon]));
+			break;
+		case i_Pistol:
+			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandPistol]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandPistol]));
+			break;
+
 		default:
 
 			ErrorGL(glBindVertexArray(m_ItemInHandDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
 			break;
 		}
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		ErrorGL(glBindVertexArray(m_HandDD));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 	else
