@@ -1,10 +1,10 @@
 ﻿  projectile.cpp
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(65,46): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(65,22): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(101,17): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(105,20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(127,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(132,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(92,46): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(92,22): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(157,17): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(161,20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(183,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(188,22): warning C4018: '<': signed/unsigned mismatch
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244:         [
@@ -13,9 +13,9 @@ C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\
   (compiling source file 'src/projectile.cpp')
       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103):
       the template instantiation context (the oldest one first) is
-          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(140,19):
+          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(196,19):
           see reference to function template instantiation 'void std::vector<Projectile,std::allocator<Projectile>>::emplace_back<ProjectilesTypes,int&,int,int,int,unsigned int&,unsigned int&>(ProjectilesTypes &&,int &,int &&,int &&,int &&,unsigned int &,unsigned int &)' being compiled
-              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(140,31):
+              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp(196,31):
               see the first reference to 'std::vector<Projectile,std::allocator<Projectile>>::emplace_back' in 'SandEveryFrame'
           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\vector(924,24):
           see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<ProjectilesTypes,int&,int,int,int,unsigned int&,unsigned int&>(ProjectilesTypes &&,int &,int &&,int &&,int &&,unsigned int &,unsigned int &)' being compiled

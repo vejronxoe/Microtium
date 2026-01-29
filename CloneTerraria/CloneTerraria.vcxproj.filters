@@ -141,4 +141,177 @@
     <Text Include="res\shaders\vertexShaderHand.txt" />
     <Text Include="res\shaders\vertexShaderAdvanced.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\Asphalt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicCanonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bleedArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bodyAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bootsAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bowInHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bowInInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canAxeIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canClickon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canHammerIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canNotDo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canonHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canonInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canPickaxeIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canPutItInBin.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooper.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperAxe.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperHammer.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperPickaxe.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperSword.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\DamageBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\dirtBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestplank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestSmallBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fullGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\handDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\headDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ice.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\inventorySlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\iron.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\leftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\leftRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\legAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\lightDamageBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingDownGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingTopGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Numbers.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\pistolHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bleedBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

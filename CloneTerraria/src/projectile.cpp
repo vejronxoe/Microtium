@@ -12,7 +12,19 @@ Projectile::Projectile(unsigned char projectileType
 	, unsigned int DD
 	, unsigned int projectileTexture)
 	:m_Transform{ x, y }, m_Velocity{ velocityX, velocityY}, m_ProjectileType{projectileType},m_DD{DD}, m_Texture{projectileTexture}
-{}
+{
+	switch (projectileType)
+	{
+	case p_BouncingBullet:
+	case p_BouncingCannonBall:
+	case p_BouncingArrow:
+		m_Bouncing = 5;
+		break;
+	default:
+		m_Bouncing = 0;
+		break;
+	}
+}
 bool Projectile::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
@@ -30,7 +42,10 @@ bool Projectile::EveryFrame(float deltaTime
 	hit[3] = false;
 	switch (m_ProjectileType)
 	{
+	case p_BleedCannonBall:
 	case p_BasicCannonBall:
+	case i_BouncingCannonBall:
+	case i_FireCannonBall:
 	case p_Sand:
 		m_Velocity[1] -= 16 * deltaTime;
 		if (m_Velocity[1] < -30)
@@ -42,8 +57,8 @@ bool Projectile::EveryFrame(float deltaTime
 		break;
 	case p_BasicArrow:
 	case p_BleedArrow:
+	case p_BouncingArrow:
 	case p_FireArrow:
-		
 		m_Velocity[1] -= 8 * deltaTime;
 		if (m_Velocity[1] < -30)
 		{
@@ -51,6 +66,18 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		break;
+	case p_BasicBullet:
+	case p_BleedBullet:
+	case p_BouncingBullet:
+	case p_FireBullet:
+		m_Velocity[1] -= 4 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
+		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 		break;
 	}
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
@@ -70,7 +97,9 @@ bool Projectile::EveryFrame(float deltaTime
 			m_Velocity[0] = velocity[0] / -2.0f;
 		}
 		break;
+	case p_BleedCannonBall:
 	case p_BasicCannonBall:
+	case p_FireCannonBall:
 		if (hit[2])
 		{
 			return true;
@@ -83,11 +112,38 @@ bool Projectile::EveryFrame(float deltaTime
 	case p_BasicArrow:
 	case p_BleedArrow:
 	case p_FireArrow:
+	case p_BasicBullet:
+	case p_BleedBullet:
+	case p_FireBullet:
+
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			return true;
 		}
 		break;
+	case p_BouncingArrow:
+	case p_BouncingCannonBall:
+	case p_BouncingBullet:
+		if (hit[2] || hit[3])
+		{
+			m_Bouncing--;
+			m_Velocity[1] = -1 * velocity[1];
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Bouncing--;
+			m_Velocity[0] = -1 * velocity[0];
+		}
+		
+		if (m_Bouncing < 0)
+		{
+			return true;
+		}
+		break;
+	default:
+		std::cout << "Error unknow Projectil" << m_ProjectileType << std::endl;
+		break;
+
 	}
 	return false;
 }

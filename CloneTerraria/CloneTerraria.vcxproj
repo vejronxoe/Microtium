@@ -73,6 +73,65 @@
     <Text Include="res\shaders\vertexShaderHand.txt" />
     <Text Include="res\shaders\vertexShaderTree.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\Asphalt.png" />
+    <Image Include="res\textures\basicArrow.png" />
+    <Image Include="res\textures\basicBullet.png" />
+    <Image Include="res\textures\basicCanonBall.png" />
+    <Image Include="res\textures\bleedArrow.png" />
+    <Image Include="res\textures\bleedBullet.png" />
+    <Image Include="res\textures\bodyAnimDefault.png" />
+    <Image Include="res\textures\bootsAnimDefault.png" />
+    <Image Include="res\textures\bouncingArrow.png" />
+    <Image Include="res\textures\bouncingBullet.png" />
+    <Image Include="res\textures\bouncingCannonBall.png" />
+    <Image Include="res\textures\bowInHand.png" />
+    <Image Include="res\textures\bowInInv.png" />
+    <Image Include="res\textures\canAxeIt.png" />
+    <Image Include="res\textures\canClickon.png" />
+    <Image Include="res\textures\canHammerIt.png" />
+    <Image Include="res\textures\canNotDo.png" />
+    <Image Include="res\textures\canonHand.png" />
+    <Image Include="res\textures\canonInv.png" />
+    <Image Include="res\textures\canPickaxeIt.png" />
+    <Image Include="res\textures\canPutItInBin.png" />
+    <Image Include="res\textures\cooper.png" />
+    <Image Include="res\textures\cooperAxe.png" />
+    <Image Include="res\textures\cooperHammer.png" />
+    <Image Include="res\textures\cooperPickaxe.png" />
+    <Image Include="res\textures\cooperSword.png" />
+    <Image Include="res\textures\cut1.png" />
+    <Image Include="res\textures\cut2.png" />
+    <Image Include="res\textures\cut3.png" />
+    <Image Include="res\textures\cut4.png" />
+    <Image Include="res\textures\DamageBlock.png" />
+    <Image Include="res\textures\dirtBlock.png" />
+    <Image Include="res\textures\downGrassBlock.png" />
+    <Image Include="res\textures\downLeftGrassBlock.png" />
+    <Image Include="res\textures\downRightGrassBlock.png" />
+    <Image Include="res\textures\fireArrow.png" />
+    <Image Include="res\textures\fireBullet.png" />
+    <Image Include="res\textures\fireCannonBall.png" />
+    <Image Include="res\textures\forestBush.png" />
+    <Image Include="res\textures\forestplank.png" />
+    <Image Include="res\textures\forestSmallBush.png" />
+    <Image Include="res\textures\fullGrassBlock.png" />
+    <Image Include="res\textures\handDefault.png" />
+    <Image Include="res\textures\headDefault.png" />
+    <Image Include="res\textures\ice.png" />
+    <Image Include="res\textures\inventorySlot.png" />
+    <Image Include="res\textures\iron.png" />
+    <Image Include="res\textures\leftGrassBlock.png" />
+    <Image Include="res\textures\leftRightGrassBlock.png" />
+    <Image Include="res\textures\legAnimDefault.png" />
+    <Image Include="res\textures\lightDamageBlock.png" />
+    <Image Include="res\textures\missingDownGrassBlock.png" />
+    <Image Include="res\textures\missingLeftGrassBlock.png" />
+    <Image Include="res\textures\missingRightGrassBlock.png" />
+    <Image Include="res\textures\missingTopGrassBlock.png" />
+    <Image Include="res\textures\Numbers.png" />
+    <Image Include="res\textures\pistolHand.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

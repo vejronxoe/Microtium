@@ -6,13 +6,22 @@ enum ProjectilesTypes
 	, p_FireArrow
 	, p_BleedArrow
 	, p_BasicArrow
+	, p_BouncingArrow
 	, p_BasicCannonBall
+	, p_BleedCannonBall
+	, p_BouncingCannonBall
+	, p_FireCannonBall
+	, p_BasicBullet
+	, p_BleedBullet
+	, p_BouncingBullet
+	, p_FireBullet
 };
 struct Projectile
 {
 	float m_Transform[2];
 	float m_Velocity[2];
 	unsigned char m_ProjectileType;
+	char m_Bouncing;
 	unsigned int m_DD;
 	unsigned int m_Texture;
 	Projectile(unsigned char projectileType
