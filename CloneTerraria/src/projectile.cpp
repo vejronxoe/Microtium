@@ -44,8 +44,8 @@ bool Projectile::EveryFrame(float deltaTime
 	{
 	case p_BleedCannonBall:
 	case p_BasicCannonBall:
-	case i_BouncingCannonBall:
-	case i_FireCannonBall:
+	case p_BouncingCannonBall:
+	case p_FireCannonBall:
 	case p_Sand:
 		m_Velocity[1] -= 16 * deltaTime;
 		if (m_Velocity[1] < -30)

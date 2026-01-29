@@ -218,7 +218,7 @@ Player::Player(unsigned int eob
 	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
 	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
 	m_ItemsInHandTexture[InHandCanon] = CreateTextureRGBA("res/textures/canonHand.png");
-	m_ItemsInHandDD[InHandPistol] = CreateDrawData(eob, 2.5f, 1, 1.5f, -1.5f);
+	m_ItemsInHandDD[InHandPistol] = CreateDrawData(eob, 2.5f, 1, 0.5f, -0.7f);
 	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/pistolHand.png");
 
 
@@ -947,43 +947,15 @@ void Player::EveryFrame(float deltaTime
 				{
 				case weaponBow:
 				case weaponBow + weaponAutomatic:
-					if (m_LocationAmmunition != -1)
-					{
-						if (m_PlayerSlots[m_LocationAmmunition] == i_BasicArrow ||
-							m_PlayerSlots[m_LocationAmmunition] == i_BleedArrow ||
-							m_PlayerSlots[m_LocationAmmunition] == i_BouncingArrow ||
-							m_PlayerSlots[m_LocationAmmunition] == i_FireArrow)
-						{
-							break;
-						}
-					}
 					m_LocationAmmunition = FindOneOfItemsInInv(arrows, 4);
 					break;
 				case weaponCanon:
 				case weaponCanon + weaponAutomatic:
-
-					if (m_LocationAmmunition != -1)
-					{
-						if (m_PlayerSlots[m_LocationAmmunition] == i_BasicCannonBall ||
-							m_PlayerSlots[m_LocationAmmunition] == i_BleedCannonBall ||
-							m_PlayerSlots[m_LocationAmmunition] == i_BouncingCannonBall ||
-							m_PlayerSlots[m_LocationAmmunition] == i_FireCannonBall)
-						{
-							break;
-						}
-					}
 					m_LocationAmmunition = FindOneOfItemsInInv(cannonBalls, 4);
 					break;
 					break;
 				case weaponGun:
 				case weaponGun + weaponAutomatic:
-					if (m_PlayerSlots[m_LocationAmmunition] == i_BasicBullet ||
-						m_PlayerSlots[m_LocationAmmunition] == i_BleedBullet ||
-						m_PlayerSlots[m_LocationAmmunition] == i_BouncingBullet ||
-						m_PlayerSlots[m_LocationAmmunition] == i_FireBullet)
-					{
-						break;
-					}
 					m_LocationAmmunition = FindOneOfItemsInInv(bullets, 4);
 					break;
 				}
