@@ -35,8 +35,7 @@ public:
 	float m_Transform[2];
 	float m_Velocity[2];
 	Player(unsigned int eob
-		, float& yLocationOfFirstSlot
-		, float& xLocationOfFirstSlot
+
 		, unsigned int* texturesIDs);
 
 	bool ItermGetToInventory(unsigned short int& amount
@@ -92,7 +91,8 @@ private:
 	unsigned int m_BodyAnimTex;
 	unsigned int m_HeadTex;
 private:
-	unsigned int m_InventoryDrawData;
+	float m_InvOffset[2];
+	unsigned int m_HUDDD;
 	unsigned int m_SlotTexture;
 	unsigned int m_TrashCanSlotTexture;
 	float m_SlotGap;
@@ -102,7 +102,12 @@ private:
 	char FindItemInInv(unsigned char item);
 	char FindOneOfItemsInInv(unsigned char* items,int sizeOfArray);
 public:
-	
+	float m_HPOffset[2];
+	unsigned int m_HPTexture[5];
+	int m_CurrentHealth;
+	int m_maxHealth;
+public:
+
 	float m_SlotVertices[4];
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;

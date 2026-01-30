@@ -313,5 +313,50 @@
     <Image Include="res\textures\bleedBullet.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\pistolInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\platform.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\proSand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\rightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sapling.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\saplingInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\scrapCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topDownGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\trash.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\useInventorySlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodLog.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

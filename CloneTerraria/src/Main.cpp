@@ -149,7 +149,6 @@ int main()
 	float rotation[16];
 	CreateScale(1, 1, scale);
 	CreateRotation(0, rotation);
-	//CreateTransform(-0.5f, 0.65f, transform);
 	CreateTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
 
@@ -195,13 +194,7 @@ int main()
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 
-	float MoveLeft;
-	float MoveUp;
-
-	Player player(eob, MoveUp, MoveLeft, blockTextures);
-	HUDSh.Bind();
-	ChangeTransform(MoveLeft, MoveUp, transform);
-	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
+	Player player(eob, blockTextures);
 
 
 

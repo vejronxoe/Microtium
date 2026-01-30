@@ -131,6 +131,21 @@
     <Image Include="res\textures\missingTopGrassBlock.png" />
     <Image Include="res\textures\Numbers.png" />
     <Image Include="res\textures\pistolHand.png" />
+    <Image Include="res\textures\pistolInv.png" />
+    <Image Include="res\textures\platform.png" />
+    <Image Include="res\textures\proSand.png" />
+    <Image Include="res\textures\rightGrassBlock.png" />
+    <Image Include="res\textures\sand.png" />
+    <Image Include="res\textures\sapling.png" />
+    <Image Include="res\textures\saplingInv.png" />
+    <Image Include="res\textures\scrapCannonBall.png" />
+    <Image Include="res\textures\topDownGrassBlock.png" />
+    <Image Include="res\textures\topGrassBlock.png" />
+    <Image Include="res\textures\topLeftGrassBlock.png" />
+    <Image Include="res\textures\topRightGrassBlock.png" />
+    <Image Include="res\textures\trash.png" />
+    <Image Include="res\textures\useInventorySlot.png" />
+    <Image Include="res\textures\woodLog.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

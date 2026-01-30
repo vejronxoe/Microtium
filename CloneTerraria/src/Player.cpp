@@ -106,10 +106,9 @@ void getStructureVertices(int x
 	}
 }
 Player::Player(unsigned int eob
-	, float& yLocationOfFirstSlot
-	, float& xLocationOfFirstSlot
 	, unsigned int* texturesIDs)
 {	
+
 	m_FloorHit = false;
 	m_CeilHit = false;
 	m_WallHit = false;
@@ -162,7 +161,8 @@ Player::Player(unsigned int eob
 	m_Placeable = 0;
 	m_LargePlaceable = 0;
 	m_LocationAmmunition = -1;
-
+	m_CurrentHealth = 55;
+	m_maxHealth = 100;
 	m_PlayerSlots[0] = i_Cannon;
 	m_AmountInSlots[0] = 1;
 	m_PlayerSlots[1] = i_Cannon;
@@ -271,16 +271,24 @@ Player::Player(unsigned int eob
 	float canNotDivide = ((int)std::floor(workSpace) % (18 + Window::scaleOfHUD)) - std::floor(workSpace) + workSpace;
 	float right = ((workSpace - canNotDivide) / (18.0f + Window::scaleOfHUD)) + left;
 	float down = top - (right - left);
-	m_SlotGap = right - left + 0.005f * Window::height;
-	m_SlotVertices[0] = left; m_SlotVertices[1] = 0.01f *Window::height;
+	m_SlotGap = right - left + (right - left)/16.0f;
+	m_SlotVertices[0] = left; m_SlotVertices[1] = 0.01f * Window::height;
 	m_SlotVertices[2] = right; m_SlotVertices[3] = m_SlotVertices[1] + (right - left);
-	yLocationOfFirstSlot = (top + down) / 2.0f;
-	xLocationOfFirstSlot = (left + right) / 2.0f;
-	down -= yLocationOfFirstSlot;
-	top -= yLocationOfFirstSlot;
-	left -= xLocationOfFirstSlot;
-	right -= xLocationOfFirstSlot;
-	m_InventoryDrawData = CreateDrawData(eob, top, down, right, left);
+	
+	m_InvOffset[0] = (left + right) / 2.0f;
+	m_HPOffset[0] = Window::width - (left + right) / 2.0f;
+	m_InvOffset[1] = (top + down) / 2.0f;
+	m_HPOffset[1] = m_InvOffset[1];
+	down -= m_InvOffset[1];
+	top -= m_InvOffset[1];
+	left -= m_InvOffset[0];
+	right -= m_InvOffset[0];
+	m_HUDDD = CreateDrawData(eob, top, down, right, left);
+	m_HPTexture[0] = CreateTextureRGBA("res/textures/0To5HP.png");
+	m_HPTexture[1] = CreateTextureRGBA("res/textures/5To10HP.png");
+	m_HPTexture[2] = CreateTextureRGBA("res/textures/10To15HP.png");
+	m_HPTexture[3] = CreateTextureRGBA("res/textures/15To20HP.png");
+	m_HPTexture[4] = CreateTextureRGBA("res/textures/20To25HP.png");
 
 
 	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
@@ -1660,83 +1668,86 @@ void Player::DrawPlayer(Shader& basicSh
 	, unsigned int fontDD
 	, unsigned int numberTexture)
 {
-	animSh.Bind();
-	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	animSh.SetUniformMat4(animTransform, transform);
-	ChangeScale( m_DirectionLook, 1, scale);
-	animSh.SetUniformMat4(animScale, scale);
-	animSh.SetUniform1i( animLeangth, 5);
-	animSh.SetUniform1i(animNumber, m_WalkingPhase);
-	ErrorGL(glBindVertexArray(m_BottomAnimDD));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BootsAnimTex));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_LegAnimTex));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	if (m_WalkingPhase == 0)
 	{
-		ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+		animSh.Bind();
+		ChangeTransform(m_Transform[0], m_Transform[1], transform);
 		animSh.SetUniformMat4(animTransform, transform);
-	}
-	animSh.SetUniform1i( animNumber, 0);
-	ErrorGL(glBindVertexArray(m_HeadDD));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HeadTex));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-
-	if (m_ArmsBehaviour == ArmUsing)
-	{
-		animSh.SetUniform1i(animNumber, 4);
-		ErrorGL(glBindVertexArray(m_BodyAnimDD));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
+		ChangeScale(m_DirectionLook, 1, scale);
+		animSh.SetUniformMat4(animScale, scale);
+		animSh.SetUniform1i(animLeangth, 5);
+		animSh.SetUniform1i(animNumber, m_WalkingPhase);
+		ErrorGL(glBindVertexArray(m_BottomAnimDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BootsAnimTex));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		animSh.SetUniform1i(animNumber, 0);
-
-		handSh.Bind();
-		handSh.SetUniformMat4(handTransform, transform);
-		handSh.SetUniformMat4(handScale, scale);
-		ChangeRotation(m_ArmRotation, rotation);
-		handSh.SetUniformMat4(handRotation, rotation);
-		ErrorGL(glBindVertexArray(m_HandDD));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_LegAnimTex));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		switch (m_PlayerSlots[0])
+		if (m_WalkingPhase == 0)
 		{
-
-		case i_WoodBow:
-			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandBow]));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandBow]));
-			break;
-		case i_Cannon:
-			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandCanon]));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandCanon]));
-			break;
-		case i_Pistol:
-			ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandPistol]));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandPistol]));
-			break;
-
-		default:
-
-			ErrorGL(glBindVertexArray(m_ItemInHandDD));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
-			break;
+			ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+			animSh.SetUniformMat4(animTransform, transform);
 		}
+		animSh.SetUniform1i(animNumber, 0);
+		ErrorGL(glBindVertexArray(m_HeadDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HeadTex));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	}
-	else
-	{
-		animSh.SetUniform1i(animNumber, m_ArmPhase);
-		ErrorGL(glBindVertexArray(m_BodyAnimDD));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+		if (m_ArmsBehaviour == ArmUsing)
+		{
+			animSh.SetUniform1i(animNumber, 4);
+			ErrorGL(glBindVertexArray(m_BodyAnimDD));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			animSh.SetUniform1i(animNumber, 0);
+
+			handSh.Bind();
+			handSh.SetUniformMat4(handTransform, transform);
+			handSh.SetUniformMat4(handScale, scale);
+			ChangeRotation(m_ArmRotation, rotation);
+			handSh.SetUniformMat4(handRotation, rotation);
+			ErrorGL(glBindVertexArray(m_HandDD));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			switch (m_PlayerSlots[0])
+			{
+
+			case i_WoodBow:
+				ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandBow]));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandBow]));
+				break;
+			case i_Cannon:
+				ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandCanon]));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandCanon]));
+				break;
+			case i_Pistol:
+				ErrorGL(glBindVertexArray(m_ItemsInHandDD[InHandPistol]));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ItemsInHandTexture[InHandPistol]));
+				break;
+
+			default:
+				ErrorGL(glBindVertexArray(m_ItemInHandDD));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
+				break;
+			}
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		else
+		{
+			animSh.SetUniform1i(animNumber, m_ArmPhase);
+			ErrorGL(glBindVertexArray(m_BodyAnimDD));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_BodyAnimTex));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+
 	}
 
 	HUDSh.Bind();
-	ErrorGL(glBindVertexArray(m_InventoryDrawData));
+	ErrorGL(glBindVertexArray(m_HUDDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+	ChangeTransform(m_InvOffset[0], m_InvOffset[1], transform);
+	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
 	ChangeScale(1, 1, scale);
-	HUDSh.SetUniformMat4( HUDScale, scale);
+	HUDSh.SetUniformMat4(HUDScale, scale);
 	HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
-
 	if (m_IsInventoryOpen)
 	{
 
@@ -1891,4 +1902,60 @@ void Player::DrawPlayer(Shader& basicSh
 		}
 	}
 
+	HUDSh.Bind();
+	ErrorGL(glBindVertexArray(m_HUDDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D,m_HPTexture[4]));
+	ChangeTransform(m_HPOffset[0], m_HPOffset[1], transform);
+	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
+	ChangeScale(1, 1, scale);
+	HUDSh.SetUniformMat4(HUDScale, scale);
+	HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
+	int DrawHP = m_CurrentHealth;
+	int DrawMaxHP = m_maxHealth;
+	DrawHP -= 25;
+	DrawMaxHP -= 25;
+	int i = 0;
+	int j = 0;
+	while (DrawHP > 0)
+	{
+		ChangeTransform(m_SlotGap * i, m_SlotGap * j, transform);
+		HUDSh.SetUniformMat4(HUDTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		DrawHP -= 25;
+		DrawMaxHP -= 25;
+		i--;
+		if (i <= -8)
+		{
+			i = 0;
+			j--;
+		}
+	}
+	DrawHP += 25;
+	if ((int)floorf(DrawHP / 5.0f) != 5)
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[(int)floorf(DrawHP / 5.0f)]));
+	}
+	else
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
+	}
+	ChangeTransform(m_SlotGap* i, m_SlotGap* j, transform);
+	HUDSh.SetUniformMat4(HUDTransform, transform);
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[0]));
+	while (DrawMaxHP > 0)
+	{
+		i--;
+		if (i <= -8)
+		{
+			i = 0;
+			j--;
+		}
+		ChangeTransform(m_SlotGap* i, m_SlotGap* j, transform);
+		HUDSh.SetUniformMat4(HUDTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		DrawMaxHP -= 25;
+		
+	}
 }
