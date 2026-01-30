@@ -11,6 +11,9 @@
 #include"flora.h"
 #include"projectile.h"
 
+#define PLAYERHANDOFFSETX -0.5f
+#define PLAYERHANDOFFSETY 0.65f
+
 class Player
 {
 
@@ -77,6 +80,7 @@ private:
 	char m_WalkingPhase;
 	float m_ArmRotation;
 	
+	unsigned int m_BulletsDD;
 	unsigned int m_BottomAnimDD;
 	unsigned int m_HandDD;
 	unsigned int m_BodyAnimDD;

@@ -236,13 +236,13 @@ bool AddVelocityToTransform(float* objectVertices4f
 	{
 		transform[0] -= objectVertices4f[2] - Blocks::xMax + SAFEDISTANCE;
 		velocity[0] = 0;
-		leftHit = true;
+		rightHit = true;
 	}
 	else if (objectVertices4f[0] <= Blocks::xMin + SAFEDISTANCE)
 	{
 		transform[0] -= objectVertices4f[0]- Blocks::xMin - SAFEDISTANCE;
 		velocity[0] = 0;
-		rightHit = true;
+		leftHit = true;
 	}
 	if (objectVertices4f[1] >= Blocks::yMax - SAFEDISTANCE)
 	{
@@ -252,10 +252,7 @@ bool AddVelocityToTransform(float* objectVertices4f
 	}
 	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE)
 	{
-		float x = transform[1];
-		float y = objectVertices4f[3];
 		transform[1] -= objectVertices4f[3] - Blocks::yMin - SAFEDISTANCE;
-		float z = transform[1];
 		velocity[1] = 0;
 		floorHit = true;
 		return true;

@@ -81,7 +81,7 @@ bool Projectile::EveryFrame(float deltaTime
 		break;
 	}
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity , hit[0], hit[1], hit[2], hit[3], deltaTime);
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity , hit[2], hit[1], hit[0], hit[3], deltaTime);
 	switch (m_ProjectileType)
 	{
 	case p_Sand:

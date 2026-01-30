@@ -9,6 +9,9 @@
 #include"NumberRender.h"
 
 #define SPEEDOFANIM 0.8f
+#define ARROWSTYPES 4
+#define CANNONBALLSTYPES 5
+#define BULLETSTYPES 4
 enum RangeWeaponTypes
 {
 	weaponNot = 0
@@ -32,6 +35,39 @@ enum InHandDDTex
 	, InHandCanon
 	, InHandPistol
 };
+unsigned char AmmunicionToProjectileType(unsigned char ammo)
+{
+	switch (ammo)
+	{
+	case i_BasicCannonBall:
+		return p_BasicCannonBall;
+	case i_BleedCannonBall:
+		return p_BleedCannonBall;
+	case i_BouncingCannonBall:
+		return p_BouncingCannonBall;
+	case i_FireCannonBall:
+		return p_FireCannonBall;
+	case i_BasicArrow:
+		return p_BasicArrow;
+	case i_BleedArrow:
+		return p_BleedArrow;
+	case i_BouncingArrow:
+		return p_BouncingArrow;
+	case i_FireArrow:
+		return p_FireArrow;
+	case i_BasicBullet:
+		return p_BasicBullet;
+	case i_BleedBullet:
+		return p_BleedBullet;
+	case i_BouncingBullet:
+		return p_BouncingBullet;
+	case i_FireBullet:
+		return p_FireBullet;
+	default:
+		std::cout << "Error player.cpp Dont know this Ammo: " << ammo << std::endl;
+		return -1;
+	}
+}
 unsigned int getBehaviorByTexture(unsigned int texture)
 {
 	switch (texture)
@@ -213,7 +249,7 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
 	m_AllItemTextures[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
 
-
+	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
 	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 2, 1, 1, -1);
 	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
 	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
@@ -302,7 +338,7 @@ void Player::SwapItemStats()
 		case i_Pistol:
 			m_Range = 0;
 			m_WeaponType = weaponGun;
-			m_CooldownToUse = 0.5;
+			m_CooldownToUse = 0.4;
 			break;
 		case i_BleedArrow:
 		case i_BasicArrow:
@@ -940,23 +976,23 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_WeaponType)
 			{
-				unsigned char arrows[4] = { i_BasicArrow, i_BleedArrow, i_BouncingArrow, i_FireArrow };
-				unsigned char cannonBalls[4] = { i_BasicCannonBall, i_BleedCannonBall, i_BouncingCannonBall, i_FireCannonBall };
-				unsigned char bullets[4] = {i_BasicBullet, i_BleedBullet, i_BouncingBullet, i_FireBullet};
+				unsigned char arrows[ARROWSTYPES] = { i_BasicArrow, i_BleedArrow, i_BouncingArrow, i_FireArrow };
+				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_BleedCannonBall, i_BouncingCannonBall, i_FireCannonBall };
+				unsigned char bullets[BULLETSTYPES] = {i_BasicBullet, i_BleedBullet, i_BouncingBullet, i_FireBullet};
 				switch (m_WeaponType)
 				{
 				case weaponBow:
 				case weaponBow + weaponAutomatic:
-					m_LocationAmmunition = FindOneOfItemsInInv(arrows, 4);
+					m_LocationAmmunition = FindOneOfItemsInInv(arrows, ARROWSTYPES);
 					break;
 				case weaponCanon:
 				case weaponCanon + weaponAutomatic:
-					m_LocationAmmunition = FindOneOfItemsInInv(cannonBalls, 4);
+					m_LocationAmmunition = FindOneOfItemsInInv(cannonBalls, CANNONBALLSTYPES);
 					break;
 					break;
 				case weaponGun:
 				case weaponGun + weaponAutomatic:
-					m_LocationAmmunition = FindOneOfItemsInInv(bullets, 4);
+					m_LocationAmmunition = FindOneOfItemsInInv(bullets, BULLETSTYPES);
 					break;
 				}
 
@@ -969,81 +1005,27 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (m_LocationAmmunition != -1)
 					{
-						float velocity[2] = { x - m_Transform[0], y - m_Transform[1] };
+						float velocity[2] = {Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY };
 						NormalizeVector(velocity);
-						unsigned char typeOfProjectile;
 						switch (m_PlayerSlots[0])
 						{
 						case weaponMelee:
 							m_ArmsBehaviour = ArmUsing;
 							break;
 						case i_WoodBow:
-							switch (m_PlayerSlots[m_LocationAmmunition])
-							{
-
-							case i_BasicArrow:
-								typeOfProjectile = p_BasicArrow;
-								break;
-							case i_BleedArrow:
-								typeOfProjectile = p_BleedArrow;
-								break;
-							case i_BouncingArrow:
-								typeOfProjectile = p_BouncingArrow;
-								break;
-							case i_FireArrow:
-								typeOfProjectile = p_FireArrow;
-								break;
-							
-							default:
-								std::cout << "Error player.cpp Dont know this Ammo: " << m_PlayerSlots[m_LocationAmmunition] << std::endl;
-								break;
-							}
-							projectiles.emplace_back(typeOfProjectile, m_Transform[0], m_Transform[1], velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+					
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 
 							break;
 						case i_Cannon:
 
-							switch (m_PlayerSlots[m_LocationAmmunition])
-							{
-							case i_BasicCannonBall:
-								typeOfProjectile = p_BasicCannonBall;
-								break;
-							case i_BleedCannonBall:
-								typeOfProjectile = p_BleedCannonBall;
-								break;
-							case i_BouncingCannonBall:
-								typeOfProjectile = p_BouncingCannonBall;
-								break;
-							case i_FireCannonBall:
-								typeOfProjectile = p_FireCannonBall;
-								break;
-							default:
-								std::cout << "Error player.cpp Dont know this Ammo: " << m_PlayerSlots[m_LocationAmmunition] << std::endl;
-								break;
-							}
-							projectiles.emplace_back(typeOfProjectile, m_Transform[0], m_Transform[1], velocity[0] * 15, velocity[1] * 15, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+				
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 15, velocity[1] * 15, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 							break;
 						case i_Pistol:
-
-							switch (m_PlayerSlots[m_LocationAmmunition])
-							{
-							case i_BasicBullet:
-								typeOfProjectile = p_BasicBullet;
-								break;
-							case i_BleedBullet:
-								typeOfProjectile = p_BleedBullet;
-								break;
-							case i_BouncingBullet:
-								typeOfProjectile = p_BouncingBullet;
-								break;
-							case i_FireBullet:
-								typeOfProjectile = p_FireBullet;
-								break;
-							default:
-								std::cout << "Error player.cpp Dont know this Ammo: " << m_PlayerSlots[m_LocationAmmunition] << std::endl;
-								break;
-							}
-							projectiles.emplace_back(typeOfProjectile, m_Transform[0], m_Transform[1], velocity[0] * 30, velocity[1] * 30, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+						
+							
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY,velocity[0] * 30, velocity[1] * 30 , m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 							break;
 						default:
 							std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;
@@ -1055,18 +1037,10 @@ void Player::EveryFrame(float deltaTime
 							m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
 							m_LocationAmmunition = -1;
 						}
-						m_ArmsBehaviour = ArmStanding;
 						m_UseItemTimer = 0;
 					}
-					else
-					{
-						m_ArmsBehaviour = ArmStanding;
-					}
 					
-				}
-				else if (m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMouseHold)
-				{
-					m_ArmsBehaviour = ArmUsing;
+					
 				}
 				else if (Input::LeftMouseHold && m_WeaponType == weaponNot)
 				{
@@ -1524,6 +1498,15 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 	{
+		if (m_WeaponType > weaponNot && Input::LeftMouseHold)
+		{
+			m_ArmsBehaviour = ArmUsing;
+		}
+		else
+		{
+			m_ArmsBehaviour = ArmStanding;
+		}
+
 		if (m_FloorHit)
 		{
 			m_WalkingTimer += deltaTime;
@@ -1643,7 +1626,7 @@ void Player::EveryFrame(float deltaTime
 			case i_WoodBow:
 			case i_Cannon:
 			case i_Pistol:
-				m_ArmRotation = atan2f(x - m_Transform[0], y - m_Transform[1]) * 180.0 / PI;
+				m_ArmRotation = atan2f(Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY) * 180.0 / PI;
 				if (m_ArmRotation)
 				{
 					m_DirectionLook = m_ArmRotation / abs(m_ArmRotation);
