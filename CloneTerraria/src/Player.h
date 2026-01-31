@@ -40,7 +40,7 @@ public:
 
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
-
+	void DamagePlayer(int Damage);
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
@@ -98,13 +98,17 @@ private:
 	unsigned int m_TrashCanSlotTexture;
 	float m_SlotGap;
 	float m_TimerSplitingItem;
-	float m_AddNextFrame;
+	float m_AddNextFrameDropItem;
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
 	char FindOneOfItemsInInv(unsigned char* items,int sizeOfArray);
 public:
+
 	float m_HPOffset[2];
 	unsigned int m_HPTexture[5];
+	float m_TimerSinceLastHit;
+	float m_AddNextFrameHP;
+	int m_HPRegen;
 	int m_CurrentHealth;
 	int m_maxHealth;
 public:

@@ -235,7 +235,7 @@ int main()
 		if (timer >= 1)
 		{
 			
-			std::cout << fps << std::endl;
+			std::cout << fps <<  std::endl;
 			timer = 0;
 			fps = 0;
 		}

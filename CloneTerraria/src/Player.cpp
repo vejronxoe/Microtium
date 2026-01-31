@@ -12,6 +12,7 @@
 #define ARROWSTYPES 4
 #define CANNONBALLSTYPES 5
 #define BULLETSTYPES 4
+#define REGENCOLDDOWN 4
 enum RangeWeaponTypes
 {
 	weaponNot = 0
@@ -91,7 +92,7 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 	}
 }
 void getStructureVertices(int x
-	,int y
+	, int y
 	, unsigned int ID
 	, float* vertices)
 {
@@ -133,7 +134,7 @@ Player::Player(unsigned int eob
 	m_ArmRotation = 0;
 	m_IsInventoryOpen = false;
 	m_TimerSplitingItem = 0;
-	m_AddNextFrame = 0;
+	m_AddNextFrameDropItem = 0;
 	m_UseSlot = 0;
 	m_HUDUseSlot = 1;
 	m_AimingAtSlot = -1;
@@ -161,6 +162,9 @@ Player::Player(unsigned int eob
 	m_Placeable = 0;
 	m_LargePlaceable = 0;
 	m_LocationAmmunition = -1;
+	m_TimerSinceLastHit = 0;
+	m_AddNextFrameHP = 0;
+	m_HPRegen = 2;
 	m_CurrentHealth = 55;
 	m_maxHealth = 100;
 	m_PlayerSlots[0] = i_Cannon;
@@ -296,6 +300,15 @@ Player::Player(unsigned int eob
 	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
 	SwapItemStats();
+}
+void Player::DamagePlayer(int Damage)
+{
+	m_TimerSinceLastHit = 0;
+	m_CurrentHealth - Damage;
+	if (m_CurrentHealth < 0)
+	{
+		m_CurrentHealth = 0;
+	}
 }
 void Player::SwapItemStats()
 {
@@ -722,25 +735,25 @@ void Player::EveryFrame(float deltaTime
 					m_UseSlot = m_AimingAtSlot;
 					SwapItemStats();
 				}
-				else if (m_AmountInSlots[m_AimingAtSlot] - pow(m_TimerSplitingItem, 2) * deltaTime - m_AddNextFrame < 0)
+				else if (m_AmountInSlots[m_AimingAtSlot] - pow(m_TimerSplitingItem, 2) * deltaTime - m_AddNextFrameDropItem < 0)
 				{
 					m_AmountInSlots[0] += m_AmountInSlots[m_AimingAtSlot];
 					m_AmountInSlots[m_AimingAtSlot] = 0;
-					m_AddNextFrame = 0;
+					m_AddNextFrameDropItem = 0;
 					m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
 				}
 				else
 				{
-					m_AmountInSlots[0] += floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrame);
-					m_AmountInSlots[m_AimingAtSlot] -= floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrame);
-					m_AddNextFrame = pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrame - floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrame);
+					m_AmountInSlots[0] += floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+					m_AmountInSlots[m_AimingAtSlot] -= floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+					m_AddNextFrameDropItem = pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem - floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
 				}
 				m_TimerSplitingItem += deltaTime;
 			}
 			else
 			{
 				m_TimerSplitingItem = 1;
-				m_AddNextFrame = 0;
+				m_AddNextFrameDropItem = 0;
 			}
 		}
 		if (Input::EscapePress)
@@ -1658,7 +1671,20 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
-	
+	if (m_TimerSinceLastHit >= REGENCOLDDOWN)
+	{
+		m_TimerSinceLastHit = REGENCOLDDOWN;
+		m_CurrentHealth += floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
+		m_AddNextFrameHP = deltaTime * m_HPRegen + m_AddNextFrameHP - floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
+		if (m_CurrentHealth > m_maxHealth)
+		{
+			m_CurrentHealth = m_maxHealth;
+		}
+	}
+	else
+	{
+		m_TimerSinceLastHit += deltaTime; 
+	}
 }
 void Player::DrawPlayer(Shader& basicSh
 	, Shader& HUDSh
@@ -1930,63 +1956,64 @@ void Player::DrawPlayer(Shader& basicSh
 		}
 	}
 
-	
-	HUDSh.Bind();
-	ErrorGL(glBindVertexArray(m_HUDDD));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
-	ChangeTransform(m_HPOffset[0], m_HPOffset[1], transform);
-	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
-	ChangeScale(1, 1, scale);
-	HUDSh.SetUniformMat4(HUDScale, scale);
-	HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
-
-
-	int DrawHP = m_CurrentHealth;
-	int DrawMaxHP = m_maxHealth;
-	DrawHP -= 25;
-	DrawMaxHP -= 25;
-	int i = 0;
-	int j = 0;
-	while (DrawHP > 0)
 	{
+		HUDSh.Bind();
+		ErrorGL(glBindVertexArray(m_HUDDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
+		ChangeTransform(m_HPOffset[0], m_HPOffset[1], transform);
+		HUDSh.SetUniformMat4(HUDBasicLocation, transform);
+		ChangeScale(1, 1, scale);
+		HUDSh.SetUniformMat4(HUDScale, scale);
+		HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
+
+
+		int DrawHP = m_CurrentHealth;
+		int DrawMaxHP = m_maxHealth;
+		DrawHP -= 25;
+		DrawMaxHP -= 25;
+		int i = 0;
+		int j = 0;
+		while (DrawHP > 0)
+		{
+			ChangeTransform(m_SlotGap * i, m_SlotGap * j, transform);
+			HUDSh.SetUniformMat4(HUDTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			DrawHP -= 25;
+			DrawMaxHP -= 25;
+			i--;
+			if (i <= -8)
+			{
+				i = 0;
+				j--;
+			}
+		}
+		DrawHP += 25;
+		if ((int)floorf(DrawHP / 5.0f) != 5)
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[(int)floorf(DrawHP / 5.0f)]));
+		}
+		else
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
+		}
 		ChangeTransform(m_SlotGap * i, m_SlotGap * j, transform);
 		HUDSh.SetUniformMat4(HUDTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		DrawHP -= 25;
-		DrawMaxHP -= 25;
-		i--;
-		if (i <= -8)
+
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[0]));
+		while (DrawMaxHP > 0)
 		{
-			i = 0;
-			j--;
+			i--;
+			if (i <= -8)
+			{
+				i = 0;
+				j--;
+			}
+			ChangeTransform(m_SlotGap * i, m_SlotGap * j, transform);
+			HUDSh.SetUniformMat4(HUDTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			DrawMaxHP -= 25;
+
 		}
-	}
-	DrawHP += 25;
-	if ((int)floorf(DrawHP / 5.0f) != 5)
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[(int)floorf(DrawHP / 5.0f)]));
-	}
-	else
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
-	}
-	ChangeTransform(m_SlotGap* i, m_SlotGap* j, transform);
-	HUDSh.SetUniformMat4(HUDTransform, transform);
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[0]));
-	while (DrawMaxHP > 0)
-	{
-		i--;
-		if (i <= -8)
-		{
-			i = 0;
-			j--;
-		}
-		ChangeTransform(m_SlotGap* i, m_SlotGap* j, transform);
-		HUDSh.SetUniformMat4(HUDTransform, transform);
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		DrawMaxHP -= 25;
-		
 	}
 }

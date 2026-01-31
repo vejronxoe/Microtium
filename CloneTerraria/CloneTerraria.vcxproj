@@ -74,6 +74,11 @@
     <Text Include="res\shaders\vertexShaderTree.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\textures\0To5HP.png" />
+    <Image Include="res\textures\10To15HP.png" />
+    <Image Include="res\textures\15To20HP.png" />
+    <Image Include="res\textures\20To25HP.png" />
+    <Image Include="res\textures\5To10HP.png" />
     <Image Include="res\textures\Asphalt.png" />
     <Image Include="res\textures\basicArrow.png" />
     <Image Include="res\textures\basicBullet.png" />
