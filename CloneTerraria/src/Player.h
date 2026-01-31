@@ -86,6 +86,7 @@ private:
 	unsigned int m_HeadDD;
 	unsigned int m_BootsAnimTex;
 	unsigned int m_ItemInHandDD;
+	unsigned int m_BlockInHandDD;
 	unsigned int m_HandTex;
 	unsigned int m_LegAnimTex;
 	unsigned int m_BodyAnimTex;

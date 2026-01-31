@@ -258,7 +258,8 @@ Player::Player(unsigned int eob
 	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/pistolHand.png");
 
 
-	m_ItemInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
+	m_ItemInHandDD = CreateDrawData(eob, 2.5f, 1, 0, -1.5f);
+	m_BlockInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
 	m_BodyAnimDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1.0f / 5.0f);
@@ -1506,15 +1507,17 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 	{
-		if (m_WeaponType > weaponNot && Input::LeftMouseHold)
+		if (m_WeaponType > weaponNot)
 		{
-			m_ArmsBehaviour = ArmUsing;
+			if (Input::LeftMouseHold)
+			{
+				m_ArmsBehaviour = ArmUsing;
+			}
+			else
+			{
+				m_ArmsBehaviour = ArmStanding;
+			}
 		}
-		else
-		{
-			m_ArmsBehaviour = ArmStanding;
-		}
-
 		if (m_FloorHit)
 		{
 			m_WalkingTimer += deltaTime;
@@ -1724,8 +1727,16 @@ void Player::DrawPlayer(Shader& basicSh
 				break;
 
 			default:
-				ErrorGL(glBindVertexArray(m_ItemInHandDD));
+				if (m_Placeable)
+				{
+					ErrorGL(glBindVertexArray(m_BlockInHandDD));
+				}
+				else
+				{
+					ErrorGL(glBindVertexArray(m_ItemInHandDD));
+				}
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
+
 				break;
 			}
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -1739,7 +1750,6 @@ void Player::DrawPlayer(Shader& basicSh
 		}
 
 	}
-
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_HUDDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
@@ -1776,6 +1786,7 @@ void Player::DrawPlayer(Shader& basicSh
 				}
 
 			}
+			
 			ChangeScale(0.8f, 0.8f, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
 
@@ -1838,6 +1849,23 @@ void Player::DrawPlayer(Shader& basicSh
 		float left = (m_SlotVertices[0] + 9 * m_SlotGap);
 		drawNumber(Window::height - m_SlotVertices[3] - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
 
+
+		HUDSh.Bind();
+		ErrorGL(glBindVertexArray(m_HUDDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+		ChangeTransform(m_HPOffset[0], m_HPOffset[1], transform);
+		HUDSh.SetUniformMat4(HUDBasicLocation, transform);
+		ChangeScale(1, 1, scale);
+		HUDSh.SetUniformMat4(HUDScale, scale);
+		HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
+		
+		for (int i = -3; i > -11; i--)
+		{
+			ChangeTransform(0, m_SlotGap * i, transform);
+			HUDSh.SetUniformMat4(HUDTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		
 	}
 	else
 	{
@@ -1902,14 +1930,17 @@ void Player::DrawPlayer(Shader& basicSh
 		}
 	}
 
+	
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_HUDDD));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D,m_HPTexture[4]));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HPTexture[4]));
 	ChangeTransform(m_HPOffset[0], m_HPOffset[1], transform);
 	HUDSh.SetUniformMat4(HUDBasicLocation, transform);
 	ChangeScale(1, 1, scale);
 	HUDSh.SetUniformMat4(HUDScale, scale);
 	HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
+
+
 	int DrawHP = m_CurrentHealth;
 	int DrawMaxHP = m_maxHealth;
 	DrawHP -= 25;
