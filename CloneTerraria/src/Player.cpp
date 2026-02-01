@@ -36,6 +36,13 @@ enum InHandDDTex
 	, InHandCanon
 	, InHandPistol
 };
+enum PartsOfArmor
+{
+	armorHelmet = 0
+	, armorChestPlate
+	, armorPants
+	, armorShoes
+};
 unsigned char AmmunicionToProjectileType(unsigned char ammo)
 {
 	switch (ammo)
@@ -108,7 +115,7 @@ void getStructureVertices(int x
 }
 Player::Player(unsigned int eob
 	, unsigned int* texturesIDs)
-{	
+{
 
 	m_FloorHit = false;
 	m_CeilHit = false;
@@ -138,7 +145,7 @@ Player::Player(unsigned int eob
 	m_UseSlot = 0;
 	m_HUDUseSlot = 1;
 	m_AimingAtSlot = -1;
-	for (int i = 0; i < 52; i++)
+	for (int i = 0; i < 60; i++)
 	{
 		m_PlayerSlots[i] = i_Nothing;
 	}
@@ -175,7 +182,7 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[2] = 1;
 	m_PlayerSlots[3] = i_Pistol;
 	m_AmountInSlots[3] = 1;
-	
+
 	m_PlayerSlots[4] = i_BasicArrow;
 	m_PlayerSlots[5] = i_BleedArrow;
 	m_PlayerSlots[6] = i_BouncingArrow;
@@ -188,19 +195,27 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[13] = i_BleedBullet;
 	m_PlayerSlots[14] = i_BouncingBullet;
 	m_PlayerSlots[15] = i_FireBullet;
-
-	m_AmountInSlots[4]  = 20;
-	m_AmountInSlots[5]  = 20;
-	m_AmountInSlots[6]  = 20;
-	m_AmountInSlots[7]  = 20;
-	m_AmountInSlots[8]  = 20;
-	m_AmountInSlots[9]  = 20;
+	m_PlayerSlots[16] = i_WoodHelmet;
+	m_PlayerSlots[17] = i_WoodChestPlate;
+	m_PlayerSlots[18] = i_WoodPants;
+	m_PlayerSlots[19] = i_WoodShoes;
+	
+	m_AmountInSlots[4] = 20;
+	m_AmountInSlots[5] = 20;
+	m_AmountInSlots[6] = 20;
+	m_AmountInSlots[7] = 20;
+	m_AmountInSlots[8] = 20;
+	m_AmountInSlots[9] = 20;
 	m_AmountInSlots[10] = 20;
 	m_AmountInSlots[11] = 20;
 	m_AmountInSlots[12] = 20;
 	m_AmountInSlots[13] = 20;
 	m_AmountInSlots[14] = 20;
 	m_AmountInSlots[15] = 20;
+	m_AmountInSlots[16] = 1;
+	m_AmountInSlots[17] = 1;
+	m_AmountInSlots[18] = 1;
+	m_AmountInSlots[19] = 1;
 
 
 	m_PlayerSlots[41] = i_CopperSword;
@@ -232,7 +247,7 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_Dirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_Ice] = texturesIDs[t_Ice];
 	m_AllItemTextures[i_Asphalt] = texturesIDs[t_Asphalt];
-	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform]; 
+	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform];
 	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
 	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
 	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
@@ -252,9 +267,14 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_BleedBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
 	m_AllItemTextures[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
 	m_AllItemTextures[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
+	m_AllItemTextures[i_WoodHelmet] = CreateTextureRGBA("res/textures/woodHelmet.png");
+	m_AllItemTextures[i_WoodChestPlate] = CreateTextureRGBA("res/textures/woodChestPlate.png");
+	m_AllItemTextures[i_WoodPants] = CreateTextureRGBA("res/textures/woodPants.png");
+	m_AllItemTextures[i_WoodShoes] = CreateTextureRGBA("res/textures/woodShoes.png");
+
 
 	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
-	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 2, 1, 1, -1);
+	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 1.5f, 0.5f, 1, -1);
 	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
 	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
 	m_ItemsInHandTexture[InHandCanon] = CreateTextureRGBA("res/textures/canonHand.png");
@@ -299,7 +319,12 @@ Player::Player(unsigned int eob
 	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
 	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
+	
 	SwapItemStats();
+	SwapArmor(16, armorHelmet);
+	SwapArmor(17, armorChestPlate);
+	SwapArmor(18, armorPants);
+	SwapArmor(19, armorShoes);
 }
 void Player::DamagePlayer(int Damage)
 {
@@ -386,9 +411,99 @@ void Player::SwapItemStats()
 
 
 }
+void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
+{
+	int holder = m_PlayerSlots[SlotIndex];
+	switch (armorPart)
+	{
+	case armorHelmet:
+		m_PlayerSlots[SlotIndex] = m_PlayerSlots[52];
+		m_PlayerSlots[52] = holder;
+		ErrorGL(glDeleteTextures(1, &m_HeadTex));
+		switch (holder)
+		{
+		case i_Nothing:
+			m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
+			break;
+		case i_WoodHelmet:
+			m_HeadTex = CreateTextureRGBA("res/textures/headWood.png");
+			break;
+		default:
+			std::cout << "Error Player.cpp unknow Helmet" << holder << std::endl;
+			m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
+			break;
+		}
+		break;
+	case armorChestPlate:
+		m_PlayerSlots[SlotIndex] = m_PlayerSlots[53];
+		m_PlayerSlots[53] = holder;
+		ErrorGL(glDeleteTextures(1, &m_BodyAnimTex));
+		ErrorGL(glDeleteTextures(1, &m_HandTex));
+		switch (holder)
+		{
+		case i_Nothing:
+			m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
+			m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
+			break;
+		case i_WoodChestPlate:
+			m_HandTex = CreateTextureRGBA("res/textures/handWood.png");
+			m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimWood.png");
+			break;
+		default:
+			std::cout << "Error Player.cpp unknow ChestPlate" << holder << std::endl;
+			m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
+			m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
+			break;
+		}
+		break;
+	case armorPants:
+		m_PlayerSlots[SlotIndex] = m_PlayerSlots[54];
+		m_PlayerSlots[54] = holder;
+		ErrorGL(glDeleteTextures(1, &m_LegAnimTex));
+		switch (holder)
+		{
+		case i_Nothing:
+			m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
+			break;
+		case i_WoodPants:
+			m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimWood.png");
+			break;
+		default:
+			std::cout << "Error Player.cpp unknow Pants" << holder << std::endl;
+			m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
+			break;
+		}
+		break;
+	case armorShoes:
+		m_PlayerSlots[SlotIndex] = m_PlayerSlots[55];
+		m_PlayerSlots[55] = holder;
+		ErrorGL(glDeleteTextures(1, &m_BootsAnimTex));
+		switch (holder)
+		{
+		case i_Nothing:
+			m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
+			break;
+		case i_WoodShoes:
+			m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimWood.png");
+			break;
+		default:
+			std::cout << "Error Player.cpp unknow Shoes" << holder << std::endl;
+			m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
+			break;
+		}
+
+		break;
+	default:
+		std::cout << "Error Player.cpp unknow armor part: " << armorPart << std::endl;
+		break;
+	}
+	if (m_PlayerSlots[SlotIndex] == i_Nothing)
+	{
+		m_AmountInSlots[SlotIndex] = 0;
+	}
+}
 bool Player::IsItStackble(unsigned short int item)
 {
-	bool isItStackble = true;
 	switch (item)
 	{
 	case i_CopperHammer:
@@ -396,10 +511,16 @@ bool Player::IsItStackble(unsigned short int item)
 	case i_CopperAxe:
 	case i_CopperSword:
 	case i_WoodBow:
-		isItStackble = false;
-		break;
+	case i_Pistol:
+	case i_Cannon:
+	case i_WoodHelmet:
+	case i_WoodChestPlate:
+	case i_WoodPants:
+	case i_WoodShoes:
+		return false;
+	default: 
+		return true;
 	}
-	return isItStackble;
 }
 char Player::FindItemInInv(unsigned char item)
 {
@@ -1526,7 +1647,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				m_ArmsBehaviour = ArmUsing;
 			}
-			else
+			else if(m_ArmsBehaviour == ArmUsing)
 			{
 				m_ArmsBehaviour = ArmStanding;
 			}
@@ -1733,9 +1854,7 @@ void Player::DrawPlayer(Shader& basicSh
 			handSh.SetUniformMat4(handScale, scale);
 			ChangeRotation(m_ArmRotation, rotation);
 			handSh.SetUniformMat4(handRotation, rotation);
-			ErrorGL(glBindVertexArray(m_HandDD));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			
 			switch (m_PlayerSlots[0])
 			{
 
@@ -1762,9 +1881,11 @@ void Player::DrawPlayer(Shader& basicSh
 					ErrorGL(glBindVertexArray(m_ItemInHandDD));
 				}
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[0]]));
-
 				break;
 			}
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			ErrorGL(glBindVertexArray(m_HandDD));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_HandTex));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		else

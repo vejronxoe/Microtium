@@ -86,7 +86,9 @@
     <Image Include="res\textures\bleedArrow.png" />
     <Image Include="res\textures\bleedBullet.png" />
     <Image Include="res\textures\bodyAnimDefault.png" />
+    <Image Include="res\textures\bodyAnimWood.png" />
     <Image Include="res\textures\bootsAnimDefault.png" />
+    <Image Include="res\textures\bootsAnimWood.png" />
     <Image Include="res\textures\bouncingArrow.png" />
     <Image Include="res\textures\bouncingBullet.png" />
     <Image Include="res\textures\bouncingCannonBall.png" />
@@ -122,13 +124,16 @@
     <Image Include="res\textures\forestSmallBush.png" />
     <Image Include="res\textures\fullGrassBlock.png" />
     <Image Include="res\textures\handDefault.png" />
+    <Image Include="res\textures\handWood.png" />
     <Image Include="res\textures\headDefault.png" />
+    <Image Include="res\textures\headWood.png" />
     <Image Include="res\textures\ice.png" />
     <Image Include="res\textures\inventorySlot.png" />
     <Image Include="res\textures\iron.png" />
     <Image Include="res\textures\leftGrassBlock.png" />
     <Image Include="res\textures\leftRightGrassBlock.png" />
     <Image Include="res\textures\legAnimDefault.png" />
+    <Image Include="res\textures\legAnimWood.png" />
     <Image Include="res\textures\lightDamageBlock.png" />
     <Image Include="res\textures\missingDownGrassBlock.png" />
     <Image Include="res\textures\missingLeftGrassBlock.png" />
@@ -150,7 +155,11 @@
     <Image Include="res\textures\topRightGrassBlock.png" />
     <Image Include="res\textures\trash.png" />
     <Image Include="res\textures\useInventorySlot.png" />
+    <Image Include="res\textures\woodChestPlate.png" />
+    <Image Include="res\textures\woodHelmet.png" />
     <Image Include="res\textures\woodLog.png" />
+    <Image Include="res\textures\woodPants.png" />
+    <Image Include="res\textures\woodShoes.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

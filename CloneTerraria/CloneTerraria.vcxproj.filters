@@ -373,5 +373,32 @@
     <Image Include="res\textures\20To25HP.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\woodHelmet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodPants.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodChestPlate.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodShoes.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\handWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\headWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bodyAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\legAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bootsAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

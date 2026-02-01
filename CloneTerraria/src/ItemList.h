@@ -30,7 +30,10 @@ enum Items
 	, i_BleedBullet
 	, i_BouncingBullet
 	, i_FireBullet
-
+	, i_WoodHelmet
+	, i_WoodChestPlate
+	, i_WoodPants
+	, i_WoodShoes
 };
 enum Structures
 {
