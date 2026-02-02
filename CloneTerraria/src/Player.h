@@ -143,4 +143,5 @@ public:
 	short int m_Damage;
 	bool m_Placeable;
 	bool m_LargePlaceable;
+	bool m_Consume;
 };

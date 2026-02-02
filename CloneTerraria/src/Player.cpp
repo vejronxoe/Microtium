@@ -321,10 +321,10 @@ Player::Player(unsigned int eob
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
 	
 	SwapItemStats();
-	SwapArmor(16, armorHelmet);
+	/*SwapArmor(16, armorHelmet);
 	SwapArmor(17, armorChestPlate);
 	SwapArmor(18, armorPants);
-	SwapArmor(19, armorShoes);
+	SwapArmor(19, armorShoes);*/
 }
 void Player::DamagePlayer(int Damage)
 {
@@ -344,6 +344,7 @@ void Player::SwapItemStats()
 	m_Range = 4;
 	m_Damage = 0;
 	m_WeaponType = weaponNot;
+	m_Consume = false;
 	m_Placeable = false;
 	m_LargePlaceable = false;
 	switch (m_PlayerSlots[0])
@@ -386,6 +387,14 @@ void Player::SwapItemStats()
 			m_Range = 0;
 			m_WeaponType = weaponGun;
 			m_CooldownToUse = 0.4;
+			break;
+		case i_WoodHelmet:
+		case i_WoodChestPlate:
+		case i_WoodPants:
+		case i_WoodShoes:
+			m_Range = 0;
+			m_Consume = true;
+			m_CooldownToUse = 0.8;
 			break;
 		case i_BleedArrow:
 		case i_BasicArrow:
@@ -1491,6 +1500,56 @@ void Player::EveryFrame(float deltaTime
 							}
 							SwapItemStats();
 						}
+					}
+					else if (m_Consume)
+					{
+						switch (m_PlayerSlots[0])
+						{
+						case i_WoodHelmet:
+							if (m_UseSlot == 0)
+							{
+								SwapArmor(m_HUDUseSlot, armorHelmet);
+							}
+							else
+							{
+								SwapArmor(0,armorHelmet);
+							}
+							break;
+						case i_WoodChestPlate:
+							if (m_UseSlot == 0)
+							{
+								SwapArmor(m_HUDUseSlot, armorChestPlate);
+							}
+							else
+							{
+								SwapArmor(0, armorChestPlate);
+							}
+							break;
+						case i_WoodPants:
+							if (m_UseSlot == 0)
+							{
+								SwapArmor(m_HUDUseSlot, armorPants);
+							}
+							else
+							{
+								SwapArmor(0, armorPants);
+							}
+							break;
+						case i_WoodShoes:
+							if (m_UseSlot == 0)
+							{
+								SwapArmor(m_HUDUseSlot, armorShoes);
+							}
+							else
+							{
+								SwapArmor(0, armorShoes);
+							}
+							break;
+						default:
+							std::cout << "Error Player.cpp Unknow consumable " << m_PlayerSlots[0] << std::endl;
+							break;
+						}
+						SwapItemStats();
 					}
 					m_UseItemTimer = 0;
 
