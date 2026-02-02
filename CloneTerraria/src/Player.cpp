@@ -55,6 +55,8 @@ unsigned char AmmunicionToProjectileType(unsigned char ammo)
 		return p_BouncingCannonBall;
 	case i_FireCannonBall:
 		return p_FireCannonBall;
+	case i_Sand:
+		return p_Sand;
 	case i_BasicArrow:
 		return p_BasicArrow;
 	case i_BleedArrow:
@@ -321,10 +323,7 @@ Player::Player(unsigned int eob
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
 	
 	SwapItemStats();
-	/*SwapArmor(16, armorHelmet);
-	SwapArmor(17, armorChestPlate);
-	SwapArmor(18, armorPants);
-	SwapArmor(19, armorShoes);*/
+	
 }
 void Player::DamagePlayer(int Damage)
 {
@@ -1129,7 +1128,7 @@ void Player::EveryFrame(float deltaTime
 			else if (m_WeaponType)
 			{
 				unsigned char arrows[ARROWSTYPES] = { i_BasicArrow, i_BleedArrow, i_BouncingArrow, i_FireArrow };
-				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_BleedCannonBall, i_BouncingCannonBall, i_FireCannonBall };
+				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_BleedCannonBall, i_BouncingCannonBall, i_FireCannonBall, i_Sand};
 				unsigned char bullets[BULLETSTYPES] = {i_BasicBullet, i_BleedBullet, i_BouncingBullet, i_FireBullet};
 				switch (m_WeaponType)
 				{
