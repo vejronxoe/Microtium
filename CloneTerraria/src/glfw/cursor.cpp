@@ -82,9 +82,9 @@ void DrawCursor(unsigned int* CursorTextures
 			fontSh.Bind();
 			ErrorGL(glBindVertexArray(fontDrawData));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
-			float right = player.m_SlotVertices[2] + Input::XRawMousePos;
-			float left = player.m_SlotVertices[0] + Input::XRawMousePos;
-			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
+			float right = player.m_InvOffset[0] + player.m_HalfOfSlotLeanght + Input::XRawMousePos;
+			float left = player.m_InvOffset[0] - player.m_HalfOfSlotLeanght + Input::XRawMousePos;
+			drawNumber(Window::height - player.m_InvOffset[1] - player.m_HalfOfSlotLeanght - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
 		}
 		else
 		{
@@ -95,9 +95,9 @@ void DrawCursor(unsigned int* CursorTextures
 			fontSh.Bind();
 			ErrorGL(glBindVertexArray(fontDrawData));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
-			float right = player.m_SlotVertices[2] + Input::XRawMousePos;
-			float left = player.m_SlotVertices[0] + Input::XRawMousePos;
-			drawNumber(Window::height - player.m_SlotVertices[3] - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
+			float right = player.m_InvOffset[0] + player.m_HalfOfSlotLeanght + Input::XRawMousePos;
+			float left = player.m_InvOffset[0] - player.m_HalfOfSlotLeanght + Input::XRawMousePos;
+			drawNumber(Window::height - player.m_InvOffset[0] + player.m_HalfOfSlotLeanght - Input::YRawMousePos, left, right, player.m_AmountInSlots[0], fontDrawData, scale, transform, fontSh);
 
 		}
 		return;

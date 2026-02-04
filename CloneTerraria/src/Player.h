@@ -92,7 +92,6 @@ private:
 	unsigned int m_BodyAnimTex;
 	unsigned int m_HeadTex;
 private:
-	float m_InvOffset[2];
 	unsigned int m_HUDDD;
 	unsigned int m_SlotTexture;
 	unsigned int m_TrashCanSlotTexture;
@@ -114,7 +113,8 @@ public:
 	int m_maxHealth;
 public:
 
-	float m_SlotVertices[4];
+	float m_InvOffset[2];
+	float m_HalfOfSlotLeanght;
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;
 	unsigned char m_AimingAtSlot;

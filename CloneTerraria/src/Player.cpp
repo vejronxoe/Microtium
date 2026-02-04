@@ -49,7 +49,7 @@ unsigned char AmmunicionToProjectileType(unsigned char ammo)
 	{
 	case i_BasicCannonBall:
 		return p_BasicCannonBall;
-	case i_BleedCannonBall:
+	case i_BleedCannonBall:	
 		return p_BleedCannonBall;
 	case i_BouncingCannonBall:
 		return p_BouncingCannonBall;
@@ -114,6 +114,25 @@ void getStructureVertices(int x
 		vertices[3] = y;
 		break;
 	}
+}
+char WhatPartOfArmor(unsigned char item)
+{
+	switch (item)
+	{
+	case i_WoodHelmet:
+		return armorHelmet;
+	case i_WoodChestPlate:
+		return armorChestPlate;
+	case i_WoodPants:
+		return armorPants;
+	case i_WoodShoes:
+		return armorShoes;
+	case i_Nothing:
+		return -1;
+	default:
+		return -2;
+	}
+
 }
 Player::Player(unsigned int eob
 	, unsigned int* texturesIDs)
@@ -299,8 +318,7 @@ Player::Player(unsigned int eob
 	float right = ((workSpace - canNotDivide) / (18.0f + Window::scaleOfHUD)) + left;
 	float down = top - (right - left);
 	m_SlotGap = right - left + (right - left)/16.0f;
-	m_SlotVertices[0] = left; m_SlotVertices[1] = 0.01f * Window::height;
-	m_SlotVertices[2] = right; m_SlotVertices[3] = m_SlotVertices[1] + (right - left);
+	
 	
 	m_InvOffset[0] = (left + right) / 2.0f;
 	m_HPOffset[0] = Window::width - (left + right) / 2.0f;
@@ -310,6 +328,7 @@ Player::Player(unsigned int eob
 	top -= m_InvOffset[1];
 	left -= m_InvOffset[0];
 	right -= m_InvOffset[0];
+	m_HalfOfSlotLeanght = -left;
 	m_HUDDD = CreateDrawData(eob, top, down, right, left);
 	m_HPTexture[0] = CreateTextureRGBA("res/textures/0To5HP.png");
 	m_HPTexture[1] = CreateTextureRGBA("res/textures/5To10HP.png");
@@ -422,6 +441,7 @@ void Player::SwapItemStats()
 void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 {
 	int holder = m_PlayerSlots[SlotIndex];
+
 	switch (armorPart)
 	{
 	case armorHelmet:
@@ -505,6 +525,7 @@ void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 		std::cout << "Error Player.cpp unknow armor part: " << armorPart << std::endl;
 		break;
 	}
+
 	if (m_PlayerSlots[SlotIndex] == i_Nothing)
 	{
 		m_AmountInSlots[SlotIndex] = 0;
@@ -657,6 +678,10 @@ void Player::EveryFrame(float deltaTime
 {
 	
 	{
+		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
+								, Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
+								, m_InvOffset[0] + m_HalfOfSlotLeanght
+								, Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght};
 		if (m_ArmsBehaviour != ArmUsing)
 		{
 			m_AimingAtSlot = 0;
@@ -668,18 +693,27 @@ void Player::EveryFrame(float deltaTime
 					{
 						if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != i_Nothing)
 						{
-							if (m_SlotGap * j + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * j + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * i + m_SlotVertices[3] > Input::YRawMousePos)
+							if (m_SlotGap * j + slotVertices[0] < Input::XRawMousePos && m_SlotGap * j + slotVertices[2] > Input::XRawMousePos)
 							{
-								m_AimingAtSlot = i * 10 + j + 1;
+								if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
+								{
+									m_AimingAtSlot = i * 10 + j + 1;
+								}
 							}
 						}
 					}
 				}
 				if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[51] != i_Nothing)
 				{
-					if (m_SlotGap * 9 + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + m_SlotVertices[2] > Input::XRawMousePos && m_SlotGap * 5 + m_SlotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + m_SlotVertices[3] > Input::YRawMousePos)
+
+					if (m_SlotGap * 9 + slotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + slotVertices[2] > Input::XRawMousePos)
 					{
-						m_AimingAtSlot = 51;
+						if (m_SlotGap * 5 + slotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + slotVertices[3] > Input::YRawMousePos)
+						{
+
+
+							m_AimingAtSlot = 51;
+						}
 					}
 				}
 			}
@@ -689,9 +723,12 @@ void Player::EveryFrame(float deltaTime
 				{
 					if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i] != i_Nothing)
 					{
-						if (m_SlotGap * i + m_SlotVertices[0] < Input::XRawMousePos && m_SlotGap * i + m_SlotVertices[2] > Input::XRawMousePos && + m_SlotVertices[1] < Input::YRawMousePos && + m_SlotVertices[3] > Input::YRawMousePos)
+						if (m_SlotGap * i + slotVertices[0] < Input::XRawMousePos && m_SlotGap * i + slotVertices[2] > Input::XRawMousePos)
 						{
-							m_AimingAtSlot = i + 1;
+							if (slotVertices[1] < Input::YRawMousePos && slotVertices[3] > Input::YRawMousePos)
+							{
+								m_AimingAtSlot = i + 1;
+							}
 						}
 					}
 				}
@@ -797,8 +834,6 @@ void Player::EveryFrame(float deltaTime
 				}
 
 			}
-
-
 			if (Input::MouseWheel && !m_IsInventoryOpen)
 			{
 				m_HUDUseSlot += Input::MouseWheel;
@@ -883,6 +918,74 @@ void Player::EveryFrame(float deltaTime
 			{
 				m_TimerSplitingItem = 1;
 				m_AddNextFrameDropItem = 0;
+			}
+			if (m_IsInventoryOpen)
+			{
+				if (m_AimingAtSlot == 0)
+				{
+					slotVertices[0] = m_HPOffset[0] - m_HalfOfSlotLeanght;
+					slotVertices[1] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] - m_HalfOfSlotLeanght);
+					slotVertices[2] = m_HPOffset[0] + m_HalfOfSlotLeanght;
+					slotVertices[3] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] + m_HalfOfSlotLeanght);
+					for (int i = 0; i < 8; i++)
+					{
+						if (m_PlayerSlots[52 + i] != i_Nothing || m_PlayerSlots[0] != i_Nothing)
+						{
+							if (slotVertices[0] < Input::XRawMousePos && slotVertices[2] > Input::XRawMousePos)
+							{
+								if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
+								{
+									m_AimingAtSlot = 52 + i;
+								}
+							}
+						}
+					}
+					
+					if (Input::LeftMousePress && m_AimingAtSlot != 0 )
+					{
+						if (m_UseSlot == 0)
+						{
+							m_PlayerSlots[0] = i_Nothing;
+							m_AmountInSlots[0] = 0;
+						}
+						char typeOfArmor = WhatPartOfArmor(m_PlayerSlots[0]);
+
+						if (typeOfArmor == -1)
+						{
+							
+							switch (m_AimingAtSlot)
+							{
+							case 52:
+								SwapArmor(0, armorHelmet);
+								break;
+							case 53:
+								SwapArmor(0, armorChestPlate);
+								break;
+							case 54:
+								SwapArmor(0, armorPants);
+								break;
+							case 55:
+								SwapArmor(0, armorShoes);
+								break;
+							}
+							if (m_UseSlot == 0)
+							{
+								m_UseSlot = m_AimingAtSlot;
+							}
+							SwapItemStats();
+						}
+						else if (typeOfArmor >= 0)
+						{
+							SwapArmor(0, typeOfArmor);
+							if (m_UseSlot == 0)
+							{
+								m_UseSlot = m_AimingAtSlot;
+							}
+							SwapItemStats();
+						}
+					}
+				}
+				
 			}
 		}
 		if (Input::EscapePress)
@@ -2044,15 +2147,15 @@ void Player::DrawPlayer(Shader& basicSh
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				float right = (m_SlotVertices[2] + j * m_SlotGap);
-				float left = (m_SlotVertices[0] + j * m_SlotGap);
-				drawNumber(Window::height - m_SlotVertices[3] - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDD, scale, transform, fontSh);
+				float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
+				float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
+				drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDD, scale, transform, fontSh);
 			}
 		}
 		
-		float right = (m_SlotVertices[2] + 9 * m_SlotGap);
-		float left = (m_SlotVertices[0] + 9 * m_SlotGap);
-		drawNumber(Window::height - m_SlotVertices[3] - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
+		float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
+		float left = (m_InvOffset[0] - m_HalfOfSlotLeanght - 9 * m_SlotGap);
+		drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
 
 
 		HUDSh.Bind();
@@ -2071,6 +2174,19 @@ void Player::DrawPlayer(Shader& basicSh
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		
+		ChangeScale(0.8f, 0.8f, scale);
+		HUDSh.SetUniformMat4(HUDScale, scale);
+
+		for (int i = -3; i > -11; i--)
+		{
+			if (m_PlayerSlots[52 - i - 3])
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[52 - i - 3]]));
+				ChangeTransform(0, m_SlotGap * i, transform);
+				HUDSh.SetUniformMat4(HUDTransform, transform);
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			}
+		}
 	}
 	else
 	{
@@ -2129,9 +2245,9 @@ void Player::DrawPlayer(Shader& basicSh
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 		for (int j = 0; j < 10; j++)
 		{
-			float right = (m_SlotVertices[2] + j * m_SlotGap);
-			float left = (m_SlotVertices[0] + j * m_SlotGap);
-			drawNumber(Window::height - m_SlotVertices[3], left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDD, scale, transform, fontSh);
+			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
+			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
+			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDD, scale, transform, fontSh);
 		}
 	}
 
