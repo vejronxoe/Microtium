@@ -141,6 +141,7 @@ public:
 	unsigned char m_HammerStreanght;
 	unsigned char m_Range;
 	short int m_Damage;
+	short int m_ArmorClass;
 	bool m_Placeable;
 	bool m_LargePlaceable;
 	bool m_Consume;

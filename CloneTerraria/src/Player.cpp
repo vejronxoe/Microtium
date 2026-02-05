@@ -115,6 +115,26 @@ void getStructureVertices(int x
 		break;
 	}
 }
+short int ArmorClass(unsigned char item)
+{
+	switch (item)
+	{
+	case i_WoodHelmet:
+		return 1;
+	case i_WoodChestPlate:
+		return 2;
+	case i_WoodPants:
+		return 1;
+	case i_WoodShoes:
+		return 1;
+	case i_Nothing:
+		return 0;
+	default:
+		std::cout << "Error Player.cpp UnKnow ArmorClass" << std::endl;
+		break;
+	}
+	return 0;
+}
 char WhatPartOfArmor(unsigned char item)
 {
 	switch (item)
@@ -143,6 +163,7 @@ Player::Player(unsigned int eob
 	m_WallHit = false;
 	m_CoyoteTimer = 0;
 	m_JumpTimer = 0;
+	m_ArmorClass = 0;
 	m_CanJump = false;
 	m_DirectionLook = -1;
 	m_JumpPower = 12;
@@ -347,7 +368,14 @@ Player::Player(unsigned int eob
 void Player::DamagePlayer(int Damage)
 {
 	m_TimerSinceLastHit = 0;
-	m_CurrentHealth - Damage;
+	if (Damage - m_ArmorClass >= 0)
+	{
+		m_CurrentHealth -= Damage - m_ArmorClass;
+	}
+	else
+	{
+		m_CurrentHealth--;
+	}
 	if (m_CurrentHealth < 0)
 	{
 		m_CurrentHealth = 0;
@@ -461,6 +489,7 @@ void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 			m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 			break;
 		}
+		m_ArmorClass += ArmorClass(m_PlayerSlots[52]);
 		break;
 	case armorChestPlate:
 		m_PlayerSlots[SlotIndex] = m_PlayerSlots[53];
@@ -483,6 +512,7 @@ void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 			m_BodyAnimTex = CreateTextureRGBA("res/textures/bodyAnimDefault.png");
 			break;
 		}
+		m_ArmorClass += ArmorClass(m_PlayerSlots[53]);
 		break;
 	case armorPants:
 		m_PlayerSlots[SlotIndex] = m_PlayerSlots[54];
@@ -501,6 +531,7 @@ void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 			m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
 			break;
 		}
+		m_ArmorClass += ArmorClass(m_PlayerSlots[54]);
 		break;
 	case armorShoes:
 		m_PlayerSlots[SlotIndex] = m_PlayerSlots[55];
@@ -519,13 +550,13 @@ void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
 			m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
 			break;
 		}
-
+		m_ArmorClass += ArmorClass(m_PlayerSlots[55]);
 		break;
 	default:
 		std::cout << "Error Player.cpp unknow armor part: " << armorPart << std::endl;
 		break;
 	}
-
+	m_ArmorClass -= ArmorClass(m_PlayerSlots[SlotIndex]);
 	if (m_PlayerSlots[SlotIndex] == i_Nothing)
 	{
 		m_AmountInSlots[SlotIndex] = 0;
