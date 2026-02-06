@@ -1,4 +1,5 @@
 #pragma once
+#define GRAVITY -40
 enum Items
 {
 	i_Nothing = 0

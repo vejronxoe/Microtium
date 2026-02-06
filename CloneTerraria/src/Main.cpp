@@ -20,7 +20,7 @@
 #include"DroppedItems.h"
 #include"flora.h"
 #include"projectile.h"
-
+#include"Enemy.h"
 
 int main()
 {
@@ -215,6 +215,18 @@ int main()
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 200, -100, 100, blockTextures);
 	
 
+	////
+	////
+	//
+	//
+	// 
+	
+	Enemy zombie(enemyZombie, 100, 100, eob);
+
+	// 
+	//
+	//
+	//////
 
 
 
@@ -235,7 +247,7 @@ int main()
 		if (timer >= 1)
 		{
 			
-			std::cout << fps <<  std::endl;
+			std::cout << fps << "   "<< zombie.m_Velocity[0] <<" "<< zombie.m_Velocity[1] << std::endl;
 			timer = 0;
 			fps = 0;
 		}
@@ -251,6 +263,7 @@ int main()
 			}
 
 		}
+		zombie.EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
 
 		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
@@ -353,6 +366,9 @@ int main()
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			}
 		}
+		basicSh.Bind();
+		zombie.DrawEnemy(basicSh, transform);
+
 		advancedSh.Bind();
 		for (int i = 0; i < projectiles.size(); i++)
 		{

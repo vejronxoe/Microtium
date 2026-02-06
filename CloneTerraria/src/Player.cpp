@@ -13,6 +13,7 @@
 #define CANNONBALLSTYPES 5
 #define BULLETSTYPES 4
 #define REGENCOLDDOWN 4
+
 enum RangeWeaponTypes
 {
 	weaponNot = 0
@@ -167,7 +168,7 @@ Player::Player(unsigned int eob
 	m_CanJump = false;
 	m_DirectionLook = -1;
 	m_JumpPower = 12;
-	m_Gravity = -40;
+	m_Gravity = GRAVITY;
 	m_Acceleration = 0;
 	m_Friction = 0;
 	m_MaxMovementSpeed = 0;
