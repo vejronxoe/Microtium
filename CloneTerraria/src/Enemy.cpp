@@ -33,6 +33,10 @@ void Enemy::WhereIsPlayer(float* playerTransform
 }
 
 Enemy::Enemy(unsigned int typeOfEnemy
+	, std::vector<Enemy> enemis
+	, unsigned int* EnemisTex
+	, unsigned int* EnemisDD1
+	, unsigned int* EnemisDD2
 	, float x
 	, float y
 	, unsigned int eob)
@@ -48,8 +52,28 @@ Enemy::Enemy(unsigned int typeOfEnemy
 	m_Transform[1] = y;
 	m_Velocity[0] = 0;
 	m_Velocity[1] = 0;
-	m_tex = CreateTextureRGBA("res/textures/blue.png");
-	m_DD = CreateDrawData(eob, -1.5f, 1.5f, 1, -1);
+	bool enemyExist = false;
+	for(int i = 0; i < enemis.size();i++)
+	{
+		if (enemis.at(i).m_TypeOfEnemy == typeOfEnemy)
+		{
+			enemyExist = true;
+			break;
+		}
+	}
+
+	if (!enemyExist)
+	{
+		switch (typeOfEnemy)
+		{
+		case enemyZombie:
+			EnemisTex[typeOfEnemy] = CreateTextureRGBA("res/textures/blue.png");
+			EnemisDD1[typeOfEnemy] = CreateDrawData(eob, -1.5f, 1.5f, 1, -1);
+			break;
+		}
+	}
+	m_tex = EnemisTex[typeOfEnemy];
+	m_DD[0] = EnemisDD1[typeOfEnemy];
 }
 bool Enemy::PlayerInWay(float deltatime
 	, float* playerTransform
@@ -100,7 +124,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		float distance[2];
 
 		WhereIsPlayer(playerTransform, distance, direction);
-		if (abs(distance[0]) < 2 || zombieMovement < abs(m_Velocity[0]))
+		if (abs(distance[0]) < 2 || zombieMovement < m_Velocity[0] * direction[0])
 		{
 			m_Velocity[0] -= direction[0] * zombieMovement * deltaTime;
 				
@@ -146,6 +170,6 @@ void Enemy::DrawEnemy(Shader sh
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_tex));
-	ErrorGL(glBindVertexArray(m_DD));
+	ErrorGL(glBindVertexArray(m_DD[0]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }

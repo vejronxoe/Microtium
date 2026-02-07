@@ -5,6 +5,7 @@ enum enemyTypes
 {
 	enemyZombie = 0
 	, enemySlime
+	, enemySize
 };
 struct Enemy
 {
@@ -14,8 +15,12 @@ struct Enemy
 	float m_PlayerHitTimer;
 	int m_Damage;
 	unsigned int m_tex;
-	unsigned int m_DD;
+	unsigned int m_DD[2];
 	Enemy(unsigned int typeOfEnemy
+		, std::vector<Enemy> enemis
+		, unsigned int* EnemisTex
+		, unsigned int* EnemisDD1
+		, unsigned int* EnemisDD2
 		, float x
 		, float y
 		, unsigned int eob);

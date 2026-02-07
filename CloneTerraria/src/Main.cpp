@@ -162,6 +162,9 @@ int main()
 	fontSh.SetUniformMat4(fontCamera, camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
+	unsigned int enemisTex[enemySize];
+	unsigned int enemisDD1[enemySize];
+	unsigned int enemisDD2[enemySize];
 	unsigned int projectileTextures[1];
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int cursorTextures[6];
@@ -209,26 +212,22 @@ int main()
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
 	std::vector<bool> isSandOnX;
+	std::vector<Enemy> enemis;
 
 	std::vector<Projectile> projectiles;
 
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 200, -100, 100, blockTextures);
 	
 
-	////
-	////
 	//
+	// 
 	//
 	// 
 	
-	Enemy zombie(enemyZombie, 100, 100, eob);
+	enemis.emplace_back(enemyZombie, enemis, enemisTex, enemisDD1, enemisDD2, 100, 100, eob);
 
 	// 
-	//
-	//
-	//////
-
-
+	// //////////////////////
 
 	float deltaTime;
 	float timer = 0;
@@ -247,7 +246,7 @@ int main()
 		if (timer >= 1)
 		{
 			
-			std::cout << fps << "   "<< zombie.m_Velocity[0] <<" "<< zombie.m_Velocity[1] << std::endl;
+			std::cout << fps << std::endl;
 			timer = 0;
 			fps = 0;
 		}
@@ -263,8 +262,10 @@ int main()
 			}
 
 		}
-		zombie.EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
-
+		for (int i = 0; i < enemis.size(); i++)
+		{
+			enemis.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+		}
 		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
 		
@@ -367,8 +368,10 @@ int main()
 			}
 		}
 		basicSh.Bind();
-		zombie.DrawEnemy(basicSh, transform);
-
+		for (int i = 0; i < enemis.size(); i++)
+		{
+			enemis.at(i).DrawEnemy(basicSh, transform);
+		}
 		advancedSh.Bind();
 		for (int i = 0; i < projectiles.size(); i++)
 		{
