@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\imageLoader\</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>6963</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>6262</DEFECTCODE>
+    <DESCRIPTION>Function uses '34968' bytes of stack.  Consider moving some data to heap.</DESCRIPTION>
+    <FUNCTION>stbi__load_gif_main</FUNCTION>
+    <DECORATED>?stbi__load_gif_main@@YAPAXPAUstbi__context@@PAPAHPAH222H@Z</DECORATED>
+    <FUNCLINE>6963</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\imageLoader\</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>7048</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>6262</DEFECTCODE>
+    <DESCRIPTION>Function uses '34932' bytes of stack.  Consider moving some data to heap.</DESCRIPTION>
+    <FUNCTION>stbi__gif_load</FUNCTION>
+    <DECORATED>?stbi__gif_load@@YAPAXPAUstbi__context@@PAH11HPAUstbi__result_info@@@Z</DECORATED>
+    <FUNCLINE>7048</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

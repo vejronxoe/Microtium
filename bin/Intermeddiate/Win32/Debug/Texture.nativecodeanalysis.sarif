@@ -1,0 +1,67 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.44.35221.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/texture.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "f5546f70e74437c71163a967fabbcc6570645046d8afbcdd2ab269066262f00b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/texture.h"
+          },
+          "hashes": {
+            "sha-256": "8f74ca465fe13877bf7e118b2f7f4b8f69011d85f96b97d575f10df853c47082"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/dependencies/glew/include/gl/glew.h"
+          },
+          "hashes": {
+            "sha-256": "1a2d50dc00a69940838cb3b5413cf7a7ac3cee8078672f27ffbfa2d3b88ad344"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/errorsystem.h"
+          },
+          "hashes": {
+            "sha-256": "605b041554f0a0c77f8ed1ed29ba758b73acea3aa029dc775eb8d34963fd22ec"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/imageloader/stb_image.h"
+          },
+          "hashes": {
+            "sha-256": "1f8c1b6b408f26e3b20cbfbbd4758afb3dc9b837ff1e17c258928f406148a87c"
+          }
+        }
+      ]
+    }
+  ]
+}

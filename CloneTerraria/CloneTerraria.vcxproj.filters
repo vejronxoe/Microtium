@@ -406,5 +406,11 @@
     <Image Include="res\textures\bootsAnimWood.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\zombieAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\zombieBody.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

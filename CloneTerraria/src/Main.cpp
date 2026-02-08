@@ -162,7 +162,8 @@ int main()
 	fontSh.SetUniformMat4(fontCamera, camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
-	unsigned int enemisTex[enemySize];
+	unsigned int enemisTex1[enemySize];
+	unsigned int enemisTex2[enemySize];
 	unsigned int enemisDD1[enemySize];
 	unsigned int enemisDD2[enemySize];
 	unsigned int projectileTextures[1];
@@ -212,7 +213,7 @@ int main()
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
 	std::vector<bool> isSandOnX;
-	std::vector<Enemy> enemis;
+	std::vector<Enemy*> enemis;
 
 	std::vector<Projectile> projectiles;
 
@@ -223,8 +224,8 @@ int main()
 	// 
 	//
 	// 
-	
-	enemis.emplace_back(enemyZombie, enemis, enemisTex, enemisDD1, enemisDD2, 100, 100, eob);
+	Zombie z(enemyZombie, enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,100,100,eob);
+	enemis.emplace_back(&z);
 
 	// 
 	// //////////////////////
@@ -264,7 +265,7 @@ int main()
 		}
 		for (int i = 0; i < enemis.size(); i++)
 		{
-			enemis.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+			enemis.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
 		}
 		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
@@ -367,10 +368,10 @@ int main()
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			}
 		}
-		basicSh.Bind();
+		animSh.Bind();
 		for (int i = 0; i < enemis.size(); i++)
 		{
-			enemis.at(i).DrawEnemy(basicSh, transform);
+			enemis.at(i)->DrawEnemy(animSh, transform, scale);
 		}
 		advancedSh.Bind();
 		for (int i = 0; i < projectiles.size(); i++)

@@ -8,7 +8,7 @@
 #include"math/VectorOperation.h"
 #include"NumberRender.h"
 
-#define SPEEDOFANIM 0.8f
+#define SPEEDOFANIM 0.5f
 #define ARROWSTYPES 4
 #define CANNONBALLSTYPES 5
 #define BULLETSTYPES 4

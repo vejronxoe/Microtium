@@ -1,0 +1,107 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.44.35221.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/numberrender.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "31bf89fa11cb6eb553d15a7757fcd2e284de148121fc54c92bc62596f78aa6b4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/numberrender.h"
+          },
+          "hashes": {
+            "sha-256": "87d4f47694dd084e139671b5a450eaf1f79bda4ac4607a88adf5ef760dace78d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/shader.h"
+          },
+          "hashes": {
+            "sha-256": "c0b51df76da91ac33e18cfd4a140da08369be19cdb904d724b3fb2584f48b8c3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/dependencies/glew/include/gl/glew.h"
+          },
+          "hashes": {
+            "sha-256": "1a2d50dc00a69940838cb3b5413cf7a7ac3cee8078672f27ffbfa2d3b88ad344"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/errorsystem.h"
+          },
+          "hashes": {
+            "sha-256": "605b041554f0a0c77f8ed1ed29ba758b73acea3aa029dc775eb8d34963fd22ec"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/texture.h"
+          },
+          "hashes": {
+            "sha-256": "8f74ca465fe13877bf7e118b2f7f4b8f69011d85f96b97d575f10df853c47082"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/opengl/drawdata.h"
+          },
+          "hashes": {
+            "sha-256": "124230d2c7da9a86096ab0a4a957513f353150352e0643803b31bef359e16cdd"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/math/matrix.h"
+          },
+          "hashes": {
+            "sha-256": "78cdc0aae448dde077a917c22b5db6cabe9f6aff874e4f6a64f208baccfbd1ec"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/cloneterraria/src/glfw/window.h"
+          },
+          "hashes": {
+            "sha-256": "1bf45113b43aa28ec0e8f75963de45acd4ff718ca4f4208c77bb5dea6f8e6e2b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/leosz/desktop/cpp/mikrotium/dependencies/glfw/include/glfw/glfw3.h"
+          },
+          "hashes": {
+            "sha-256": "0fd04b330d92fc4bd6630c20d1006cef36d25b16ec9f911ec4041918482307bb"
+          }
+        }
+      ]
+    }
+  ]
+}

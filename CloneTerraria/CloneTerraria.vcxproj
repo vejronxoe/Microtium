@@ -162,6 +162,8 @@
     <Image Include="res\textures\woodLog.png" />
     <Image Include="res\textures\woodPants.png" />
     <Image Include="res\textures\woodShoes.png" />
+    <Image Include="res\textures\zombieAnim.png" />
+    <Image Include="res\textures\zombieBody.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
