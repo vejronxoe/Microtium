@@ -224,8 +224,8 @@ int main()
 	// 
 	//
 	// 
-	Zombie z(enemyZombie, enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,100,100,eob);
-	enemis.emplace_back(&z);
+	Slime s( enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,100,100,eob);
+	enemis.emplace_back(&s);
 
 	// 
 	// //////////////////////
@@ -265,7 +265,11 @@ int main()
 		}
 		for (int i = 0; i < enemis.size(); i++)
 		{
-			enemis.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+			int damage = enemis.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+			if (damage)
+			{
+				player.DamagePlayer(enemis.at(i)->m_Transform, damage);
+			}
 		}
 		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);

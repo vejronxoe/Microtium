@@ -366,8 +366,31 @@ Player::Player(unsigned int eob
 	SwapItemStats();
 	
 }
-void Player::DamagePlayer(int Damage)
+void Player::DamagePlayer(float* transfromAttacker
+	, int Damage)
 {
+	int x = transfromAttacker[0] - m_Transform[0];
+	int y = transfromAttacker[1] - m_Transform[1];
+	if (x)
+	{
+		x = abs(x) / x;
+	}
+	else
+	{
+		x = -1;
+	}
+
+	if (y)
+	{
+		y = abs(y) / y;
+	}
+	else
+	{
+		y = 0;
+	}
+
+	m_Velocity[0] = 20 * -x;
+	m_Velocity[1] = 5 * -y;
 	m_TimerSinceLastHit = 0;
 	if (Damage - m_ArmorClass >= 0)
 	{

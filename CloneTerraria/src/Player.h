@@ -35,12 +35,12 @@ public:
 	float m_Transform[2];
 	float m_Velocity[2];
 	Player(unsigned int eob
-
 		, unsigned int* texturesIDs);
 
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
-	void DamagePlayer(int Damage);
+	void DamagePlayer(float* transfromAttacker
+		, int Damage);
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
@@ -101,7 +101,7 @@ private:
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
-	char FindOneOfItemsInInv(unsigned char* items,int sizeOfArray);
+	char FindOneOfItemsInInv(unsigned char* items, int sizeOfArray);
 public:
 
 	float m_HPOffset[2];
