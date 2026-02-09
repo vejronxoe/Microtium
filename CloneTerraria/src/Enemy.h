@@ -11,17 +11,19 @@ class Enemy
 {
 public:
 	char m_TypeOfEnemy;
+	float m_Vertices[4];
 	float m_Transform[2];
 	float m_Velocity[2];
 	float m_PlayerHitTimer;
+	int m_HP;
 	int m_Damage;
-		
+	
 	void DDAndTexManager(unsigned int eob
-		, std::vector<Enemy*> enemis
-		, unsigned int* EnemisTex1
-		, unsigned int* EnemisTex2
-		, unsigned int* EnemisDD1
-		, unsigned int* EnemisDD2);
+		, std::vector<Enemy*> enemies
+		, unsigned int* enemiesTex1
+		, unsigned int* enemiesTex2
+		, unsigned int* enemiesDD1
+		, unsigned int* enemiesDD2);
 
 	void WhereIsPlayer(float* playerTransform
 		, float* distance
@@ -30,6 +32,9 @@ public:
 	bool PlayerInWay(float deltatime
 		, float* playerTransform
 		, float* enemyVertices);
+
+	bool DamageEnemy(int Damage
+		, float* transformAttacker);
 
 	virtual int EnemyEveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
@@ -47,11 +52,11 @@ public:
 	unsigned int m_Tex[2];
 	char m_AnimPhase;
 	float m_AnimTimer;
-	Zombie(std::vector<Enemy*> enemis
-		, unsigned int* EnemisTex1
-		, unsigned int* EnemisTex2
-		, unsigned int* EnemisDD1
-		, unsigned int* EnemisDD2
+	Zombie(std::vector<Enemy*> enemies
+		, unsigned int* enemiesTex1
+		, unsigned int* enemiesTex2
+		, unsigned int* enemiesDD1
+		, unsigned int* enemiesDD2
 		, float x
 		, float y
 		, unsigned int eob);
@@ -74,11 +79,11 @@ public:
 	float m_JumpTimer;
 	float m_AnimTimer;
 	char m_AnimPhase;
-	Slime(std::vector<Enemy*> enemis
-		, unsigned int* EnemisTex1
-		, unsigned int* EnemisTex2
-		, unsigned int* EnemisDD1
-		, unsigned int* EnemisDD2
+	Slime(std::vector<Enemy*> enemies
+		, unsigned int* enemiesTex1
+		, unsigned int* enemiesTex2
+		, unsigned int* enemiesDD1
+		, unsigned int* enemiesDD2
 		, float x
 		, float y
 		, unsigned int eob);

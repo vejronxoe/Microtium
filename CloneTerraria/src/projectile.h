@@ -1,5 +1,6 @@
 #pragma once
 #include "BlocksAndWalls.h"
+#include "Enemy.h"
 enum ProjectilesTypes
 {
 	p_Sand = 0
@@ -21,6 +22,7 @@ struct Projectile
 	float m_Transform[2];
 	float m_Velocity[2];
 	unsigned char m_ProjectileType;
+	int m_Damage;
 	char m_Bouncing;
 	unsigned int m_DD;
 	unsigned int m_Texture;
@@ -29,9 +31,14 @@ struct Projectile
 		, float y
 		, float velocityX
 		, float velocityY
+		, int damage
 		, unsigned int m_DD
 		, unsigned int projectileTexture);
+	int HitEnemy(float deltaTime
+		, float* vertices
+		, std::vector<Enemy*>& enemies);
 	bool EveryFrame(float deltaTime
+		, std::vector<Enemy*>& enemies
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
 		, std::vector<bool>& isSandOnX

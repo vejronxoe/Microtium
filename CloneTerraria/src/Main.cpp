@@ -276,7 +276,7 @@ int main()
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			if (projectiles.at(i).EveryFrame(deltaTime, blocks, walls, isSandOnX, blockTextures))
+			if (projectiles.at(i).EveryFrame(deltaTime, enemis, blocks, walls, isSandOnX, blockTextures))
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}

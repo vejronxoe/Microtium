@@ -1,4 +1,4 @@
-#include"Player.h"
+   #include"Player.h"
 
 #include"Opengl/Texture.h"
 #include"Opengl/drawData.h"
@@ -377,7 +377,7 @@ void Player::DamagePlayer(float* transfromAttacker
 	}
 	else
 	{
-		x = -1;
+		x = 0;
 	}
 
 	if (y)
@@ -389,7 +389,7 @@ void Player::DamagePlayer(float* transfromAttacker
 		y = 0;
 	}
 
-	m_Velocity[0] = 20 * -x;
+	m_Velocity[0] = 10 * -x;
 	m_Velocity[1] = 5 * -y;
 	m_TimerSinceLastHit = 0;
 	if (Damage - m_ArmorClass >= 0)
@@ -445,16 +445,19 @@ void Player::SwapItemStats()
 			break;
 		case i_WoodBow:
 			m_Range = 0;
+			m_Damage = 5;
 			m_WeaponType = weaponBow;
 			m_CooldownToUse = 0.8;
 			break;
 		case i_Cannon:
 			m_Range = 0;
+			m_Damage = 15;
 			m_WeaponType = weaponCanon;
 			m_CooldownToUse = 1.2;
 			break;
 		case i_Pistol:
 			m_Range = 0;
+			m_Damage = 20;
 			m_WeaponType = weaponGun;
 			m_CooldownToUse = 0.4;
 			break;
@@ -490,7 +493,8 @@ void Player::SwapItemStats()
 
 
 }
-void Player::SwapArmor(unsigned char SlotIndex, char armorPart)
+void Player::SwapArmor(unsigned char SlotIndex
+	, char armorPart)
 {
 	int holder = m_PlayerSlots[SlotIndex];
 
@@ -617,7 +621,8 @@ char Player::FindItemInInv(unsigned char item)
 	}
 	return -1;
 }
-char Player::FindOneOfItemsInInv(unsigned char* items, int sizeOfArray)
+char Player::FindOneOfItemsInInv(unsigned char* items
+	, int sizeOfArray)
 {
 	for (int i = 0; i < 52; i++)
 	{
@@ -1323,18 +1328,18 @@ void Player::EveryFrame(float deltaTime
 							break;
 						case i_WoodBow:
 					
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 22, velocity[1] * 22, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 22, velocity[1] * 22, m_Damage, blockDD,  m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 
 							break;
 						case i_Cannon:
 
 				
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 15, velocity[1] * 15, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 15, velocity[1] * 15, m_Damage ,blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 							break;
 						case i_Pistol:
 						
 							
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY,velocity[0] * 30, velocity[1] * 30 , m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY,velocity[0] * 30, velocity[1] * 30 , m_Damage,m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 							break;
 						default:
 							std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;

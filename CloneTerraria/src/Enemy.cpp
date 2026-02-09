@@ -35,6 +35,40 @@ void Enemy::WhereIsPlayer(float* playerTransform
 	}
 }
 
+bool Enemy::DamageEnemy(int Damage
+	, float* transfromAttacker)
+{		
+
+	int x = transfromAttacker[0] - m_Transform[0];
+	int y = transfromAttacker[1] - m_Transform[1];
+	if (x)
+	{
+		x = abs(x) / x;
+	}
+	else
+	{
+		x = 0;
+	}
+
+	if (y)
+	{
+		y = abs(y) / y;
+	}
+	else
+	{
+		y = 0;
+	}
+	m_Velocity[0] = 20 * -x;
+	m_Velocity[1] = 5 * -y;
+	m_HP -= Damage;
+	if (m_HP <= 0)
+	{
+		m_HP = 0;
+		return true;
+	}
+	return false;
+
+}
 bool Enemy::PlayerInWay(float deltatime
 	, float* playerTransform
 	, float* enemyVertices)
@@ -69,16 +103,16 @@ bool Enemy::PlayerInWay(float deltatime
 }
 
 void Enemy::DDAndTexManager(unsigned int eob
-	, std::vector<Enemy*> enemis
-	, unsigned int* EnemisTex1
-	, unsigned int* EnemisTex2
-	, unsigned int* EnemisDD1
-	, unsigned int* EnemisDD2)
+	, std::vector<Enemy*> enemies
+	, unsigned int* enemiesTex1
+	, unsigned int* enemiesTex2
+	, unsigned int* enemiesDD1
+	, unsigned int* enemiesDD2)
 {
 	bool enemyExist = false;
-	for (int i = 0; i < enemis.size(); i++)
+	for (int i = 0; i < enemies.size(); i++)
 	{
-		if (enemis.at(i)->m_TypeOfEnemy == m_TypeOfEnemy)
+		if (enemies.at(i)->m_TypeOfEnemy == m_TypeOfEnemy)
 		{
 			enemyExist = true;
 			break;
@@ -90,33 +124,35 @@ void Enemy::DDAndTexManager(unsigned int eob
 		switch (m_TypeOfEnemy)
 		{
 		case enemyZombie:
-			EnemisTex1[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/zombieAnim.png");
-			EnemisTex2[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/zombieBody.png");
-			EnemisDD1[m_TypeOfEnemy] = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
-			EnemisDD2[m_TypeOfEnemy] = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1);
+			enemiesTex1[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/zombieAnim.png");
+			enemiesTex2[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/zombieBody.png");
+			enemiesDD1[m_TypeOfEnemy] = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
+			enemiesDD2[m_TypeOfEnemy] = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1);
 			break;
 		case enemySlime:
-			EnemisTex1[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/slimeAnim.png");
-			EnemisDD1[m_TypeOfEnemy] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f/2.0f);
+			enemiesTex1[m_TypeOfEnemy] = CreateTextureRGBA("res/textures/slimeAnim.png");
+			enemiesDD1[m_TypeOfEnemy] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f/2.0f);
 			break;
 		}
 	}
 }
 
-
-
-Zombie::Zombie(std::vector<Enemy*> enemis
-	, unsigned int* EnemisTex1
-	, unsigned int* EnemisTex2
-	, unsigned int* EnemisDD1
-	, unsigned int* EnemisDD2
+Zombie::Zombie(std::vector<Enemy*> enemies
+	, unsigned int* enemiesTex1
+	, unsigned int* enemiesTex2
+	, unsigned int* enemiesDD1
+	, unsigned int* enemiesDD2
 	, float x
 	, float y
 	, unsigned int eob)
 {
-
+	m_Vertices[0] = -0.9f; 
+	m_Vertices[1] = 1.3f; 
+	m_Vertices[2] = 0.9f; 
+	m_Vertices[3] = -1.5f;
 	m_PlayerHitTimer = 0;
 	m_TypeOfEnemy = enemyZombie;
+	m_HP = 15;
 	m_Damage = 45;
 	m_Transform[0] = x;
 	m_Transform[1] = y;
@@ -124,11 +160,11 @@ Zombie::Zombie(std::vector<Enemy*> enemis
 	m_Velocity[1] = 0;
 	m_AnimPhase = 0;
 	m_AnimTimer = 0;
-	DDAndTexManager(eob, enemis, EnemisTex1, EnemisTex2, EnemisDD1, EnemisDD2);
-	m_DD[0] = EnemisDD1[m_TypeOfEnemy];
-	m_DD[1] = EnemisDD2[m_TypeOfEnemy];
-	m_Tex[0] = EnemisTex1[m_TypeOfEnemy];
-	m_Tex[1] = EnemisTex2[m_TypeOfEnemy];
+	DDAndTexManager(eob, enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2);
+	m_DD[0] = enemiesDD1[m_TypeOfEnemy];
+	m_DD[1] = enemiesDD2[m_TypeOfEnemy];
+	m_Tex[0] = enemiesTex1[m_TypeOfEnemy];
+	m_Tex[1] = enemiesTex2[m_TypeOfEnemy];
 }
 int Zombie::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
@@ -141,7 +177,6 @@ int Zombie::EnemyEveryFrame(float deltaTime
 	}
 	int direction[2];
 	float distance[2];
-
 	WhereIsPlayer(playerTransform, distance, direction);
 	m_LookAt = direction[0];
 	if ((abs(distance[0]) < 2 || ZOMBIEMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
@@ -174,11 +209,11 @@ int Zombie::EnemyEveryFrame(float deltaTime
 		m_Velocity[1] = GRAVITY;
 	}
 	bool hit[4] = { false, false, false, false };
-	float vertices[4] = { -0.9f, 1.3f, 0.9f, -1.5f };
-	vertices[0] += m_Transform[0];
-	vertices[1] += m_Transform[1];
-	vertices[2] += m_Transform[0];
-	vertices[3] += m_Transform[1];
+	float vertices[4];
+	vertices[0] = m_Transform[0] + m_Vertices[0];
+	vertices[1] = m_Transform[1] + m_Vertices[1];
+	vertices[2] = m_Transform[0] + m_Vertices[2];
+	vertices[3] = m_Transform[1] + m_Vertices[3];
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
 	if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{
@@ -286,17 +321,18 @@ void Zombie::DrawEnemy(Shader& sh
 }
 	
 
-Slime::Slime(std::vector<Enemy*> enemis
-	, unsigned int* EnemisTex1
-	, unsigned int* EnemisTex2
-	, unsigned int* EnemisDD1
-	, unsigned int* EnemisDD2
+Slime::Slime(std::vector<Enemy*> enemies
+	, unsigned int* enemiesTex1
+	, unsigned int* enemiesTex2
+	, unsigned int* enemiesDD1
+	, unsigned int* enemiesDD2
 	, float x
 	, float y
 	, unsigned int eob)
 {
 	m_PlayerHitTimer = 0;
 	m_TypeOfEnemy = enemySlime;
+	m_HP = 10;
 	m_Damage = 45;
 	m_Transform[0] = x;
 	m_Transform[1] = y;
@@ -305,9 +341,13 @@ Slime::Slime(std::vector<Enemy*> enemis
 	m_JumpTimer = 0;
 	m_AnimTimer = 0;
 	m_AnimPhase = 0;
-	DDAndTexManager(eob, enemis, EnemisTex1, EnemisTex2, EnemisDD1, EnemisDD2);
-	m_DD = EnemisDD1[m_TypeOfEnemy];
-	m_Tex = EnemisTex1[m_TypeOfEnemy];
+	m_Vertices[0] = -0.9f;
+	m_Vertices[1] = 0.8f;
+	m_Vertices[2] = 0.9f;
+	m_Vertices[3] = -1;
+	DDAndTexManager(eob, enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2);
+	m_DD = enemiesDD1[m_TypeOfEnemy];
+	m_Tex = enemiesTex1[m_TypeOfEnemy];
 }
 int Slime::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
@@ -321,11 +361,11 @@ int Slime::EnemyEveryFrame(float deltaTime
 
 	m_Velocity[1] += deltaTime * GRAVITY;
 	bool hit[4] = { false, false, false, false };
-	float vertices[4] = { -0.9f, 0.8f, 0.9f, -1 };
-	vertices[0] += m_Transform[0];
-	vertices[1] += m_Transform[1];
-	vertices[2] += m_Transform[0];
-	vertices[3] += m_Transform[1];
+	float vertices[4];
+	vertices[0] = m_Transform[0] + m_Vertices[0];
+	vertices[1] = m_Transform[1] + m_Vertices[1];
+	vertices[2] = m_Transform[0] + m_Vertices[2];
+	vertices[3] = m_Transform[1] + m_Vertices[3];
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
 	if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{

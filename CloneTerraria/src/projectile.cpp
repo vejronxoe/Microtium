@@ -9,10 +9,12 @@ Projectile::Projectile(unsigned char projectileType
 	, float y
 	, float velocityX
 	, float velocityY
+	, int damage
 	, unsigned int DD
 	, unsigned int projectileTexture)
 	:m_Transform{ x, y }, m_Velocity{ velocityX, velocityY}, m_ProjectileType{projectileType},m_DD{DD}, m_Texture{projectileTexture}
 {
+	m_Damage = damage;
 	switch (projectileType)
 	{
 	case p_BouncingBullet:
@@ -25,7 +27,48 @@ Projectile::Projectile(unsigned char projectileType
 		break;
 	}
 }
+int Projectile::HitEnemy(float deltaTime
+	, float* proVertices
+	, std::vector<Enemy*>& enemies)
+{
+	float vertices[4];
+	if (m_Velocity[0] > 0)
+	{
+		vertices[0] = proVertices[0];
+		vertices[2] = proVertices[2] + m_Velocity[0] * deltaTime;
+	}
+	else
+	{
+		vertices[0] = proVertices[0] + m_Velocity[0] * deltaTime;
+		vertices[2] = proVertices[2];
+	}
+	if (m_Velocity[1] > 0)
+	{
+		vertices[3] = proVertices[3];
+		vertices[1] = proVertices[1] + m_Velocity[0] * deltaTime;
+	}
+	else
+	{
+		vertices[3] = proVertices[3] + m_Velocity[0] * deltaTime;
+		vertices[1] = proVertices[1];
+	}
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		float enemyVertices[4] = { enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[0], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[1], enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[2], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[3] };
+		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
+		{
+			if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+			{
+				enemies.erase(enemies.begin() + i);
+			}
+			return true;
+
+		}
+	}
+	return false;
+}
 bool Projectile::EveryFrame(float deltaTime
+	, std::vector<Enemy*>& enemies
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<bool>& isSandOnX
@@ -81,6 +124,10 @@ bool Projectile::EveryFrame(float deltaTime
 		break;
 	}
 	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+	if(HitEnemy(deltaTime, vertices, enemies))
+	{
+		return true;
+	}
 	AddVelocityToTransform(vertices, m_Transform, m_Velocity , hit[2], hit[1], hit[0], hit[3], deltaTime);
 	switch (m_ProjectileType)
 	{
@@ -193,7 +240,7 @@ void SandEveryFrame(std::vector<bool>& isSandOnX
 					if (blocks.at(i).at(j).m_Y != nextY)
 					{
 					
-						projectiles.emplace_back(p_Sand, i, nextY + 1, 0, -5, blockDD, projectileSand);
+						projectiles.emplace_back(p_Sand, i, nextY + 1, 0, -5, 5,blockDD, projectileSand);
 						DestroyBlock(blocks, walls, isSandOnX, i, nextY + 1);
 						j--;
 						if(isSandOnX.at(i) == false)
