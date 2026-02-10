@@ -271,7 +271,7 @@ int main()
 				player.DamagePlayer(enemis.at(i)->m_Transform, damage);
 			}
 		}
-		player.EveryFrame(deltaTime, blocks, walls, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
+		player.EveryFrame(deltaTime, blocks, walls, enemis, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
 		
 		for (int i = 0; i < projectiles.size(); i++)

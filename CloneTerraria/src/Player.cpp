@@ -723,6 +723,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<Enemy*>& enemies
 	, std::vector<bool>& isThereSandOnX
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
@@ -2001,12 +2002,32 @@ void Player::EveryFrame(float deltaTime
 				break;
 			default:
 				m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
+				float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1]};
+				for (int i = 0; i < enemies.size(); i++)
+				{
+					if (Pyt2D(enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1]) <= 3)
+					{
+						if (abs(atan2(enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1])) <= -m_ArmRotation)
+						{
+							if (enemies.at(i)->DamageEnemy(m_Damage,m_Transform))
+							{
+								enemies.erase(enemies.begin() + i);
+								i--;
+							}
+							else
+							{
+								m_HitEnemies.push_back(enemies.at(i)->m_ID);
+							}
+						}
+					}
+				}
 				if (m_UseItemTimer > m_CooldownToUse)
 				{
 					if (!Input::LeftMousePress)
-					{
+					{	
 						m_ArmsBehaviour = ArmStanding;
 					}
+					m_HitEnemies.clear();
 					m_ArmRotation = 0;
 				}
 				break;

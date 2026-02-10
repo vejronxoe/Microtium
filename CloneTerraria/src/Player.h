@@ -44,6 +44,7 @@ public:
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
+		, std::vector<Enemy*>& enemies
 		, std::vector<bool>& isThereSandOnX
 		, std::vector<damagedWood>& damagedWood
 		, std::vector<DamagedBlock>& damageblocks
@@ -135,6 +136,7 @@ public:
 	bool m_CursorOnPlaceableSpot;
 	char m_LocationAmmunition;
 	float m_CooldownToUse;
+	std::vector<unsigned int> m_HitEnemies;
 	unsigned char m_WeaponType;
 	unsigned char m_PickaxeStreanght;
 	unsigned char m_AxeStreanght;
