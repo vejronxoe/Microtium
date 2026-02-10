@@ -146,6 +146,14 @@ Zombie::Zombie(std::vector<Enemy*> enemies
 	, float y
 	, unsigned int eob)
 {
+	if (enemies.size())
+	{
+		m_ID = enemies.at(enemies.size() - 1)->m_ID + 1;
+	}
+	else
+	{
+		m_ID = 0;
+	}
 	m_Vertices[0] = -0.9f; 
 	m_Vertices[1] = 1.3f; 
 	m_Vertices[2] = 0.9f; 

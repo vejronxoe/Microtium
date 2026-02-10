@@ -18,17 +18,17 @@ enum Items
 	, i_Sapling
 	, i_WoodBow
 	, i_BasicArrow
-	, i_BleedArrow
+	, i_PierceArrow
 	, i_BouncingArrow
 	, i_FireArrow
 	, i_Cannon
 	, i_BasicCannonBall
-	, i_BleedCannonBall
+	, i_PierceCannonBall
 	, i_BouncingCannonBall
 	, i_FireCannonBall
 	, i_Pistol
 	, i_BasicBullet
-	, i_BleedBullet
+	, i_PierceBullet
 	, i_BouncingBullet
 	, i_FireBullet
 	, i_WoodHelmet

@@ -5,20 +5,21 @@ enum ProjectilesTypes
 {
 	p_Sand = 0
 	, p_FireArrow
-	, p_BleedArrow
+	, p_PierceArrow
 	, p_BasicArrow
 	, p_BouncingArrow
 	, p_BasicCannonBall
-	, p_BleedCannonBall
+	, p_PierceCannonBall
 	, p_BouncingCannonBall
 	, p_FireCannonBall
 	, p_BasicBullet
-	, p_BleedBullet
+	, p_PierceBullet
 	, p_BouncingBullet
 	, p_FireBullet
 };
 struct Projectile
 {
+	std::vector<unsigned int> m_HitEnemies;
 	float m_Transform[2];
 	float m_Velocity[2];
 	unsigned char m_ProjectileType;
@@ -36,6 +37,9 @@ struct Projectile
 		, unsigned int projectileTexture);
 	int HitEnemy(float deltaTime
 		, float* vertices
+		, std::vector<Enemy*>& enemies);
+	int HitEnemies(float deltaTime
+		, float* proVertices
 		, std::vector<Enemy*>& enemies);
 	bool EveryFrame(float deltaTime
 		, std::vector<Enemy*>& enemies

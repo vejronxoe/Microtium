@@ -50,8 +50,8 @@ unsigned char AmmunicionToProjectileType(unsigned char ammo)
 	{
 	case i_BasicCannonBall:
 		return p_BasicCannonBall;
-	case i_BleedCannonBall:	
-		return p_BleedCannonBall;
+	case i_PierceCannonBall:	
+		return p_PierceCannonBall;
 	case i_BouncingCannonBall:
 		return p_BouncingCannonBall;
 	case i_FireCannonBall:
@@ -60,16 +60,16 @@ unsigned char AmmunicionToProjectileType(unsigned char ammo)
 		return p_Sand;
 	case i_BasicArrow:
 		return p_BasicArrow;
-	case i_BleedArrow:
-		return p_BleedArrow;
+	case i_PierceArrow:
+		return p_PierceArrow;
 	case i_BouncingArrow:
 		return p_BouncingArrow;
 	case i_FireArrow:
 		return p_FireArrow;
 	case i_BasicBullet:
 		return p_BasicBullet;
-	case i_BleedBullet:
-		return p_BleedBullet;
+	case i_PierceBullet:
+		return p_PierceBullet;
 	case i_BouncingBullet:
 		return p_BouncingBullet;
 	case i_FireBullet:
@@ -227,15 +227,15 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[3] = 1;
 
 	m_PlayerSlots[4] = i_BasicArrow;
-	m_PlayerSlots[5] = i_BleedArrow;
+	m_PlayerSlots[5] = i_PierceArrow;
 	m_PlayerSlots[6] = i_BouncingArrow;
 	m_PlayerSlots[7] = i_FireArrow;
 	m_PlayerSlots[8] = i_BasicCannonBall;
-	m_PlayerSlots[9] = i_BleedCannonBall;
+	m_PlayerSlots[9] = i_PierceCannonBall;
 	m_PlayerSlots[10] = i_BouncingCannonBall;
 	m_PlayerSlots[11] = i_FireCannonBall;
 	m_PlayerSlots[12] = i_BasicBullet;
-	m_PlayerSlots[13] = i_BleedBullet;
+	m_PlayerSlots[13] = i_PierceBullet;
 	m_PlayerSlots[14] = i_BouncingBullet;
 	m_PlayerSlots[15] = i_FireBullet;
 	m_PlayerSlots[16] = i_WoodHelmet;
@@ -297,17 +297,17 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 	m_AllItemTextures[i_WoodBow] = CreateTextureRGBA("res/textures/bowInInv.png");
 	m_AllItemTextures[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
-	m_AllItemTextures[i_BleedArrow] = CreateTextureRGBA("res/textures/bleedArrow.png");
+	m_AllItemTextures[i_PierceArrow] = CreateTextureRGBA("res/textures/BleedArrow.png");
 	m_AllItemTextures[i_BouncingArrow] = CreateTextureRGBA("res/textures/bouncingArrow.png");
 	m_AllItemTextures[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
 	m_AllItemTextures[i_Cannon] = CreateTextureRGBA("res/textures/canonInv.png");
 	m_AllItemTextures[i_BasicCannonBall] = CreateTextureRGBA("res/textures/basicCanonBall.png");
-	m_AllItemTextures[i_BleedCannonBall] = CreateTextureRGBA("res/textures/scrapCannonBall.png");
+	m_AllItemTextures[i_PierceCannonBall] = CreateTextureRGBA("res/textures/scrapCannonBall.png");
 	m_AllItemTextures[i_BouncingCannonBall] = CreateTextureRGBA("res/textures/bouncingCannonBall.png");
 	m_AllItemTextures[i_FireCannonBall] = CreateTextureRGBA("res/textures/fireCannonBall.png");
 	m_AllItemTextures[i_Pistol] = CreateTextureRGBA("res/textures/pistolInv.png");
 	m_AllItemTextures[i_BasicBullet] = CreateTextureRGBA("res/textures/basicBullet.png");
-	m_AllItemTextures[i_BleedBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
+	m_AllItemTextures[i_PierceBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
 	m_AllItemTextures[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
 	m_AllItemTextures[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
 	m_AllItemTextures[i_WoodHelmet] = CreateTextureRGBA("res/textures/woodHelmet.png");
@@ -469,16 +469,16 @@ void Player::SwapItemStats()
 			m_Consume = true;
 			m_CooldownToUse = 0.8;
 			break;
-		case i_BleedArrow:
+		case i_PierceArrow:
 		case i_BasicArrow:
 		case i_BouncingArrow:
 		case i_FireArrow:
 		case i_BasicCannonBall:
-		case i_BleedCannonBall:
+		case i_PierceCannonBall:
 		case i_BouncingCannonBall:
 		case i_FireCannonBall:
 		case i_BasicBullet:
-		case i_BleedBullet:
+		case i_PierceBullet:
 		case i_BouncingBullet:
 		case i_FireBullet:
 		case(i_Nothing):
@@ -1290,9 +1290,9 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_WeaponType)
 			{
-				unsigned char arrows[ARROWSTYPES] = { i_BasicArrow, i_BleedArrow, i_BouncingArrow, i_FireArrow };
-				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_BleedCannonBall, i_BouncingCannonBall, i_FireCannonBall, i_Sand};
-				unsigned char bullets[BULLETSTYPES] = {i_BasicBullet, i_BleedBullet, i_BouncingBullet, i_FireBullet};
+				unsigned char arrows[ARROWSTYPES] = { i_BasicArrow, i_PierceArrow, i_BouncingArrow, i_FireArrow };
+				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_PierceCannonBall, i_BouncingCannonBall, i_FireCannonBall, i_Sand};
+				unsigned char bullets[BULLETSTYPES] = {i_BasicBullet, i_PierceBullet, i_BouncingBullet, i_FireBullet};
 				switch (m_WeaponType)
 				{
 				case weaponBow:
@@ -1328,13 +1328,13 @@ void Player::EveryFrame(float deltaTime
 							break;
 						case i_WoodBow:
 					
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 22, velocity[1] * 22, m_Damage, blockDD,  m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage, blockDD,  m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 
 							break;
 						case i_Cannon:
 
 				
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 15, velocity[1] * 15, m_Damage ,blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage ,blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
 							break;
 						case i_Pistol:
 						

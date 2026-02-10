@@ -10,6 +10,7 @@ enum enemyTypes
 class Enemy
 {
 public:
+	unsigned int m_ID;
 	char m_TypeOfEnemy;
 	float m_Vertices[4];
 	float m_Transform[2];

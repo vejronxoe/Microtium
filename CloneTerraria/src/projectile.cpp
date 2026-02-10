@@ -67,6 +67,61 @@ int Projectile::HitEnemy(float deltaTime
 	}
 	return false;
 }
+int Projectile::HitEnemies(float deltaTime
+	, float* proVertices
+	, std::vector<Enemy*>& enemies)
+{
+	float vertices[4];
+	if (m_Velocity[0] > 0)
+	{
+		vertices[0] = proVertices[0];
+		vertices[2] = proVertices[2] + m_Velocity[0] * deltaTime;
+	}
+	else
+	{
+		vertices[0] = proVertices[0] + m_Velocity[0] * deltaTime;
+		vertices[2] = proVertices[2];
+	}
+	if (m_Velocity[1] > 0)
+	{
+		vertices[3] = proVertices[3];
+		vertices[1] = proVertices[1] + m_Velocity[0] * deltaTime;
+	}
+	else
+	{
+		vertices[3] = proVertices[3] + m_Velocity[0] * deltaTime;
+		vertices[1] = proVertices[1];
+	}
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		float enemyVertices[4] = { enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[0], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[1], enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[2], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[3] };
+		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
+		{
+			bool wasHit = false;
+			for (int i =0; i < m_HitEnemies.size(); i++)
+			{
+				if (m_HitEnemies.at(i) == enemies.at(i)->m_ID)
+				{
+					wasHit = true;
+				}
+			}
+			if (!wasHit)
+			{
+				if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+				{
+					enemies.erase(enemies.begin() + i);
+					i--;
+				}
+				else
+				{
+					m_HitEnemies.push_back(enemies.at(i)->m_ID);
+				}
+			}
+		}
+	}
+	return false;
+}
+
 bool Projectile::EveryFrame(float deltaTime
 	, std::vector<Enemy*>& enemies
 	, std::vector<std::vector<Block>>& blocks
@@ -85,53 +140,21 @@ bool Projectile::EveryFrame(float deltaTime
 	hit[3] = false;
 	switch (m_ProjectileType)
 	{
-	case p_BleedCannonBall:
-	case p_BasicCannonBall:
-	case p_BouncingCannonBall:
-	case p_FireCannonBall:
 	case p_Sand:
-		m_Velocity[1] -= 16 * deltaTime;
+	{
+		m_Velocity[1] -= 18 * deltaTime;
 		if (m_Velocity[1] < -30)
 		{
 			m_Velocity[1] = -30;
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		break;
-	case p_BasicArrow:
-	case p_BleedArrow:
-	case p_BouncingArrow:
-	case p_FireArrow:
-		m_Velocity[1] -= 8 * deltaTime;
-		if (m_Velocity[1] < -30)
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
 		{
-			m_Velocity[1] = -30;
+			return true;
 		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		break;
-	case p_BasicBullet:
-	case p_BleedBullet:
-	case p_BouncingBullet:
-	case p_FireBullet:
-		m_Velocity[1] -= 4 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
-		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-		break;
-	}
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-	if(HitEnemy(deltaTime, vertices, enemies))
-	{
-		return true;
-	}
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity , hit[2], hit[1], hit[0], hit[3], deltaTime);
-	switch (m_ProjectileType)
-	{
-	case p_Sand:
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 
 		if (hit[2])
 		{
@@ -144,33 +167,22 @@ bool Projectile::EveryFrame(float deltaTime
 			m_Velocity[0] = velocity[0] / -2.0f;
 		}
 		break;
-	case p_BleedCannonBall:
-	case p_BasicCannonBall:
-	case p_FireCannonBall:
-		if (hit[2])
-		{
-			return true;
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Velocity[0] = velocity[0] / -2.0f;
-		}
-		break;
-	case p_BasicArrow:
-	case p_BleedArrow:
-	case p_FireArrow:
-	case p_BasicBullet:
-	case p_BleedBullet:
-	case p_FireBullet:
-
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			return true;
-		}
-		break;
-	case p_BouncingArrow:
+	}
 	case p_BouncingCannonBall:
-	case p_BouncingBullet:
+	{
+		m_Velocity[1] -= 18 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2] || hit[3])
 		{
 			m_Bouncing--;
@@ -181,16 +193,220 @@ bool Projectile::EveryFrame(float deltaTime
 			m_Bouncing--;
 			m_Velocity[0] = -1 * velocity[0];
 		}
-		
+
 		if (m_Bouncing < 0)
 		{
 			return true;
 		}
 		break;
+	}
+	case p_PierceCannonBall:
+	{
+		m_Velocity[1] -= 18 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[2])
+		{
+			return true;
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		break;
+	}
+	case p_BasicCannonBall:
+	case p_FireCannonBall:
+	{
+		m_Velocity[1] -= 24 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[2])
+		{
+			return true;
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		break;
+	}
+	case p_PierceArrow:
+	{
+		m_Velocity[1] -= 8 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			return true;
+		}
+
+		break;
+	}
+	case p_BasicArrow:
+	case p_FireArrow:
+	{
+		m_Velocity[1] -= 8 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			return true;
+		}
+
+		break;
+	}
+	case p_BouncingArrow:
+	{
+		m_Velocity[1] -= 8 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+
+		if (hit[2] || hit[3])
+		{
+			m_Bouncing--;
+			m_Velocity[1] = -1 * velocity[1];
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Bouncing--;
+			m_Velocity[0] = -1 * velocity[0];
+		}
+
+		if (m_Bouncing < 0)
+		{
+			return true;
+		}
+		break;
+	}
+	case p_PierceBullet:
+	{
+		m_Velocity[1] -= 4 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
+		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			return true;
+		}
+		break;
+	}
+	case p_BasicBullet:
+	case p_FireBullet:
+	{
+		m_Velocity[1] -= 4 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
+		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			return true;
+		}
+		break;
+	}
+	case p_BouncingBullet:
+	{
+		m_Velocity[1] -= 4 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
+		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, enemies))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[2] || hit[3])
+		{
+			m_Bouncing--;
+			m_Velocity[1] = -1 * velocity[1];
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Bouncing--;
+			m_Velocity[0] = -1 * velocity[0];
+		}
+
+		if (m_Bouncing < 0)
+		{
+			return true;
+		}
+		break;
+	}
 	default:
 		std::cout << "Error unknow Projectil" << m_ProjectileType << std::endl;
 		break;
-
 	}
 	return false;
 }
