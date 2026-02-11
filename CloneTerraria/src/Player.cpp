@@ -217,6 +217,8 @@ Player::Player(unsigned int eob
 	m_HPRegen = 2;
 	m_CurrentHealth = 55;
 	m_maxHealth = 100;
+	m_LastStandingY = 0;
+
 	m_PlayerSlots[0] = i_Cannon;
 	m_AmountInSlots[0] = 1;
 	m_PlayerSlots[1] = i_Cannon;
@@ -388,29 +390,42 @@ Player::Player(unsigned int eob
 void Player::DamagePlayer(float* transfromAttacker
 	, int Damage)
 {
-	int x = transfromAttacker[0] - m_Transform[0];
-	int y = transfromAttacker[1] - m_Transform[1];
-	if (x)
+	if (transfromAttacker)
 	{
-		x = abs(x) / x;
+		int x = transfromAttacker[0] - m_Transform[0];
+		int y = transfromAttacker[1] - m_Transform[1];
+		if (x)
+		{
+			x = abs(x) / x;
+		}
+		else
+		{
+			x = 0;
+		}
+
+		if (y)
+		{
+			m_Velocity[1] = 5;
+		}
+
+
+		m_Velocity[0] = 10 * -x;
+		if (Damage - m_ArmorClass >= 0)
+		{
+			m_CurrentHealth -= Damage - m_ArmorClass;
+		}
+		else
+		{
+			m_CurrentHealth--;
+		}
 	}
 	else
 	{
-		x = 0;
+		m_CurrentHealth -= Damage;
+
 	}
-
-
-	m_Velocity[0] = 10 * -x;
-	m_Velocity[1] = 5 ;
 	m_TimerSinceLastHit = 0;
-	if (Damage - m_ArmorClass >= 0)
-	{
-		m_CurrentHealth -= Damage - m_ArmorClass;
-	}
-	else
-	{
-		m_CurrentHealth--;
-	}
+
 	if (m_CurrentHealth < 0)
 	{
 		m_CurrentHealth = 0;
@@ -1814,7 +1829,14 @@ void Player::EveryFrame(float deltaTime
 		{
 			moveBehavior = b_BasicSolid;
 		}
-
+		if (m_FloorHit)
+		{
+			if (m_LastStandingY - m_Transform[1] > 20)
+			{
+				DamagePlayer(NULL, m_LastStandingY - m_Transform[1] - 20);
+			}
+			m_LastStandingY = m_Transform[1];
+		}
 
 		switch (moveBehavior)
 		{

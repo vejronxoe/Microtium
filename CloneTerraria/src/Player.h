@@ -105,6 +105,7 @@ private:
 	char FindOneOfItemsInInv(unsigned char* items, int sizeOfArray);
 public:
 
+	float m_LastStandingY;
 	float m_HPOffset[2];
 	unsigned int m_HPTexture[5];
 	float m_TimerSinceLastHit;
