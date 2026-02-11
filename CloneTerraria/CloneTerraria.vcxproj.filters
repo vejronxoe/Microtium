@@ -412,5 +412,8 @@
     <Image Include="res\textures\zombieBody.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\slimeAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

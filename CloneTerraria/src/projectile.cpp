@@ -98,9 +98,9 @@ int Projectile::HitEnemies(float deltaTime
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
 			bool wasHit = false;
-			for (int i =0; i < m_HitEnemies.size(); i++)
+			for (int j =0; j < m_HitEnemies.size(); j++)
 			{
-				if (m_HitEnemies.at(i) == enemies.at(i)->m_ID)
+				if (m_HitEnemies.at(j) == enemies.at(i)->m_ID)
 				{
 					wasHit = true;
 				}

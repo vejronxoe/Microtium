@@ -224,8 +224,10 @@ int main()
 	// 
 	//
 	// 
-	Slime s( enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,100,100,eob);
-	enemis.emplace_back(&s);
+//	Slime s(enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2, 100, 100, eob);
+	Zombie z( enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,80,100,eob);
+	//enemis.emplace_back(&s);
+	enemis.emplace_back(&z);
 
 	// 
 	// //////////////////////

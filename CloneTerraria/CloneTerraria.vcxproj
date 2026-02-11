@@ -151,6 +151,7 @@
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingInv.png" />
     <Image Include="res\textures\scrapCannonBall.png" />
+    <Image Include="res\textures\slimeAnim.png" />
     <Image Include="res\textures\topDownGrassBlock.png" />
     <Image Include="res\textures\topGrassBlock.png" />
     <Image Include="res\textures\topLeftGrassBlock.png" />

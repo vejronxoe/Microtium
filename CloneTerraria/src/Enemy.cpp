@@ -58,8 +58,8 @@ bool Enemy::DamageEnemy(int Damage
 	{
 		y = 0;
 	}
-	m_Velocity[0] = 20 * -x;
-	m_Velocity[1] = 5 * -y;
+	m_Velocity[0] = 10 * -x;
+	m_Velocity[1] = 5 ;
 	m_HP -= Damage;
 	if (m_HP <= 0)
 	{
@@ -408,7 +408,7 @@ int Slime::EnemyEveryFrame(float deltaTime
 		float distance[2];
 		WhereIsPlayer(playerTransform, distance, direction);
 		m_JumpTimer = 0;
-		m_Velocity[0] = 25 * direction[0];
+		m_Velocity[0] = 15 * direction[0];
 		m_Velocity[1] = 15;
 		m_AnimPhase = 0;
 	}

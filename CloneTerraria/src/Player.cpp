@@ -324,8 +324,27 @@ Player::Player(unsigned int eob
 	m_ItemsInHandDD[InHandPistol] = CreateDrawData(eob, 2.5f, 1, 0.5f, -0.7f);
 	m_ItemsInHandTexture[InHandPistol] = CreateTextureRGBA("res/textures/pistolHand.png");
 
+	float vertices[16];
+	vertices[0] = 0; vertices[1] = 3; vertices[2] = 0; vertices[3] = 1;
+	vertices[4] = 1; vertices[5] = 2; vertices[6] = 1; vertices[7] = 1;
+	vertices[8] = 0; vertices[9] = 1; vertices[10] = 1; vertices[11] = 0;
+	vertices[12] = -1; vertices[13] = 2;  vertices[14] = 0; vertices[15] = 0;
+	unsigned int vertexBuffer;
 
-	m_ItemInHandDD = CreateDrawData(eob, 2.5f, 1, 0, -1.5f);
+	ErrorGL(glGenVertexArrays(1, &m_ItemInHandDD));
+	ErrorGL(glBindVertexArray(m_ItemInHandDD));
+	ErrorGL(glGenBuffers(1, &vertexBuffer));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float), vertices, GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
+
+	ErrorGL(glBindVertexArray(0));
 	m_BlockInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
@@ -380,17 +399,9 @@ void Player::DamagePlayer(float* transfromAttacker
 		x = 0;
 	}
 
-	if (y)
-	{
-		y = abs(y) / y;
-	}
-	else
-	{
-		y = 0;
-	}
 
 	m_Velocity[0] = 10 * -x;
-	m_Velocity[1] = 5 * -y;
+	m_Velocity[1] = 5 ;
 	m_TimerSinceLastHit = 0;
 	if (Damage - m_ArmorClass >= 0)
 	{
@@ -445,19 +456,19 @@ void Player::SwapItemStats()
 			break;
 		case i_WoodBow:
 			m_Range = 0;
-			m_Damage = 5;
+			m_Damage = 4;
 			m_WeaponType = weaponBow;
 			m_CooldownToUse = 0.8;
 			break;
 		case i_Cannon:
 			m_Range = 0;
-			m_Damage = 15;
+			m_Damage = 10;
 			m_WeaponType = weaponCanon;
 			m_CooldownToUse = 1.2;
 			break;
 		case i_Pistol:
 			m_Range = 0;
-			m_Damage = 20;
+			m_Damage = 15;
 			m_WeaponType = weaponGun;
 			m_CooldownToUse = 0.4;
 			break;
@@ -2005,18 +2016,45 @@ void Player::EveryFrame(float deltaTime
 				float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1]};
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					if (Pyt2D(enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1]) <= 3)
+					float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1]};
+					float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
+					for (int j = 0; j < 2; j++)
 					{
-						if (abs(atan2(enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1])) <= -m_ArmRotation)
+						float holder[2];
+						holder[1] = distanceVertices[1 + 2 * j];
+						for (int l = 0 ; l < 2; l++)
 						{
-							if (enemies.at(i)->DamageEnemy(m_Damage,m_Transform))
+							holder[0] = distanceVertices[2 * i];
+							if (Pyt2D(holder) < Pyt2D(distance))
 							{
-								enemies.erase(enemies.begin() + i);
-								i--;
+								distance[0] = holder[0];
+								distance[1] = holder[1];
 							}
-							else
+						}
+					}
+					if (Pyt2D(distance) <= 2.5f)
+					{
+						if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
+						{
+							bool wasEnemyHit = false;
+							for (int j = 0; j < m_HitEnemies.size(); j++)
 							{
-								m_HitEnemies.push_back(enemies.at(i)->m_ID);
+								if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+								{
+									wasEnemyHit = true;
+								}
+							}
+							if (!wasEnemyHit)
+							{
+								if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+								{
+									enemies.erase(enemies.begin() + i);
+									i--;
+								}
+								else
+								{
+									m_HitEnemies.push_back(enemies.at(i)->m_ID);
+								}
 							}
 						}
 					}
