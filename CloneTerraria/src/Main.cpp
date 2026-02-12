@@ -21,6 +21,7 @@
 #include"flora.h"
 #include"projectile.h"
 #include"Enemy.h"
+#include"background.h"
 
 int main()
 {
@@ -39,6 +40,9 @@ int main()
 		std::cin.get();
 		return -1;
 	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	GLFWwindow* window;
 	if (Window::fullScreen)
 	{
@@ -55,10 +59,8 @@ int main()
 	glfwSetScrollCallback(window, Input::ScrollCallback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+//
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -142,6 +144,11 @@ int main()
 	advancedSh.GetUniformLocation("transform");
 	advancedSh.GetUniformLocation("scale");
 	advancedSh.GetUniformLocation("rotation");
+	Shader backgroundSh("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBackground.txt");
+	backgroundSh.Bind();
+	backgroundSh.GetUniformLocation("camera");
+	backgroundSh.GetUniformLocation("transform");
+	backgroundSh.GetUniformLocation("blendFactor");
 
 	float camera[16];
 	float scale[16];
@@ -217,8 +224,8 @@ int main()
 
 	std::vector<Projectile> projectiles;
 
-	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 200, -100, 100, blockTextures);
-	
+	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 1080, -500, 360, blockTextures);
+	Background background(eob,backgroundSh);
 
 	//
 	// 
@@ -333,8 +340,10 @@ int main()
 		handSh.SetUniformMat4(handCamera, camera);
 		advancedSh.Bind();
 		advancedSh.SetUniformMat4(advancedCamera, camera);
+		backgroundSh.Bind();
+		backgroundSh.SetUniformMat4(basicCamera, camera);
 		
-
+		background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
 
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));

@@ -72,6 +72,9 @@
     <ClCompile Include="src\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\background.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -131,6 +134,9 @@
     <ClInclude Include="src\Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\background.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shaders\fragmentShaderBasic.txt" />
@@ -146,6 +152,7 @@
     <Text Include="res\shaders\vertexShaderAnimation.txt" />
     <Text Include="res\shaders\vertexShaderHand.txt" />
     <Text Include="res\shaders\vertexShaderAdvanced.txt" />
+    <Text Include="res\shaders\fragmentShaderBackground.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">

@@ -65,14 +65,18 @@ enum advancedVertexSh
 	, advancedRotation
 	, advancedSize
 };
+enum backgroundVertexSh
+{
+	backgroundBlendFactor = 0 
+};
 class Shader
 {
 private:
-	unsigned int m_ID;
 	std::string fileShaderRead(std::string filePath);
 	unsigned int CompileShader(unsigned int type, const char* source, const char* nameShader);
 	void LinkBasicShader(unsigned int vertexShader, unsigned int fragmentShader);
 public:
+	unsigned int m_ID;
 	std::vector<unsigned int> m_Locations;
 	Shader(const char* VertexShaderSource, const char* FragmentShadersource);
 	void DeleteShader();

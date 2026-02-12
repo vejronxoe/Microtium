@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\background.cpp" />
     <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\flora.cpp" />
     <ClCompile Include="src\Collision.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="src\projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\background.h" />
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\BlocksAndWalls.h" />
     <ClInclude Include="src\DroppedItems.h" />
@@ -64,6 +66,7 @@
     <Text Include="res\save\mapBlocks.txt" />
     <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\settings.txt" />
+    <Text Include="res\shaders\fragmentShaderBackground.txt" />
     <Text Include="res\shaders\fragmentShaderShadow.txt" />
     <Text Include="res\shaders\fragmentShaderTest.txt" />
     <Text Include="res\shaders\vertexShaderAnimation.txt" />

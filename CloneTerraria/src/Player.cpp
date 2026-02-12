@@ -173,7 +173,7 @@ Player::Player(unsigned int eob
 	m_Friction = 0;
 	m_MaxMovementSpeed = 0;
 	m_Transform[0] = 150;
-	m_Transform[1] = 10;
+	m_Transform[1] = 30;
 	m_Velocity[0] = 0;
 	m_Velocity[1] = -2;
 	m_ArmTimer = 0;
