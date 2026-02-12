@@ -14,9 +14,9 @@ Background::Background(unsigned int eob , Shader backgroundSh)
 	m_Tex[2] = CreateTextureRepeatRGBA("res/textures/BackgroundSky.png");
 	m_Tex[3] = CreateTextureRepeatRGBA("res/textures/BackgroundSand.png");
 	m_Tex[4] = CreateTextureRepeatRGBA("res/textures/BackgroundSnow.png");
-	m_DD[0] = CreateDrawData(eob, SlowForBackground * Blocks::yMax/12.0f, 0, SlowForBackground * Blocks::xMax, Blocks::xMin, 1, 0, 24, 0);
-	m_DD[1] = CreateDrawData(eob, SlowForBackground * Blocks::yMax, SlowForBackground * Blocks::yMax / 12.0f, SlowForBackground * Blocks::xMax, Blocks::xMin, 4, 0, 24, 0);
-	m_DD[2] = CreateDrawData(eob, 0, SlowForBackground * Blocks::yMin, SlowForBackground * Blocks::xMax, Blocks::xMin, 24, 0, 24, 0);
+	m_DD[0] = CreateDrawData(eob, SlowForBackground * Blocks::yMax/12.0f, 0, SlowForBackground * Blocks::xMax, - SlowForBackground * Blocks::xMax / 24.0f, 1, 0, 25, 0);
+	m_DD[1] = CreateDrawData(eob, SlowForBackground * Blocks::yMax, SlowForBackground * Blocks::yMax / 12.0f, SlowForBackground * Blocks::xMax, Blocks::xMin, 4, 0, 25, 0);
+	m_DD[2] = CreateDrawData(eob, 0, SlowForBackground * Blocks::yMin, SlowForBackground * Blocks::xMax, -SlowForBackground * Blocks::xMax / 24.0f, 24, 0, 25, 0);
 }
 void Background::DrawBackground(Shader backgroundSh, Shader basicSh, float* transform, float* cameraTransform)
 {	
