@@ -2035,50 +2035,54 @@ void Player::EveryFrame(float deltaTime
 				break;
 			default:
 				m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
-				float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1]};
-				for (int i = 0; i < enemies.size(); i++)
+				if (!m_Placeable && !m_LargePlaceable)
 				{
-					float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1]};
-					float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
-					for (int j = 0; j < 2; j++)
+					float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1] };
+					for (int i = 0; i < enemies.size(); i++)
 					{
-						float holder[2];
-						holder[1] = distanceVertices[1 + 2 * j];
-						for (int l = 0 ; l < 2; l++)
+						float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1] };
+						float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
+						for (int j = 0; j < 2; j++)
 						{
-							holder[0] = distanceVertices[2 * i];
-							if (Pyt2D(holder) < Pyt2D(distance))
+							float holder[2];
+							holder[1] = distanceVertices[1 + 2 * j];
+							for (int l = 0; l < 2; l++)
 							{
-								distance[0] = holder[0];
-								distance[1] = holder[1];
-							}
-						}
-					}
-					if (Pyt2D(distance) <= 2.5f)
-					{
-						if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
-						{
-							bool wasEnemyHit = false;
-							for (int j = 0; j < m_HitEnemies.size(); j++)
-							{
-								if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+								holder[0] = distanceVertices[2 * i];
+								if (Pyt2D(holder) < Pyt2D(distance))
 								{
-									wasEnemyHit = true;
-								}
-							}
-							if (!wasEnemyHit)
-							{
-								if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
-								{
-									enemies.erase(enemies.begin() + i);
-									i--;
-								}
-								else
-								{
-									m_HitEnemies.push_back(enemies.at(i)->m_ID);
+									distance[0] = holder[0];
+									distance[1] = holder[1];
 								}
 							}
 						}
+						if (Pyt2D(distance) <= 2.5f)
+						{
+							if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
+							{
+								bool wasEnemyHit = false;
+								for (int j = 0; j < m_HitEnemies.size(); j++)
+								{
+									if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+									{
+										wasEnemyHit = true;
+									}
+								}
+								if (!wasEnemyHit)
+								{
+									if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+									{
+										enemies.erase(enemies.begin() + i);
+										i--;
+									}
+									else
+									{
+										m_HitEnemies.push_back(enemies.at(i)->m_ID);
+									}
+								}
+							}
+						}
+
 					}
 				}
 				if (m_UseItemTimer > m_CooldownToUse)
