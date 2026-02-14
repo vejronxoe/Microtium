@@ -35,6 +35,10 @@ enum Items
 	, i_WoodChestPlate
 	, i_WoodPants
 	, i_WoodShoes
+	, i_AccessoriseArrowBag
+	, i_AccessoriseWallClimb
+	, i_AccessoriseShackle
+	, i_AccessoriseFastShoes
 };
 enum Structures
 {

@@ -84,7 +84,16 @@
     <Image Include="res\textures\15To20HP.png" />
     <Image Include="res\textures\20To25HP.png" />
     <Image Include="res\textures\5To10HP.png" />
+    <Image Include="res\textures\accessoriseArrowBag.png" />
+    <Image Include="res\textures\accessoriseFastShoes.png" />
+    <Image Include="res\textures\accessoriseShackle.png" />
+    <Image Include="res\textures\accessoriseWallClimb.png" />
     <Image Include="res\textures\Asphalt.png" />
+    <Image Include="res\textures\BackgroundForest.png" />
+    <Image Include="res\textures\BackgroundSand.png" />
+    <Image Include="res\textures\BackgroundSky.png" />
+    <Image Include="res\textures\BackgroundSnow.png" />
+    <Image Include="res\textures\BackgroundUnderground.png" />
     <Image Include="res\textures\basicArrow.png" />
     <Image Include="res\textures\basicBullet.png" />
     <Image Include="res\textures\basicCanonBall.png" />

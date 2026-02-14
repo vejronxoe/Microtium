@@ -422,5 +422,32 @@
     <Image Include="res\textures\slimeAnim.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\BackgroundForest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSky.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSnow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundUnderground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseArrowBag.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseFastShoes.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseShackle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseWallClimb.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

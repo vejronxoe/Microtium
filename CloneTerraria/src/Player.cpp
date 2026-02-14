@@ -161,7 +161,8 @@ Player::Player(unsigned int eob
 
 	m_FloorHit = false;
 	m_CeilHit = false;
-	m_WallHit = false;
+	m_LeftWallHit = false;
+	m_RightWallHit = false;
 	m_CoyoteTimer = 0;
 	m_JumpTimer = 0;
 	m_ArmorClass = 0;
@@ -218,6 +219,14 @@ Player::Player(unsigned int eob
 	m_CurrentHealth = 55;
 	m_maxHealth = 100;
 	m_LastStandingY = 0;
+	m_CanDoubleJump = false;
+	m_Accessorise = false;
+	m_Effects[0] = 0;
+	m_Effects[1] = 0;
+	m_Effects[2] = 0;
+	m_Effects[3] = 0;
+	m_OnFireTimer = 0;
+	m_SpeedMultiplier = 1;
 
 	m_PlayerSlots[0] = i_Cannon;
 	m_AmountInSlots[0] = 1;
@@ -244,7 +253,10 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[17] = i_WoodChestPlate;
 	m_PlayerSlots[18] = i_WoodPants;
 	m_PlayerSlots[19] = i_WoodShoes;
-	
+	m_PlayerSlots[20] = i_AccessoriseArrowBag;
+	m_PlayerSlots[21] = i_AccessoriseWallClimb;
+	m_PlayerSlots[22] = i_AccessoriseFastShoes;
+	m_PlayerSlots[23] = i_AccessoriseShackle;
 	m_AmountInSlots[4] = 20;
 	m_AmountInSlots[5] = 20;
 	m_AmountInSlots[6] = 20;
@@ -261,6 +273,10 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[17] = 1;
 	m_AmountInSlots[18] = 1;
 	m_AmountInSlots[19] = 1;
+	m_AmountInSlots[20] = 1;
+	m_AmountInSlots[21] = 1;
+	m_AmountInSlots[22] = 1;
+	m_AmountInSlots[23] = 1;
 
 
 	m_PlayerSlots[41] = i_CopperSword;
@@ -316,6 +332,10 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_WoodChestPlate] = CreateTextureRGBA("res/textures/woodChestPlate.png");
 	m_AllItemTextures[i_WoodPants] = CreateTextureRGBA("res/textures/woodPants.png");
 	m_AllItemTextures[i_WoodShoes] = CreateTextureRGBA("res/textures/woodShoes.png");
+	m_AllItemTextures[i_AccessoriseArrowBag] = CreateTextureRGBA("res/textures/accessoriseArrowBag.png");
+	m_AllItemTextures[i_AccessoriseWallClimb] = CreateTextureRGBA("res/textures/accessoriseWallClimb.png");
+	m_AllItemTextures[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
+	m_AllItemTextures[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
 
 
 	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
@@ -443,6 +463,8 @@ void Player::SwapItemStats()
 	m_Consume = false;
 	m_Placeable = false;
 	m_LargePlaceable = false;
+	m_Accessorise = false;
+
 	switch (m_PlayerSlots[0])
 	{
 		break;
@@ -495,6 +517,15 @@ void Player::SwapItemStats()
 			m_Consume = true;
 			m_CooldownToUse = 0.8;
 			break;
+		case i_AccessoriseArrowBag:
+		case i_AccessoriseWallClimb:
+		case i_AccessoriseFastShoes:
+		case i_AccessoriseShackle:
+			m_CooldownToUse = 0;
+			m_Range = 0;
+			m_Accessorise = true;
+			break;
+
 		case i_PierceArrow:
 		case i_BasicArrow:
 		case i_BouncingArrow:
@@ -507,8 +538,8 @@ void Player::SwapItemStats()
 		case i_PierceBullet:
 		case i_BouncingBullet:
 		case i_FireBullet:
-		case(i_Nothing):
-			m_CooldownToUse = 0;
+		case i_Nothing:
+			m_CooldownToUse = 10;
 			m_Range = 0;
 			break;
 		default:
@@ -516,9 +547,13 @@ void Player::SwapItemStats()
 			m_Placeable = true;
 			break;
 	}
-
+	if (m_WeaponType == weaponBow && m_Effects[effectArrowBag])
+	{
+		m_WeaponType = weaponBow + weaponAutomatic;
+	}
 
 }
+
 void Player::SwapArmor(unsigned char SlotIndex
 	, char armorPart)
 {
@@ -616,6 +651,64 @@ void Player::SwapArmor(unsigned char SlotIndex
 		m_AmountInSlots[SlotIndex] = 0;
 	}
 }
+void Player::SwapAccessorise(unsigned char invSlotIndex
+	, unsigned char accessoriseSlotIndex)
+{
+
+	switch (m_PlayerSlots[invSlotIndex])
+	{
+	case i_AccessoriseArrowBag:
+		m_Effects[effectArrowBag] = true;
+		break;
+	case i_AccessoriseFastShoes:
+		m_SpeedMultiplier *= 2;
+		break;
+	case i_AccessoriseWallClimb:
+		m_Effects[effectWallClimb] = true;
+		break;
+	case i_AccessoriseShackle:
+		m_ArmorClass += 2;
+		break;
+	case i_Nothing:
+		break;
+	default:
+		std::cout << "Error Player.cpp unknnow Accessorise Input : " << m_PlayerSlots[invSlotIndex] << std::endl;
+		break;
+	}
+	switch (m_PlayerSlots[accessoriseSlotIndex])
+	{
+	case i_AccessoriseArrowBag:
+		m_Effects[effectArrowBag] = false;
+		break;
+	case i_AccessoriseFastShoes:
+		m_SpeedMultiplier /= 2;
+		break;
+	case i_AccessoriseWallClimb:
+		m_Effects[effectWallClimb] = false;
+		break;
+	case i_AccessoriseShackle:
+		m_ArmorClass -= 2;
+		break;
+	case i_Nothing:
+		break;
+	default:
+		std::cout << "Error Player.cpp unknnow Accessorise output : " << m_PlayerSlots[accessoriseSlotIndex] << std::endl;
+		break;
+	}
+	int holder = m_PlayerSlots[invSlotIndex];
+	m_PlayerSlots[invSlotIndex] = m_PlayerSlots[accessoriseSlotIndex];
+	m_PlayerSlots[accessoriseSlotIndex] = holder;
+	if (m_PlayerSlots[invSlotIndex] == i_Nothing)
+	{
+		m_AmountInSlots[invSlotIndex] = 0;
+	}
+	else
+	{
+		m_AmountInSlots[invSlotIndex] = 1;
+	}
+
+}
+
 bool Player::IsItStackble(unsigned short int item)
 {
 	switch (item)
@@ -746,6 +839,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 	}
 	return isItDone;
 }
+
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
@@ -763,318 +857,326 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Projectile>& projectiles)
 {
-	
+	if (m_ArmsBehaviour != ArmUsing)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
 								, Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
 								, m_InvOffset[0] + m_HalfOfSlotLeanght
-								, Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght};
-		if (m_ArmsBehaviour != ArmUsing)
+								, Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght };
+
+		m_AimingAtSlot = 0;
+		if (m_IsInventoryOpen)
 		{
-			m_AimingAtSlot = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+					if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != i_Nothing)
+					{
+						if (m_SlotGap * j + slotVertices[0] < Input::XRawMousePos && m_SlotGap * j + slotVertices[2] > Input::XRawMousePos)
+						{
+							if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
+							{
+								m_AimingAtSlot = i * 10 + j + 1;
+							}
+						}
+					}
+				}
+			}
+			if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[51] != i_Nothing)
+			{
+
+				if (m_SlotGap * 9 + slotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + slotVertices[2] > Input::XRawMousePos)
+				{
+					if (m_SlotGap * 5 + slotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + slotVertices[3] > Input::YRawMousePos)
+					{
+
+
+						m_AimingAtSlot = 51;
+					}
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i] != i_Nothing)
+				{
+					if (m_SlotGap * i + slotVertices[0] < Input::XRawMousePos && m_SlotGap * i + slotVertices[2] > Input::XRawMousePos)
+					{
+						if (slotVertices[1] < Input::YRawMousePos && slotVertices[3] > Input::YRawMousePos)
+						{
+							m_AimingAtSlot = i + 1;
+						}
+					}
+				}
+			}
+		}
+		if (Input::LeftMousePress && m_AimingAtSlot)
+		{
 			if (m_IsInventoryOpen)
 			{
-				for (int i = 0; i < 5; i++)
+				if (m_UseSlot == 0)
 				{
-					for (int j = 0; j < 10; j++)
-					{
-						if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i * 10 + j + 1] != i_Nothing)
-						{
-							if (m_SlotGap * j + slotVertices[0] < Input::XRawMousePos && m_SlotGap * j + slotVertices[2] > Input::XRawMousePos)
-							{
-								if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
-								{
-									m_AimingAtSlot = i * 10 + j + 1;
-								}
-							}
-						}
-					}
+					m_PlayerSlots[0] = i_Nothing;
+					m_AmountInSlots[0] = 0;
 				}
-				if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[51] != i_Nothing)
+				if (m_AimingAtSlot == 51)
 				{
 
-					if (m_SlotGap * 9 + slotVertices[0] < Input::XRawMousePos && m_SlotGap * 9 + slotVertices[2] > Input::XRawMousePos)
+					m_UseSlot = 51;
+					if (m_PlayerSlots[0] == i_Nothing)
 					{
-						if (m_SlotGap * 5 + slotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + slotVertices[3] > Input::YRawMousePos)
-						{
-
-
-							m_AimingAtSlot = 51;
-						}
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < 10; i++)
-				{
-					if ((m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0) || m_PlayerSlots[i] != i_Nothing)
-					{
-						if (m_SlotGap * i + slotVertices[0] < Input::XRawMousePos && m_SlotGap * i + slotVertices[2] > Input::XRawMousePos)
-						{
-							if (slotVertices[1] < Input::YRawMousePos && slotVertices[3] > Input::YRawMousePos)
-							{
-								m_AimingAtSlot = i + 1;
-							}
-						}
-					}
-				}
-			}
-			if (Input::LeftMousePress && m_AimingAtSlot)
-			{
-				if (m_IsInventoryOpen)
-				{
-					if (m_UseSlot == 0)
-					{
-						m_PlayerSlots[0] = i_Nothing;
-						m_AmountInSlots[0] = 0;
-					}
-					if (m_AimingAtSlot == 51)
-					{
-
-						m_UseSlot = 51;
-						if (m_PlayerSlots[0] == i_Nothing)
-						{
-							m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
-							m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
-							m_PlayerSlots[m_UseSlot] = i_Nothing;
-							m_AmountInSlots[m_UseSlot] = 0;
-						}
-						else
-						{
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-							m_UseSlot = 0;
-							m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-							m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-						}
-						SwapItemStats();
-					}
-					else if (Input::CtrlHold)
-					{
-						if (m_PlayerSlots[m_AimingAtSlot] != i_Nothing)
-						{
-							m_PlayerSlots[51] = m_PlayerSlots[m_AimingAtSlot];
-							m_AmountInSlots[51] = m_AmountInSlots[m_AimingAtSlot];
-							m_PlayerSlots[m_AimingAtSlot] = 0;
-							m_AmountInSlots[m_AimingAtSlot] = 0;
-							if (m_UseSlot == 0)
-							{
-								m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-								m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-								SwapItemStats();
-							}
-						}
+						m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
+						m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
+						m_PlayerSlots[m_UseSlot] = i_Nothing;
+						m_AmountInSlots[m_UseSlot] = 0;
 					}
 					else
 					{
-						m_UseSlot = m_AimingAtSlot;
-						if (m_PlayerSlots[m_UseSlot] == m_PlayerSlots[0] && IsItStackble(m_PlayerSlots[0]) && m_AmountInSlots[0] != 9999 && m_AmountInSlots[m_UseSlot] != 9999)
+						m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+						m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+						m_UseSlot = 0;
+						m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+						m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+					}
+					SwapItemStats();
+				}
+				else if (Input::CtrlHold)
+				{
+					if (m_PlayerSlots[m_AimingAtSlot] != i_Nothing)
+					{
+						m_PlayerSlots[51] = m_PlayerSlots[m_AimingAtSlot];
+						m_AmountInSlots[51] = m_AmountInSlots[m_AimingAtSlot];
+						m_PlayerSlots[m_AimingAtSlot] = 0;
+						m_AmountInSlots[m_AimingAtSlot] = 0;
+						if (m_UseSlot == 0)
 						{
-							if (m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] <= 9999)
-							{
-								m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0];
-								m_UseSlot = 0;
-								m_PlayerSlots[0] = 0;
-								m_AmountInSlots[0] = 0;
-							}
-							else
-							{
-								short int holdForAmountInSlot = m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] - 9999;
-								m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0] - holdForAmountInSlot;
-								m_AmountInSlots[0] = holdForAmountInSlot;
-							}
-						}
-						else if (m_PlayerSlots[0] == i_Nothing)
-						{
-							m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
-							m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
-							m_PlayerSlots[m_UseSlot] = i_Nothing;
-							m_AmountInSlots[m_UseSlot] = 0;
-						}
-						else if (m_PlayerSlots[m_UseSlot] == i_Nothing)
-						{
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-							m_UseSlot = 0;
 							m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
 							m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+							SwapItemStats();
 						}
-						else
-						{
-							unsigned short int holdForPlyerSlot = m_PlayerSlots[m_UseSlot];
-							unsigned short int holdForAmountInSlot = m_AmountInSlots[m_UseSlot];
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-							m_PlayerSlots[0] = holdForPlyerSlot;
-							m_AmountInSlots[0] = holdForAmountInSlot;
-						}
-						SwapItemStats();
 					}
 				}
 				else
 				{
-					m_HUDUseSlot = m_AimingAtSlot;
-					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-					m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+					m_UseSlot = m_AimingAtSlot;
+					if (m_PlayerSlots[m_UseSlot] == m_PlayerSlots[0] && IsItStackble(m_PlayerSlots[0]) && m_AmountInSlots[0] != 9999 && m_AmountInSlots[m_UseSlot] != 9999)
+					{
+						if (m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] <= 9999)
+						{
+							m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0];
+							m_UseSlot = 0;
+							m_PlayerSlots[0] = 0;
+							m_AmountInSlots[0] = 0;
+						}
+						else
+						{
+							short int holdForAmountInSlot = m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] - 9999;
+							m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0] - holdForAmountInSlot;
+							m_AmountInSlots[0] = holdForAmountInSlot;
+						}
+					}
+					else if (m_PlayerSlots[0] == i_Nothing)
+					{
+						m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
+						m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
+						m_PlayerSlots[m_UseSlot] = i_Nothing;
+						m_AmountInSlots[m_UseSlot] = 0;
+					}
+					else if (m_PlayerSlots[m_UseSlot] == i_Nothing)
+					{
+						m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+						m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+						m_UseSlot = 0;
+						m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+						m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+					}
+					else
+					{
+						unsigned short int holdForPlyerSlot = m_PlayerSlots[m_UseSlot];
+						unsigned short int holdForAmountInSlot = m_AmountInSlots[m_UseSlot];
+						m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+						m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+						m_PlayerSlots[0] = holdForPlyerSlot;
+						m_AmountInSlots[0] = holdForAmountInSlot;
+					}
 					SwapItemStats();
 				}
-
 			}
-			if (Input::MouseWheel && !m_IsInventoryOpen)
+			else
 			{
-				m_HUDUseSlot += Input::MouseWheel;
-				if (10 < m_HUDUseSlot)
-				{
-					m_HUDUseSlot = 1;
-				}
-				else if (1 > m_HUDUseSlot)
-				{
-					m_HUDUseSlot = 10;
-				}
+				m_HUDUseSlot = m_AimingAtSlot;
 				m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
 				m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
 				SwapItemStats();
 			}
-			for (int i = 0; i < 10; i++)
-			{
-				if (Input::NumberPress[i])
-				{
-					if (m_UseSlot != 0 && m_IsInventoryOpen)
-					{
-						if (m_PlayerSlots[m_UseSlot] != i_Nothing)
-						{
-							if (!ItermGetToInventory(m_AmountInSlots[0], m_PlayerSlots[0]))
-							{
-								droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
-								m_PlayerSlots[0] = i_Nothing;
-								m_AmountInSlots[0] = 0;
-								SwapItemStats();
-							}
-						}
-						else
-						{
-							m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-							m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
 
-						}
-						m_PlayerSlots[0] = i_Nothing;
-						m_AmountInSlots[0] = 0;
-						m_UseSlot = 0;
-					}
-					m_HUDUseSlot = i + 1;
-					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-					m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-					SwapItemStats();
-				}
-			}
-			if (Input::RightMouseHold && m_AimingAtSlot && m_IsInventoryOpen && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_UseSlot == 0))
+		}
+		if (Input::MouseWheel && !m_IsInventoryOpen)
+		{
+			m_HUDUseSlot += Input::MouseWheel;
+			if (10 < m_HUDUseSlot)
 			{
-				if (m_TimerSplitingItem == 1)
+				m_HUDUseSlot = 1;
+			}
+			else if (1 > m_HUDUseSlot)
+			{
+				m_HUDUseSlot = 10;
+			}
+			m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+			m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+			SwapItemStats();
+		}
+		for (int i = 0; i < 10; i++)
+		{
+			if (Input::NumberPress[i])
+			{
+				if (m_UseSlot != 0 && m_IsInventoryOpen)
 				{
-					if (m_UseSlot == 0)
+					if (m_PlayerSlots[m_UseSlot] != i_Nothing)
 					{
-						m_AmountInSlots[0] = 0;
+						if (!ItermGetToInventory(m_AmountInSlots[0], m_PlayerSlots[0]))
+						{
+							droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
+							m_PlayerSlots[0] = i_Nothing;
+							m_AmountInSlots[0] = 0;
+							SwapItemStats();
+						}
 					}
-					m_AmountInSlots[m_AimingAtSlot]--;
-					m_AmountInSlots[0]++;
-					m_PlayerSlots[0] = m_PlayerSlots[m_AimingAtSlot];
-					if (m_AmountInSlots[m_AimingAtSlot] <= 0)
+					else
 					{
-						m_PlayerSlots[m_AimingAtSlot] == i_Nothing;
+						m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+						m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+
 					}
-					m_UseSlot = m_AimingAtSlot;
-					SwapItemStats();
+					m_PlayerSlots[0] = i_Nothing;
+					m_AmountInSlots[0] = 0;
+					m_UseSlot = 0;
 				}
-				else if (m_AmountInSlots[m_AimingAtSlot] - pow(m_TimerSplitingItem, 2) * deltaTime - m_AddNextFrameDropItem < 0)
+				m_HUDUseSlot = i + 1;
+				m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+				m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+				SwapItemStats();
+			}
+		}
+		if (Input::RightMouseHold && m_AimingAtSlot && m_IsInventoryOpen && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_UseSlot == 0))
+		{
+			if (m_TimerSplitingItem == 1)
+			{
+				if (m_UseSlot == 0)
 				{
-					m_AmountInSlots[0] += m_AmountInSlots[m_AimingAtSlot];
-					m_AmountInSlots[m_AimingAtSlot] = 0;
-					m_AddNextFrameDropItem = 0;
-					m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
+					m_AmountInSlots[0] = 0;
 				}
-				else
+				m_AmountInSlots[m_AimingAtSlot]--;
+				m_AmountInSlots[0]++;
+				m_PlayerSlots[0] = m_PlayerSlots[m_AimingAtSlot];
+				if (m_AmountInSlots[m_AimingAtSlot] <= 0)
 				{
-					m_AmountInSlots[0] += floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
-					m_AmountInSlots[m_AimingAtSlot] -= floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
-					m_AddNextFrameDropItem = pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem - floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+					m_PlayerSlots[m_AimingAtSlot] == i_Nothing;
 				}
-				m_TimerSplitingItem += deltaTime;
+				m_UseSlot = m_AimingAtSlot;
+				SwapItemStats();
+			}
+			else if (m_AmountInSlots[m_AimingAtSlot] - pow(m_TimerSplitingItem, 2) * deltaTime - m_AddNextFrameDropItem < 0)
+			{
+				m_AmountInSlots[0] += m_AmountInSlots[m_AimingAtSlot];
+				m_AmountInSlots[m_AimingAtSlot] = 0;
+				m_AddNextFrameDropItem = 0;
+				m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
 			}
 			else
 			{
-				m_TimerSplitingItem = 1;
-				m_AddNextFrameDropItem = 0;
+				m_AmountInSlots[0] += floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+				m_AmountInSlots[m_AimingAtSlot] -= floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+				m_AddNextFrameDropItem = pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem - floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
 			}
-			if (m_IsInventoryOpen)
+			m_TimerSplitingItem += deltaTime;
+		}
+		else
+		{
+			m_TimerSplitingItem = 1;
+			m_AddNextFrameDropItem = 0;
+		}
+		if (m_IsInventoryOpen)
+		{
+			if (m_AimingAtSlot == 0)
 			{
-				if (m_AimingAtSlot == 0)
+				slotVertices[0] = m_HPOffset[0] - m_HalfOfSlotLeanght;
+				slotVertices[1] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] - m_HalfOfSlotLeanght);
+				slotVertices[2] = m_HPOffset[0] + m_HalfOfSlotLeanght;
+				slotVertices[3] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] + m_HalfOfSlotLeanght);
+				for (int i = 0; i < 8; i++)
 				{
-					slotVertices[0] = m_HPOffset[0] - m_HalfOfSlotLeanght;
-					slotVertices[1] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] - m_HalfOfSlotLeanght);
-					slotVertices[2] = m_HPOffset[0] + m_HalfOfSlotLeanght;
-					slotVertices[3] = m_SlotGap * 3 + (Window::height - m_HPOffset[1] + m_HalfOfSlotLeanght);
-					for (int i = 0; i < 8; i++)
+					if (m_PlayerSlots[52 + i] != i_Nothing || m_PlayerSlots[0] != i_Nothing)
 					{
-						if (m_PlayerSlots[52 + i] != i_Nothing || m_PlayerSlots[0] != i_Nothing)
+						if (slotVertices[0] < Input::XRawMousePos && slotVertices[2] > Input::XRawMousePos)
 						{
-							if (slotVertices[0] < Input::XRawMousePos && slotVertices[2] > Input::XRawMousePos)
+							if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
 							{
-								if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
-								{
-									m_AimingAtSlot = 52 + i;
-								}
+								m_AimingAtSlot = 52 + i;
 							}
-						}
-					}
-					
-					if (Input::LeftMousePress && m_AimingAtSlot != 0 )
-					{
-						if (m_UseSlot == 0)
-						{
-							m_PlayerSlots[0] = i_Nothing;
-							m_AmountInSlots[0] = 0;
-						}
-						char typeOfArmor = WhatPartOfArmor(m_PlayerSlots[0]);
-
-						if (typeOfArmor == -1)
-						{
-							
-							switch (m_AimingAtSlot)
-							{
-							case 52:
-								SwapArmor(0, armorHelmet);
-								break;
-							case 53:
-								SwapArmor(0, armorChestPlate);
-								break;
-							case 54:
-								SwapArmor(0, armorPants);
-								break;
-							case 55:
-								SwapArmor(0, armorShoes);
-								break;
-							}
-							if (m_UseSlot == 0)
-							{
-								m_UseSlot = m_AimingAtSlot;
-							}
-							SwapItemStats();
-						}
-						else if (typeOfArmor >= 0)
-						{
-							SwapArmor(0, typeOfArmor);
-							if (m_UseSlot == 0)
-							{
-								m_UseSlot = m_AimingAtSlot;
-							}
-							SwapItemStats();
 						}
 					}
 				}
-				
+				char typeOfArmor = WhatPartOfArmor(m_PlayerSlots[0]);
+				if (Input::LeftMousePress && m_AimingAtSlot != 0)
+				{
+					if (m_UseSlot == 0)
+					{
+						m_PlayerSlots[0] = i_Nothing;
+						m_AmountInSlots[0] = 0;
+					}
+
+					if ((m_Accessorise || m_PlayerSlots[0] == i_Nothing) && m_AimingAtSlot > 55)
+					{
+						SwapAccessorise(0, m_AimingAtSlot);
+						if (m_UseSlot == 0)
+						{
+							m_UseSlot = m_AimingAtSlot;
+						}
+						SwapItemStats();
+					}
+					else if (typeOfArmor == -1)
+					{
+						
+						switch (m_AimingAtSlot)
+						{
+						case 52:
+							SwapArmor(0, armorHelmet);
+							break;
+						case 53:
+							SwapArmor(0, armorChestPlate);
+							break;
+						case 54:
+							SwapArmor(0, armorPants);
+							break;
+						case 55:
+							SwapArmor(0, armorShoes);
+							break;
+						}
+						if (m_UseSlot == 0)
+						{
+							m_UseSlot = m_AimingAtSlot;
+						}
+						SwapItemStats();
+					}
+					else if(typeOfArmor >= 0)
+					{
+						SwapArmor(0, typeOfArmor);
+						if (m_UseSlot == 0)
+						{
+							m_UseSlot = m_AimingAtSlot;
+						}
+						SwapItemStats();
+					}
+				}
 			}
+
+
 		}
+
 		if (Input::EscapePress)
 		{
 			if (m_IsInventoryOpen)
@@ -1105,7 +1207,6 @@ void Player::EveryFrame(float deltaTime
 				m_IsInventoryOpen = true;
 			}
 		}
-		
 	}
 	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
 	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
@@ -1393,7 +1494,10 @@ void Player::EveryFrame(float deltaTime
 					case i_Nothing:
 						break;
 					default:
-						m_ArmsBehaviour = ArmUsing;
+						if (!m_Consume)
+						{
+							m_ArmsBehaviour = ArmUsing;
+						}
 						break;
 					}
 
@@ -1821,11 +1925,12 @@ void Player::EveryFrame(float deltaTime
 
 		m_FloorHit = false;
 		m_CeilHit = false;
-		m_WallHit = false;
+		m_LeftWallHit = false;
+		m_RightWallHit = false;
 
 
-		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_WallHit, m_WallHit, m_FloorHit, m_CeilHit);
-		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, m_WallHit, m_WallHit, m_CeilHit, deltaTime))
+		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
+		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
 		{
 			moveBehavior = b_BasicSolid;
 		}
@@ -1837,30 +1942,37 @@ void Player::EveryFrame(float deltaTime
 			}
 			m_LastStandingY = m_Transform[1];
 		}
+		if ((m_LeftWallHit && Input::AHold  || m_RightWallHit && Input::DHold) && m_Velocity[1] < 0 && m_Effects[effectWallClimb])
+		{
+			m_FloorHit = true;
+			m_Velocity[1] = 0;
+			moveBehavior = b_Asphalt;
+			m_LastStandingY = m_Transform[1];
+		}
 
 		switch (moveBehavior)
 		{
 		case(b_Air):
 			m_Acceleration = 5.0f;
 			m_Friction = 4;
-			m_MaxMovementSpeed = 12;
+			m_MaxMovementSpeed = 12 * m_SpeedMultiplier;
 			break;
 		case(b_Slippery):
 			m_Acceleration = 12.0f;
 			m_Friction = 8;
-			m_MaxMovementSpeed = 15;
+			m_MaxMovementSpeed = 15 * m_SpeedMultiplier;
 			break;
 		case(b_Asphalt):
 			m_Acceleration = 30.0f;
 			m_Friction = 70;
-			m_MaxMovementSpeed = 25;
+			m_MaxMovementSpeed = 25 * m_SpeedMultiplier;
 			break;
 		case(b_BasicSolid):
 		case(b_Platform):
 		case(b_Sand):
 			m_Acceleration = 25.0f;
 			m_Friction = 40;
-			m_MaxMovementSpeed = 10;
+			m_MaxMovementSpeed = 10 * m_SpeedMultiplier;
 			break;
 		}
 		if (m_FloorHit)

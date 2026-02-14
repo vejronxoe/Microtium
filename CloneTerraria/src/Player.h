@@ -14,13 +14,22 @@
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
 
+enum Effects
+{
+	effectBleed = 0
+	, effectWallClimb
+	, effectArrowBag
+};
+
+
 class Player
 {
 
 private:
 	bool m_FloorHit;
 	bool m_CeilHit;
-	bool m_WallHit;
+	bool m_LeftWallHit;
+	bool m_RightWallHit;
 	float m_CoyoteTimer;
 	float m_JumpTimer;
 	bool m_CanJump;
@@ -92,7 +101,8 @@ private:
 	unsigned int m_LegAnimTex;
 	unsigned int m_BodyAnimTex;
 	unsigned int m_HeadTex;
-private:
+
+
 	unsigned int m_HUDDD;
 	unsigned int m_SlotTexture;
 	unsigned int m_TrashCanSlotTexture;
@@ -113,7 +123,7 @@ public:
 	int m_HPRegen;
 	int m_CurrentHealth;
 	int m_maxHealth;
-public:
+
 
 	float m_InvOffset[2];
 	float m_HalfOfSlotLeanght;
@@ -122,13 +132,13 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[33];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[37];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60];
 	unsigned short int m_AmountInSlots[52];
 
-public:
+
 	float m_UseItemTimer;
 	bool m_CursorOnMinableBlock;
 	bool m_CursorOnMinableWall;
@@ -148,4 +158,12 @@ public:
 	bool m_Placeable;
 	bool m_LargePlaceable;
 	bool m_Consume;
+
+	void SwapAccessorise(unsigned char invSlotIndex
+		, unsigned char accessoriseSlotIndex);
+	bool m_Effects[4];
+	float m_OnFireTimer;
+	bool m_CanDoubleJump;
+	int m_SpeedMultiplier;
+	bool m_Accessorise;
 };

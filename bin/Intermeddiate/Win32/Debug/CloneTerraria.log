@@ -3,87 +3,91 @@ C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(112,17): warni
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(113,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(114,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(115,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(353,43): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(354,39): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(356,8): warning C4101: 'inventoryVertices': unreferenced local variable
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(355,15): warning C4101: 'inventoryVertexBuffer': unreferenced local variable
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(395,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(396,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(412,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(436,20): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(476,22): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(482,22): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(488,22): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(496,22): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(546,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(569,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(588,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(607,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(613,52): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(984,37): warning C4553: '==': result of expression not used; did you intend '='?
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(998,75): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(998,34): warning C4244: '+=': conversion from 'float' to 'unsigned short', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(999,88): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(999,47): warning C4244: '-=': conversion from 'float' to 'unsigned short', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1000,145): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1000,96): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1038,57): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,45): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,45): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,67): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,89): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,89): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,110): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1110,110): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1111,34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1111,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1112,34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1112,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1122,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1123,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1151,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1156,37): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1157,39): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1158,39): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1159,37): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1283,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1349,45): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1349,45): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1349,101): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1349,101): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1358,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1364,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1369,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1404,41): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1414,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1491,41): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1501,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1531,41): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1541,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1544,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1555,28): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1613,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1836,57): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1844,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1849,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1854,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1861,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1877,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2029,101): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2029,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2029,130): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2032,38): warning C4244: '=': conversion from 'float' to 'short', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2041,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2064,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2104,28): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(373,43): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(374,39): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(376,8): warning C4101: 'inventoryVertices': unreferenced local variable
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(375,15): warning C4101: 'inventoryVertexBuffer': unreferenced local variable
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(415,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(416,9): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(432,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(456,20): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(498,22): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(504,22): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(510,22): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(518,22): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(581,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(604,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(623,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(642,46): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(648,52): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1077,36): warning C4553: '==': result of expression not used; did you intend '='?
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1091,74): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1091,33): warning C4244: '+=': conversion from 'float' to 'unsigned short', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1092,87): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1092,46): warning C4244: '-=': conversion from 'float' to 'unsigned short', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1093,144): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1093,95): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1123,55): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,45): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,45): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,67): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,89): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,89): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,110): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1211,110): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1212,34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1212,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1213,34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1213,8): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1223,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1224,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1252,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1257,37): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1258,39): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1259,39): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1260,37): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1384,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1450,45): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1450,45): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1450,101): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1450,101): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1459,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1465,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1470,94): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1508,41): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1518,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1595,41): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1605,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1635,41): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1645,51): warning C4244: '-=': conversion from 'float' to 'char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1648,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1659,28): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1717,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1941,57): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1956,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1958,28): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1961,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1963,28): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1966,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1968,28): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1973,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1975,28): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1989,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2141,101): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2141,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2141,130): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2144,38): warning C4244: '=': conversion from 'float' to 'short', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2153,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2176,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(2216,28): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'src/Player.cpp')
       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103):
       the template instantiation context (the oldest one first) is
-          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1417,22):
+          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1521,22):
           see reference to function template instantiation 'void std::vector<DroppedItem,std::allocator<DroppedItem>>::emplace_back<int&,int&,int,unsigned short&,int,bool>(int &,int &,int &&,unsigned short &,int &&,bool &&)' being compiled
-              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1417,34):
+              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1521,34):
               see the first reference to 'std::vector<DroppedItem,std::allocator<DroppedItem>>::emplace_back' in 'Player::EveryFrame'
           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\vector(924,24):
           see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<int&,int&,int,unsigned short&,int,bool>(int &,int &,int &&,unsigned short &,int &&,bool &&)' being compiled
@@ -114,9 +118,9 @@ C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\
   (compiling source file 'src/Player.cpp')
       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\xmemory(732,103):
       the template instantiation context (the oldest one first) is
-          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1429,21):
+          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1533,21):
           see reference to function template instantiation 'void std::vector<DamagedBlock,std::allocator<DamagedBlock>>::emplace_back<int&,int&,float>(int &,int &,float &&)' being compiled
-              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1429,33):
+              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp(1533,33):
               see the first reference to 'std::vector<DamagedBlock,std::allocator<DamagedBlock>>::emplace_back' in 'Player::EveryFrame'
           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207\include\vector(924,24):
           see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<int&,int&,float>(int &,int &,float &&)' being compiled
