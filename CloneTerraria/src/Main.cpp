@@ -97,58 +97,65 @@ int main()
 	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
 
 
-	Shader basicSh("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader basicSh("res/shaders/verBasic.txt", "res/shaders/fragBasic.txt");
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
 	basicSh.GetUniformLocation("transform");
-	Shader fontSh("res/shaders/vertexShaderfont.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader fontSh("res/shaders/verfont.txt", "res/shaders/fragBasic.txt");
 	fontSh.Bind();
 	fontSh.GetUniformLocation("fontCamera");
 	fontSh.GetUniformLocation("fontTransform");
 	fontSh.GetUniformLocation("fontScale");
 	fontSh.GetUniformLocation("fontLetter");
-	Shader HUDSh("res/shaders/vertexShaderHUD.txt", "res/shaders/fragmentShaderShadow.txt ");
+	Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragShadow.txt ");
 	HUDSh.Bind();
 	HUDSh.GetUniformLocation("HUDCamera");
 	HUDSh.GetUniformLocation("HUDTransform");
 	HUDSh.GetUniformLocation("HUDScale");
 	HUDSh.GetUniformLocation("HUDBasicLocation");
 	HUDSh.GetUniformLocation("shadow");
-	Shader shadowSh("res/shaders/vertexShaderbasic.txt", "res/shaders/fragmentShaderShadow.txt ");
+	Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
 	shadowSh.Bind();
 	shadowSh.GetUniformLocation("camera");
 	shadowSh.GetUniformLocation("transform");
 	shadowSh.GetUniformLocation("shadow");
-	Shader treeSh("res/shaders/vertexShaderTree.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader treeSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
 	treeSh.Bind();
 	treeSh.GetUniformLocation("treeCamera");
 	treeSh.GetUniformLocation("treeTransform");
 	treeSh.GetUniformLocation("treeRotation");
-	Shader animSh("res/shaders/vertexShaderAnimation.txt", "res/shaders/fragmentShaderBasic.txt ");
+	Shader animSh("res/shaders/verAnimation.txt", "res/shaders/fragBasic.txt ");
 	animSh.Bind();
 	animSh.GetUniformLocation("animCamera");
 	animSh.GetUniformLocation("animTransform");
 	animSh.GetUniformLocation("animScale");
 	animSh.GetUniformLocation("animNumber");
 	animSh.GetUniformLocation("animLeangth");
-	Shader handSh("res/shaders/vertexShaderHand.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader handSh("res/shaders/verHand.txt", "res/shaders/fragBasic.txt");
 	handSh.Bind();
 	handSh.GetUniformLocation("camera");
 	handSh.GetUniformLocation("transform");
 	handSh.GetUniformLocation("scale");
 	handSh.GetUniformLocation("rotation");
 	handSh.GetUniformLocation("beginTransform");
-	Shader advancedSh("res/shaders/vertexShaderAdvanced.txt", "res/shaders/fragmentShaderBasic.txt");
+	Shader advancedSh("res/shaders/verAdvanced.txt", "res/shaders/fragBasic.txt");
 	advancedSh.Bind();
 	advancedSh.GetUniformLocation("camera");
 	advancedSh.GetUniformLocation("transform");
 	advancedSh.GetUniformLocation("scale");
 	advancedSh.GetUniformLocation("rotation");
-	Shader backgroundSh("res/shaders/vertexShaderBasic.txt", "res/shaders/fragmentShaderBackground.txt");
+	Shader backgroundSh("res/shaders/verBasic.txt", "res/shaders/fragBackground.txt");
 	backgroundSh.Bind();
 	backgroundSh.GetUniformLocation("camera");
 	backgroundSh.GetUniformLocation("transform");
 	backgroundSh.GetUniformLocation("blendFactor");
+	Shader particlesSh("res/shaders/verParticles.txt", "res/shaders/fragParticles.txt");
+	particlesSh.Bind();
+	particlesSh.GetUniformLocation("camera");
+	particlesSh.GetUniformLocation("transform");
+	particlesSh.GetUniformLocation("scale");
+	particlesSh.GetUniformLocation("rotation");
+	particlesSh.GetUniformLocation("color");
 
 	float camera[16];
 	float scale[16];
@@ -251,7 +258,7 @@ int main()
 		
 		
 
-		timer += deltaTime;
+		timer += deltaTime; 
 		fps++;
 		if (timer >= 1)
 		{
@@ -340,10 +347,12 @@ int main()
 		handSh.SetUniformMat4(handCamera, camera);
 		advancedSh.Bind();
 		advancedSh.SetUniformMat4(advancedCamera, camera);
+		particlesSh.Bind();
+		particlesSh.SetUniformMat4(particlesCamera, camera);
 		backgroundSh.Bind();
 		backgroundSh.SetUniformMat4(basicCamera, camera);
-		
 		background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
+
 
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
@@ -383,6 +392,8 @@ int main()
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 			}
 		}
+		particlesSh.Bind();
+
 		animSh.Bind();
 		for (int i = 0; i < enemis.size(); i++)
 		{

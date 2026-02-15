@@ -75,6 +75,9 @@
     <ClCompile Include="src\background.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\particles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -137,22 +140,27 @@
     <ClInclude Include="src\background.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\shaders\fragmentShaderBasic.txt" />
+    <Text Include="res\shaders\fragBasic.txt" />
     <Text Include="res\save\mapBlocks.txt" />
-    <Text Include="res\shaders\vertexShaderBasic.txt" />
+    <Text Include="res\shaders\verBasic.txt" />
     <Text Include="res\settings.txt" />
-    <Text Include="res\shaders\fragmentShaderTest.txt" />
-    <Text Include="res\shaders\vertexShaderHUD.txt" />
-    <Text Include="res\shaders\vertexShaderFont.txt" />
+    <Text Include="res\shaders\fragtTest.txt" />
+    <Text Include="res\shaders\verHUD.txt" />
+    <Text Include="res\shaders\verFont.txt" />
     <Text Include="res\save\mapWalls.txt" />
-    <Text Include="res\shaders\fragmentShaderShadow.txt" />
-    <Text Include="res\shaders\vertexShaderTree.txt" />
-    <Text Include="res\shaders\vertexShaderAnimation.txt" />
-    <Text Include="res\shaders\vertexShaderHand.txt" />
-    <Text Include="res\shaders\vertexShaderAdvanced.txt" />
-    <Text Include="res\shaders\fragmentShaderBackground.txt" />
+    <Text Include="res\shaders\fragShadow.txt" />
+    <Text Include="res\shaders\verTree.txt" />
+    <Text Include="res\shaders\verAnimation.txt" />
+    <Text Include="res\shaders\verHand.txt" />
+    <Text Include="res\shaders\verAdvanced.txt" />
+    <Text Include="res\shaders\fragBackground.txt" />
+    <Text Include="res\shaders\fragParticles.txt" />
+    <Text Include="res\shaders\verParticles.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">

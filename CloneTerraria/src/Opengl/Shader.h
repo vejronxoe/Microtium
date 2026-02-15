@@ -69,6 +69,19 @@ enum backgroundVertexSh
 {
 	backgroundBlendFactor = 0 
 };
+enum particlesVertexSh
+{
+	particlesCamera = 0
+	, particlesTransform
+	, particlesScale
+	, particlesRotation
+	, particlesSize
+};
+enum particlesFragSh
+{
+	particlesColor = 0
+	, particlesFragSize
+};
 class Shader
 {
 private:

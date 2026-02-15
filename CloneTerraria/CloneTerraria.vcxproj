@@ -36,6 +36,7 @@
     <ClCompile Include="src\NumberRender.cpp" />
     <ClCompile Include="src\Opengl\Shader.cpp" />
     <ClCompile Include="src\Opengl\Texture.cpp" />
+    <ClCompile Include="src\particles.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
     <ClCompile Include="src\projectile.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="src\math\matrix.h" />
     <ClInclude Include="src\Opengl\Shader.h" />
     <ClInclude Include="src\Opengl\Texture.h" />
+    <ClInclude Include="src\particles.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
     <ClInclude Include="src\projectile.h" />
@@ -66,17 +68,19 @@
     <Text Include="res\save\mapBlocks.txt" />
     <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\settings.txt" />
-    <Text Include="res\shaders\fragmentShaderBackground.txt" />
-    <Text Include="res\shaders\fragmentShaderShadow.txt" />
-    <Text Include="res\shaders\fragmentShaderTest.txt" />
-    <Text Include="res\shaders\vertexShaderAnimation.txt" />
-    <Text Include="res\shaders\vertexShaderBasic.txt" />
-    <Text Include="res\shaders\fragmentShaderBasic.txt" />
-    <Text Include="res\shaders\vertexShaderAdvanced.txt" />
-    <Text Include="res\shaders\vertexShaderFont.txt" />
-    <Text Include="res\shaders\vertexShaderHUD.txt" />
-    <Text Include="res\shaders\vertexShaderHand.txt" />
-    <Text Include="res\shaders\vertexShaderTree.txt" />
+    <Text Include="res\shaders\fragBackground.txt" />
+    <Text Include="res\shaders\fragShadow.txt" />
+    <Text Include="res\shaders\fragtTest.txt" />
+    <Text Include="res\shaders\fragParticles.txt" />
+    <Text Include="res\shaders\verAnimation.txt" />
+    <Text Include="res\shaders\verBasic.txt" />
+    <Text Include="res\shaders\fragBasic.txt" />
+    <Text Include="res\shaders\verAdvanced.txt" />
+    <Text Include="res\shaders\verFont.txt" />
+    <Text Include="res\shaders\verHUD.txt" />
+    <Text Include="res\shaders\verHand.txt" />
+    <Text Include="res\shaders\verParticles.txt" />
+    <Text Include="res\shaders\verTree.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\0To5HP.png" />
