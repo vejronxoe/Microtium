@@ -1,6 +1,8 @@
 #pragma once
 #include"Collision.h"
 #include"BlocksAndWalls.h"
+#include "particles.h"
+#define TIMEONFIRE 10
 enum enemyTypes
 {
 	enemyZombie = 0
@@ -18,7 +20,11 @@ public:
 	float m_PlayerHitTimer;
 	int m_HP;
 	int m_Damage;
-	
+	bool m_IsBurning;
+	float m_BurningTimer;
+	int m_BurnDamageNextTime;
+	FireParticle m_OnFire;
+
 	void DDAndTexManager(unsigned int eob
 		, std::vector<Enemy*> enemies
 		, unsigned int* enemiesTex1

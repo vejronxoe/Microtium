@@ -16,9 +16,9 @@
 
 enum Effects
 {
-	effectBleed = 0
-	, effectWallClimb
+	effectWallClimb = 0
 	, effectArrowBag
+	, effectDoubleJump
 };
 
 
@@ -67,15 +67,18 @@ public:
 		, std::vector<DroppedItem>& droppedItems
 		, std::vector<Projectile>& projectiles);
 
-	void DrawPlayer(Shader& basicSh
+	void DrawPlayer(float deltaTime
+		, Shader& basicSh
 		, Shader& HUDSh
 		, Shader& fontSh
 		, Shader& animSh
 		, Shader& handSh
+		, Shader& particlesSh
 		, float* transform
 		, float* scale
 		, float* rotation
 		, unsigned int fontDD
+		, unsigned int particlesDD
 		, unsigned int numberTexture);
 
 	bool HavePlayerSpace(unsigned short int item);
@@ -161,9 +164,13 @@ public:
 
 	void SwapAccessorise(unsigned char invSlotIndex
 		, unsigned char accessoriseSlotIndex);
-	bool m_Effects[4];
+	bool m_Effects[3];
 	float m_OnFireTimer;
 	bool m_CanDoubleJump;
 	int m_SpeedMultiplier;
 	bool m_Accessorise;
+	bool m_IsBurning;
+	float m_BurningTimer;
+	int m_BurnDamageNextTime;
+	FireParticle m_OnFire;
 };

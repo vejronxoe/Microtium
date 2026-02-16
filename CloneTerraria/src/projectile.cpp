@@ -29,7 +29,9 @@ Projectile::Projectile(unsigned char projectileType
 }
 int Projectile::HitEnemy(float deltaTime
 	, float* proVertices
-	, std::vector<Enemy*>& enemies)
+	, std::vector<BoomParticle>& particles
+	, std::vector<Enemy*>& enemies
+	, bool burning)
 {
 	float vertices[4];
 	if (m_Velocity[0] > 0)
@@ -57,10 +59,16 @@ int Projectile::HitEnemy(float deltaTime
 		float enemyVertices[4] = { enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[0], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[1], enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[2], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[3] };
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
+			if (burning)
+			{
+				enemies.at(i)->m_IsBurning = true;
+			}
 			if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
 			{
 				enemies.erase(enemies.begin() + i);
 			}
+			float c[4] = { 1,0,0,0.8f };
+			particles.emplace_back(m_Transform, c,1,8);
 			return true;
 
 		}
@@ -69,6 +77,7 @@ int Projectile::HitEnemy(float deltaTime
 }
 int Projectile::HitEnemies(float deltaTime
 	, float* proVertices
+	, std::vector<BoomParticle>& particles
 	, std::vector<Enemy*>& enemies)
 {
 	float vertices[4];
@@ -116,6 +125,8 @@ int Projectile::HitEnemies(float deltaTime
 				{
 					m_HitEnemies.push_back(enemies.at(i)->m_ID);
 				}
+				float c[4] = { 1,0,0,0.8f };
+				particles.emplace_back(m_Transform, c, 1, 8);
 			}
 		}
 	}
@@ -126,6 +137,7 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<Enemy*>& enemies
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<BoomParticle>& particles
 	, std::vector<bool>& isSandOnX
 	, unsigned int* blockTextures)
 {
@@ -150,7 +162,7 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
@@ -178,7 +190,7 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
@@ -196,6 +208,8 @@ bool Projectile::EveryFrame(float deltaTime
 
 		if (m_Bouncing < 0)
 		{
+			float c[4] = { 0,0.4,0,1 };
+			particles.emplace_back(m_Transform,c,1,15);
 			return true;
 		}
 		break;
@@ -210,13 +224,15 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, enemies))
+		if (HitEnemies(deltaTime, vertices, particles, enemies))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
+			float c[4] = { 0.8f,0.8f,0.8f,1 };
+			particles.emplace_back(m_Transform, c, 1, 15);
 			return true;
 		}
 		else if (hit[0] || hit[1])
@@ -225,8 +241,34 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		break;
 	}
-	case p_BasicCannonBall:
 	case p_FireCannonBall:
+	{
+		m_Velocity[1] -= 30 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[2])
+		{
+			return true;
+			float c[4] = { 1,0.2f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 15);
+		}
+		else if (hit[0] || hit[1])
+		{
+			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		break;
+	}
+	case p_BasicCannonBall:
 	{
 		m_Velocity[1] -= 24 * deltaTime;
 		if (m_Velocity[1] < -30)
@@ -236,13 +278,15 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
+			float c[4] = { 0,0,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 15);
 			return true;
 		}
 		else if (hit[0] || hit[1])
@@ -261,20 +305,45 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, enemies))
+		if (HitEnemies(deltaTime, vertices, particles, enemies))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
+			float c[4] = { 0.7f,0.4f,0.2f,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
+			return true;
+		}
+
+		break;
+	}
+	case p_FireArrow:
+	{
+		m_Velocity[1] -= 14 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
+		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			float c[4] = { 1,0.2f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 
 		break;
 	}
 	case p_BasicArrow:
-	case p_FireArrow:
 	{
 		m_Velocity[1] -= 8 * deltaTime;
 		if (m_Velocity[1] < -30)
@@ -284,13 +353,15 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
+			float c[4] = { 0.7f,0.4f,0.2f,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 
@@ -306,7 +377,7 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
@@ -325,6 +396,8 @@ bool Projectile::EveryFrame(float deltaTime
 
 		if (m_Bouncing < 0)
 		{
+			float c[4] = { 0,0.4f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 		break;
@@ -339,19 +412,20 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, enemies))
+		if (HitEnemies(deltaTime, vertices, particles, enemies))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
+			float c[4] = { 1,0.5f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 		break;
 	}
 	case p_BasicBullet:
-	case p_FireBullet:
 	{
 		m_Velocity[1] -= 4 * deltaTime;
 		if (m_Velocity[1] < -30)
@@ -361,13 +435,38 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
+			float c[4] = { 1,0.5f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
+			return true;
+		}
+		break;
+	}
+	case p_FireBullet:
+	{
+		m_Velocity[1] -= 8 * deltaTime;
+		if (m_Velocity[1] < -30)
+		{
+			m_Velocity[1] = -30;
+		}
+		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
+		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		{
+			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		if (hit[0] || hit[1] || hit[2] || hit[3])
+		{
+			float c[4] = { 1,0.5f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 		break;
@@ -382,7 +481,7 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, enemies))
+		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
 		{
 			return true;
 		}
@@ -400,6 +499,8 @@ bool Projectile::EveryFrame(float deltaTime
 
 		if (m_Bouncing < 0)
 		{
+			float c[4] = { 0,0.4f,0,1 };
+			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
 		break;

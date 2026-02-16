@@ -37,14 +37,19 @@ struct Projectile
 		, unsigned int projectileTexture);
 	int HitEnemy(float deltaTime
 		, float* vertices
-		, std::vector<Enemy*>& enemies);
+		, std::vector<BoomParticle>& particles
+		, std::vector<Enemy*>& enemies
+		, bool Burning);
+
 	int HitEnemies(float deltaTime
 		, float* proVertices
+		, std::vector<BoomParticle>& particles
 		, std::vector<Enemy*>& enemies);
 	bool EveryFrame(float deltaTime
 		, std::vector<Enemy*>& enemies
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
+		, std::vector<BoomParticle>& particles
 		, std::vector<bool>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh

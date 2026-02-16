@@ -38,29 +38,33 @@ void Enemy::WhereIsPlayer(float* playerTransform
 bool Enemy::DamageEnemy(int Damage
 	, float* transfromAttacker)
 {		
+	if (transfromAttacker)
+	{
+		int x = transfromAttacker[0] - m_Transform[0];
+		int y = transfromAttacker[1] - m_Transform[1];
+		if (x)
+		{
+			x = abs(x) / x;
+		}
+		else
+		{
+			x = 0;
+		}
 
-	int x = transfromAttacker[0] - m_Transform[0];
-	int y = transfromAttacker[1] - m_Transform[1];
-	if (x)
-	{
-		x = abs(x) / x;
-	}
-	else
-	{
-		x = 0;
+		if (y)
+		{
+			y = abs(y) / y;
+		}
+		else
+		{
+			y = 0;
+		}
+		m_Velocity[0] = 10 * -x;
+		m_Velocity[1] = 5;
 	}
 
-	if (y)
-	{
-		y = abs(y) / y;
-	}
-	else
-	{
-		y = 0;
-	}
-	m_Velocity[0] = 10 * -x;
-	m_Velocity[1] = 5 ;
 	m_HP -= Damage;
+
 	if (m_HP <= 0)
 	{
 		m_HP = 0;
@@ -160,7 +164,7 @@ Zombie::Zombie(std::vector<Enemy*> enemies
 	m_Vertices[3] = -1.5f;
 	m_PlayerHitTimer = 0;
 	m_TypeOfEnemy = enemyZombie;
-	m_HP = 15;
+	m_HP = 25;
 	m_Damage = 45;
 	m_Transform[0] = x;
 	m_Transform[1] = y;
@@ -173,6 +177,10 @@ Zombie::Zombie(std::vector<Enemy*> enemies
 	m_DD[1] = enemiesDD2[m_TypeOfEnemy];
 	m_Tex[0] = enemiesTex1[m_TypeOfEnemy];
 	m_Tex[1] = enemiesTex2[m_TypeOfEnemy];
+	m_IsBurning = false;
+	m_BurningTimer = 0;
+	m_BurnDamageNextTime = 0;
+	m_OnFire.constructorFire(m_Vertices, 4, 0.2f);
 }
 int Zombie::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
@@ -326,6 +334,7 @@ void Zombie::DrawEnemy(Shader& sh
 	ErrorGL(glBindVertexArray(m_DD[1]));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 }
 	
 
@@ -340,7 +349,7 @@ Slime::Slime(std::vector<Enemy*> enemies
 {
 	m_PlayerHitTimer = 0;
 	m_TypeOfEnemy = enemySlime;
-	m_HP = 10;
+	m_HP = 15;
 	m_Damage = 45;
 	m_Transform[0] = x;
 	m_Transform[1] = y;
@@ -356,6 +365,10 @@ Slime::Slime(std::vector<Enemy*> enemies
 	DDAndTexManager(eob, enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2);
 	m_DD = enemiesDD1[m_TypeOfEnemy];
 	m_Tex = enemiesTex1[m_TypeOfEnemy];
+	m_IsBurning = false;
+	m_BurnDamageNextTime = 0;
+	m_BurningTimer = 0;
+	m_OnFire.constructorFire(m_Vertices, 3, 0.2f);
 }
 int Slime::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks

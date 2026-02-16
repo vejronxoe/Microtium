@@ -22,6 +22,7 @@
 #include"projectile.h"
 #include"Enemy.h"
 #include"background.h"
+#include"particles.h"
 
 int main()
 {
@@ -176,10 +177,11 @@ int main()
 	fontSh.SetUniformMat4(fontCamera, camera);
 	ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
-	unsigned int enemisTex1[enemySize];
-	unsigned int enemisTex2[enemySize];
-	unsigned int enemisDD1[enemySize];
-	unsigned int enemisDD2[enemySize];
+
+	unsigned int enemiesTex1[enemySize];
+	unsigned int enemiesTex2[enemySize];
+	unsigned int enemiesDD1[enemySize];
+	unsigned int enemiesDD2[enemySize];
 	unsigned int projectileTextures[1];
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int cursorTextures[6];
@@ -208,7 +210,7 @@ int main()
 	unsigned int numberTexture;
 	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
 	unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
-
+	unsigned int particlesDD = CreateDrawData(eob,0.125f, -0.125f, 0.125f, -0.125f);
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 
@@ -227,7 +229,8 @@ int main()
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
 	std::vector<bool> isSandOnX;
-	std::vector<Enemy*> enemis;
+	std::vector<Enemy*> enemies;
+	std::vector<BoomParticle> boomParticles; 
 
 	std::vector<Projectile> projectiles;
 
@@ -238,11 +241,11 @@ int main()
 	// 
 	//
 	// 
-//	Slime s(enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2, 100, 100, eob);
-	Zombie z( enemis, enemisTex1, enemisTex2, enemisDD1, enemisDD2,80,100,eob);
-	//enemis.emplace_back(&s);
-	enemis.emplace_back(&z);
-
+	//Slime s(enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
+	Zombie z( enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2,80,100,eob);
+	//enemies.emplace_back(&s);
+	enemies.emplace_back(&z);
+	
 	// 
 	// //////////////////////
 
@@ -279,20 +282,20 @@ int main()
 			}
 
 		}
-		for (int i = 0; i < enemis.size(); i++)
+		for (int i = 0; i < enemies.size(); i++)
 		{
-			int damage = enemis.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+			int damage = enemies.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
 			if (damage)
 			{
-				player.DamagePlayer(enemis.at(i)->m_Transform, damage);
+				player.DamagePlayer(enemies.at(i)->m_Transform, damage);
 			}
 		}
-		player.EveryFrame(deltaTime, blocks, walls, enemis, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
+		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			if (projectiles.at(i).EveryFrame(deltaTime, enemis, blocks, walls, isSandOnX, blockTextures))
+			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, boomParticles, isSandOnX, blockTextures))
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}
@@ -393,18 +396,68 @@ int main()
 			}
 		}
 		particlesSh.Bind();
+		ErrorGL(glBindVertexArray(particlesDD));
+		for  (int i = 0; i < boomParticles.size(); i++)
+		{
+			if (boomParticles.at(i).DrawParticles(particlesSh, deltaTime, transform, scale, rotation))
+			{
+				boomParticles.erase(boomParticles.begin() + i);
+				i--;
+			}
+		}
+		ChangeRotation(0, rotation);
+		particlesSh.SetUniformMat4(particlesRotation, rotation);
+		ChangeScale(1, 1, scale);
+		particlesSh.SetUniformMat4(particlesScale, scale);
 
 		animSh.Bind();
-		for (int i = 0; i < enemis.size(); i++)
+		for (int i = 0; i < enemies.size(); i++)
 		{
-			enemis.at(i)->DrawEnemy(animSh, transform, scale);
+			enemies.at(i)->DrawEnemy(animSh, transform, scale);
+		}
+		particlesSh.Bind();
+		ErrorGL(glBindVertexArray(particlesDD));
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			
+			if (enemies.at(i)->m_IsBurning)
+			{
+				enemies.at(i)->m_BurningTimer += deltaTime;
+				if (enemies.at(i)->m_BurningTimer < TIMEONFIRE)
+				{
+					if (enemies.at(i)->m_OnFire.DrawParticles(particlesSh,deltaTime, true, enemies.at(i)->m_Transform,transform))
+					{
+						enemies.at(i)->m_BurnDamageNextTime++;
+						if (enemies.at(i)->m_BurnDamageNextTime >= 4)
+						{
+							enemies.at(i)->m_BurnDamageNextTime = 0;
+							if (enemies.at(i)->DamageEnemy(1, NULL))
+							{
+								enemies.erase(enemies.begin() + i);
+								i--;
+							}
+						}
+					}
+				}
+				else
+				{
+					enemies.at(i)->m_BurnDamageNextTime = 0;
+					enemies.at(i)->m_BurningTimer = 0;
+					enemies.at(i)->m_IsBurning = false;
+				}
+			}
+			else
+			{
+				enemies.at(i)->m_OnFire.DrawParticles(particlesSh, deltaTime, false, enemies.at(i)->m_Transform, transform);
+			}
+			
 		}
 		advancedSh.Bind();
 		for (int i = 0; i < projectiles.size(); i++)
 		{
 			projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 		}
-		player.DrawPlayer(basicSh, HUDSh, fontSh, animSh, handSh, transform, scale, rotation, fontDrawData, numberTexture);
+		player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
 
 		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 		

@@ -221,12 +221,17 @@ Player::Player(unsigned int eob
 	m_LastStandingY = 0;
 	m_CanDoubleJump = false;
 	m_Accessorise = false;
-	m_Effects[0] = 0;
-	m_Effects[1] = 0;
-	m_Effects[2] = 0;
-	m_Effects[3] = 0;
+	m_Effects[0] = false;
+	m_Effects[1] = false;
+	m_Effects[2] = false;
 	m_OnFireTimer = 0;
 	m_SpeedMultiplier = 1;
+	m_IsBurning = false;
+	m_BurningTimer = 0;
+	m_BurnDamageNextTime = 0;
+	float playerVertice[4] = {-1,1.5f,1,-1.5f};
+	m_OnFire.constructorFire(playerVertice, 4, 0.2f);
+
 
 	m_PlayerSlots[0] = i_Cannon;
 	m_AmountInSlots[0] = 1;
@@ -2225,15 +2230,18 @@ void Player::EveryFrame(float deltaTime
 		m_TimerSinceLastHit += deltaTime; 
 	}
 }
-void Player::DrawPlayer(Shader& basicSh
+void Player::DrawPlayer(float deltaTime
+	, Shader& basicSh
 	, Shader& HUDSh
 	, Shader& fontSh
 	, Shader& animSh
 	, Shader& handSh
+	, Shader& particlesSh
 	, float* transform
 	, float* scale
 	, float* rotation
 	, unsigned int fontDD
+	, unsigned int particlesDD
 	, unsigned int numberTexture)
 {
 	{
@@ -2315,6 +2323,35 @@ void Player::DrawPlayer(Shader& basicSh
 		}
 
 	}
+	particlesSh.Bind();
+	ErrorGL(glBindVertexArray(particlesDD));
+	if (m_IsBurning)
+	{
+		m_BurningTimer += deltaTime;
+		if (m_BurningTimer < TIMEONFIRE)
+		{
+			if (m_OnFire.DrawParticles(particlesSh, deltaTime,true, m_Transform, transform))
+			{
+				m_BurnDamageNextTime++;
+				if (m_BurnDamageNextTime >= 4)
+				{
+					m_BurnDamageNextTime = 0;
+					DamagePlayer(NULL, 2);
+				}
+			}
+		}
+		else
+		{
+			m_BurningTimer = 0;
+			m_BurnDamageNextTime = 0;
+			m_IsBurning = false;
+		}
+	}
+	else
+	{
+		m_OnFire.DrawParticles(particlesSh, deltaTime, false, m_Transform, transform);
+	}
+	
 	HUDSh.Bind();
 	ErrorGL(glBindVertexArray(m_HUDDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
