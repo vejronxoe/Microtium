@@ -28,6 +28,7 @@ Projectile::Projectile(unsigned char projectileType
 	}
 }
 int Projectile::HitEnemy(float deltaTime
+	, float* oldVelocity
 	, float* proVertices
 	, std::vector<BoomParticle>& particles
 	, std::vector<Enemy*>& enemies
@@ -37,21 +38,21 @@ int Projectile::HitEnemy(float deltaTime
 	if (m_Velocity[0] > 0)
 	{
 		vertices[0] = proVertices[0];
-		vertices[2] = proVertices[2] + m_Velocity[0] * deltaTime;
+		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - m_Velocity[0]) * deltaTime;
 	}
 	else
 	{
-		vertices[0] = proVertices[0] + m_Velocity[0] * deltaTime;
+		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - m_Velocity[0]) * deltaTime;
 		vertices[2] = proVertices[2];
 	}
 	if (m_Velocity[1] > 0)
 	{
 		vertices[3] = proVertices[3];
-		vertices[1] = proVertices[1] + m_Velocity[0] * deltaTime;
+		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - m_Velocity[1]) * deltaTime;
 	}
 	else
 	{
-		vertices[3] = proVertices[3] + m_Velocity[0] * deltaTime;
+		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - m_Velocity[1]) * deltaTime;
 		vertices[1] = proVertices[1];
 	}
 	for (int i = 0; i < enemies.size(); i++)
@@ -76,6 +77,7 @@ int Projectile::HitEnemy(float deltaTime
 	return false;
 }
 int Projectile::HitEnemies(float deltaTime
+	, float* oldVelocity
 	, float* proVertices
 	, std::vector<BoomParticle>& particles
 	, std::vector<Enemy*>& enemies)
@@ -84,21 +86,21 @@ int Projectile::HitEnemies(float deltaTime
 	if (m_Velocity[0] > 0)
 	{
 		vertices[0] = proVertices[0];
-		vertices[2] = proVertices[2] + m_Velocity[0] * deltaTime;
+		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f *(oldVelocity[0] - m_Velocity[0]) * deltaTime;
 	}
 	else
 	{
-		vertices[0] = proVertices[0] + m_Velocity[0] * deltaTime;
+		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - m_Velocity[0]) * deltaTime;;
 		vertices[2] = proVertices[2];
 	}
 	if (m_Velocity[1] > 0)
 	{
 		vertices[3] = proVertices[3];
-		vertices[1] = proVertices[1] + m_Velocity[0] * deltaTime;
+		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - m_Velocity[1]) * deltaTime;
 	}
 	else
 	{
-		vertices[3] = proVertices[3] + m_Velocity[0] * deltaTime;
+		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - m_Velocity[1]) * deltaTime;;
 		vertices[1] = proVertices[1];
 	}
 	for (int i = 0; i < enemies.size(); i++)
@@ -143,8 +145,11 @@ bool Projectile::EveryFrame(float deltaTime
 {
 	float vertices[4];
 	float velocity[2];
+	float oldVelocity[2];
 	velocity[0] = m_Velocity[0];
 	velocity[1] = m_Velocity[1];
+	oldVelocity[0] = m_Velocity[0];
+	oldVelocity[1] = m_Velocity[1];
 	bool hit[4];
 	hit[0] = false;
 	hit[1] = false;
@@ -161,12 +166,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 
 		if (hit[2])
 		{
@@ -189,12 +194,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2] || hit[3])
 		{
 			m_Bouncing--;
@@ -223,12 +228,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, particles, enemies))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			float c[4] = { 0.8f,0.8f,0.8f,1 };
@@ -250,12 +255,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			return true;
@@ -277,12 +282,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			float c[4] = { 0,0,0,1 };
@@ -304,12 +309,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, particles, enemies))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 0.7f,0.4f,0.2f,1 };
@@ -328,12 +333,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 1,0.2f,0,1 };
@@ -352,12 +357,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 0.7f,0.4f,0.2f,1 };
@@ -376,12 +381,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 
 		if (hit[2] || hit[3])
 		{
@@ -411,12 +416,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, vertices, particles, enemies))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 1,0.5f,0,1 };
@@ -434,12 +439,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 1,0.5f,0,1 };
@@ -457,12 +462,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, true))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 1,0.5f,0,1 };
@@ -480,12 +485,12 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, vertices, particles, enemies, false))
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
+		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2] || hit[3])
 		{
 			m_Bouncing--;

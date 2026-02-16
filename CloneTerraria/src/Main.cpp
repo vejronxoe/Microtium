@@ -219,7 +219,7 @@ int main()
 
 
 	std::vector<DroppedItem> dropItems;
-	dropItems.emplace_back(124, 0, 1, i_Ice, 1, true);
+
 	
 	std::vector<std::vector<Block>> blocks;
 	std::vector<DamagedBlock> damagedBlocks;

@@ -862,6 +862,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Projectile>& projectiles)
 {
+	float oldVelocity[2] = {m_Velocity[0], m_Velocity[1]};
 	if (m_ArmsBehaviour != ArmUsing)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
@@ -1932,13 +1933,16 @@ void Player::EveryFrame(float deltaTime
 		m_CeilHit = false;
 		m_LeftWallHit = false;
 		m_RightWallHit = false;
-
-
-		unsigned char moveBehavior = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, verticesPlayer, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
-		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
+		if (deltaTime > 5)
 		{
-			moveBehavior = b_BasicSolid;
+			int i = 0;
 		}
+		m_FloorBehaviour = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
+		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, oldVelocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
+		{
+			m_FloorBehaviour = b_BasicSolid;
+		}
+		
 		if (m_FloorHit)
 		{
 			if (m_LastStandingY - m_Transform[1] > 20)
@@ -1951,11 +1955,11 @@ void Player::EveryFrame(float deltaTime
 		{
 			m_FloorHit = true;
 			m_Velocity[1] = 0;
-			moveBehavior = b_Asphalt;
+			m_FloorBehaviour = b_Asphalt;
 			m_LastStandingY = m_Transform[1];
 		}
 
-		switch (moveBehavior)
+		switch (m_FloorBehaviour)
 		{
 		case(b_Air):
 			m_Acceleration = 5.0f;
@@ -2229,6 +2233,8 @@ void Player::EveryFrame(float deltaTime
 	{
 		m_TimerSinceLastHit += deltaTime; 
 	}
+
+
 }
 void Player::DrawPlayer(float deltaTime
 	, Shader& basicSh

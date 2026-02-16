@@ -36,12 +36,14 @@ struct Projectile
 		, unsigned int m_DD
 		, unsigned int projectileTexture);
 	int HitEnemy(float deltaTime
+		, float* oldVelocity
 		, float* vertices
 		, std::vector<BoomParticle>& particles
 		, std::vector<Enemy*>& enemies
 		, bool Burning);
 
 	int HitEnemies(float deltaTime
+		, float* oldVelocity
 		, float* proVertices
 		, std::vector<BoomParticle>& particles
 		, std::vector<Enemy*>& enemies);

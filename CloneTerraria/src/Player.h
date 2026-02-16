@@ -35,7 +35,7 @@ private:
 	bool m_CanJump;
 public:
 	short int m_DirectionLook;
-
+	unsigned int m_FloorBehaviour;
 	int m_JumpPower;
 	float m_Gravity;
 	int m_Acceleration;

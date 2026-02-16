@@ -25,7 +25,6 @@ bool FireParticle::DrawParticles(Shader& particlesSh
 	, float* targetTransform
 	, float* transform)
 {
-	
 	bool RE = false;
 	if (onFire)
 	{
@@ -115,14 +114,14 @@ bool BoomParticle::DrawParticles(Shader& particlesSh
 	particlesSh.SetUniform4f(particlesSize + particlesColor, m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
 	for (int i = 0 ; i < m_Amount; i++)
 	{
-
+		float oldVelocityY = m_VelocityY.at(i);
 		m_VelocityY.at(i) -= GRAVITYBOOM * deltaTime;
 		if (m_VelocityY.at(i) > 30)
 		{
 			m_VelocityY.at(i) = 30;
 		}
 		m_X.at(i) += m_VelocityX.at(i) * deltaTime;
-		m_Y.at(i) += m_VelocityY.at(i) * deltaTime;
+		m_Y.at(i) += oldVelocityY * deltaTime + 0.5f * (m_VelocityY.at(i) - oldVelocityY) * deltaTime;
 		ChangeRotation(-atan2(m_X.at(i), m_Y.at(i)),rotation);
 		particlesSh.SetUniformMat4(particlesRotation, rotation);
 		ChangeTransform(m_X.at(i), m_Y.at(i), transform);

@@ -38,6 +38,7 @@ public:
 
 	bool PlayerInWay(float deltatime
 		, float* playerTransform
+		, float* oldVelocity
 		, float* enemyVertices);
 
 	bool DamageEnemy(int Damage

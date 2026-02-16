@@ -75,27 +75,28 @@ bool Enemy::DamageEnemy(int Damage
 }
 bool Enemy::PlayerInWay(float deltatime
 	, float* playerTransform
+	, float* oldVelocity
 	, float* enemyVertices)
 {
 	float vertices[4];
 	if (m_Velocity[0] > 0)
 	{
 		vertices[0] = enemyVertices[0];
-		vertices[2] = enemyVertices[2] + m_Velocity[0] * deltatime;
+		vertices[2] = enemyVertices[2] + oldVelocity[0] * deltatime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltatime;
 	}
 	else
 	{
-		vertices[0] = enemyVertices[0] + m_Velocity[0] * deltatime;
+		vertices[0] = enemyVertices[0] + oldVelocity[0] * deltatime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltatime;
 		vertices[2] = enemyVertices[2];
 	}
 	if (m_Velocity[1] > 0)
 	{
 		vertices[3] = enemyVertices[3];
-		vertices[1] = enemyVertices[1] + m_Velocity[0] * deltatime;
+		vertices[1] = enemyVertices[1] + oldVelocity[1] * deltatime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltatime;
 	}
 	else
 	{
-		vertices[3] = enemyVertices[3] + m_Velocity[0] * deltatime;
+		vertices[3] = enemyVertices[3] + oldVelocity[1] * deltatime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltatime;
 		vertices[1] = enemyVertices[1];
 	}
 	float playerVertices[4] = { playerTransform[0] - 1, playerTransform[1] + 1.5f, playerTransform[0] + 1, playerTransform[1] - 1.5f };
@@ -186,6 +187,7 @@ int Zombie::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, float* playerTransform)
 {
+	float oldVelocity[2] = {m_Velocity[0], m_Velocity[1]};
 	int RE = 0;
 	if (m_PlayerHitTimer < COOLDOWNHIT)
 	{
@@ -230,14 +232,14 @@ int Zombie::EnemyEveryFrame(float deltaTime
 	vertices[1] = m_Transform[1] + m_Vertices[1];
 	vertices[2] = m_Transform[0] + m_Vertices[2];
 	vertices[3] = m_Transform[1] + m_Vertices[3];
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
-	if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+	if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{
 		RE = m_Damage;
 		m_PlayerHitTimer = 0;
 	}
 
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
 	if (hit[3])
 	{
 		m_AnimTimer += deltaTime;
@@ -374,6 +376,7 @@ int Slime::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, float* playerTransform)
 {
+	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 	int RE = 0;
 	if (m_PlayerHitTimer < COOLDOWNHIT)
 	{
@@ -387,13 +390,13 @@ int Slime::EnemyEveryFrame(float deltaTime
 	vertices[1] = m_Transform[1] + m_Vertices[1];
 	vertices[2] = m_Transform[0] + m_Vertices[2];
 	vertices[3] = m_Transform[1] + m_Vertices[3];
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
-	if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+	if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{
 		RE = m_Damage;
 		m_PlayerHitTimer = 0;
 	}
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
 	if (hit[3])
 	{
 		m_Velocity[0] = 0;

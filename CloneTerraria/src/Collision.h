@@ -6,6 +6,7 @@
 unsigned char DynamicSquereHitbox(float deltaTime
 	, float* transform
 	, float* velocity
+	, float* oldVelocity
 	, float* objectVertices4f
 	, std::vector<std::vector<Block>>& hitbox
 	, bool& leftWallHit
@@ -17,6 +18,7 @@ float CameraHitboxX(float x);
 bool AddVelocityToTransform(float* objectVertices4f
 	, float* transform
 	, float* velocity
+	, float* oldVelocity
 	, bool& floorHit
 	, bool& rightHit
 	, bool& leftHit
