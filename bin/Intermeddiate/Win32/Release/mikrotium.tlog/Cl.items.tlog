@@ -1,3 +1,5 @@
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\background.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\background.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Enemy.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Enemy.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\flora.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\flora.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Collision.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Collision.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\BlocksAndWalls.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\BlocksAndWalls.obj
@@ -13,6 +15,7 @@ C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp;C:\Users\
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\NumberRender.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\NumberRender.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Shader.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Shader.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\Texture.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Texture.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\particles.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\particles.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Player.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Player.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Window.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\Window.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\projectile.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Release\projectile.obj
