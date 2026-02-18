@@ -1933,10 +1933,7 @@ void Player::EveryFrame(float deltaTime
 		m_CeilHit = false;
 		m_LeftWallHit = false;
 		m_RightWallHit = false;
-		if (deltaTime > 5)
-		{
-			int i = 0;
-		}
+	
 		m_FloorBehaviour = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
 		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, oldVelocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
 		{

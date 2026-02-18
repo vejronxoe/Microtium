@@ -1,3 +1,20 @@
-﻿  particles.cpp
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\particles.cpp(56,20): warning C4018: '<': signed/unsigned mismatch
+﻿  Main.cpp
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(30,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(174,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(174,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(298,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(316,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(324,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(335,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(358,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(367,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(370,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(408,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(414,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(419,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(427,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(441,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(455,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(461,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(497,21): warning C4018: '<': signed/unsigned mismatch
   CloneTerraria.vcxproj -> C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Win32\Debug\mikrotium.exe

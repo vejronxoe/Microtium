@@ -78,6 +78,9 @@
     <ClCompile Include="src\particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\structures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -143,6 +146,9 @@
     <ClInclude Include="src\particles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\structures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shaders\fragBasic.txt" />
@@ -161,6 +167,7 @@
     <Text Include="res\shaders\fragBackground.txt" />
     <Text Include="res\shaders\fragParticles.txt" />
     <Text Include="res\shaders\verParticles.txt" />
+    <Text Include="res\shaders\verStructure.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">
@@ -455,6 +462,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\accessoriseWallClimb.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bench.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forge.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

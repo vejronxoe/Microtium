@@ -40,6 +40,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
     <ClCompile Include="src\projectile.cpp" />
+    <ClCompile Include="src\structures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\background.h" />
@@ -63,6 +64,7 @@
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
     <ClInclude Include="src\projectile.h" />
+    <ClInclude Include="src\structures.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\save\mapBlocks.txt" />
@@ -80,6 +82,7 @@
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verHand.txt" />
     <Text Include="res\shaders\verParticles.txt" />
+    <Text Include="res\shaders\verStructure.txt" />
     <Text Include="res\shaders\verTree.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +104,7 @@
     <Image Include="res\textures\basicArrow.png" />
     <Image Include="res\textures\basicBullet.png" />
     <Image Include="res\textures\basicCanonBall.png" />
+    <Image Include="res\textures\bench.png" />
     <Image Include="res\textures\bleedArrow.png" />
     <Image Include="res\textures\bleedBullet.png" />
     <Image Include="res\textures\bodyAnimDefault.png" />
@@ -140,6 +144,7 @@
     <Image Include="res\textures\forestBush.png" />
     <Image Include="res\textures\forestplank.png" />
     <Image Include="res\textures\forestSmallBush.png" />
+    <Image Include="res\textures\forge.png" />
     <Image Include="res\textures\fullGrassBlock.png" />
     <Image Include="res\textures\handDefault.png" />
     <Image Include="res\textures\handWood.png" />

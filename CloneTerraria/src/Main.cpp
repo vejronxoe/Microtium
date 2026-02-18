@@ -23,6 +23,7 @@
 #include"Enemy.h"
 #include"background.h"
 #include"particles.h"
+#include"structures.h"
 
 int main()
 {
@@ -157,7 +158,12 @@ int main()
 	particlesSh.GetUniformLocation("scale");
 	particlesSh.GetUniformLocation("rotation");
 	particlesSh.GetUniformLocation("color");
-
+	Shader structureSh("res/shaders/verStructure.txt", "res/shaders/fragShadow.txt");
+	structureSh.Bind();
+	structureSh.GetUniformLocation("camera");
+	structureSh.GetUniformLocation("transform");
+	structureSh.GetUniformLocation("scale");
+	structureSh.GetUniformLocation("shadow");
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -187,20 +193,26 @@ int main()
 	unsigned int cursorTextures[6];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
-	unsigned int structuresTextures[1];
+	unsigned int structuresTextures[4];
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
 	CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 	CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 	CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
 	structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
+	structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
+	structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
+	structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
 	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 	projectileTextures[p_Sand] = CreateTextureRGBA("res/textures/proSand.png");
 	unsigned int treeDD[3];
-	unsigned int structuresDD[1];
+	unsigned int structuresDD[4];
 	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+	structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
+	structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
+	structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
 	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
 	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
 	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
@@ -231,8 +243,9 @@ int main()
 	std::vector<bool> isSandOnX;
 	std::vector<Enemy*> enemies;
 	std::vector<BoomParticle> boomParticles; 
-
 	std::vector<Projectile> projectiles;
+	std::vector<CraftStation> craftStations;
+
 
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 1080, -500, 360, blockTextures);
 	Background background(eob,backgroundSh);
@@ -245,7 +258,33 @@ int main()
 	Zombie z( enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2,80,100,eob);
 	//enemies.emplace_back(&s);
 	enemies.emplace_back(&z);
-	
+
+
+	CraftStation forge;
+	forge.m_CraftStationtype = s_Forge;
+	forge.m_LookAt = 1;
+	forge.m_Transform[0] = 110;
+	forge.m_Transform[1] = 16;
+	craftStations.emplace_back(forge);
+
+	CraftStation table;
+
+	table.m_CraftStationtype = s_CraftingTable;
+	table.m_LookAt = -1;
+	table.m_Transform[0] = 100;
+	table.m_Transform[1] = 16;
+	craftStations.emplace_back(table);
+
+	CraftStation anvil;
+
+	anvil.m_CraftStationtype = s_Anvil;
+	anvil.m_LookAt = -1;
+	anvil.m_Transform[0] = 120;
+	anvil.m_Transform[1] = 16;
+	craftStations.emplace_back(anvil);
+
+
+
 	// 
 	// //////////////////////
 
@@ -355,7 +394,8 @@ int main()
 		backgroundSh.Bind();
 		backgroundSh.SetUniformMat4(basicCamera, camera);
 		background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
-
+		structureSh.Bind();
+		structureSh.SetUniformMat4(structureCamera, camera);
 
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
@@ -380,6 +420,7 @@ int main()
 		{
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
+		DrawCraftStations(craftStations, structureSh, scale, transform, structuresDD, structuresTextures);
 		shadowSh.Bind();
 		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 		ErrorGL(glBindVertexArray(itemDD));

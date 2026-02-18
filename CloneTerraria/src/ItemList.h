@@ -43,5 +43,7 @@ enum Items
 enum Structures
 {
 	s_Sapling = 0
-
+	, s_CraftingTable
+	, s_Forge
+	, s_Anvil
 };
