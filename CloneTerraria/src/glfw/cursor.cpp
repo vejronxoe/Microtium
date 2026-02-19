@@ -25,6 +25,7 @@ void DrawCursor(unsigned int* CursorTextures
 	, unsigned int cursorDrawData
 	, unsigned int blockDrawData
 	, Shader& basicSh
+	, Shader& structuresSh
 	, Shader& fontSh
 	, float* transform
 	, float* camera
@@ -34,36 +35,56 @@ void DrawCursor(unsigned int* CursorTextures
 	, Player& player
 	, float* cameraCoordinates)
 {
-	basicSh.Bind();
 	int x = std::roundf(cameraCoordinates[0] + Input::XMousePos);
 	int y = std::roundf(cameraCoordinates[1] + Input::YMousePos);
-	if (player.m_CursorOnPlaceableSpot)
+	
+	if (player.m_CursorOnPlaceableForStructure && player.m_PlayerSlots[0])
 	{
+		structuresSh.Bind();
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4(basicTransform, transform);
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_UseSlotTexture));
-		ErrorGL(glBindVertexArray(blockDrawData));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	}
-	else if (player.m_CursorOnPlaceableForStructure)
-	{
-		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4( basicTransform, transform);
-		basicSh.SetUniform1i(basicSize + ShadowLocation, -1);
+		structuresSh.SetUniformMat4(basicTransform, transform);
+		structuresSh.SetUniform1i(structureSize + ShadowLocation, -1);
+		structuresSh.SetUniform1i(basicSize + structureLookAt, player.m_DirectionLook);
+
 
 		switch (player.m_PlayerSlots[0])
 		{
 		case i_Sapling:
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Sapling]));
 			ErrorGL(glBindVertexArray(structurteDD[s_Sapling]));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-
+			break;
+		case i_CraftingTable:
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_CraftingTable]));
+			ErrorGL(glBindVertexArray(structurteDD[s_CraftingTable]));
+			break;
+		case i_Forge:
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Forge]));
+			ErrorGL(glBindVertexArray(structurteDD[s_Forge]));
+			break;
+		case i_Anvil:
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Anvil]));
+			ErrorGL(glBindVertexArray(structurteDD[s_Anvil]));
+			break;
+		default:
+			std::cout << "error cursor.cpp unknow structure"<< player.m_PlayerSlots[0] << std::endl;
 			break;
 		}
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		basicSh.SetUniform1i(basicSize + ShadowLocation, 0);
+		structuresSh.SetUniform1i(structureSize + ShadowLocation, 0);
 
 	}
+	basicSh.Bind();
+
+	if (player.m_CursorOnPlaceableSpot && player.m_PlayerSlots[0])
+	{
+
+		ChangeTransform(x, y, transform);
+		basicSh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_UseSlotTexture));
+		ErrorGL(glBindVertexArray(blockDrawData));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
 	basicSh.SetUniformMat4(basicTransform, transform);
 	ChangeCamera(0, Window::width, 0, Window::height, camera);

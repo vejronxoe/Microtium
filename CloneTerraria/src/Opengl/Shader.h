@@ -82,11 +82,10 @@ enum particlesFragSh
 	particlesColor = 0
 	, particlesFragSize
 };
-enum structureVertexSh
+enum structureFragSh
 {
-	structureCamera = 0
-	, structureTransform
-	, structureScale
+	structureShadow = 0
+	, structureLookAt
 	, structureSize
 };
 class Shader

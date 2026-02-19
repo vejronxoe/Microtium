@@ -158,12 +158,12 @@ int main()
 	particlesSh.GetUniformLocation("scale");
 	particlesSh.GetUniformLocation("rotation");
 	particlesSh.GetUniformLocation("color");
-	Shader structureSh("res/shaders/verStructure.txt", "res/shaders/fragShadow.txt");
+	Shader structureSh("res/shaders/verBasic.txt", "res/shaders/fragStructures.txt");
 	structureSh.Bind();
 	structureSh.GetUniformLocation("camera");
 	structureSh.GetUniformLocation("transform");
-	structureSh.GetUniformLocation("scale");
 	structureSh.GetUniformLocation("shadow");
+	structureSh.GetUniformLocation("lookAt");
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -188,7 +188,6 @@ int main()
 	unsigned int enemiesTex2[enemySize];
 	unsigned int enemiesDD1[enemySize];
 	unsigned int enemiesDD2[enemySize];
-	unsigned int projectileTextures[1];
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int cursorTextures[6];
 	unsigned int treeTextures[3];
@@ -206,7 +205,6 @@ int main()
 	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
-	projectileTextures[p_Sand] = CreateTextureRGBA("res/textures/proSand.png");
 	unsigned int treeDD[3];
 	unsigned int structuresDD[4];
 	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
@@ -329,8 +327,8 @@ int main()
 				player.DamagePlayer(enemies.at(i)->m_Transform, damage);
 			}
 		}
-		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
-		SandEveryFrame(isSandOnX, projectiles, blocks, walls, projectileTextures[p_Sand], blocksDrawData);
+		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
+		SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
@@ -395,7 +393,7 @@ int main()
 		backgroundSh.SetUniformMat4(basicCamera, camera);
 		background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
 		structureSh.Bind();
-		structureSh.SetUniformMat4(structureCamera, camera);
+		structureSh.SetUniformMat4(basicCamera, camera);
 
 		shadowSh.Bind();
 		ErrorGL(glBindVertexArray(blocksDrawData));
@@ -420,7 +418,7 @@ int main()
 		{
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
-		DrawCraftStations(craftStations, structureSh, scale, transform, structuresDD, structuresTextures);
+		DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 		shadowSh.Bind();
 		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 		ErrorGL(glBindVertexArray(itemDD));
@@ -500,7 +498,7 @@ int main()
 		}
 		player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
 
-		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
+		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 		
 
 		Input::EndOfLoop();

@@ -7,6 +7,13 @@ enum Items
 	, i_CopperAxe
 	, i_CopperHammer
 	, i_CopperSword
+	, i_IronOre
+	, i_CopperOre
+	, i_IronIngot
+	, i_CopperIngot
+	, i_CraftingTable
+	, i_Forge
+	, i_Anvil
 	, i_Dirt
 	, i_Ice
 	, i_Asphalt
@@ -42,8 +49,9 @@ enum Items
 };
 enum Structures
 {
-	s_Sapling = 0
-	, s_CraftingTable
+	s_CraftingTable = 0
 	, s_Forge
 	, s_Anvil
+	, s_Sapling
+
 };

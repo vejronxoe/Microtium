@@ -167,7 +167,7 @@
     <Text Include="res\shaders\fragBackground.txt" />
     <Text Include="res\shaders\fragParticles.txt" />
     <Text Include="res\shaders\verParticles.txt" />
-    <Text Include="res\shaders\verStructure.txt" />
+    <Text Include="res\shaders\fragStructures.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">
@@ -230,7 +230,7 @@
     <Image Include="res\textures\canPutItInBin.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\textures\cooper.png">
+    <Image Include="res\textures\copper.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\cooperAxe.png">
@@ -468,6 +468,24 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\forge.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\anvil.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\anvilInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\benchInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\copperIngot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ironIngot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forgeInv.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

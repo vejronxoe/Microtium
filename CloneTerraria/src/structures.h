@@ -10,7 +10,6 @@ struct CraftStation
 };
 void DrawCraftStations(std::vector<CraftStation>& structures
 	, Shader& sh
-	, float* scale
 	, float* transform
 	, unsigned int* structureDDs
 	, unsigned int* structureTexs);

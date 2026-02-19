@@ -10,6 +10,7 @@
 #include"BlocksAndWalls.h"
 #include"flora.h"
 #include"projectile.h"
+#include"structures.h"
 
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
@@ -55,6 +56,7 @@ public:
 		, std::vector<std::vector<wall>>& walls
 		, std::vector<Enemy*>& enemies
 		, std::vector<bool>& isThereSandOnX
+		, std::vector<CraftStation>& craftStations
 		, std::vector<damagedWood>& damagedWood
 		, std::vector<DamagedBlock>& damageblocks
 		, std::vector<DamagedBlock>& damagedWalls
@@ -135,7 +137,7 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
-	unsigned int m_AllItemTextures[37];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[44];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60];

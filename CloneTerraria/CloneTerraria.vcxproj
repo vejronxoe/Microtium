@@ -72,6 +72,7 @@
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragBackground.txt" />
     <Text Include="res\shaders\fragShadow.txt" />
+    <Text Include="res\shaders\fragStructures.txt" />
     <Text Include="res\shaders\fragtTest.txt" />
     <Text Include="res\shaders\fragParticles.txt" />
     <Text Include="res\shaders\verAnimation.txt" />
@@ -82,7 +83,6 @@
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verHand.txt" />
     <Text Include="res\shaders\verParticles.txt" />
-    <Text Include="res\shaders\verStructure.txt" />
     <Text Include="res\shaders\verTree.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +95,8 @@
     <Image Include="res\textures\accessoriseFastShoes.png" />
     <Image Include="res\textures\accessoriseShackle.png" />
     <Image Include="res\textures\accessoriseWallClimb.png" />
+    <Image Include="res\textures\anvil.png" />
+    <Image Include="res\textures\anvilInv.png" />
     <Image Include="res\textures\Asphalt.png" />
     <Image Include="res\textures\BackgroundForest.png" />
     <Image Include="res\textures\BackgroundSand.png" />
@@ -105,6 +107,7 @@
     <Image Include="res\textures\basicBullet.png" />
     <Image Include="res\textures\basicCanonBall.png" />
     <Image Include="res\textures\bench.png" />
+    <Image Include="res\textures\benchInv.png" />
     <Image Include="res\textures\bleedArrow.png" />
     <Image Include="res\textures\bleedBullet.png" />
     <Image Include="res\textures\bodyAnimDefault.png" />
@@ -124,11 +127,12 @@
     <Image Include="res\textures\canonInv.png" />
     <Image Include="res\textures\canPickaxeIt.png" />
     <Image Include="res\textures\canPutItInBin.png" />
-    <Image Include="res\textures\cooper.png" />
+    <Image Include="res\textures\copper.png" />
     <Image Include="res\textures\cooperAxe.png" />
     <Image Include="res\textures\cooperHammer.png" />
     <Image Include="res\textures\cooperPickaxe.png" />
     <Image Include="res\textures\cooperSword.png" />
+    <Image Include="res\textures\copperIngot.png" />
     <Image Include="res\textures\cut1.png" />
     <Image Include="res\textures\cut2.png" />
     <Image Include="res\textures\cut3.png" />
@@ -145,6 +149,7 @@
     <Image Include="res\textures\forestplank.png" />
     <Image Include="res\textures\forestSmallBush.png" />
     <Image Include="res\textures\forge.png" />
+    <Image Include="res\textures\forgeInv.png" />
     <Image Include="res\textures\fullGrassBlock.png" />
     <Image Include="res\textures\handDefault.png" />
     <Image Include="res\textures\handWood.png" />
@@ -153,6 +158,7 @@
     <Image Include="res\textures\ice.png" />
     <Image Include="res\textures\inventorySlot.png" />
     <Image Include="res\textures\iron.png" />
+    <Image Include="res\textures\ironIngot.png" />
     <Image Include="res\textures\leftGrassBlock.png" />
     <Image Include="res\textures\leftRightGrassBlock.png" />
     <Image Include="res\textures\legAnimDefault.png" />

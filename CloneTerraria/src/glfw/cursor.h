@@ -21,6 +21,7 @@ void DrawCursor(unsigned int* CursorTextures
 	, unsigned int cursorDrawData
 	, unsigned int blockDrawData
 	, Shader& basicSh
+	, Shader& structuresSh
 	, Shader& fontSh
 	, float* transform
 	, float* camera

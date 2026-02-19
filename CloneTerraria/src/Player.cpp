@@ -104,7 +104,7 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 void getStructureVertices(int x
 	, int y
 	, unsigned int ID
-	, float* vertices)
+	, int* vertices)
 {
 	switch (ID)
 	{
@@ -114,8 +114,41 @@ void getStructureVertices(int x
 		vertices[2] = x;
 		vertices[3] = y;
 		break;
+	case s_Anvil:
+	case s_CraftingTable:
+		vertices[0] = x;
+		vertices[1] = y;
+		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+	case s_Forge:
+		vertices[0] = x;
+		vertices[1] = y + 2;
+		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+
 	}
 }
+char GetStructureID(unsigned char Item)
+{
+
+	switch (Item)
+	{
+	case i_Sapling:
+		return s_Sapling;
+	case i_CraftingTable:
+		return s_CraftingTable;
+	case i_Anvil:
+		return s_Anvil;
+	case i_Forge:
+		return s_Forge;
+	default:
+		std::cout << "error playyer.cpp unknown structure :" << (unsigned int)Item << std::endl;
+		return s_CraftingTable;
+	}
+}
+
 short int ArmorClass(unsigned char item)
 {
 	switch (item)
@@ -229,7 +262,7 @@ Player::Player(unsigned int eob
 	m_IsBurning = false;
 	m_BurningTimer = 0;
 	m_BurnDamageNextTime = 0;
-	float playerVertice[4] = {-1,1.5f,1,-1.5f};
+	float playerVertice[4] = { -1,1.5f,1,-1.5f };
 	m_OnFire.constructorFire(playerVertice, 4, 0.2f);
 
 
@@ -262,6 +295,9 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[21] = i_AccessoriseWallClimb;
 	m_PlayerSlots[22] = i_AccessoriseFastShoes;
 	m_PlayerSlots[23] = i_AccessoriseShackle;
+	m_PlayerSlots[24] = i_Forge;
+	m_PlayerSlots[25] = i_CraftingTable;
+	m_PlayerSlots[26] = i_Anvil;
 	m_AmountInSlots[4] = 20;
 	m_AmountInSlots[5] = 20;
 	m_AmountInSlots[6] = 20;
@@ -282,6 +318,9 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[21] = 1;
 	m_AmountInSlots[22] = 1;
 	m_AmountInSlots[23] = 1;
+	m_AmountInSlots[24] = 1;
+	m_AmountInSlots[25] = 1;
+	m_AmountInSlots[26] = 1;
 
 
 	m_PlayerSlots[41] = i_CopperSword;
@@ -341,6 +380,14 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_AccessoriseWallClimb] = CreateTextureRGBA("res/textures/accessoriseWallClimb.png");
 	m_AllItemTextures[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
 	m_AllItemTextures[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
+	m_AllItemTextures[i_IronOre] = CreateTextureRGBA("res/textures/iron.png");
+	m_AllItemTextures[i_CopperOre] = CreateTextureRGBA("res/textures/copper.png");
+	m_AllItemTextures[i_IronIngot] = CreateTextureRGBA("res/textures/ironIngot.png");
+	m_AllItemTextures[i_CopperIngot] = CreateTextureRGBA("res/textures/copperIngot.png");
+	m_AllItemTextures[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
+	m_AllItemTextures[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
+	m_AllItemTextures[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
+
 
 
 	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
@@ -493,6 +540,9 @@ void Player::SwapItemStats()
 			m_Damage = 1;
 		break;
 		case(i_Sapling):
+		case i_CraftingTable:
+		case i_Forge:
+		case i_Anvil:
 			m_CooldownToUse = 0.1f;
 			m_LargePlaceable = true;
 			break;
@@ -530,7 +580,10 @@ void Player::SwapItemStats()
 			m_Range = 0;
 			m_Accessorise = true;
 			break;
-
+		case i_CopperOre:
+		case i_CopperIngot:
+		case i_IronOre:
+		case i_IronIngot:
 		case i_PierceArrow:
 		case i_BasicArrow:
 		case i_BouncingArrow:
@@ -850,6 +903,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<Enemy*>& enemies
 	, std::vector<bool>& isThereSandOnX
+	, std::vector<CraftStation>& craftStations
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
@@ -863,6 +917,44 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<Projectile>& projectiles)
 {
 	float oldVelocity[2] = {m_Velocity[0], m_Velocity[1]};
+
+	
+
+
+	if (m_IsInventoryOpen)
+	{
+		bool isCloseToCraftStation[3];
+		isCloseToCraftStation[s_CraftingTable] = false;
+		isCloseToCraftStation[s_Forge] = false;
+		isCloseToCraftStation[s_Anvil] = false;
+
+		for (int i = 0; i < craftStations.size(); i++)
+		{
+			if (m_Transform[1] == craftStations.at(i).m_Transform[1] + 1)
+			{
+				int vertices[4];
+				getStructureVertices(craftStations.at(i).m_Transform[0], craftStations.at(i).m_Transform[1], craftStations.at(i).m_CraftStationtype, vertices);
+				if (abs(m_Transform[0] - (float)(vertices[0] + vertices[2])/2.0f) < 5)
+				{
+					Assert(2 < craftStations.at(i).m_CraftStationtype);
+					isCloseToCraftStation[craftStations.at(i).m_CraftStationtype] = true;
+				}
+			}
+		}
+		if (isCloseToCraftStation[s_CraftingTable])
+		{
+
+		}
+		if (isCloseToCraftStation[s_Forge])
+		{
+
+		}
+		if (isCloseToCraftStation[s_Anvil])
+		{
+
+		}
+
+	}
 	if (m_ArmsBehaviour != ArmUsing)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
@@ -1067,7 +1159,7 @@ void Player::EveryFrame(float deltaTime
 				SwapItemStats();
 			}
 		}
-		if (Input::RightMouseHold && m_AimingAtSlot && m_IsInventoryOpen && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_UseSlot == 0))
+		if (Input::RightMouseHold && m_AimingAtSlot && m_IsInventoryOpen && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0))
 		{
 			if (m_TimerSplitingItem == 1)
 			{
@@ -1352,15 +1444,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					int  vertices[4];
 					bool floors = true;
-					switch (m_PlayerSlots[0])
-					{
-					case i_Sapling:
-						vertices[0] = x;
-						vertices[1] = y + 1;
-						vertices[2] = x;
-						vertices[3] = y;
-						break;
-					}
+					getStructureVertices(x, y, GetStructureID(m_PlayerSlots[0]), vertices);
 					if (vertices[0] <= Blocks::xMin)
 					{
 						inBlock = true;
@@ -1502,7 +1586,9 @@ void Player::EveryFrame(float deltaTime
 					default:
 						if (!m_Consume)
 						{
-							m_ArmsBehaviour = ArmUsing;
+							
+								m_ArmsBehaviour = ArmUsing;
+							
 						}
 						break;
 					}
@@ -1544,53 +1630,22 @@ void Player::EveryFrame(float deltaTime
 					{
 						if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 						{
-							createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);
-							if (m_UseSlot)
-							{
-								m_AmountInSlots[0]--;
-								if (!m_AmountInSlots[0])
-								{
-									m_UseSlot = 0;
-									m_PlayerSlots[0] = i_Nothing;
-									SwapItemStats();
-								}
-							}
-							else
-							{
-								m_AmountInSlots[m_HUDUseSlot]--;
-								if (m_AmountInSlots[m_HUDUseSlot] <= 0)
-								{
-									m_AmountInSlots[0] = 0;
-									m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
-									m_PlayerSlots[0] = i_Nothing;
-									SwapItemStats();
-								}
-							}
+							createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);	
 						}
-
 						else
 						{
 							CreateBlock(x, y, m_PlayerSlots[0], walls, blocks, isThereSandOnX, texturesIDs);
-							if (m_UseSlot)
+						}
+						m_AmountInSlots[0]--;
+						if (m_UseSlot == 0)
+						{
+							m_AmountInSlots[m_HUDUseSlot]--;
+						}
+						if (m_AmountInSlots[0] <= 0)
+						{
+							if (m_UseSlot == 0)
 							{
-								m_AmountInSlots[0]--;
-								if (!m_AmountInSlots[0])
-								{
-									m_UseSlot = 0;
-									m_PlayerSlots[0] = i_Nothing;
-									SwapItemStats();
-								}
-							}
-							else
-							{
-								m_AmountInSlots[m_HUDUseSlot]--;
-								if (m_AmountInSlots[m_HUDUseSlot] <= 0)
-								{
-									m_AmountInSlots[0] = 0;
-									m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
-									m_PlayerSlots[0] = i_Nothing;
-									SwapItemStats();
-								}
+								m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
 							}
 						}
 					}
@@ -1784,6 +1839,36 @@ void Player::EveryFrame(float deltaTime
 						case i_Sapling:
 							seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
 							break;
+						case i_CraftingTable:
+						{
+							CraftStation table;
+							table.m_CraftStationtype = s_CraftingTable;
+							table.m_Transform[0] = x;
+							table.m_Transform[1] = y;
+							table.m_LookAt = m_DirectionLook;
+							craftStations.emplace_back(table);
+							break;
+						}
+						case i_Forge:
+						{
+							CraftStation forge;
+							forge.m_CraftStationtype = s_Forge;
+							forge.m_Transform[0] = x;
+							forge.m_Transform[1] = y;
+							forge.m_LookAt = m_DirectionLook;
+							craftStations.emplace_back(forge);
+							break;
+						}
+						case i_Anvil:
+						{
+							CraftStation anvil;
+							anvil.m_CraftStationtype = s_Anvil;
+							anvil.m_Transform[0] = x;
+							anvil.m_Transform[1] = y;
+							anvil.m_LookAt = m_DirectionLook;
+							craftStations.emplace_back(anvil);
+							break;
+						}
 						}
 						m_AmountInSlots[0]--;
 						if (m_UseSlot == 0)
@@ -1792,12 +1877,10 @@ void Player::EveryFrame(float deltaTime
 						}
 						if (m_AmountInSlots[0] <= 0)
 						{
-							m_PlayerSlots[0] = i_Nothing;
 							if (m_UseSlot == 0)
 							{
 								m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
 							}
-							SwapItemStats();
 						}
 					}
 					else if (m_Consume)
@@ -2205,10 +2288,12 @@ void Player::EveryFrame(float deltaTime
 				}
 				if (m_UseItemTimer > m_CooldownToUse)
 				{
-					if (!Input::LeftMousePress)
-					{	
-						m_ArmsBehaviour = ArmStanding;
+					if (m_AmountInSlots[0] == 0)
+					{
+						m_PlayerSlots[0] = i_Nothing;
+						SwapItemStats();
 					}
+					m_ArmsBehaviour = ArmStanding;
 					m_HitEnemies.clear();
 					m_ArmRotation = 0;
 				}

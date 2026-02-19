@@ -4,7 +4,6 @@
 
 void DrawCraftStations(std::vector<CraftStation>& structures
 	, Shader& sh
-	, float* scale
 	, float* transform
 	, unsigned int* structureDDs
 	, unsigned int* structureTexs)
@@ -12,10 +11,10 @@ void DrawCraftStations(std::vector<CraftStation>& structures
 	sh.Bind();
 	for(int i = 0; i < structures.size(); i++)
 	{
-		ChangeScale(structures.at(i).m_LookAt, 1, scale);
 		ChangeTransform(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], transform);
-		sh.SetUniformMat4(structureTransform, transform);
-		sh.SetUniformMat4(structureScale, scale);
+		sh.SetUniformMat4(basicTransform, transform);
+		sh.SetUniform1i(basicSize + structureLookAt, structures.at(i).m_LookAt);
+
 		ErrorGL(glBindVertexArray(structureDDs[structures.at(i).m_CraftStationtype]));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, structureTexs[structures.at(i).m_CraftStationtype]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
