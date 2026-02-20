@@ -189,11 +189,11 @@ bool Projectile::EveryFrame(float deltaTime
 			}
 			if (!inBlock)
 			{
-				inBlock = IsThereSeedling(seedlings, x, y);
+				FindSeedling(seedlings, x, y,inBlock);
 			}
 			if (!inBlock)
 			{
-				inBlock = isCraftStationOnThisSpot(craftStations, x, y);
+				FindCraftStation(craftStations, x, y, inBlock);
 			}
 			if (!inBlock)
 			{

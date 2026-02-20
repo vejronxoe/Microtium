@@ -77,9 +77,10 @@ int FindWood(std::vector<tree>& woods
 	, int y
 	, bool& found);
 
-bool IsThereSeedling(std::vector<seedling>& seedlings
+int FindSeedling(std::vector<seedling>& seedlings
 	, int x
-	, int y);
+	, int y
+	, bool& found);
 
 bool SeedlingInArea(std::vector<seedling>& seedlings
 	, int* vertices);

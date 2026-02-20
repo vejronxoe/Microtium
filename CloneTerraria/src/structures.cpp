@@ -36,9 +36,10 @@ bool IsInAreaCraftStation(std::vector<CraftStation>& structures
 	}
 	return false;
 }
-bool isCraftStationOnThisSpot(std::vector<CraftStation>& structures
+int FindCraftStation(std::vector<CraftStation>& structures
 	, float x
-	, float y)
+	, float y
+	, bool& found)
 {
 	for (int i = 0; i < structures.size(); i++)
 	{
@@ -46,10 +47,11 @@ bool isCraftStationOnThisSpot(std::vector<CraftStation>& structures
 		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
 		if (structureVertices[0] <= x && structureVertices[2] >= x && structureVertices[3] <= y && structureVertices[1] >= y)
 		{
-			return true;
+			found =  true;
+			return i;
 		}
 	}
-	return false;
+	return -1;
 }
 void getStructureVertices(int x
 	, int y
@@ -77,7 +79,7 @@ void getStructureVertices(int x
 		vertices[2] = x + 1;
 		vertices[3] = y;
 		break;
-
+		
 	}
 }
 char GetStructureID(unsigned char Item)
@@ -94,7 +96,48 @@ char GetStructureID(unsigned char Item)
 	case i_Forge:
 		return s_Forge;
 	default:
-		std::cout << "error playyer.cpp unknown structure :" << (unsigned int)Item << std::endl;
+		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
 		return s_CraftingTable;
+	}
+}
+unsigned char GetItemIDByStructure(char structure)
+{
+
+	switch (structure)
+	{
+	case s_Sapling:
+		return i_Sapling;
+	case s_CraftingTable:
+		return i_CraftingTable;
+	case s_Anvil:
+		return i_Anvil;
+	case s_Forge:
+		return i_Forge;
+	default:
+		std::cout << "error playyer.cpp unknown structure :" << (unsigned int)structure << std::endl;
+		return i_CraftingTable;
+	}
+}
+void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<DroppedItem>& droppedItems)
+{
+	for (int i = 0; i < craftingStation.size(); i++)
+	{
+		bool floorFound = false;
+		int vertices[4];
+		getStructureVertices(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], craftingStation.at(i).m_CraftStationtype, vertices);
+		for (int j = vertices[0]; j <= vertices[2]; j++)
+		{
+			FindBlock(blocks, j, craftingStation.at(i).m_Transform[1] - 1, floorFound);
+			if (!floorFound)
+			{
+				droppedItems.emplace_back(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], 0, GetItemIDByStructure(craftingStation.at(i).m_CraftStationtype),1,true);
+				craftingStation.erase(i + craftingStation.begin());
+				i--;
+				break;
+			}
+			floorFound = false;
+		}
 	}
 }

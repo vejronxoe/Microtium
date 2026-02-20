@@ -319,6 +319,7 @@ int main()
 			}
 
 		}
+		CheckFloorCraftStations(craftStations, blocks, dropItems);
 		for (int i = 0; i < enemies.size(); i++)
 		{
 			int damage = enemies.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);

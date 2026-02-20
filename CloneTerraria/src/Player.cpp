@@ -1267,6 +1267,8 @@ void Player::EveryFrame(float deltaTime
 
 		
 		int blockIndex = 0;
+		int craftingStationIndex = 0;
+		int seedlingIndex = 0;
 		int wallIndex = -1;
 		int woodIndex = 0;
 		bool inBlock = false;
@@ -1297,9 +1299,9 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
 		m_CursorOnMinableWood = false;
-		if (m_AimingAtSlot == 0  )
+		if (m_AimingAtSlot == 0)
 		{
-			
+
 			if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 			{
 				if (m_Placeable)
@@ -1318,11 +1320,11 @@ void Player::EveryFrame(float deltaTime
 						FindWood(trees, x, y, inBlock);
 						if (!inBlock)
 						{
-							inBlock = isCraftStationOnThisSpot(craftStations, x, y);
+							FindCraftStation(craftStations, x, y, inBlock);
 						}
 						if (!inBlock)
 						{
-							inBlock = IsThereSeedling(seedlings, x, y);
+							 FindSeedling(seedlings, x, y, inBlock);
 						}
 						if (!inBlock)
 						{
@@ -1375,10 +1377,21 @@ void Player::EveryFrame(float deltaTime
 				{
 
 					blockIndex = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
+
 					if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
 					{
 						m_CursorOnMinableBlock = false;
 					}
+
+					if (!m_CursorOnMinableBlock)
+					{
+						craftingStationIndex = FindCraftStation(craftStations,x,y,m_CursorOnMinableBlock);
+					}
+					if (!m_CursorOnMinableBlock)
+					{
+						seedlingIndex = FindSeedling(seedlings, x, y, m_CursorOnMinableBlock);
+					}
+
 				}
 				else if (m_HammerStreanght)
 				{
@@ -1422,7 +1435,7 @@ void Player::EveryFrame(float deltaTime
 					if (!inBlock)
 					{
 						inBlock = blockInArea(blocks, vertices);
-						
+
 						if (!inBlock)
 						{
 							for (int i = vertices[0]; i <= vertices[2]; i++)
@@ -1470,8 +1483,8 @@ void Player::EveryFrame(float deltaTime
 			else if (m_WeaponType)
 			{
 				unsigned char arrows[ARROWSTYPES] = { i_BasicArrow, i_PierceArrow, i_BouncingArrow, i_FireArrow };
-				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_PierceCannonBall, i_BouncingCannonBall, i_FireCannonBall, i_Sand};
-				unsigned char bullets[BULLETSTYPES] = {i_BasicBullet, i_PierceBullet, i_BouncingBullet, i_FireBullet};
+				unsigned char cannonBalls[CANNONBALLSTYPES] = { i_BasicCannonBall, i_PierceCannonBall, i_BouncingCannonBall, i_FireCannonBall, i_Sand };
+				unsigned char bullets[BULLETSTYPES] = { i_BasicBullet, i_PierceBullet, i_BouncingBullet, i_FireBullet };
 				switch (m_WeaponType)
 				{
 				case weaponBow:
@@ -1490,194 +1503,267 @@ void Player::EveryFrame(float deltaTime
 				}
 
 			}
-	
 
-			if (m_UseItemTimer > m_CooldownToUse)
+			if (!m_AimingAtSlot)
 			{
-				if (m_WeaponType > weaponAutomatic && Input::LeftMouseHold || m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMouseRelease)
+				if (m_UseItemTimer > m_CooldownToUse)
 				{
-					if (m_LocationAmmunition != -1)
+					if (m_WeaponType > weaponAutomatic && Input::LeftMouseHold || m_WeaponType < weaponAutomatic && m_WeaponType > weaponNot && Input::LeftMouseRelease)
 					{
-						float velocity[2] = {Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY };
-						NormalizeVector(velocity);
+						if (m_LocationAmmunition != -1)
+						{
+							float velocity[2] = { Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY };
+							NormalizeVector(velocity);
+							switch (m_PlayerSlots[0])
+							{
+							case weaponMelee:
+								m_ArmsBehaviour = ArmUsing;
+								break;
+							case i_WoodBow:
+
+								projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+
+								break;
+							case i_Cannon:
+
+
+								projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								break;
+							case i_Pistol:
+
+
+								projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 30, velocity[1] * 30, m_Damage, m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+								break;
+							default:
+								std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;
+								break;
+							}
+							m_AmountInSlots[m_LocationAmmunition]--;
+							if (m_AmountInSlots[m_LocationAmmunition] <= 0)
+							{
+								m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
+								m_LocationAmmunition = -1;
+							}
+							m_UseItemTimer = 0;
+						}
+
+
+					}
+					else if (Input::LeftMouseHold && m_WeaponType == weaponNot)
+					{
+
+
+
 						switch (m_PlayerSlots[0])
 						{
-						case weaponMelee:
-							m_ArmsBehaviour = ArmUsing;
-							break;
-						case i_WoodBow:
-					
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage, blockDD,  m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
-
-							break;
-						case i_Cannon:
-
-				
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage ,blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
-							break;
-						case i_Pistol:
-						
-							
-							projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY,velocity[0] * 30, velocity[1] * 30 , m_Damage,m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+						case i_Nothing:
 							break;
 						default:
-							std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;
+							if (!m_Consume)
+							{
+
+								m_ArmsBehaviour = ArmUsing;
+
+							}
 							break;
 						}
-						m_AmountInSlots[m_LocationAmmunition]--;
-						if (m_AmountInSlots[m_LocationAmmunition] <= 0)
+
+						if (m_CursorOnMinableBlock)
 						{
-							m_PlayerSlots[m_LocationAmmunition] = i_Nothing;
-							m_LocationAmmunition = -1;
-						}
-						m_UseItemTimer = 0;
-					}
-					
-					
-				}
-				else if (Input::LeftMouseHold && m_WeaponType == weaponNot)
-				{
-
-
-
-					switch (m_PlayerSlots[0])
-					{
-					case i_Nothing:
-						break;
-					default:
-						if (!m_Consume)
-						{
-							
-								m_ArmsBehaviour = ArmUsing;
-							
-						}
-						break;
-					}
-
-					if (m_CursorOnMinableBlock)
-					{
-						bool damaged = false;
-						int damageIndex;
-						for (damageIndex = 0; damageIndex < damageblocks.size(); damageIndex++)
-						{
-							if (damageblocks.at(damageIndex).m_Transform[0] == x && damageblocks.at(damageIndex).m_Transform[1] == y)
+							if ( blockIndex != -1)
 							{
-								damaged = true;
-								break;
+								bool damaged = false;
+								int damageIndex;
+								for (damageIndex = 0; damageIndex < damageblocks.size(); damageIndex++)
+								{
+									if (damageblocks.at(damageIndex).m_Transform[0] == x && damageblocks.at(damageIndex).m_Transform[1] == y)
+									{
+										damaged = true;
+										break;
+									}
+								}
+								if (damaged)
+								{
+									damageblocks.at(damageIndex).m_HP -= floorf((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness);
+									if (0 >= damageblocks.at(damageIndex).m_HP)
+									{
+										droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
+										damageblocks.erase(damageblocks.begin() + damageIndex);
+										DestroyBlock(blocks, walls, isThereSandOnX, x, y);
+									}
+								}
+								else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
+								{
+									droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
+									DestroyBlock(blocks, walls, isThereSandOnX, x, y);
+								}
+								else
+								{
+									damageblocks.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, ceilf(3.0f - ((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness)));
+								}
+							}
+							else if (craftingStationIndex != -1)
+							{
+							
+								droppedItems.emplace_back(x, y, 0, GetItemIDByStructure(craftStations.at(craftingStationIndex).m_CraftStationtype), 1, true);
+						
+								craftStations.erase(craftStations.begin() + craftingStationIndex);
+							}
+							else if (seedlingIndex != 0)
+							{
+								droppedItems.emplace_back(x, y, 0,i_Sapling,1,true);
+								seedlings.erase(seedlingIndex + seedlings.begin());
 							}
 						}
-						if (damaged)
+						else if (m_CursorOnPlaceableSpot)
 						{
-							damageblocks.at(damageIndex).m_HP -= floorf((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness);
-							if (0 >= damageblocks.at(damageIndex).m_HP)
+							if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 							{
-								droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
-								damageblocks.erase(damageblocks.begin() + damageIndex);
-								DestroyBlock(blocks, walls, isThereSandOnX, x, y);
+								createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);
 							}
-						}
-						else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
-						{
-							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
-							DestroyBlock(blocks, walls, isThereSandOnX, x, y);
-						}
-						else
-						{
-							damageblocks.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, ceilf(3.0f - ((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness)));
-						}
-
-					}
-					else if (m_CursorOnPlaceableSpot)
-					{
-						if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
-						{
-							createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);	
-						}
-						else
-						{
-							CreateBlock(x, y, m_PlayerSlots[0], walls, blocks, isThereSandOnX, texturesIDs);
-						}
-						m_AmountInSlots[0]--;
-						if (m_UseSlot == 0)
-						{
-							m_AmountInSlots[m_HUDUseSlot]--;
-						}
-						if (m_AmountInSlots[0] <= 0)
-						{
+							else
+							{
+								CreateBlock(x, y, m_PlayerSlots[0], walls, blocks, isThereSandOnX, texturesIDs);
+							}
+							m_AmountInSlots[0]--;
 							if (m_UseSlot == 0)
 							{
-								m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+								m_AmountInSlots[m_HUDUseSlot]--;
 							}
-						}
-					}
-					else if (m_CursorOnMinableWall)
-					{
-						bool damaged = false;
-						int damageIndex;
-						for (damageIndex = 0; damageIndex < damagedWalls.size(); damageIndex++)
-						{
-							if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == y)
+							if (m_AmountInSlots[0] <= 0)
 							{
-								damaged = true;
-								break;
+								if (m_UseSlot == 0)
+								{
+									m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+								}
 							}
 						}
-						if (damaged)
+						else if (m_CursorOnMinableWall)
 						{
-							damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness);
-							if (0 >= damagedWalls.at(damageIndex).m_HP)
+							bool damaged = false;
+							int damageIndex;
+							for (damageIndex = 0; damageIndex < damagedWalls.size(); damageIndex++)
+							{
+								if (damagedWalls.at(damageIndex).m_Transform[0] == x && damagedWalls.at(damageIndex).m_Transform[1] == y)
+								{
+									damaged = true;
+									break;
+								}
+							}
+							if (damaged)
+							{
+								damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness);
+								if (0 >= damagedWalls.at(damageIndex).m_HP)
+								{
+									if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+									{
+										droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
+									}
+									damagedWalls.erase(damagedWalls.begin() + damageIndex);
+									walls.at(x).erase(walls.at(x).begin() + wallIndex);
+								}
+							}
+							else if (0 >= ((float)walls.at(x).at(wallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
 							{
 								if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
 								{
 									droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
 								}
-								damagedWalls.erase(damagedWalls.begin() + damageIndex);
 								walls.at(x).erase(walls.at(x).begin() + wallIndex);
 							}
-						}
-						else if (0 >= ((float)walls.at(x).at(wallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
-						{
-							if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
+							else
 							{
-								droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
-							}
-							walls.at(x).erase(walls.at(x).begin() + wallIndex);
-						}
-						else
-						{
 
-							damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Y, ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
-						}
-
-					}
-					else if (m_CursorOnMinableWood)
-					{
-						bool damaged = false;
-						int damageIndex;
-						for (damageIndex = 0; damageIndex < damagedWoods.size(); damageIndex++)
-						{
-							if (damagedWoods.at(damageIndex).m_Transform[0] == x && damagedWoods.at(damageIndex).m_Transform[1] == y)
-							{
-								damaged = true;
-								break;
+								damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Y, ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
 							}
+
 						}
-						if (damaged)
+						else if (m_CursorOnMinableWood)
 						{
-							damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness);
-							if (0 >= damagedWoods.at(damageIndex).m_HP)
+							bool damaged = false;
+							int damageIndex;
+							for (damageIndex = 0; damageIndex < damagedWoods.size(); damageIndex++)
 							{
-								for (int i = 0; i < blocks.at(x).size(); i++)
+								if (damagedWoods.at(damageIndex).m_Transform[0] == x && damagedWoods.at(damageIndex).m_Transform[1] == y)
 								{
-									if (blocks.at(x).at(i).m_Y == y - 1)
-									{
-										blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
-									}
+									damaged = true;
+									break;
 								}
+							}
+							if (damaged)
+							{
+								damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness);
+								if (0 >= damagedWoods.at(damageIndex).m_HP)
+								{
+									for (int i = 0; i < blocks.at(x).size(); i++)
+									{
+										if (blocks.at(x).at(i).m_Y == y - 1)
+										{
+											blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
+										}
+									}
+									while (woodIndex != -1)
+									{
+										int specialIndex = -1;
+										int destroy[6] = { -1, -1, -1, -1, -1 , -1 };
+										for (int i = 0; i < trees.size(); i++)
+										{
+											if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
+											{
+												specialIndex = i;
+											}
+											else if (trees.at(woodIndex).m_Transform[1] == trees.at(i).m_Transform[1] && trees.at(i).m_Transform[0] <= trees.at(woodIndex).m_Transform[0] + 2 && trees.at(i).m_Transform[0] >= trees.at(woodIndex).m_Transform[0] - 2 && trees.at(i).m_Transform[0] != trees.at(woodIndex).m_Transform[0])
+											{
+												int j;
+												for (j = 0; destroy[j] != -1; j++) {}
+												destroy[j] = i;
+											}
+										}
+										{
+											int j;
+											for (j = 0; destroy[j] != -1; j++) {}
+											destroy[j] = woodIndex;
+											for (int i = 0; i < 5; i++)
+											{
+												for (int j = 1; j < 5; j++)
+												{
+													if (destroy[j - 1] < destroy[j])
+													{
+														int holder = destroy[j - 1];
+														destroy[j - 1] = destroy[j];
+														destroy[j] = holder;
+													}
+												}
+											}
+										}
+										for (int i = 0; i < 5; i++)
+										{
+											if (destroy[i] < specialIndex && destroy[i] != -1)
+											{
+												specialIndex--;
+											}
+										}
+										woodIndex = specialIndex;
+										for (int j = 0; destroy[j] != -1; j++)
+										{
+											if (trees.at(destroy[j]).m_ItemDrop != i_Nothing)
+											{
+												droppedItems.emplace_back(trees.at(destroy[j]).m_Transform[0], trees.at(destroy[j]).m_Transform[1], 0, trees.at(destroy[j]).m_ItemDrop, 1, true);
+
+											}
+											trees.erase(trees.begin() + destroy[j]);
+										}
+									}
+									damagedWoods.erase(damagedWoods.begin() + damageIndex);
+
+								}
+							}
+							else if (0 >= ((float)trees.at(woodIndex).m_Hardness) - ((float)m_AxeStreanght / 12.0f))
+							{
 								while (woodIndex != -1)
 								{
 									int specialIndex = -1;
-									int destroy[6] = { -1, -1, -1, -1, -1 , -1 };
+									int destroy[5] = { -1, -1, -1, -1, -1 };
 									for (int i = 0; i < trees.size(); i++)
 									{
 										if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
@@ -1726,177 +1812,120 @@ void Player::EveryFrame(float deltaTime
 										trees.erase(trees.begin() + destroy[j]);
 									}
 								}
-								damagedWoods.erase(damagedWoods.begin() + damageIndex);
 
 							}
-						}
-						else if (0 >= ((float)trees.at(woodIndex).m_Hardness) - ((float)m_AxeStreanght / 12.0f))
-						{
-							while (woodIndex != -1)
+							else
 							{
-								int specialIndex = -1;
-								int destroy[5] = { -1, -1, -1, -1, -1 };
-								for (int i = 0; i < trees.size(); i++)
-								{
-									if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
-									{
-										specialIndex = i;
-									}
-									else if (trees.at(woodIndex).m_Transform[1] == trees.at(i).m_Transform[1] && trees.at(i).m_Transform[0] <= trees.at(woodIndex).m_Transform[0] + 2 && trees.at(i).m_Transform[0] >= trees.at(woodIndex).m_Transform[0] - 2 && trees.at(i).m_Transform[0] != trees.at(woodIndex).m_Transform[0])
-									{
-										int j;
-										for (j = 0; destroy[j] != -1; j++) {}
-										destroy[j] = i;
-									}
-								}
-								{
-									int j;
-									for (j = 0; destroy[j] != -1; j++) {}
-									destroy[j] = woodIndex;
-									for (int i = 0; i < 5; i++)
-									{
-										for (int j = 1; j < 5; j++)
-										{
-											if (destroy[j - 1] < destroy[j])
-											{
-												int holder = destroy[j - 1];
-												destroy[j - 1] = destroy[j];
-												destroy[j] = holder;
-											}
-										}
-									}
-								}
-								for (int i = 0; i < 5; i++)
-								{
-									if (destroy[i] < specialIndex && destroy[i] != -1)
-									{
-										specialIndex--;
-									}
-								}
-								woodIndex = specialIndex;
-								for (int j = 0; destroy[j] != -1; j++)
-								{
-									if (trees.at(destroy[j]).m_ItemDrop != i_Nothing)
-									{
-										droppedItems.emplace_back(trees.at(destroy[j]).m_Transform[0], trees.at(destroy[j]).m_Transform[1], 0, trees.at(destroy[j]).m_ItemDrop, 1, true);
 
-									}
-									trees.erase(trees.begin() + destroy[j]);
-								}
+								damagedWoods.emplace_back(x, trees.at(woodIndex).m_Transform[1], trees.at(woodIndex).m_Rotation, ceilf(12.0f - ((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness)));
 							}
 
 						}
-						else
+						else if (m_CursorOnPlaceableForStructure)
 						{
-
-							damagedWoods.emplace_back(x, trees.at(woodIndex).m_Transform[1], trees.at(woodIndex).m_Rotation, ceilf(12.0f - ((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness)));
+							switch (m_PlayerSlots[0])
+							{
+							case i_Sapling:
+								seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
+								break;
+							case i_CraftingTable:
+							{
+								CraftStation table;
+								table.m_CraftStationtype = s_CraftingTable;
+								table.m_Transform[0] = x;
+								table.m_Transform[1] = y;
+								table.m_LookAt = m_DirectionLook;
+								craftStations.emplace_back(table);
+								break;
+							}
+							case i_Forge:
+							{
+								CraftStation forge;
+								forge.m_CraftStationtype = s_Forge;
+								forge.m_Transform[0] = x;
+								forge.m_Transform[1] = y;
+								forge.m_LookAt = m_DirectionLook;
+								craftStations.emplace_back(forge);
+								break;
+							}
+							case i_Anvil:
+							{
+								CraftStation anvil;
+								anvil.m_CraftStationtype = s_Anvil;
+								anvil.m_Transform[0] = x;
+								anvil.m_Transform[1] = y;
+								anvil.m_LookAt = m_DirectionLook;
+								craftStations.emplace_back(anvil);
+								break;
+							}
+							}
+							m_AmountInSlots[0]--;
+							if (m_UseSlot == 0)
+							{
+								m_AmountInSlots[m_HUDUseSlot]--;
+							}
+							if (m_AmountInSlots[0] <= 0)
+							{
+								if (m_UseSlot == 0)
+								{
+									m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
+								}
+							}
 						}
+						else if (m_Consume)
+						{
+							switch (m_PlayerSlots[0])
+							{
+							case i_WoodHelmet:
+								if (m_UseSlot == 0)
+								{
+									SwapArmor(m_HUDUseSlot, armorHelmet);
+								}
+								else
+								{
+									SwapArmor(0, armorHelmet);
+								}
+								break;
+							case i_WoodChestPlate:
+								if (m_UseSlot == 0)
+								{
+									SwapArmor(m_HUDUseSlot, armorChestPlate);
+								}
+								else
+								{
+									SwapArmor(0, armorChestPlate);
+								}
+								break;
+							case i_WoodPants:
+								if (m_UseSlot == 0)
+								{
+									SwapArmor(m_HUDUseSlot, armorPants);
+								}
+								else
+								{
+									SwapArmor(0, armorPants);
+								}
+								break;
+							case i_WoodShoes:
+								if (m_UseSlot == 0)
+								{
+									SwapArmor(m_HUDUseSlot, armorShoes);
+								}
+								else
+								{
+									SwapArmor(0, armorShoes);
+								}
+								break;
+							default:
+								std::cout << "Error Player.cpp Unknow consumable " << m_PlayerSlots[0] << std::endl;
+								break;
+							}
+							SwapItemStats();
+						}
+						m_UseItemTimer = 0;
+
 
 					}
-					else if (m_CursorOnPlaceableForStructure)
-					{
-						switch (m_PlayerSlots[0])
-						{
-						case i_Sapling:
-							seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
-							break;
-						case i_CraftingTable:
-						{
-							CraftStation table;
-							table.m_CraftStationtype = s_CraftingTable;
-							table.m_Transform[0] = x;
-							table.m_Transform[1] = y;
-							table.m_LookAt = m_DirectionLook;
-							craftStations.emplace_back(table);
-							break;
-						}
-						case i_Forge:
-						{
-							CraftStation forge;
-							forge.m_CraftStationtype = s_Forge;
-							forge.m_Transform[0] = x;
-							forge.m_Transform[1] = y;
-							forge.m_LookAt = m_DirectionLook;
-							craftStations.emplace_back(forge);
-							break;
-						}
-						case i_Anvil:
-						{
-							CraftStation anvil;
-							anvil.m_CraftStationtype = s_Anvil;
-							anvil.m_Transform[0] = x;
-							anvil.m_Transform[1] = y;
-							anvil.m_LookAt = m_DirectionLook;
-							craftStations.emplace_back(anvil);
-							break;
-						}
-						}
-						m_AmountInSlots[0]--;
-						if (m_UseSlot == 0)
-						{
-							m_AmountInSlots[m_HUDUseSlot]--;
-						}
-						if (m_AmountInSlots[0] <= 0)
-						{
-							if (m_UseSlot == 0)
-							{
-								m_PlayerSlots[m_HUDUseSlot] = i_Nothing;
-							}
-						}
-					}
-					else if (m_Consume)
-					{
-						switch (m_PlayerSlots[0])
-						{
-						case i_WoodHelmet:
-							if (m_UseSlot == 0)
-							{
-								SwapArmor(m_HUDUseSlot, armorHelmet);
-							}
-							else
-							{
-								SwapArmor(0,armorHelmet);
-							}
-							break;
-						case i_WoodChestPlate:
-							if (m_UseSlot == 0)
-							{
-								SwapArmor(m_HUDUseSlot, armorChestPlate);
-							}
-							else
-							{
-								SwapArmor(0, armorChestPlate);
-							}
-							break;
-						case i_WoodPants:
-							if (m_UseSlot == 0)
-							{
-								SwapArmor(m_HUDUseSlot, armorPants);
-							}
-							else
-							{
-								SwapArmor(0, armorPants);
-							}
-							break;
-						case i_WoodShoes:
-							if (m_UseSlot == 0)
-							{
-								SwapArmor(m_HUDUseSlot, armorShoes);
-							}
-							else
-							{
-								SwapArmor(0, armorShoes);
-							}
-							break;
-						default:
-							std::cout << "Error Player.cpp Unknow consumable " << m_PlayerSlots[0] << std::endl;
-							break;
-						}
-						SwapItemStats();
-					}
-					m_UseItemTimer = 0;
-
-
 				}
 			}
 		}

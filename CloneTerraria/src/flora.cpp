@@ -39,18 +39,20 @@ bool WoodInArea(std::vector<tree>& woods
 	}
 	return false;
 }
-bool IsThereSeedling(std::vector<seedling>& seedlings
+int FindSeedling(std::vector<seedling>& seedlings
 	, int x
-	, int y)
+	, int y
+	, bool& found)
 {
 	for (int i = 0; i < seedlings.size(); i++)
 	{
 		if (seedlings.at(i).m_Transform[0] == x && (seedlings.at(i).m_Transform[1] == y || seedlings.at(i).m_Transform[1] + 1 == y))
 		{
-			return true;
+			found = true;
+			return i;
 		}
 	}
-	return false;
+	return -1;
 }
 bool SeedlingInArea(std::vector<seedling>& seedlings
 	, int* vertices)
