@@ -332,7 +332,7 @@ int main()
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, boomParticles, isSandOnX, blockTextures))
+			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles, isSandOnX, blockTextures))
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}

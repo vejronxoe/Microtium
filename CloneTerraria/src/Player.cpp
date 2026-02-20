@@ -101,53 +101,6 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 			break;
 	}
 }
-void getStructureVertices(int x
-	, int y
-	, unsigned int ID
-	, int* vertices)
-{
-	switch (ID)
-	{
-	case s_Sapling:
-		vertices[0] = x;
-		vertices[1] = y + 1;
-		vertices[2] = x;
-		vertices[3] = y;
-		break;
-	case s_Anvil:
-	case s_CraftingTable:
-		vertices[0] = x;
-		vertices[1] = y;
-		vertices[2] = x + 1;
-		vertices[3] = y;
-		break;
-	case s_Forge:
-		vertices[0] = x;
-		vertices[1] = y + 2;
-		vertices[2] = x + 1;
-		vertices[3] = y;
-		break;
-
-	}
-}
-char GetStructureID(unsigned char Item)
-{
-
-	switch (Item)
-	{
-	case i_Sapling:
-		return s_Sapling;
-	case i_CraftingTable:
-		return s_CraftingTable;
-	case i_Anvil:
-		return s_Anvil;
-	case i_Forge:
-		return s_Forge;
-	default:
-		std::cout << "error playyer.cpp unknown structure :" << (unsigned int)Item << std::endl;
-		return s_CraftingTable;
-	}
-}
 
 short int ArmorClass(unsigned char item)
 {
@@ -1363,7 +1316,10 @@ void Player::EveryFrame(float deltaTime
 						wallIndex = FindWall(walls, x, y, inWall);
 						m_CursorOnPlaceableSpot = inWall;
 						FindWood(trees, x, y, inBlock);
-
+						if (!inBlock)
+						{
+							inBlock = isCraftStationOnThisSpot(craftStations, x, y);
+						}
 						if (!inBlock)
 						{
 							inBlock = IsThereSeedling(seedlings, x, y);
@@ -1466,6 +1422,7 @@ void Player::EveryFrame(float deltaTime
 					if (!inBlock)
 					{
 						inBlock = blockInArea(blocks, vertices);
+						
 						if (!inBlock)
 						{
 							for (int i = vertices[0]; i <= vertices[2]; i++)
@@ -1498,6 +1455,10 @@ void Player::EveryFrame(float deltaTime
 						if (!inBlock)
 						{
 							inBlock = SeedlingInArea(seedlings, vertices);
+						}
+						if (!inBlock)
+						{
+							inBlock = IsInAreaCraftStation(craftStations, vertices);
 						}
 						if (!inBlock)
 						{

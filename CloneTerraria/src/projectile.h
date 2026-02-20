@@ -1,6 +1,10 @@
 #pragma once
 #include "BlocksAndWalls.h"
 #include "Enemy.h"
+#include "flora.h"
+#include "structures.h"
+#include "DroppedItems.h"
+
 enum ProjectilesTypes
 {
 	p_Sand = 0
@@ -51,6 +55,10 @@ struct Projectile
 		, std::vector<Enemy*>& enemies
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
+		, std::vector<CraftStation>& craftStations
+		, std::vector<seedling>& seedlings
+		, std::vector<tree>& trees
+		, std::vector<DroppedItem>& dropItems
 		, std::vector<BoomParticle>& particles
 		, std::vector<bool>& isSandOnX
 		, unsigned int* blockTextures);

@@ -139,6 +139,10 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<Enemy*>& enemies
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<CraftStation>& craftStations
+	, std::vector<seedling>& seedlings
+	, std::vector<tree>& trees
+	, std::vector<DroppedItem>& dropItems
 	, std::vector<BoomParticle>& particles
 	, std::vector<bool>& isSandOnX
 	, unsigned int* blockTextures)
@@ -167,7 +171,7 @@ bool Projectile::EveryFrame(float deltaTime
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
 		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
+		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
 		}
@@ -175,8 +179,30 @@ bool Projectile::EveryFrame(float deltaTime
 
 		if (hit[2])
 		{
-
-			CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
+			int x = roundf(m_Transform[0]);
+			int y = roundf(m_Transform[1]);
+			bool inBlock;
+			FindBlock(blocks, x, y, inBlock);
+			if (!inBlock)
+			{
+				FindWood(trees, x, y, inBlock);
+			}
+			if (!inBlock)
+			{
+				inBlock = IsThereSeedling(seedlings, x, y);
+			}
+			if (!inBlock)
+			{
+				inBlock = isCraftStationOnThisSpot(craftStations, x, y);
+			}
+			if (!inBlock)
+			{
+				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
+			}
+			else
+			{
+				dropItems.emplace_back(x, y, 0, i_Sand, 1, true);
+			}
 			return true;
 		}
 		else if (hit[0] || hit[1])

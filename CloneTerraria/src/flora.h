@@ -56,10 +56,7 @@ public:
 		, float* Transform);
 
 };
-class fragileFlowers
-{
 
-};
 class damagedWood
 {
 public:
