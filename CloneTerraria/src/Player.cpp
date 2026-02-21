@@ -44,6 +44,17 @@ enum PartsOfArmor
 	, armorPants
 	, armorShoes
 };
+
+Ingredient::Ingredient(short int item, short int amount)
+	:m_Item(item)
+	, m_Amount(amount)
+{}
+void Recipe::CreateRecipe(short itemOutput, short amountOutput, char craftingStation)
+{
+	 m_CraftingStation = craftingStation;
+	 m_ItemOutput = itemOutput;
+	 m_AmountOutput = amountOutput;
+}
 unsigned char AmmunicionToProjectileType(unsigned char ammo)
 {
 	switch (ammo)
@@ -141,9 +152,32 @@ char WhatPartOfArmor(unsigned char item)
 	}
 
 }
+
+void Player::CheckRecipe(Recipe& recipe
+	, bool* isCloseToCraftStation)
+{
+	
+}
+
 Player::Player(unsigned int eob
 	, unsigned int* texturesIDs)
 {
+	m_Recipes[0].CreateRecipe(i_CraftingTable, 1, -1);
+	m_Recipes[0].m_Ingredients.emplace_back(i_ForestPlank, 10);
+
+	m_Recipes[1].CreateRecipe(i_CopperIngot, 1, s_Forge);
+	m_Recipes[1].m_Ingredients.emplace_back(i_CopperOre, 3);
+
+	m_Recipes[2].CreateRecipe(i_CopperPickaxe, 1, s_Anvil);
+	m_Recipes[2].m_Ingredients.emplace_back(i_CopperIngot, 5);
+	m_Recipes[2].m_Ingredients.emplace_back(i_ForestPlank, 5);
+
+	m_Recipes[3].CreateRecipe(i_WoodHelmet, 1, s_CraftingTable);
+	m_Recipes[3].m_Ingredients.emplace_back(i_ForestPlank, 8);
+
+	m_Recipes[4].CreateRecipe(i_BasicArrow, 2, -1);
+	m_Recipes[4].m_Ingredients.emplace_back(i_ForestPlank, 3);
+
 
 	m_FloorHit = false;
 	m_CeilHit = false;
@@ -894,20 +928,71 @@ void Player::EveryFrame(float deltaTime
 				}
 			}
 		}
-		if (isCloseToCraftStation[s_CraftingTable])
+		for (int l = 0; l < sizeof(m_Recipes)/ sizeof(m_Recipes[0]); l++)
 		{
+			if (m_Recipes[l].m_CraftingStation != -1)
+			{
+				Assert(3 <= m_Recipes[l].m_CraftingStation);
+				if (!isCloseToCraftStation[m_Recipes[l].m_CraftingStation])
+				{
+					m_Recipes[l].m_CraftingState = cantCraft;
+					continue;
+				}
+			}
+			bool canCraft = true;
+			bool missingCraft = false;
 
-		}
-		if (isCloseToCraftStation[s_Forge])
-		{
+			for (int i = 0; i < m_Recipes[l].m_Ingredients.size(); i++)
+			{
 
-		}
-		if (isCloseToCraftStation[s_Anvil])
-		{
+				int leftToAmount = m_Recipes[l].m_Ingredients.at(i).m_Amount;
+				for (int j = 1; j < 51; j++)
+				{
+					if (m_Recipes[l].m_Ingredients.at(i).m_Item == m_PlayerSlots[j])
+					{
+
+						leftToAmount -= m_AmountInSlots[j];
+						if (leftToAmount <= 0)
+						{
+							break;
+						}
+					}
+				}
+				if (leftToAmount <= 0)
+				{
+					missingCraft = true;
+					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = ReadyToCraft;
+				}
+				else if (m_Recipes[l].m_Ingredients.at(i).m_Amount == leftToAmount)
+				{
+					canCraft = false;
+					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = cantCraft;
+				}
+				else
+				{
+					canCraft = false;
+					missingCraft = true;
+					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = missingToCraft;
+				}
+			}
+			if (canCraft)
+			{
+				m_Recipes[l].m_CraftingState = ReadyToCraft;
+			}
+			else if (missingCraft)
+			{
+				m_Recipes[l].m_CraftingState = missingToCraft;
+			}
+			else
+			{
+				m_Recipes[l].m_CraftingState = cantCraft;
+			}
 
 		}
 
 	}
+	std::cout << (int)m_Recipes[0].m_CraftingState << std::endl;
+
 	if (m_ArmsBehaviour != ArmUsing)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
@@ -2231,44 +2316,48 @@ void Player::EveryFrame(float deltaTime
 					float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1] };
 					for (int i = 0; i < enemies.size(); i++)
 					{
-						float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1] };
-						float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
-						for (int j = 0; j < 2; j++)
+						if (enemies.at(i)->m_Transform[0] - m_Transform[0] * m_DirectionLook >= 0)
 						{
-							float holder[2];
-							holder[1] = distanceVertices[1 + 2 * j];
-							for (int l = 0; l < 2; l++)
+							float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1] };
+							float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
+							for (int j = 0; j < 2; j++)
 							{
-								holder[0] = distanceVertices[2 * i];
-								if (Pyt2D(holder) < Pyt2D(distance))
+								float holder[2];
+								holder[1] = distanceVertices[1 + 2 * j];
+								for (int l = 0; l < 2; l++)
 								{
-									distance[0] = holder[0];
-									distance[1] = holder[1];
+									holder[0] = distanceVertices[2 * i];
+									if (Pyt2D(holder) < Pyt2D(distance))
+									{
+										distance[0] = holder[0];
+										distance[1] = holder[1];
+									}
 								}
 							}
-						}
-						if (Pyt2D(distance) <= 2.5f)
-						{
-							if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
+
+							if (Pyt2D(distance) <= 2.5f)
 							{
-								bool wasEnemyHit = false;
-								for (int j = 0; j < m_HitEnemies.size(); j++)
+								if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
 								{
-									if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+									bool wasEnemyHit = false;
+									for (int j = 0; j < m_HitEnemies.size(); j++)
 									{
-										wasEnemyHit = true;
+										if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+										{
+											wasEnemyHit = true;
+										}
 									}
-								}
-								if (!wasEnemyHit)
-								{
-									if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+									if (!wasEnemyHit)
 									{
-										enemies.erase(enemies.begin() + i);
-										i--;
-									}
-									else
-									{
-										m_HitEnemies.push_back(enemies.at(i)->m_ID);
+										if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+										{
+											enemies.erase(enemies.begin() + i);
+											i--;
+										}
+										else
+										{
+											m_HitEnemies.push_back(enemies.at(i)->m_ID);
+										}
 									}
 								}
 							}

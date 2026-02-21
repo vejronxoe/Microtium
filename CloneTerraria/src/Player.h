@@ -21,10 +21,42 @@ enum Effects
 	, effectArrowBag
 	, effectDoubleJump
 };
+enum CraftingState
+{
+	cantCraft = 0
+	, missingToCraft
+	, ReadyToCraft
+};
+struct Ingredient
+{
+	Ingredient(short int item, short int amount);
+	short int m_Item;
+	short int m_Amount;
+	bool m_CraftingState;
+};
+
+struct Recipe
+{
+	void CreateRecipe(short itemOutput, short amountOutput, char craftingStation);
+	char m_CraftingState;
+	std::vector<Ingredient> m_Ingredients;
+	short m_CraftingStation;
+	short m_ItemOutput;
+	short m_AmountOutput;
+};
+
 
 
 class Player
 {
+private:
+	Recipe m_Recipes[5];
+	void CheckRecipe(Recipe& recipe
+		, bool* isCloseToCraftStation);
+
+
+
+
 
 private:
 	bool m_FloorHit;
@@ -176,3 +208,4 @@ public:
 	int m_BurnDamageNextTime;
 	FireParticle m_OnFire;
 };
+
