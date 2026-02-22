@@ -153,11 +153,6 @@ char WhatPartOfArmor(unsigned char item)
 
 }
 
-void Player::CheckRecipe(Recipe& recipe
-	, bool* isCloseToCraftStation)
-{
-	
-}
 
 Player::Player(unsigned int eob
 	, unsigned int* texturesIDs)
@@ -177,6 +172,10 @@ Player::Player(unsigned int eob
 
 	m_Recipes[4].CreateRecipe(i_BasicArrow, 2, -1);
 	m_Recipes[4].m_Ingredients.emplace_back(i_ForestPlank, 3);
+
+	m_UsingIndexRecipe = 0;
+	m_RecipeY = 0;
+
 
 
 	m_FloorHit = false;
@@ -285,6 +284,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[24] = i_Forge;
 	m_PlayerSlots[25] = i_CraftingTable;
 	m_PlayerSlots[26] = i_Anvil;
+	m_PlayerSlots[27] = i_CopperIngot;
 	m_AmountInSlots[4] = 20;
 	m_AmountInSlots[5] = 20;
 	m_AmountInSlots[6] = 20;
@@ -308,6 +308,7 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[24] = 1;
 	m_AmountInSlots[25] = 1;
 	m_AmountInSlots[26] = 1;
+	m_AmountInSlots[27] = 8;
 
 
 	m_PlayerSlots[41] = i_CopperSword;
@@ -442,7 +443,9 @@ Player::Player(unsigned int eob
 	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
 	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
-	
+	m_MissingSlotTexture = CreateTextureRGBA("res/textures/missingIngredientSlot.png");
+	m_NothingSlotTexture = CreateTextureRGBA("res/textures/nothingIngredientSlot.png");
+
 	SwapItemStats();
 	
 }
@@ -907,7 +910,7 @@ void Player::EveryFrame(float deltaTime
 
 	
 
-
+	//Crafting 
 	if (m_IsInventoryOpen)
 	{
 		bool isCloseToCraftStation[3];
@@ -928,6 +931,7 @@ void Player::EveryFrame(float deltaTime
 				}
 			}
 		}
+		m_NumberOfVisibleRecipes = 0;
 		for (int l = 0; l < sizeof(m_Recipes)/ sizeof(m_Recipes[0]); l++)
 		{
 			if (m_Recipes[l].m_CraftingStation != -1)
@@ -978,10 +982,14 @@ void Player::EveryFrame(float deltaTime
 			if (canCraft)
 			{
 				m_Recipes[l].m_CraftingState = ReadyToCraft;
+				m_VisibleRecipes[m_NumberOfVisibleRecipes] = m_Recipes[l];
+				m_NumberOfVisibleRecipes++;
 			}
 			else if (missingCraft)
 			{
 				m_Recipes[l].m_CraftingState = missingToCraft;
+				m_VisibleRecipes[m_NumberOfVisibleRecipes] = m_Recipes[l];
+				m_NumberOfVisibleRecipes++;
 			}
 			else
 			{
@@ -991,8 +999,8 @@ void Player::EveryFrame(float deltaTime
 		}
 
 	}
-	std::cout << (int)m_Recipes[0].m_CraftingState << std::endl;
 
+	// inventory moving 
 	if (m_ArmsBehaviour != ArmUsing)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
@@ -1347,6 +1355,8 @@ void Player::EveryFrame(float deltaTime
 	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
 	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
 	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
+
+	// cursor decider and using item 
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
 
@@ -2019,6 +2029,8 @@ void Player::EveryFrame(float deltaTime
 			m_UseItemTimer += deltaTime;
 		}
 	}
+
+	// moving player 
 	m_CoyoteTimer += deltaTime;
 	{
 		if (m_ArmsBehaviour != ArmUsing)
@@ -2150,6 +2162,8 @@ void Player::EveryFrame(float deltaTime
 			m_CoyoteTimer = 0.0f;
 		}
 	}
+
+	//item receive 
 	for (int i = 0; i < droppedItems.size(); i++)
 	{
 		if (droppedItems.at(i).EveryFrame(deltaTime, blocks, droppedItems, m_Transform, HavePlayerSpace(droppedItems.at(i).m_Item)))
@@ -2171,6 +2185,8 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
+
+	//player anim
 	{
 		if (m_WeaponType > weaponNot)
 		{
@@ -2380,6 +2396,9 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
+
+
+	//health regen
 	if (m_TimerSinceLastHit >= REGENCOLDDOWN)
 	{
 		m_TimerSinceLastHit = REGENCOLDDOWN;
@@ -2556,8 +2575,13 @@ void Player::DrawPlayer(float deltaTime
 
 			}
 			
+			
+			
+
+
 			ChangeScale(0.8f, 0.8f, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
+
 
 			for (int j = 0; j < 10; j++)
 			{
@@ -2566,7 +2590,7 @@ void Player::DrawPlayer(float deltaTime
 				{
 					if (m_PlayerSlots[(i * 10) + (j + 1)] >= i_WallDirt && m_PlayerSlots[(i * 10) + (j + 1)] <= i_WallIce)
 					{
-						HUDSh.SetUniform1i(HUDSize + ShadowLocation, 1);
+						HUDSh.SetUniform1i(HUDSize + HUDShadow, 1);
 						ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
 						HUDSh.SetUniformMat4(HUDTransform, transform);
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[(i * 10) + (j + 1)]]));
@@ -2575,7 +2599,7 @@ void Player::DrawPlayer(float deltaTime
 					}
 					else
 					{
-						HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
+						HUDSh.SetUniform1i(HUDSize + HUDShadow, 0);
 						ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
 						HUDSh.SetUniformMat4(HUDTransform, transform);
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[(i * 10) + (j + 1)]]));
@@ -2583,12 +2607,91 @@ void Player::DrawPlayer(float deltaTime
 					}
 				}
 			}
-			HUDSh.SetUniform1i( HUDSize + ShadowLocation, 0);
+			HUDSh.SetUniform1i( HUDSize + HUDShadow, 0);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 			ChangeScale(1, 1, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
 		}
-	
+		
+		if (m_UsingIndexRecipe >= m_NumberOfVisibleRecipes && m_NumberOfVisibleRecipes != 0)
+		{
+			m_UsingIndexRecipe = m_NumberOfVisibleRecipes - 1;
+		}
+		for (int i = 0; i < m_NumberOfVisibleRecipes; i++)
+		{
+			if (m_VisibleRecipes[i].m_CraftingState != cantCraft)
+			{
+				ChangeTransform(10 * m_SlotGap + 2 * (m_SlotGap - 2 * m_HalfOfSlotLeanght), m_RecipeY * m_SlotGap - m_SlotGap * i - 2 * m_SlotGap, transform);
+				HUDSh.SetUniformMat4(HUDTransform, transform);
+				if (m_UsingIndexRecipe == i)
+				{
+					ChangeScale(1.2f, 1.2f, scale);
+					HUDSh.SetUniformMat4(HUDScale, scale);
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_UseSlotTexture));
+					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+					ChangeScale(1, 1, scale);
+					HUDSh.SetUniformMat4(HUDScale, scale);
+					for (int j = 0; j < m_VisibleRecipes[i].m_Ingredients.size(); j++)
+					{
+						ChangeTransform(10 * m_SlotGap + (j + 1) * m_SlotGap + 2 * (m_SlotGap - 2 * m_HalfOfSlotLeanght), m_RecipeY * m_SlotGap - m_SlotGap * i - 2 * m_SlotGap, transform);
+						HUDSh.SetUniformMat4(HUDTransform, transform);
+
+						if (m_VisibleRecipes[i].m_Ingredients.at(j).m_CraftingState == ReadyToCraft)
+						{
+							ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+
+						}
+						else if(m_VisibleRecipes[i].m_Ingredients.at(j).m_CraftingState == missingToCraft)
+						{
+							ErrorGL(glBindTexture(GL_TEXTURE_2D, m_MissingSlotTexture));
+						}
+						else
+						{
+							ErrorGL(glBindTexture(GL_TEXTURE_2D, m_NothingSlotTexture));
+						}
+
+						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+						ChangeScale(0.8f, 0.8f, scale);
+						HUDSh.SetUniformMat4(HUDScale, scale);
+
+
+						ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_VisibleRecipes[i].m_Ingredients.at(j).m_Item]));
+
+						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+						ChangeScale(1, 1, scale);
+						HUDSh.SetUniformMat4(HUDScale, scale);
+						ChangeTransform(10 * m_SlotGap + 2 * (m_SlotGap - 2 * m_HalfOfSlotLeanght), m_RecipeY* m_SlotGap - m_SlotGap * i - 2 * m_SlotGap, transform);
+						HUDSh.SetUniformMat4(HUDTransform, transform);
+
+					}
+
+				}
+				if (m_VisibleRecipes[i].m_CraftingState == ReadyToCraft)
+				{
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+
+				}
+				else
+				{
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_MissingSlotTexture));
+				}
+
+
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+
+				ChangeScale(0.8f, 0.8f, scale);
+				HUDSh.SetUniformMat4(HUDScale, scale);
+
+
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_VisibleRecipes[i].m_ItemOutput]));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+			}
+		}
+
 		ChangeTransform(9 * m_SlotGap, -5 * m_SlotGap, transform);
 		HUDSh.SetUniformMat4(HUDTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_TrashCanSlotTexture));

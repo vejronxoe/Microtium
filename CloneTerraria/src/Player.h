@@ -32,7 +32,7 @@ struct Ingredient
 	Ingredient(short int item, short int amount);
 	short int m_Item;
 	short int m_Amount;
-	bool m_CraftingState;
+	char m_CraftingState;
 };
 
 struct Recipe
@@ -51,8 +51,10 @@ class Player
 {
 private:
 	Recipe m_Recipes[5];
-	void CheckRecipe(Recipe& recipe
-		, bool* isCloseToCraftStation);
+	int m_NumberOfVisibleRecipes;
+	Recipe m_VisibleRecipes[5];
+	int m_UsingIndexRecipe;
+	float m_RecipeY;
 
 
 
@@ -166,6 +168,8 @@ public:
 	float m_HalfOfSlotLeanght;
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;
+	unsigned int m_MissingSlotTexture;
+	unsigned int m_NothingSlotTexture;
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;

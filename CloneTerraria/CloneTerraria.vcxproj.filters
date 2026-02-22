@@ -168,6 +168,7 @@
     <Text Include="res\shaders\fragParticles.txt" />
     <Text Include="res\shaders\verParticles.txt" />
     <Text Include="res\shaders\fragStructures.txt" />
+    <Text Include="res\shaders\fragHUD.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">
@@ -486,6 +487,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\forgeInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\nothingIngredientSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingIngredientSlot.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

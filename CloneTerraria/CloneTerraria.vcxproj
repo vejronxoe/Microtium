@@ -71,6 +71,7 @@
     <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragBackground.txt" />
+    <Text Include="res\shaders\fragHUD.txt" />
     <Text Include="res\shaders\fragShadow.txt" />
     <Text Include="res\shaders\fragStructures.txt" />
     <Text Include="res\shaders\fragtTest.txt" />
@@ -165,9 +166,11 @@
     <Image Include="res\textures\legAnimWood.png" />
     <Image Include="res\textures\lightDamageBlock.png" />
     <Image Include="res\textures\missingDownGrassBlock.png" />
+    <Image Include="res\textures\missingIngredientSlot.png" />
     <Image Include="res\textures\missingLeftGrassBlock.png" />
     <Image Include="res\textures\missingRightGrassBlock.png" />
     <Image Include="res\textures\missingTopGrassBlock.png" />
+    <Image Include="res\textures\nothingIngredientSlot.png" />
     <Image Include="res\textures\Numbers.png" />
     <Image Include="res\textures\pistolHand.png" />
     <Image Include="res\textures\pistolInv.png" />

@@ -88,6 +88,12 @@ enum structureFragSh
 	, structureLookAt
 	, structureSize
 };
+enum craftingHUDFragSh
+{
+	HUDShadow = 0
+	, HUDCraftingY
+	, fragHUDSize
+};
 class Shader
 {
 private:
