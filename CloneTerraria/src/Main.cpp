@@ -103,12 +103,16 @@ int main()
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
 	basicSh.GetUniformLocation("transform");
-	Shader fontSh("res/shaders/verfont.txt", "res/shaders/fragBasic.txt");
+	Shader fontSh("res/shaders/verfont.txt", "res/shaders/fragHUD.txt");
 	fontSh.Bind();
 	fontSh.GetUniformLocation("fontCamera");
 	fontSh.GetUniformLocation("fontTransform");
 	fontSh.GetUniformLocation("fontScale");
 	fontSh.GetUniformLocation("fontLetter");
+	fontSh.GetUniformLocation("shadow");
+	fontSh.GetUniformLocation("craftingY");
+	fontSh.SetUniform1f(fontSize + HUDCraftingY, 0);
+
 	Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt ");
 	HUDSh.Bind();
 	HUDSh.GetUniformLocation("HUDCamera");
@@ -117,6 +121,8 @@ int main()
 	HUDSh.GetUniformLocation("HUDBasicLocation");
 	HUDSh.GetUniformLocation("shadow");
 	HUDSh.GetUniformLocation("craftingY");
+	HUDSh.SetUniform1f(HUDSize + HUDCraftingY, 0);
+
 	Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
 	shadowSh.Bind();
 	shadowSh.GetUniformLocation("camera");
@@ -165,6 +171,7 @@ int main()
 	structureSh.GetUniformLocation("transform");
 	structureSh.GetUniformLocation("shadow");
 	structureSh.GetUniformLocation("lookAt");
+
 	float camera[16];
 	float scale[16];
 	float transform[16];
