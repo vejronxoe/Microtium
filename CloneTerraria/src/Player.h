@@ -55,8 +55,8 @@ private:
 	Recipe m_VisibleRecipes[5];
 	int m_UsingIndexRecipe;
 	float m_RecipeY;
-
-
+	float m_TimerCrafting;
+	float m_NumberOfRecipesDone;
 
 
 
