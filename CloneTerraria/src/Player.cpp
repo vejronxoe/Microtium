@@ -246,6 +246,7 @@ Player::Player(unsigned int eob
 	m_OnFireTimer = 0;
 	m_SpeedMultiplier = 1;
 	m_IsBurning = false;
+
 	m_BurningTimer = 0;
 	m_BurnDamageNextTime = 0;
 	float playerVertice[4] = { -1,1.5f,1,-1.5f };
@@ -286,7 +287,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[26] = i_Anvil;
 	m_PlayerSlots[27] = i_CopperIngot;
 	m_PlayerSlots[28] = i_ForestPlank;
-	m_AmountInSlots[4] = 20;
+	m_AmountInSlots[4] = 9999;
 	m_AmountInSlots[5] = 20;
 	m_AmountInSlots[6] = 20;
 	m_AmountInSlots[7] = 20;
@@ -908,9 +909,8 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Projectile>& projectiles)
 {
-	float oldVelocity[2] = {m_Velocity[0], m_Velocity[1]};
+	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 
-	
 
 	//Crafting 
 	if (m_IsInventoryOpen)
@@ -926,7 +926,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				int vertices[4];
 				getStructureVertices(craftStations.at(i).m_Transform[0], craftStations.at(i).m_Transform[1], craftStations.at(i).m_CraftStationtype, vertices);
-				if (abs(m_Transform[0] - (float)(vertices[0] + vertices[2])/2.0f) < 5)
+				if (abs(m_Transform[0] - (float)(vertices[0] + vertices[2]) / 2.0f) < 5)
 				{
 					Assert(2 < craftStations.at(i).m_CraftStationtype);
 					isCloseToCraftStation[craftStations.at(i).m_CraftStationtype] = true;
@@ -934,7 +934,7 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 		m_NumberOfVisibleRecipes = 0;
-		for (int l = 0; l < sizeof(m_Recipes)/ sizeof(m_Recipes[0]); l++)
+		for (int l = 0; l < sizeof(m_Recipes) / sizeof(m_Recipes[0]); l++)
 		{
 			if (m_Recipes[l].m_CraftingStation != -1)
 			{
@@ -1006,19 +1006,19 @@ void Player::EveryFrame(float deltaTime
 		if (m_RecipeY != m_UsingIndexRecipe)
 		{
 			float distanceBefore = m_UsingIndexRecipe - m_RecipeY;
-			m_RecipeY += (abs(distanceBefore)/ distanceBefore * (abs(distanceBefore) + 1)) * 5 * deltaTime;
+			m_RecipeY += (abs(distanceBefore) / distanceBefore * (abs(distanceBefore) + 1)) * 5 * deltaTime;
 			float distanceAfter = m_UsingIndexRecipe - m_RecipeY;
 			if (distanceAfter)
 			{
 				if (abs(distanceAfter) / distanceAfter != abs(distanceBefore) / distanceBefore)
 					m_RecipeY = m_UsingIndexRecipe;
 			}
-			
+
 		}
 	}
 
 	// inventory moving 
-	if (m_ArmsBehaviour != ArmUsing)
+	if (m_ArmsBehaviour != ArmUsing&&(!Input::LeftMouseHold || Input::LeftMousePress || m_TimerCrafting != 1))
 	{
 		m_AimingAtSlot = 0;
 
@@ -1034,6 +1034,7 @@ void Player::EveryFrame(float deltaTime
 			slotVertices[1] <= Input::YRawMousePos &&
 			slotVertices[3] + m_SlotGap * 4 >= Input::YRawMousePos)
 		{
+			
 			if (m_RecipeY == m_UsingIndexRecipe)
 			{
 				for (int i = 0; i < 5; i++)
@@ -1077,7 +1078,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					
 					
-					if (m_TimerCrafting == 1)
+					if (m_TimerCrafting == 1 && (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput <= 9999 || m_UseSlot == 0))
 					{
 						m_TimerCrafting += deltaTime;
 
@@ -1126,6 +1127,8 @@ void Player::EveryFrame(float deltaTime
 							{
 								if (m_SlotGap * i + slotVertices[1] < Input::YRawMousePos && m_SlotGap * i + slotVertices[3] > Input::YRawMousePos)
 								{
+									
+
 									m_AimingAtSlot = i * 10 + j + 1;
 								}
 							}
@@ -1140,7 +1143,7 @@ void Player::EveryFrame(float deltaTime
 						if (m_SlotGap * 5 + slotVertices[1] < Input::YRawMousePos && m_SlotGap * 5 + slotVertices[3] > Input::YRawMousePos)
 						{
 
-
+						
 							m_AimingAtSlot = 51;
 						}
 					}
@@ -1281,7 +1284,7 @@ void Player::EveryFrame(float deltaTime
 			
 			if (Input::RightMouseHold && m_AimingAtSlot && m_IsInventoryOpen && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0))
 			{
-				if (m_TimerSplitingItem == 1)
+				if (m_TimerSplitingItem == 1 && (m_AmountInSlots[0] != 9999 || m_UseSlot == 0))
 				{
 					if (m_UseSlot == 0)
 					{
@@ -1297,20 +1300,28 @@ void Player::EveryFrame(float deltaTime
 					m_UseSlot = m_AimingAtSlot;
 					SwapItemStats();
 				}
-				else if (m_AmountInSlots[m_AimingAtSlot] - pow(m_TimerSplitingItem, 2) * deltaTime - m_AddNextFrameDropItem < 0)
+				else if (m_AmountInSlots[m_AimingAtSlot] - m_ItemsToTake < 0)
 				{
 					m_AmountInSlots[0] += m_AmountInSlots[m_AimingAtSlot];
 					m_AmountInSlots[m_AimingAtSlot] = 0;
 					m_AddNextFrameDropItem = 0;
 					m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
 				}
+				else if (m_AmountInSlots[0] + floorf(m_ItemsToTake) >= 9999)
+				{
+					m_AmountInSlots[m_AimingAtSlot] -= 9999 - m_AmountInSlots[0];
+					m_AmountInSlots[0] = 9999;
+					m_AddNextFrameDropItem = 0;
+				}
 				else
 				{
-					m_AmountInSlots[0] += floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
-					m_AmountInSlots[m_AimingAtSlot] -= floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
-					m_AddNextFrameDropItem = pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem - floorf(pow(m_TimerSplitingItem, 2) * deltaTime + m_AddNextFrameDropItem);
+					m_AmountInSlots[0] += floorf(m_ItemsToTake);
+					m_AmountInSlots[m_AimingAtSlot] -= floorf(m_ItemsToTake);
+					m_AddNextFrameDropItem = m_ItemsToTake - floorf(m_ItemsToTake) ;
 				}
+				float oldTimer = m_TimerSplitingItem;
 				m_TimerSplitingItem += deltaTime;
+				m_ItemsToTake = 2 * m_TimerSplitingItem * deltaTime + 1.0f / 2.0f * (2 * m_TimerSplitingItem - oldTimer) * deltaTime + m_AddNextFrameDropItem;
 			}
 			else
 			{
@@ -1463,6 +1474,7 @@ void Player::EveryFrame(float deltaTime
 	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
 
 	// cursor decider and using item 
+	if(!m_AimingAtSlot)
 	{
 		float playerVertices[4] = { verticesPlayer[0], verticesPlayer[1], verticesPlayer[2], verticesPlayer[3] };
 
@@ -1502,7 +1514,7 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableWood = false;
 		if (m_AimingAtSlot == 0)
 		{
-
+			
 			if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 			{
 				if (m_Placeable)
@@ -2262,7 +2274,7 @@ void Player::EveryFrame(float deltaTime
 			m_CanJump = true;
 			m_CoyoteTimer = 0.0f;
 		}
-		if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.125f)
+		if (!m_FloorHit && m_CanJump && m_CoyoteTimer >= 0.1f)
 		{
 			m_CanJump = false;
 			m_CoyoteTimer = 0.0f;
@@ -2296,7 +2308,7 @@ void Player::EveryFrame(float deltaTime
 	{
 		if (m_WeaponType > weaponNot)
 		{
-			if (Input::LeftMouseHold)
+			if (Input::LeftMouseHold && !m_AimingAtSlot )
 			{
 				m_ArmsBehaviour = ArmUsing;
 			}
@@ -2862,7 +2874,7 @@ void Player::DrawPlayer(float deltaTime
 		}
 		
 		float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
-		float left = (m_InvOffset[0] - m_HalfOfSlotLeanght - 9 * m_SlotGap);
+		float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + 9 * m_SlotGap);
 		drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
 
 

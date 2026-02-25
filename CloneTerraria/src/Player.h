@@ -148,6 +148,7 @@ private:
 	float m_SlotGap;
 	float m_TimerSplitingItem;
 	float m_AddNextFrameDropItem;
+	float m_ItemsToTake;
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
@@ -173,6 +174,8 @@ public:
 	unsigned char m_AimingAtSlot;
 	unsigned char m_UseSlot;
 	bool m_IsInventoryOpen;
+
+
 	unsigned int m_AllItemTextures[44];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
