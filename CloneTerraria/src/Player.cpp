@@ -311,7 +311,7 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[25] = 1;
 	m_AmountInSlots[26] = 1;
 	m_AmountInSlots[27] = 8;
-	m_AmountInSlots[28] = 8;
+	m_AmountInSlots[28] = 3000;
 
 
 	m_PlayerSlots[41] = i_CopperSword;
@@ -951,30 +951,28 @@ void Player::EveryFrame(float deltaTime
 			for (int i = 0; i < m_Recipes[l].m_Ingredients.size(); i++)
 			{
 
-				int leftToAmount = m_Recipes[l].m_Ingredients.at(i).m_Amount;
+				int amount = 0;
 				for (int j = 1; j < 51; j++)
 				{
 					if (m_Recipes[l].m_Ingredients.at(i).m_Item == m_PlayerSlots[j])
 					{
 
-						leftToAmount -= m_AmountInSlots[j];
-						if (leftToAmount <= 0)
-						{
-							break;
-						}
+						amount += m_AmountInSlots[j];
 					}
 				}
-				if (leftToAmount <= 0)
+				float numberOfCraft = (float)amount / (float)m_Recipes[l].m_Ingredients.at(i).m_Amount;
+				m_Recipes[l].m_Ingredients.at(i).m_NumberOfPossibleCraft = floorf(numberOfCraft);
+				if (numberOfCraft >= 1)
 				{
 					missingCraft = true;
 					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = ReadyToCraft;
 				}
-				else if (m_Recipes[l].m_Ingredients.at(i).m_Amount == leftToAmount)
+				else if (numberOfCraft == 0)
 				{
 					canCraft = false;
 					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = cantCraft;
 				}
-				else
+				else 
 				{
 					canCraft = false;
 					missingCraft = true;
@@ -983,9 +981,19 @@ void Player::EveryFrame(float deltaTime
 			}
 			if (canCraft)
 			{
+
 				m_Recipes[l].m_CraftingState = ReadyToCraft;
+				m_Recipes[l].m_MaximumCraft = m_Recipes[l].m_Ingredients.at(0).m_NumberOfPossibleCraft;
+				for (int i = 1; i < m_Recipes[l].m_Ingredients.size(); i++)
+				{
+					if (m_Recipes[l].m_MaximumCraft > m_Recipes[l].m_Ingredients.at(0).m_NumberOfPossibleCraft)
+					{
+						m_Recipes[l].m_MaximumCraft = m_Recipes[l].m_Ingredients.at(0).m_NumberOfPossibleCraft;
+					}
+				}
 				m_VisibleRecipes[m_NumberOfVisibleRecipes] = m_Recipes[l];
 				m_NumberOfVisibleRecipes++;
+				
 			}
 			else if (missingCraft)
 			{
@@ -1018,7 +1026,7 @@ void Player::EveryFrame(float deltaTime
 	}
 
 	// inventory moving 
-	if (m_ArmsBehaviour != ArmUsing&&(!Input::LeftMouseHold || Input::LeftMousePress || m_TimerCrafting != 1))
+	if (m_ArmsBehaviour != ArmUsing&&(!Input::LeftMouseHold || Input::LeftMousePress || m_TimerCrafting != 1 ) && !Input::LeftMouseRelease)
 	{
 		m_AimingAtSlot = 0;
 
@@ -1073,11 +1081,12 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (Input::LeftMouseHold && m_AimingAtSlot)
 			{
+				
+
+
 				int aimingSlot = m_AimingAtSlot - 3;
 				if (0 == aimingSlot && m_VisibleRecipes[m_UsingIndexRecipe].m_CraftingState == ReadyToCraft && (m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput == m_PlayerSlots[0] || m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
 				{
-					
-					
 					if (m_TimerCrafting == 1 && (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput <= 9999 || m_UseSlot == 0))
 					{
 						m_TimerCrafting += deltaTime;
@@ -1088,16 +1097,67 @@ void Player::EveryFrame(float deltaTime
 						}
 						m_AmountInSlots[0] += m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput;
 						m_PlayerSlots[0] = m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput;
-						
+
 						m_UseSlot = 1;
-						
+
+						for (int i = 0; i < m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.size(); i++)
+						{
+							int amountLeft = m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.at(i).m_Amount;
+							for (int j = 1; j < 51; j++)
+							{
+								if (m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.at(i).m_Item == m_PlayerSlots[j])
+								{
+
+									amountLeft -= m_AmountInSlots[j];
+									if (amountLeft <= 0)
+									{
+										m_AmountInSlots[j] = abs(amountLeft);
+										break;
+									}
+									else if (amountLeft == 0)
+									{
+										m_PlayerSlots[j] = i_Nothing;
+										m_AmountInSlots[j] = 0;
+										break;
+									}
+								}
+							}
+						}
 						SwapItemStats();
+
 					}
 					else if (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput * floorf(m_NumberOfRecipesDone) < 9999 && IsItStackble(m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput))
 					{
+						if (m_VisibleRecipes[m_UsingIndexRecipe].m_MaximumCraft < floorf(m_NumberOfRecipesDone))
+						{
+							m_NumberOfRecipesDone = m_VisibleRecipes[m_UsingIndexRecipe].m_MaximumCraft;
+						}
 
 						m_AmountInSlots[0] += m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput * floorf(m_NumberOfRecipesDone);
 						m_AddNextFrameDropItem = m_NumberOfRecipesDone - floorf(m_NumberOfRecipesDone);
+						for (int i = 0; i < m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.size();i++)
+						{
+							int amountLeft = floorf(m_NumberOfRecipesDone) * m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.at(i).m_Amount;
+							for (int j = 1; j < 51; j++)
+							{
+								if (m_VisibleRecipes[m_UsingIndexRecipe].m_Ingredients.at(i).m_Item == m_PlayerSlots[j])
+								{
+									
+									amountLeft -= m_AmountInSlots[j];
+									if (amountLeft < 0)
+									{
+										m_AmountInSlots[j] = abs(amountLeft);
+										break;
+									}
+									else if(amountLeft == 0)
+									{
+										m_PlayerSlots[j] = i_Nothing;
+										m_AmountInSlots[j] = 0;
+										break;
+									}
+								}
+							}
+						}
 					}
 					float oldTimer = 2 * m_TimerCrafting;
 					m_TimerCrafting += deltaTime;
@@ -2755,6 +2815,8 @@ void Player::DrawPlayer(float deltaTime
 					HUDSh.SetUniformMat4(HUDScale, scale);
 					for (int j = 0; j < m_VisibleRecipes[i].m_Ingredients.size(); j++)
 					{
+						ChangeScale(0.8f, 0.8f, scale);
+						HUDSh.SetUniformMat4(HUDScale, scale);
 						ChangeTransform(x + (j + 1) * m_SlotGap , y, transform);
 						HUDSh.SetUniformMat4(HUDTransform, transform);
 
@@ -2774,7 +2836,7 @@ void Player::DrawPlayer(float deltaTime
 
 						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-						ChangeScale(0.8f, 0.8f, scale);
+						ChangeScale(0.6f, 0.6f, scale);
 						HUDSh.SetUniformMat4(HUDScale, scale);
 
 
@@ -2782,12 +2844,13 @@ void Player::DrawPlayer(float deltaTime
 
 						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-						ChangeScale(1, 1, scale);
-						HUDSh.SetUniformMat4(HUDScale, scale);
-						ChangeTransform(x , y, transform);
-						HUDSh.SetUniformMat4(HUDTransform, transform);
+						
 
 					}
+					ChangeScale(1, 1, scale);
+					HUDSh.SetUniformMat4(HUDScale, scale);
+					ChangeTransform(x, y, transform);
+					HUDSh.SetUniformMat4(HUDTransform, transform);
 
 				}
 				if (m_VisibleRecipes[i].m_CraftingState == ReadyToCraft)
@@ -2847,9 +2910,9 @@ void Player::DrawPlayer(float deltaTime
 					for (int j = 0; j < m_VisibleRecipes[i].m_Ingredients.size(); j++)
 					{
 
-						float right = x + m_HalfOfSlotLeanght+ (j + 1) * m_SlotGap;
-						float left = x - m_HalfOfSlotLeanght +(j + 1) * m_SlotGap;
-						drawNumber(y, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, fontDD, scale, transform, fontSh);
+						float right = x + m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
+						float left = x - m_HalfOfSlotLeanght * 0.8f +(j + 1) * m_SlotGap;
+						drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, fontDD, scale, transform, fontSh);
 
 					}
 

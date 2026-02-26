@@ -33,6 +33,7 @@ struct Ingredient
 	short int m_Item;
 	short int m_Amount;
 	char m_CraftingState;
+	int m_NumberOfPossibleCraft;
 };
 
 struct Recipe
@@ -43,6 +44,7 @@ struct Recipe
 	short m_CraftingStation;
 	short m_ItemOutput;
 	short m_AmountOutput;
+	int m_MaximumCraft;
 };
 
 
