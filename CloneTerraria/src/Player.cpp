@@ -379,7 +379,11 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
 	m_AllItemTextures[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
 
-
+	m_ArmorSlotsTex[0] = CreateTextureRGBA("res/textures/HelmetSlot.png");
+	m_ArmorSlotsTex[1] = CreateTextureRGBA("res/textures/ChestPlateSlot.png");
+	m_ArmorSlotsTex[2] = CreateTextureRGBA("res/textures/PantsSlot.png");
+	m_ArmorSlotsTex[3] = CreateTextureRGBA("res/textures/ShoesSlot.png");
+	m_ArmorClassTex = CreateTextureRGBA("res/textures/ArmorClass.png");
 
 	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
 	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 1.5f, 0.5f, 1, -1);
@@ -2737,25 +2741,21 @@ void Player::DrawPlayer(float deltaTime
 					ChangeScale(1.2f, 1.2f, scale);
 					HUDSh.SetUniformMat4(HUDScale, scale);
 					ChangeTransform(j * m_SlotGap, 0, transform);
-					HUDSh.SetUniformMat4( HUDTransform, transform);
+					HUDSh.SetUniformMat4(HUDTransform, transform);
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_UseSlotTexture));
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 					ChangeScale(1, 1, scale);
-					HUDSh.SetUniformMat4( HUDScale, scale);
+					HUDSh.SetUniformMat4(HUDScale, scale);
 				}
 				else
 				{
 					ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
-					HUDSh.SetUniformMat4( HUDTransform, transform);
+					HUDSh.SetUniformMat4(HUDTransform, transform);
 					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				}
 
 			}
-			
-			
-			
-
 
 			ChangeScale(0.8f, 0.8f, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
@@ -2763,7 +2763,7 @@ void Player::DrawPlayer(float deltaTime
 
 			for (int j = 0; j < 10; j++)
 			{
-				
+
 				if (m_PlayerSlots[(i * 10) + (j + 1)] != i_Nothing)
 				{
 					if (m_PlayerSlots[(i * 10) + (j + 1)] >= i_WallDirt && m_PlayerSlots[(i * 10) + (j + 1)] <= i_WallIce)
@@ -2785,14 +2785,11 @@ void Player::DrawPlayer(float deltaTime
 					}
 				}
 			}
-			HUDSh.SetUniform1i( HUDSize + HUDShadow, 0);
+			HUDSh.SetUniform1i(HUDSize + HUDShadow, 0);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
 			ChangeScale(1, 1, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
 		}
-		
-		
-		
 		for (int i = 0; i < m_NumberOfVisibleRecipes; i++)
 		{
 			if (!(i - m_RecipeY > 3 || i - m_RecipeY < -3))
@@ -2817,7 +2814,7 @@ void Player::DrawPlayer(float deltaTime
 					{
 						ChangeScale(0.8f, 0.8f, scale);
 						HUDSh.SetUniformMat4(HUDScale, scale);
-						ChangeTransform(x + (j + 1) * m_SlotGap , y, transform);
+						ChangeTransform(x + (j + 1) * m_SlotGap, y, transform);
 						HUDSh.SetUniformMat4(HUDTransform, transform);
 
 						if (m_VisibleRecipes[i].m_Ingredients.at(j).m_CraftingState == ReadyToCraft)
@@ -2844,7 +2841,7 @@ void Player::DrawPlayer(float deltaTime
 
 						ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-						
+
 
 					}
 					ChangeScale(1, 1, scale);
@@ -2911,7 +2908,7 @@ void Player::DrawPlayer(float deltaTime
 					{
 
 						float right = x + m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
-						float left = x - m_HalfOfSlotLeanght * 0.8f +(j + 1) * m_SlotGap;
+						float left = x - m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
 						drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, fontDD, scale, transform, fontSh);
 
 					}
@@ -2936,10 +2933,10 @@ void Player::DrawPlayer(float deltaTime
 			}
 		}
 		
-		float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
-		float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + 9 * m_SlotGap);
-		drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
-
+			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
+			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + 9 * m_SlotGap);
+			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
+		
 
 		HUDSh.Bind();
 		ErrorGL(glBindVertexArray(m_HUDDD));
@@ -2949,14 +2946,36 @@ void Player::DrawPlayer(float deltaTime
 		ChangeScale(1, 1, scale);
 		HUDSh.SetUniformMat4(HUDScale, scale);
 		HUDSh.SetUniform1i(HUDSize + ShadowLocation, 0);
-		
-		for (int i = -3; i > -11; i--)
+
+		for (int i = -3; i > -7; i--)
+		{
+			if (!m_PlayerSlots[52 - i - 3])
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ArmorSlotsTex[-i - 3]));
+			}
+			else
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+			}
+			ChangeTransform(0, m_SlotGap * i, transform);
+			HUDSh.SetUniformMat4(HUDTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexture));
+
+		for (int i = -7; i > -11; i--)
 		{
 			ChangeTransform(0, m_SlotGap * i, transform);
 			HUDSh.SetUniformMat4(HUDTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ArmorClassTex));
+		ChangeTransform(0, m_SlotGap * -11, transform);
+		HUDSh.SetUniformMat4(HUDTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		
+		
+
 		ChangeScale(0.8f, 0.8f, scale);
 		HUDSh.SetUniformMat4(HUDScale, scale);
 
@@ -2970,6 +2989,13 @@ void Player::DrawPlayer(float deltaTime
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			}
 		}
+		fontSh.Bind();
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+		ErrorGL(glBindVertexArray(fontDD));
+		right = m_HPOffset[0] + m_HalfOfSlotLeanght;
+		left = m_HPOffset[0] - m_HalfOfSlotLeanght;
+		drawTwoNumberWithZero(m_HPOffset[1] - m_HalfOfSlotLeanght/2.0f - 11 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_ArmorClass, fontDD, scale, transform, fontSh);
+
 	}
 	else
 	{

@@ -201,6 +201,8 @@ public:
 	unsigned char m_Range;
 	short int m_Damage;
 	short int m_ArmorClass;
+	unsigned int m_ArmorClassTex;
+	unsigned int m_ArmorSlotsTex[4];
 	bool m_Placeable;
 	bool m_LargePlaceable;
 	bool m_Consume;

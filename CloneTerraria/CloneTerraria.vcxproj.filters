@@ -495,5 +495,17 @@
     <Image Include="res\textures\missingIngredientSlot.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\HelmetSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ChestPlateSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\PantsSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ArmorClass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

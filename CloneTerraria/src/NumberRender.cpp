@@ -54,3 +54,36 @@ void drawNumber(float bottom, float right, float left, unsigned short int value,
 		}
 	}
 }
+void drawTwoNumberWithZero(float bottom, float right, float left, unsigned short int value, unsigned int NumberDrawData, float* scale, float* transform, Shader Sh)
+{
+
+	int thirdDigit = ((value / 100));
+	int secondDigit = ((value / 10) - thirdDigit * 10);
+	int firstDigit = value - thirdDigit * 100 - secondDigit * 10;
+
+	float oneLeterSize = (right - left) / 2;
+	ChangeScale(oneLeterSize, oneLeterSize, scale);
+	Sh.SetUniformMat4(fontScale, scale);
+	bottom -= oneLeterSize;
+	if (secondDigit)
+	{
+		Sh.SetUniform1i(fontLetter, firstDigit);
+		ChangeTransform(left, bottom, transform);
+		Sh.SetUniformMat4(fontTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+		Sh.SetUniform1i(fontLetter, secondDigit);
+		ChangeTransform(left + oneLeterSize, bottom, transform);
+		Sh.SetUniformMat4(fontTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+	else
+	{
+		Sh.SetUniform1i(fontLetter, firstDigit);
+		ChangeTransform(((right - left)/4.0f)+ left, bottom, transform);
+		Sh.SetUniformMat4(fontTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	}
+
+}
