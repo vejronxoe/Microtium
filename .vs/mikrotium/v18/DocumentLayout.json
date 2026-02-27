@@ -21,7 +21,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 795,
+          "DockedWidth": 940,
           "SelectedChildIndex": 2,
           "Children": [
             {
@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Player.cpp",
-              "ViewState": "AgIAAAcEAAAAAAAAAAAowDEKAAASAAAAAAAAAA==",
+              "ViewState": "AgIAADUEAAAAAAAAAAD4v1IEAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-26T16:07:44.273Z",
               "EditorCaption": ""
@@ -55,13 +55,12 @@
               "RelativeToolTip": "CloneTerraria\\src\\Main.cpp",
               "ViewState": "AgIAAP8AAAAAAAAAAAAAAOMBAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-08T09:14:15.079Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T09:14:15.079Z"
             }
           ]
         },
         {
-          "DockedWidth": 561,
+          "DockedWidth": 416,
           "SelectedChildIndex": 0,
           "Children": [
             {
@@ -72,7 +71,7 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.h",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.h",
               "RelativeToolTip": "CloneTerraria\\src\\Player.h",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAAAMwAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAKQAAAAAAAAAAAAcwNUAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-26T16:41:55.562Z",
               "EditorCaption": ""

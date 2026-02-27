@@ -497,7 +497,10 @@ void Player::DamagePlayer(float* transfromAttacker
 
 	if (m_CurrentHealth < 0)
 	{
-		m_CurrentHealth = 0;
+		m_Transform[0] = Blocks::xMax / 2.0f;
+		m_Transform[1] = 15;
+		m_LastStandingY = 15;
+		m_CurrentHealth = m_maxHealth/2;
 	}
 }
 void Player::SwapItemStats()
@@ -1089,7 +1092,7 @@ void Player::EveryFrame(float deltaTime
 
 
 				int aimingSlot = m_AimingAtSlot - 3;
-				if (0 == aimingSlot && m_VisibleRecipes[m_UsingIndexRecipe].m_CraftingState == ReadyToCraft && (m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput == m_PlayerSlots[0] || m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
+				if (0 == aimingSlot && m_VisibleRecipes[m_UsingIndexRecipe].m_CraftingState == ReadyToCraft && (m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput == m_PlayerSlots[0] && IsItStackble(m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput) || m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
 				{
 					if (m_TimerCrafting == 1 && (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput <= 9999 || m_UseSlot == 0))
 					{
@@ -1130,7 +1133,7 @@ void Player::EveryFrame(float deltaTime
 						SwapItemStats();
 
 					}
-					else if (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput * floorf(m_NumberOfRecipesDone) < 9999 && IsItStackble(m_VisibleRecipes[m_UsingIndexRecipe].m_ItemOutput))
+					else if (m_AmountInSlots[0] + m_VisibleRecipes[m_UsingIndexRecipe].m_AmountOutput * floorf(m_NumberOfRecipesDone) < 9999)
 					{
 						if (m_VisibleRecipes[m_UsingIndexRecipe].m_MaximumCraft < floorf(m_NumberOfRecipesDone))
 						{
@@ -2578,24 +2581,38 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
+		
+			
 
-
-	//health regen
-	if (m_TimerSinceLastHit >= REGENCOLDDOWN)
+	//health
+	int playerVertices[4] = { RoundFiveUp(verticesPlayer[0]), RoundFiveDown(verticesPlayer[1]), RoundFiveDown(verticesPlayer[2]), RoundFiveUp(verticesPlayer[3]) };
 	{
-		m_TimerSinceLastHit = REGENCOLDDOWN;
-		m_CurrentHealth += floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
-		m_AddNextFrameHP = deltaTime * m_HPRegen + m_AddNextFrameHP - floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
-		if (m_CurrentHealth > m_maxHealth)
+		bool IsPlayerInBlock = blockInArea(blocks, playerVertices);
+		m_DamageTimer += deltaTime;
+		if (m_DamageTimer > 0.5f)
 		{
-			m_CurrentHealth = m_maxHealth;
+			m_DamageTimer = 0;
+			if (IsPlayerInBlock)
+			{
+				DamagePlayer(NULL, 5);
+			}
 		}
+		if (m_TimerSinceLastHit >= REGENCOLDDOWN)
+		{
+			m_TimerSinceLastHit = REGENCOLDDOWN;
+			m_CurrentHealth += floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
+			m_AddNextFrameHP = deltaTime * m_HPRegen + m_AddNextFrameHP - floorf(deltaTime * m_HPRegen + m_AddNextFrameHP);
+			if (m_CurrentHealth > m_maxHealth)
+			{
+				m_CurrentHealth = m_maxHealth;
+			}
+		}
+		else
+		{
+			m_TimerSinceLastHit += deltaTime;
+		}
+		
 	}
-	else
-	{
-		m_TimerSinceLastHit += deltaTime; 
-	}
-
 
 }
 void Player::DrawPlayer(float deltaTime

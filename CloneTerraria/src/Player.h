@@ -211,6 +211,7 @@ public:
 		, unsigned char accessoriseSlotIndex);
 	bool m_Effects[3];
 	float m_OnFireTimer;
+	float m_DamageTimer;
 	bool m_CanDoubleJump;
 	int m_SpeedMultiplier;
 	bool m_Accessorise;
