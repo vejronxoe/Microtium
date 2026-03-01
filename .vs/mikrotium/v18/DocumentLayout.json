@@ -21,7 +21,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 940,
+          "DockedWidth": 1003,
           "SelectedChildIndex": 2,
           "Children": [
             {
@@ -40,10 +40,22 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Player.cpp",
-              "ViewState": "AgIAADUEAAAAAAAAAAD4v1IEAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACoAAAAAAAAAAAAowAoDAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-26T16:07:44.273Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Player.h",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.h",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.h",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.h",
+              "RelativeToolTip": "CloneTerraria\\src\\Player.h",
+              "ViewState": "AgIAALAAAAAAAAAAAAAAwNUAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-26T16:41:55.562Z"
             },
             {
               "$type": "Document",
@@ -56,25 +68,6 @@
               "ViewState": "AgIAAP8AAAAAAAAAAAAAAOMBAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-08T09:14:15.079Z"
-            }
-          ]
-        },
-        {
-          "DockedWidth": 416,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Player.h",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.h",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\Player.h",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Player.h",
-              "RelativeToolTip": "CloneTerraria\\src\\Player.h",
-              "ViewState": "AgIAAKQAAAAAAAAAAAAcwNUAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-26T16:41:55.562Z",
-              "EditorCaption": ""
             }
           ]
         }
