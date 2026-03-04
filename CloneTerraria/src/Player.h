@@ -90,7 +90,7 @@ public:
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
-		, std::vector<Enemy*>& enemies
+		, std::vector<Enemy>& enemies
 		, std::vector<bool>& isThereSandOnX
 		, std::vector<CraftStation>& craftStations
 		, std::vector<damagedWood>& damagedWood

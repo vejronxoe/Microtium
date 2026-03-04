@@ -4,7 +4,10 @@
 #include"Opengl/Texture.h"
 #include"Opengl/DrawData.h"
 #include"math/matrix.h"
+#include"glfw/Window.h"
 
+
+#define DESPAWNTIME 10
 #define ZOMBIEMOVEMENT 5
 #define ZOMBIEWALK 0.5f
 #define SLIMEJUMPCOOLDOWN 4
@@ -108,7 +111,7 @@ bool Enemy::PlayerInWay(float deltatime
 }
 
 void Enemy::DDAndTexManager(unsigned int eob
-	, std::vector<Enemy*> enemies
+	, std::vector<Enemy> enemies
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
 	, unsigned int* enemiesDD1
@@ -117,7 +120,7 @@ void Enemy::DDAndTexManager(unsigned int eob
 	bool enemyExist = false;
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		if (enemies.at(i)->m_TypeOfEnemy == m_TypeOfEnemy)
+		if (enemies.at(i).m_TypeOfEnemy == m_TypeOfEnemy)
 		{
 			enemyExist = true;
 			break;
@@ -142,7 +145,8 @@ void Enemy::DDAndTexManager(unsigned int eob
 	}
 }
 
-Zombie::Zombie(std::vector<Enemy*> enemies
+Enemy::Enemy(std::vector<Enemy> enemies
+	, unsigned int type
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
 	, unsigned int* enemiesDD1
@@ -151,22 +155,48 @@ Zombie::Zombie(std::vector<Enemy*> enemies
 	, float y
 	, unsigned int eob)
 {
+	m_TypeOfEnemy = type;
+
 	if (enemies.size())
 	{
-		m_ID = enemies.at(enemies.size() - 1)->m_ID + 1;
+		m_ID = enemies.at(enemies.size() - 1).m_ID + 1;
 	}
 	else
 	{
 		m_ID = 0;
 	}
-	m_Vertices[0] = -0.9f; 
-	m_Vertices[1] = 1.3f; 
-	m_Vertices[2] = 0.9f; 
-	m_Vertices[3] = -1.5f;
+	switch (m_TypeOfEnemy)
+	{
+	case enemySlime:
+		m_Vertices[0] = -0.9f;
+		m_Vertices[1] = 0.8f;
+		m_Vertices[2] = 0.9f;
+		m_Vertices[3] = -1;
+		break;
+	case enemyZombie:
+		m_Vertices[0] = -0.9f;
+		m_Vertices[1] = 1.3f;
+		m_Vertices[2] = 0.9f;
+		m_Vertices[3] = -1.5f;
+		break;
+	}
 	m_PlayerHitTimer = 0;
-	m_TypeOfEnemy = enemyZombie;
-	m_HP = 25;
-	m_Damage = 45;
+
+	int hp[2] = 
+	{
+		25 
+		, 15
+
+	};
+	int damage[2] = 
+	{
+		45
+		, 45
+
+	};
+
+	m_HP = hp[m_TypeOfEnemy];
+	m_Damage = damage[m_TypeOfEnemy];
 	m_Transform[0] = x;
 	m_Transform[1] = y;
 	m_Velocity[0] = 0;
@@ -181,9 +211,13 @@ Zombie::Zombie(std::vector<Enemy*> enemies
 	m_IsBurning = false;
 	m_BurningTimer = 0;
 	m_BurnDamageNextTime = 0;
+	m_TimerOutOfCamera = 0;
 	m_OnFire.constructorFire(m_Vertices, 4, 0.2f);
+
 }
-int Zombie::EnemyEveryFrame(float deltaTime
+
+
+int Enemy::EnemyEveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, float* playerTransform)
 {
@@ -193,259 +227,256 @@ int Zombie::EnemyEveryFrame(float deltaTime
 	{
 		m_PlayerHitTimer += deltaTime;
 	}
-	int direction[2];
-	float distance[2];
-	WhereIsPlayer(playerTransform, distance, direction);
-	m_LookAt = direction[0];
-	if ((abs(distance[0]) < 2 || ZOMBIEMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
+	switch (m_TypeOfEnemy)
 	{
-		int oldVelocity = abs(m_Velocity[0]) / m_Velocity[0];
-		m_Velocity[0] -= direction[0] * ZOMBIEMOVEMENT * deltaTime;
-		if (m_Velocity[0])
-		{
-			if (m_Velocity[0] / abs(m_Velocity[0]) != oldVelocity)
-			{
-				m_Velocity[0] = 0;
-			}
-		}
-	}
-	else
+	case enemyZombie:
 	{
-		int multi = 1;
-		if (m_Velocity[0])
-		{
-			if (m_Velocity[0] / abs(m_Velocity[0]) != direction[0])
-			{
-				multi = 3;
-			}
-		}
-		m_Velocity[0] += direction[0] * ZOMBIEMOVEMENT * deltaTime * multi;
-	}
-	m_Velocity[1] += deltaTime * GRAVITY;
-	if (m_Velocity[1] < GRAVITY)
-	{
-		m_Velocity[1] = GRAVITY;
-	}
-	bool hit[4] = { false, false, false, false };
-	float vertices[4];
-	vertices[0] = m_Transform[0] + m_Vertices[0];
-	vertices[1] = m_Transform[1] + m_Vertices[1];
-	vertices[2] = m_Transform[0] + m_Vertices[2];
-	vertices[3] = m_Transform[1] + m_Vertices[3];
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
-	if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
-	{
-		RE = m_Damage;
-		m_PlayerHitTimer = 0;
-	}
-
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
-	if (hit[3])
-	{
-		m_AnimTimer += deltaTime;
-
-		if (m_Velocity[0])
-		{
-
-			if (0.1f / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 0;
-
-			}
-			else if (ZOMBIEWALK / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 3;
-
-			}
-			else if (ZOMBIEWALK * 2 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 1;
-
-			}
-			else if (ZOMBIEWALK * 3 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 3;
-
-			}
-			else if (ZOMBIEWALK * 4 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 0;
-
-			}
-			else if (ZOMBIEWALK * 5 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 4;
-
-			}
-			else if (ZOMBIEWALK * 6 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 2;
-
-			}
-			else if (ZOMBIEWALK * 7 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 4;
-
-			}
-			else if (ZOMBIEWALK * 8 / abs(m_Velocity[0]) >= m_AnimTimer)
-			{
-				m_AnimPhase = 0;
-
-			}
-			else
-			{
-				m_AnimTimer = 0;
-			}
-		}
-	}
-	else
-	{
-		m_AnimPhase = 1;
-	}
-	if ((hit[0] || hit[2] || (Input::SpacePress && abs(distance[1]) < vertices[1] - m_Transform[1] + 1.5f)) && hit[3])
-	{
-		m_Velocity[1] = 15;
-		m_AnimPhase = 1;
-	}
-	return RE;
-}
-void Zombie::DrawEnemy(Shader& sh
-	, float* transform
-	, float* scale)
-{
-	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	sh.SetUniformMat4(basicTransform, transform);
-	 
-	ChangeScale(m_LookAt,1, scale);
-	sh.SetUniformMat4(animScale, scale);
-
 	
-	ErrorGL(glBindVertexArray(m_DD[0]));
-	sh.SetUniform1i(animNumber, m_AnimPhase);
-	sh.SetUniform1i(animLeangth, 5);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[0]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-
-	sh.SetUniform1i(animNumber, 0);
-	sh.SetUniform1i(animLeangth, 1);
-	if (!m_AnimPhase)
-	{
-		ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
-		sh.SetUniformMat4(basicTransform, transform);
-	}
-	ErrorGL(glBindVertexArray(m_DD[1]));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[1]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-
-}
-	
-
-Slime::Slime(std::vector<Enemy*> enemies
-	, unsigned int* enemiesTex1
-	, unsigned int* enemiesTex2
-	, unsigned int* enemiesDD1
-	, unsigned int* enemiesDD2
-	, float x
-	, float y
-	, unsigned int eob)
-{
-	m_PlayerHitTimer = 0;
-	m_TypeOfEnemy = enemySlime;
-	m_HP = 15;
-	m_Damage = 45;
-	m_Transform[0] = x;
-	m_Transform[1] = y;
-	m_Velocity[0] = 0;
-	m_Velocity[1] = 0;
-	m_JumpTimer = 0;
-	m_AnimTimer = 0;
-	m_AnimPhase = 0;
-	m_Vertices[0] = -0.9f;
-	m_Vertices[1] = 0.8f;
-	m_Vertices[2] = 0.9f;
-	m_Vertices[3] = -1;
-	DDAndTexManager(eob, enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2);
-	m_DD = enemiesDD1[m_TypeOfEnemy];
-	m_Tex = enemiesTex1[m_TypeOfEnemy];
-	m_IsBurning = false;
-	m_BurnDamageNextTime = 0;
-	m_BurningTimer = 0;
-	m_OnFire.constructorFire(m_Vertices, 3, 0.2f);
-}
-int Slime::EnemyEveryFrame(float deltaTime
-	, std::vector<std::vector<Block>>& blocks
-	, float* playerTransform)
-{
-	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
-	int RE = 0;
-	if (m_PlayerHitTimer < COOLDOWNHIT)
-	{
-		m_PlayerHitTimer += deltaTime;
-	}
-
-	m_Velocity[1] += deltaTime * GRAVITY;
-	bool hit[4] = { false, false, false, false };
-	float vertices[4];
-	vertices[0] = m_Transform[0] + m_Vertices[0];
-	vertices[1] = m_Transform[1] + m_Vertices[1];
-	vertices[2] = m_Transform[0] + m_Vertices[2];
-	vertices[3] = m_Transform[1] + m_Vertices[3];
-	DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
-	if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
-	{
-		RE = m_Damage;
-		m_PlayerHitTimer = 0;
-	}
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
-	if (hit[3])
-	{
-		m_Velocity[0] = 0;
-	}
-	if (m_AnimTimer > -0.5f * m_JumpTimer + 2)
-	{
-		m_AnimTimer = 0;
-		if (m_AnimPhase)
+		int direction[2];
+		float distance[2];
+		WhereIsPlayer(playerTransform, distance, direction);
+		m_LookAt = direction[0];
+		if ((abs(distance[0]) < 2 || ZOMBIEMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
 		{
-			m_AnimPhase = 0;
+			int oldVelocity = abs(m_Velocity[0]) / m_Velocity[0];
+			m_Velocity[0] -= direction[0] * ZOMBIEMOVEMENT * deltaTime;
+			if (m_Velocity[0])
+			{
+				if (m_Velocity[0] / abs(m_Velocity[0]) != oldVelocity)
+				{
+					m_Velocity[0] = 0;
+				}
+			}
+		}
+		else
+		{
+			int multi = 1;
+			if (m_Velocity[0])
+			{
+				if (m_Velocity[0] / abs(m_Velocity[0]) != direction[0])
+				{
+					multi = 3;
+				}
+			}
+			m_Velocity[0] += direction[0] * ZOMBIEMOVEMENT * deltaTime * multi;
+		}
+		m_Velocity[1] += deltaTime * GRAVITY;
+		if (m_Velocity[1] < GRAVITY)
+		{
+			m_Velocity[1] = GRAVITY;
+		}
+		bool hit[4] = { false, false, false, false };
+		float vertices[4];
+		vertices[0] = m_Transform[0] + m_Vertices[0];
+		vertices[1] = m_Transform[1] + m_Vertices[1];
+		vertices[2] = m_Transform[0] + m_Vertices[2];
+		vertices[3] = m_Transform[1] + m_Vertices[3];
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		{
+			RE = m_Damage;
+			m_PlayerHitTimer = 0;
+		}
+
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		if (hit[3])
+		{
+			m_AnimTimer += deltaTime;
+
+			if (m_Velocity[0])
+			{
+
+				if (0.1f / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 0;
+
+				}
+				else if (ZOMBIEWALK / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 3;
+
+				}
+				else if (ZOMBIEWALK * 2 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 1;
+
+				}
+				else if (ZOMBIEWALK * 3 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 3;
+
+				}
+				else if (ZOMBIEWALK * 4 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 0;
+
+				}
+				else if (ZOMBIEWALK * 5 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 4;
+
+				}
+				else if (ZOMBIEWALK * 6 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 2;
+
+				}
+				else if (ZOMBIEWALK * 7 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 4;
+
+				}
+				else if (ZOMBIEWALK * 8 / abs(m_Velocity[0]) >= m_AnimTimer)
+				{
+					m_AnimPhase = 0;
+
+				}
+				else
+				{
+					m_AnimTimer = 0;
+				}
+			}
 		}
 		else
 		{
 			m_AnimPhase = 1;
 		}
+		if ((hit[0] || hit[2] || (Input::SpacePress && abs(distance[1]) < vertices[1] - m_Transform[1] + 1.5f)) && hit[3])
+		{
+			m_Velocity[1] = 15;
+			m_AnimPhase = 1;
+		}
+		break;
 	}
-	m_AnimTimer += deltaTime;
-	if (m_JumpTimer < SLIMEJUMPCOOLDOWN)
+		
+	case enemySlime:
 	{
-		m_JumpTimer += deltaTime;
+		m_Velocity[1] += deltaTime * GRAVITY;
+		bool hit[4] = { false, false, false, false };
+		float vertices[4];
+		vertices[0] = m_Transform[0] + m_Vertices[0];
+		vertices[1] = m_Transform[1] + m_Vertices[1];
+		vertices[2] = m_Transform[0] + m_Vertices[2];
+		vertices[3] = m_Transform[1] + m_Vertices[3];
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		{
+			RE = m_Damage;
+			m_PlayerHitTimer = 0;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		if (hit[3])
+		{
+			m_Velocity[0] = 0;
+		}
+		if (m_AnimTimer > -0.5f * m_JumpTimer + 2)
+		{
+			m_AnimTimer = 0;
+			if (m_AnimPhase)
+			{
+				m_AnimPhase = 0;
+			}
+			else
+			{
+				m_AnimPhase = 1;
+			}
+		}
+		m_AnimTimer += deltaTime;
+		if (m_JumpTimer < SLIMEJUMPCOOLDOWN)
+		{
+			m_JumpTimer += deltaTime;
+		}
+		else
+		{
+			int direction[2];
+			float distance[2];
+			WhereIsPlayer(playerTransform, distance, direction);
+			m_JumpTimer = 0;
+			m_Velocity[0] = 15 * direction[0];
+			m_Velocity[1] = 15;
+			m_AnimPhase = 0;
+		}
+		break;
 	}
-	else
-	{
-		int direction[2];
-		float distance[2];
-		WhereIsPlayer(playerTransform, distance, direction);
-		m_JumpTimer = 0;
-		m_Velocity[0] = 15 * direction[0];
-		m_Velocity[1] = 15;
-		m_AnimPhase = 0;
+
 	}
-	
 	return RE;
 }
-void Slime::DrawEnemy(Shader& sh
+void Enemy::DrawEnemy(Shader& sh
 	, float* transform
 	, float* scale)
 {
-	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	sh.SetUniformMat4(basicTransform, transform);
+	switch (m_TypeOfEnemy)
+	{
+	case enemyZombie:
+	{
+		ChangeTransform(m_Transform[0], m_Transform[1], transform);
+		sh.SetUniformMat4(basicTransform, transform);
 
-	ChangeScale(1, 1, scale);
-	sh.SetUniformMat4(animScale, scale);
+		ChangeScale(m_LookAt, 1, scale);
+		sh.SetUniformMat4(animScale, scale);
 
 
-	ErrorGL(glBindVertexArray(m_DD));
-	sh.SetUniform1i(animNumber, m_AnimPhase);
-	sh.SetUniform1i(animLeangth, 2);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glBindVertexArray(m_DD[0]));
+		sh.SetUniform1i(animNumber, m_AnimPhase);
+		sh.SetUniform1i(animLeangth, 5);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[0]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
+		sh.SetUniform1i(animNumber, 0);
+		sh.SetUniform1i(animLeangth, 1);
+		if (!m_AnimPhase)
+		{
+			ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+			sh.SetUniformMat4(basicTransform, transform);
+		}
+		ErrorGL(glBindVertexArray(m_DD[1]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[1]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		break;
+	}
+
+	case enemySlime:
+	{
+		ChangeTransform(m_Transform[0], m_Transform[1], transform);
+		sh.SetUniformMat4(basicTransform, transform);
+
+		ChangeScale(1, 1, scale);
+		sh.SetUniformMat4(animScale, scale);
+
+
+		ErrorGL(glBindVertexArray(m_DD[0]));
+		sh.SetUniform1i(animNumber, m_AnimPhase);
+		sh.SetUniform1i(animLeangth, 2);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[0]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		break;
+	}
+	}
+	
+
+}
+	
+
+
+
+void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Enemy>& enemies)
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		Enemy e = enemies.at(i);
+		if ((e.m_Transform[0] + e.m_Vertices[2] < CameraTrasform[0] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[0] + e.m_Vertices[0] > CameraTrasform[0] - Window::halfWidthOfGameTransform) &&
+			(e.m_Transform[1] + e.m_Vertices[1] < CameraTrasform[1] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[1] + e.m_Vertices[3] > CameraTrasform[1] - Window::halfWidthOfGameTransform))
+		{
+			e.m_TimerOutOfCamera += deltaTime;
+			if (e.m_TimerOutOfCamera > 10)
+			{
+				//////////////leak
+				
+				enemies.erase(enemies.begin() + i);
+			}
+		}
+	}
 }

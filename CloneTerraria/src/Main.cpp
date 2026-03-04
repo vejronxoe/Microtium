@@ -247,7 +247,7 @@ int main()
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
 	std::vector<bool> isSandOnX;
-	std::vector<Enemy*> enemies;
+	std::vector<Enemy> enemies;
 	std::vector<BoomParticle> boomParticles; 
 	std::vector<Projectile> projectiles;
 	std::vector<CraftStation> craftStations;
@@ -261,9 +261,9 @@ int main()
 	//
 	// 
 	//Slime s(enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
-	Zombie z( enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2,80,100,eob);
+	Enemy z( enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2,80,100,eob);
 	//enemies.emplace_back(&s);
-	enemies.emplace_back(&z);
+	enemies.emplace_back(z);
 
 
 	CraftStation forge;
@@ -330,10 +330,10 @@ int main()
 		CheckFloorCraftStations(craftStations, blocks, dropItems);
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			int damage = enemies.at(i)->EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+			int damage = enemies.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
 			if (damage)
 			{
-				player.DamagePlayer(enemies.at(i)->m_Transform, damage);
+				player.DamagePlayer(enemies.at(i).m_Transform, damage);
 			}
 		}
 		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
@@ -461,25 +461,25 @@ int main()
 		animSh.Bind();
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			enemies.at(i)->DrawEnemy(animSh, transform, scale);
+			enemies.at(i).DrawEnemy(animSh, transform, scale);
 		}
 		particlesSh.Bind();
 		ErrorGL(glBindVertexArray(particlesDD));
 		for (int i = 0; i < enemies.size(); i++)
 		{
 			
-			if (enemies.at(i)->m_IsBurning)
+			if (enemies.at(i).m_IsBurning)
 			{
-				enemies.at(i)->m_BurningTimer += deltaTime;
-				if (enemies.at(i)->m_BurningTimer < TIMEONFIRE)
+				enemies.at(i).m_BurningTimer += deltaTime;
+				if (enemies.at(i).m_BurningTimer < TIMEONFIRE)
 				{
-					if (enemies.at(i)->m_OnFire.DrawParticles(particlesSh,deltaTime, true, enemies.at(i)->m_Transform,transform))
+					if (enemies.at(i).m_OnFire.DrawParticles(particlesSh,deltaTime, true, enemies.at(i).m_Transform,transform))
 					{
-						enemies.at(i)->m_BurnDamageNextTime++;
-						if (enemies.at(i)->m_BurnDamageNextTime >= 4)
+						enemies.at(i).m_BurnDamageNextTime++;
+						if (enemies.at(i).m_BurnDamageNextTime >= 4)
 						{
-							enemies.at(i)->m_BurnDamageNextTime = 0;
-							if (enemies.at(i)->DamageEnemy(1, NULL))
+							enemies.at(i).m_BurnDamageNextTime = 0;
+							if (enemies.at(i).DamageEnemy(1, NULL))
 							{
 								enemies.erase(enemies.begin() + i);
 								i--;
@@ -489,14 +489,14 @@ int main()
 				}
 				else
 				{
-					enemies.at(i)->m_BurnDamageNextTime = 0;
-					enemies.at(i)->m_BurningTimer = 0;
-					enemies.at(i)->m_IsBurning = false;
+					enemies.at(i).m_BurnDamageNextTime = 0;
+					enemies.at(i).m_BurningTimer = 0;
+					enemies.at(i).m_IsBurning = false;
 				}
 			}
 			else
 			{
-				enemies.at(i)->m_OnFire.DrawParticles(particlesSh, deltaTime, false, enemies.at(i)->m_Transform, transform);
+				enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, false, enemies.at(i).m_Transform, transform);
 			}
 			
 		}

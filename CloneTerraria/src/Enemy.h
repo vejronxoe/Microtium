@@ -11,13 +11,30 @@ enum enemyTypes
 };
 class Enemy
 {
+
 public:
+	Enemy(std::vector<Enemy> enemies
+		, unsigned int type
+		, unsigned int* enemiesTex1
+		, unsigned int* enemiesTex2
+		, unsigned int* enemiesDD1
+		, unsigned int* enemiesDD2
+		, float x
+		, float y
+		, unsigned int eob);
 	unsigned int m_ID;
 	char m_TypeOfEnemy;
 	float m_Vertices[4];
 	float m_Transform[2];
 	float m_Velocity[2];
 	float m_PlayerHitTimer;
+	float m_TimerOutOfCamera;
+	short int m_LookAt;
+	unsigned int m_DD[2];
+	unsigned int m_Tex[2];
+	char m_AnimPhase;
+	float m_AnimTimer;
+	float m_JumpTimer;
 	int m_HP;
 	int m_Damage;
 	bool m_IsBurning;
@@ -26,7 +43,7 @@ public:
 	FireParticle m_OnFire;
 
 	void DDAndTexManager(unsigned int eob
-		, std::vector<Enemy*> enemies
+		, std::vector<Enemy> enemies
 		, unsigned int* enemiesTex1
 		, unsigned int* enemiesTex2
 		, unsigned int* enemiesDD1
@@ -44,63 +61,14 @@ public:
 	bool DamageEnemy(int Damage
 		, float* transformAttacker);
 
-	virtual int EnemyEveryFrame(float deltaTime
-		, std::vector<std::vector<Block>>& blocks
-		, float* playerTransform) = 0;
-
-	virtual void DrawEnemy(Shader& sh
-		, float* transform
-		, float* scale) = 0;
-};
-class Zombie: public Enemy
-{
-public:
-	short int m_LookAt;
-	unsigned int m_DD[2];
-	unsigned int m_Tex[2];
-	char m_AnimPhase;
-	float m_AnimTimer;
-	Zombie(std::vector<Enemy*> enemies
-		, unsigned int* enemiesTex1
-		, unsigned int* enemiesTex2
-		, unsigned int* enemiesDD1
-		, unsigned int* enemiesDD2
-		, float x
-		, float y
-		, unsigned int eob);
-
 	int EnemyEveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
-		, float* playerTransform) override;
+		, float* playerTransform);
 
 	void DrawEnemy(Shader& sh
 		, float* transform
-		, float* scale) override;
-
-
+		, float* scale);
 };
-class Slime : public Enemy
-{
-public:
-	unsigned int m_DD;
-	unsigned int m_Tex;
-	float m_JumpTimer;
-	float m_AnimTimer;
-	char m_AnimPhase;
-	Slime(std::vector<Enemy*> enemies
-		, unsigned int* enemiesTex1
-		, unsigned int* enemiesTex2
-		, unsigned int* enemiesDD1
-		, unsigned int* enemiesDD2
-		, float x
-		, float y
-		, unsigned int eob);
-	int EnemyEveryFrame(float deltaTime
-		, std::vector<std::vector<Block>>& blocks
-		, float* playerTransform) override;
 
-	void DrawEnemy(Shader& sh
-		, float* transform
-		, float* scale) override;
 
-};
+void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Enemy>& enemies);

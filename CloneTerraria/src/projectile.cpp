@@ -27,11 +27,11 @@ Projectile::Projectile(unsigned char projectileType
 		break;
 	}
 }
-int Projectile::HitEnemy(float deltaTime
+bool Projectile::HitEnemy(float deltaTime
 	, float* oldVelocity
 	, float* proVertices
 	, std::vector<BoomParticle>& particles
-	, std::vector<Enemy*>& enemies
+	, std::vector<Enemy>& enemies
 	, bool burning)
 {
 	float vertices[4];
@@ -57,14 +57,14 @@ int Projectile::HitEnemy(float deltaTime
 	}
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		float enemyVertices[4] = { enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[0], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[1], enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[2], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[3] };
+		float enemyVertices[4] = { enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[0], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[1], enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[2], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[3] };
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
 			if (burning)
 			{
-				enemies.at(i)->m_IsBurning = true;
+				enemies.at(i).m_IsBurning = true;
 			}
-			if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+			if (enemies.at(i).DamageEnemy(m_Damage, m_Transform))
 			{
 				enemies.erase(enemies.begin() + i);
 			}
@@ -76,11 +76,11 @@ int Projectile::HitEnemy(float deltaTime
 	}
 	return false;
 }
-int Projectile::HitEnemies(float deltaTime
+bool Projectile::HitEnemies(float deltaTime
 	, float* oldVelocity
 	, float* proVertices
 	, std::vector<BoomParticle>& particles
-	, std::vector<Enemy*>& enemies)
+	, std::vector<Enemy>& enemies)
 {
 	float vertices[4];
 	if (m_Velocity[0] > 0)
@@ -105,27 +105,28 @@ int Projectile::HitEnemies(float deltaTime
 	}
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		float enemyVertices[4] = { enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[0], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[1], enemies.at(i)->m_Transform[0] + enemies.at(i)->m_Vertices[2], enemies.at(i)->m_Transform[1] + enemies.at(i)->m_Vertices[3] };
+		
+		float enemyVertices[4] = { enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[0], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[1], enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[2], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[3] };
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
 			bool wasHit = false;
 			for (int j =0; j < m_HitEnemies.size(); j++)
 			{
-				if (m_HitEnemies.at(j) == enemies.at(i)->m_ID)
+				if (m_HitEnemies.at(j) == enemies.at(i).m_ID)
 				{
 					wasHit = true;
 				}
 			}
 			if (!wasHit)
 			{
-				if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+				if (enemies.at(i).DamageEnemy(m_Damage, m_Transform))
 				{
 					enemies.erase(enemies.begin() + i);
 					i--;
 				}
 				else
 				{
-					m_HitEnemies.push_back(enemies.at(i)->m_ID);
+					m_HitEnemies.push_back(enemies.at(i).m_ID);
 				}
 				float c[4] = { 1,0,0,0.8f };
 				particles.emplace_back(m_Transform, c, 1, 8);
@@ -136,7 +137,7 @@ int Projectile::HitEnemies(float deltaTime
 }
 
 bool Projectile::EveryFrame(float deltaTime
-	, std::vector<Enemy*>& enemies
+	, std::vector<Enemy>& enemies
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<CraftStation>& craftStations

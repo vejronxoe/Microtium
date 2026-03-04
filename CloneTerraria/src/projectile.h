@@ -39,20 +39,20 @@ struct Projectile
 		, int damage
 		, unsigned int m_DD
 		, unsigned int projectileTexture);
-	int HitEnemy(float deltaTime
+	bool HitEnemy(float deltaTime
 		, float* oldVelocity
 		, float* vertices
 		, std::vector<BoomParticle>& particles
-		, std::vector<Enemy*>& enemies
+		, std::vector<Enemy>& enemies
 		, bool Burning);
 
-	int HitEnemies(float deltaTime
+	bool HitEnemies(float deltaTime
 		, float* oldVelocity
 		, float* proVertices
 		, std::vector<BoomParticle>& particles
-		, std::vector<Enemy*>& enemies);
+		, std::vector<Enemy>& enemies);
 	bool EveryFrame(float deltaTime
-		, std::vector<Enemy*>& enemies
+		, std::vector<Enemy>& enemies
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& walls
 		, std::vector<CraftStation>& craftStations

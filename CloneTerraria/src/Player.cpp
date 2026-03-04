@@ -902,7 +902,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
-	, std::vector<Enemy*>& enemies
+	, std::vector<Enemy>& enemies
 	, std::vector<bool>& isThereSandOnX
 	, std::vector<CraftStation>& craftStations
 	, std::vector<damagedWood>& damagedWoods
@@ -2494,10 +2494,10 @@ void Player::EveryFrame(float deltaTime
 					float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1] };
 					for (int i = 0; i < enemies.size(); i++)
 					{
-						if (enemies.at(i)->m_Transform[0] - m_Transform[0] * m_DirectionLook >= 0)
+						if (enemies.at(i).m_Transform[0] - m_Transform[0] * m_DirectionLook >= 0)
 						{
-							float distance[2] = { enemies.at(i)->m_Transform[0] - pointOfRotation[0], enemies.at(i)->m_Transform[1] - pointOfRotation[1] };
-							float distanceVertices[4] = { distance[0] - enemies.at(i)->m_Vertices[0], distance[1] - enemies.at(i)->m_Vertices[1] , distance[0] - enemies.at(i)->m_Vertices[2] , distance[1] - enemies.at(i)->m_Vertices[2] };
+							float distance[2] = { enemies.at(i).m_Transform[0] - pointOfRotation[0], enemies.at(i).m_Transform[1] - pointOfRotation[1] };
+							float distanceVertices[4] = { distance[0] - enemies.at(i).m_Vertices[0], distance[1] - enemies.at(i).m_Vertices[1] , distance[0] - enemies.at(i).m_Vertices[2] , distance[1] - enemies.at(i).m_Vertices[2] };
 							for (int j = 0; j < 2; j++)
 							{
 								float holder[2];
@@ -2520,21 +2520,21 @@ void Player::EveryFrame(float deltaTime
 									bool wasEnemyHit = false;
 									for (int j = 0; j < m_HitEnemies.size(); j++)
 									{
-										if (enemies.at(i)->m_ID == m_HitEnemies.at(j))
+										if (enemies.at(i).m_ID == m_HitEnemies.at(j))
 										{
 											wasEnemyHit = true;
 										}
 									}
 									if (!wasEnemyHit)
 									{
-										if (enemies.at(i)->DamageEnemy(m_Damage, m_Transform))
+										if (enemies.at(i).DamageEnemy(m_Damage, m_Transform))
 										{
 											enemies.erase(enemies.begin() + i);
 											i--;
 										}
 										else
 										{
-											m_HitEnemies.push_back(enemies.at(i)->m_ID);
+											m_HitEnemies.push_back(enemies.at(i).m_ID);
 										}
 									}
 								}
