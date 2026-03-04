@@ -243,28 +243,28 @@ bool AddVelocityToTransform(float* objectVertices4f
 	objectVertices4f[3] += transform[1];
 
 
-	if (objectVertices4f[2] >= Blocks::xMax - SAFEDISTANCE)
+	if (objectVertices4f[2] >= Blocks::xMax - SAFEDISTANCE && velocity[0] > 0)
 	{
 		transform[0] -= objectVertices4f[2] - Blocks::xMax + SAFEDISTANCE;
 		velocity[0] = 0;
 		oldVelocity[0] = 0;
 		rightHit = true;
 	}
-	else if (objectVertices4f[0] <= Blocks::xMin + SAFEDISTANCE)
+	else if (objectVertices4f[0] <= Blocks::xMin + SAFEDISTANCE && velocity[0] < 0)
 	{
 		transform[0] -= objectVertices4f[0]- Blocks::xMin - SAFEDISTANCE;
 		velocity[0] = 0;
 		oldVelocity[0] = 0;
 		leftHit = true;
 	}
-	if (objectVertices4f[1] >= Blocks::yMax - SAFEDISTANCE)
+	if (objectVertices4f[1] >= Blocks::yMax - SAFEDISTANCE && velocity[1] > 0)
 	{
 		transform[1] -= objectVertices4f[1] - Blocks::yMax + SAFEDISTANCE;
 		velocity[1] = 0;
 		oldVelocity[1] = 0;
 		ceilHit = true;
 	}
-	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE)
+	else if (objectVertices4f[3] <= Blocks::yMin + SAFEDISTANCE && velocity[1] < 0)
 	{
 		transform[1] -= objectVertices4f[3] - Blocks::yMin - SAFEDISTANCE;
 		velocity[1] = 0;

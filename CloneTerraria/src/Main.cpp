@@ -260,10 +260,10 @@ int main()
 	// 
 	//
 	// 
-	//Slime s(enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
-	Enemy z( enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2,80,100,eob);
-	//enemies.emplace_back(&s);
-	enemies.emplace_back(z);
+	
+
+	enemies.emplace_back(enemies, enemySlime,enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
+	enemies.emplace_back(enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 80, 100, eob);
 
 
 	CraftStation forge;
@@ -334,6 +334,11 @@ int main()
 			if (damage)
 			{
 				player.DamagePlayer(enemies.at(i).m_Transform, damage);
+				if (enemies.at(i).m_IsBurning)
+				{
+					player.m_IsBurning = true;
+					player.m_BurningTimer = 0;
+				}
 			}
 		}
 		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);

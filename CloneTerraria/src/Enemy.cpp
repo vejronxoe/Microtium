@@ -203,6 +203,7 @@ Enemy::Enemy(std::vector<Enemy> enemies
 	m_Velocity[1] = 0;
 	m_AnimPhase = 0;
 	m_AnimTimer = 0;
+	m_JumpTimer = 0;
 	DDAndTexManager(eob, enemies, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2);
 	m_DD[0] = enemiesDD1[m_TypeOfEnemy];
 	m_DD[1] = enemiesDD2[m_TypeOfEnemy];
@@ -358,17 +359,6 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		vertices[1] = m_Transform[1] + m_Vertices[1];
 		vertices[2] = m_Transform[0] + m_Vertices[2];
 		vertices[3] = m_Transform[1] + m_Vertices[3];
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
-		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
-		{
-			RE = m_Damage;
-			m_PlayerHitTimer = 0;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
-		if (hit[3])
-		{
-			m_Velocity[0] = 0;
-		}
 		if (m_AnimTimer > -0.5f * m_JumpTimer + 2)
 		{
 			m_AnimTimer = 0;
@@ -396,6 +386,19 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = 15;
 			m_AnimPhase = 0;
 		}
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		{
+			RE = m_Damage;
+			m_PlayerHitTimer = 0;
+		}
+	
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		if (hit[3])
+		{
+			m_Velocity[0] = 0;
+		}
+		
 		break;
 	}
 
@@ -473,7 +476,7 @@ void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Ene
 			e.m_TimerOutOfCamera += deltaTime;
 			if (e.m_TimerOutOfCamera > 10)
 			{
-				//////////////leak
+			
 				
 				enemies.erase(enemies.begin() + i);
 			}

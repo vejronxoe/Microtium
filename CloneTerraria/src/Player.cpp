@@ -498,6 +498,8 @@ void Player::DamagePlayer(float* transfromAttacker
 
 	if (m_CurrentHealth < 0)
 	{
+		m_IsBurning = false;
+		m_BurningTimer = 0;
 		m_Transform[0] = Blocks::xMax / 2.0f;
 		m_Transform[1] = 15;
 		m_LastStandingY = 15;
@@ -1276,7 +1278,14 @@ void Player::EveryFrame(float deltaTime
 				else if (slotCoordinates[0] != 10)
 				{
 					//inventory
-					m_AimingAtSlot = slotCoordinates[0] + slotCoordinates[1] * 10 + 1;
+					if (slotCoordinates[1] == 5)
+					{
+						m_AimingAtSlot = 51;
+					}
+					else
+					{
+						m_AimingAtSlot = slotCoordinates[0] + slotCoordinates[1] * 10 + 1;
+					}
 					if (m_PlayerSlots[m_AimingAtSlot] == i_Nothing && (m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
 					{
 						m_AimingAtSlot = 0;
@@ -1769,7 +1778,7 @@ void Player::EveryFrame(float deltaTime
 					{
 						if (m_LocationAmmunition != -1)
 						{
-							float velocity[2] = { Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY };
+							float velocity[2] = { Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook -(m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - PLAYERHANDOFFSETY - (m_Transform[1] - CameraCoordinates[1]) };
 							NormalizeVector(velocity);
 							switch (m_PlayerSlots[0])
 							{
@@ -2480,7 +2489,7 @@ void Player::EveryFrame(float deltaTime
 			case i_WoodBow:
 			case i_Cannon:
 			case i_Pistol:
-				m_ArmRotation = atan2f(Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook, Input::YMousePos - PLAYERHANDOFFSETY) * 180.0 / PI;
+				m_ArmRotation = atan2f(Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook-(m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - PLAYERHANDOFFSETY - (m_Transform[1] - CameraCoordinates[1])) * 180.0 / PI;
 				if (m_ArmRotation)
 				{
 					m_DirectionLook = m_ArmRotation / abs(m_ArmRotation);
