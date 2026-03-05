@@ -2912,14 +2912,14 @@ void Player::DrawPlayer(float deltaTime
 
 						float right = x + m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
 						float left = x - m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
-						drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, fontDD, scale, transform, fontSh);
+						drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, scale, transform, fontSh);
 
 					}
 
 				}
 				float right = x + m_HalfOfSlotLeanght;
 				float left = x - m_HalfOfSlotLeanght;
-				drawNumber(y, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_VisibleRecipes[i].m_AmountOutput, fontDD, scale, transform, fontSh);
+				drawNumber(y, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_AmountOutput, scale, transform, fontSh);
 
 
 			}
@@ -2932,13 +2932,13 @@ void Player::DrawPlayer(float deltaTime
 			{
 				float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
 				float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
-				drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - i * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], fontDD, scale, transform, fontSh);
+				drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - i * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], scale, transform, fontSh);
 			}
 		}
 		
 			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
 			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + 9 * m_SlotGap);
-			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[51], fontDD, scale, transform, fontSh);
+			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[51], scale, transform, fontSh);
 		
 
 		HUDSh.Bind();
@@ -2997,7 +2997,7 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glBindVertexArray(fontDD));
 		right = m_HPOffset[0] + m_HalfOfSlotLeanght;
 		left = m_HPOffset[0] - m_HalfOfSlotLeanght;
-		drawTwoNumberWithZero(m_HPOffset[1] - m_HalfOfSlotLeanght/2.0f - 11 * m_SlotGap, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_ArmorClass, fontDD, scale, transform, fontSh);
+		drawTwoNumbersWithZero(m_HPOffset[1] - m_HalfOfSlotLeanght/2.0f - 11 * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_ArmorClass, scale, transform, fontSh);
 
 	}
 	else
@@ -3059,7 +3059,7 @@ void Player::DrawPlayer(float deltaTime
 		{
 			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
 			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
-			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, left + (right - left) * 0.1f, right - (right - left) * 0.1f, m_AmountInSlots[j + 1], fontDD, scale, transform, fontSh);
+			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[j + 1], scale, transform, fontSh);
 		}
 	}
 

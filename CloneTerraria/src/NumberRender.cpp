@@ -6,13 +6,25 @@
 #include"math/matrix.h"
 #include"glfw/window.h"
 
+#include<vector>
 
-unsigned int CreateDrawDataNumbers(unsigned int eob, unsigned int& numberTexture)
+unsigned int CreateDrawDataNumbers(unsigned int eob
+	, unsigned int& numberTexture
+	, unsigned int& dotTex
+	, unsigned int& dotDD)
 {
 	numberTexture = CreateTextureLinearRGBA("res/textures/Numbers.png");
-	return CreateDrawData(eob,1,0,1,0,0,1,0,0.1f);
+	dotTex = CreateTextureLinearRGBA("res/textures/dot.png");
+	dotDD = CreateDrawData(eob, 1, 0, 1, 0);
+	return CreateDrawData(eob,1,0,1,0,1,0,0.1,0);
 }
-void drawNumber(float bottom, float right, float left, unsigned short int value, unsigned int NumberDrawData, float* scale, float* transform, Shader Sh)
+void drawNumber(float bottom
+	, float right
+	, float left
+	, unsigned short int value
+	, float* scale
+	, float* transform
+	, Shader Sh)
 { 
 	if (value > 1)
 	{
@@ -25,36 +37,42 @@ void drawNumber(float bottom, float right, float left, unsigned short int value,
 		float oneLeterSize = (right - left) / 4;
 		ChangeScale(oneLeterSize, oneLeterSize, scale);
 		Sh.SetUniformMat4(fontScale, scale);
-		bottom -= oneLeterSize;
+	
 
 		Sh.SetUniform1i( fontLetter, firstDigit);
-		ChangeTransform(left, bottom, transform);
+		ChangeTransform(left + oneLeterSize * 3, bottom, transform);
 		Sh.SetUniformMat4(fontTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		if (secondDigit || thirdDigit || fourthDigit)
 		{
 			Sh.SetUniform1i(fontLetter, secondDigit);
-			ChangeTransform(left + oneLeterSize, bottom, transform);
+			ChangeTransform(left + oneLeterSize * 2, bottom, transform);
 			Sh.SetUniformMat4(fontTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		if (thirdDigit || fourthDigit)
 		{
 			Sh.SetUniform1i(fontLetter, thirdDigit);
-			ChangeTransform(left + oneLeterSize * 2, bottom, transform);
+			ChangeTransform(left + oneLeterSize, bottom, transform);
 			Sh.SetUniformMat4(fontTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		if (fourthDigit)
 		{
 			Sh.SetUniform1i(fontLetter, fourthDigit);
-			ChangeTransform(left + oneLeterSize * 3, bottom, transform);
+			ChangeTransform(left , bottom, transform);
 			Sh.SetUniformMat4(fontTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 	}
 }
-void drawTwoNumberWithZero(float bottom, float right, float left, unsigned short int value, unsigned int NumberDrawData, float* scale, float* transform, Shader Sh)
+void drawTwoNumbersWithZero(float bottom
+	, float right
+	, float left
+	, unsigned short int value
+	, float* scale
+	, float* transform
+	, Shader Sh)
 {
 
 	int thirdDigit = ((value / 100));
@@ -64,15 +82,15 @@ void drawTwoNumberWithZero(float bottom, float right, float left, unsigned short
 	float oneLeterSize = (right - left) / 2;
 	ChangeScale(oneLeterSize, oneLeterSize, scale);
 	Sh.SetUniformMat4(fontScale, scale);
-	bottom -= oneLeterSize;
+	
 	if (secondDigit)
 	{
-		Sh.SetUniform1i(fontLetter, firstDigit);
+		Sh.SetUniform1i(fontLetter, secondDigit);
 		ChangeTransform(left, bottom, transform);
 		Sh.SetUniformMat4(fontTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-		Sh.SetUniform1i(fontLetter, secondDigit);
+		Sh.SetUniform1i(fontLetter, firstDigit);
 		ChangeTransform(left + oneLeterSize, bottom, transform);
 		Sh.SetUniformMat4(fontTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
@@ -85,5 +103,62 @@ void drawTwoNumberWithZero(float bottom, float right, float left, unsigned short
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
+
+}
+void drawFloat(float bottom
+	, float left
+	, float value
+	, unsigned int numberTex
+	, unsigned int numberDD
+	, unsigned int dotTex
+	, unsigned int dotDD
+	, float* scale
+	, float* transform
+	, Shader Sh)
+{
+	
+	std::vector<int> digits;
+	int i = 0;
+	float holder = floorf(value / pow(10, i)) - floorf(value / pow(10, i + 1)) * 10;
+	digits.push_back(holder);
+	i++;
+	holder = 1;
+	while (0 < holder)
+	{
+		holder = floorf(value / pow(10, i)) - floorf(value / pow(10, i + 1)) * 10;
+		digits.push_back(holder);
+		
+		holder = value - (holder+1) * pow(10,i);
+
+		i++;
+	}
+
+
+	ChangeScale(10, 10, scale);
+	Sh.SetUniformMat4(fontScale, scale);
+	for (i = 0; i < digits.size(); i++)
+	{
+		Sh.SetUniform1i(fontLetter, digits.at(i));
+		ChangeTransform(left + 10 * (digits.size()-1) - 10 * i, bottom, transform);
+		Sh.SetUniformMat4(fontTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	}
+	
+	ErrorGL(glBindVertexArray(dotDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, dotTex));
+	Sh.SetUniform1i(fontLetter, 0);
+	ChangeTransform(left + 10 * digits.size()  , bottom, transform);
+	Sh.SetUniformMat4(fontTransform, transform);
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	
+	ErrorGL(glBindVertexArray(numberDD));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTex));
+	Sh.SetUniform1i(fontLetter, floorf((value - floorf(value)) * 10));
+	ChangeTransform(left + 10 * (digits.size()+1), bottom, transform);
+	Sh.SetUniformMat4(fontTransform, transform);
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 
 }

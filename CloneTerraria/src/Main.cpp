@@ -226,7 +226,9 @@ int main()
 	CreateAllBlockTextures(blockTextures);
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 	unsigned int numberTexture;
-	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture);
+	unsigned int dotTex;
+	unsigned int dotDD;
+	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
 	unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
 	unsigned int particlesDD = CreateDrawData(eob,0.125f, -0.125f, 0.125f, -0.125f);
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
@@ -295,8 +297,8 @@ int main()
 	// //////////////////////
 
 	float deltaTime;
-	float timer = 0;
-	int fps = 0;
+	float printFPSTimer = 1;
+	float oldDeltaTime;
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -306,15 +308,7 @@ int main()
 		
 		
 
-		timer += deltaTime; 
-		fps++;
-		if (timer >= 1)
-		{
-			
-			std::cout << fps << std::endl;
-			timer = 0;
-			fps = 0;
-		}
+		
 
 		float CameraCoordinates[2];
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
@@ -511,7 +505,17 @@ int main()
 			projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 		}
 		player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
-
+		fontSh.Bind();
+		ErrorGL(glBindVertexArray(fontDrawData));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+		printFPSTimer += deltaTime;
+		if (printFPSTimer > 0.1f)
+		{
+			printFPSTimer = 0;
+			oldDeltaTime = deltaTime;
+		}
+		drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, fontSh);
+		
 		DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 		
 
