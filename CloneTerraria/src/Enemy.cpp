@@ -462,16 +462,22 @@ void Enemy::DrawEnemy(Shader& sh
 	
 
 
-
-void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Enemy>& enemies)
+void EnemySpawnControler(float deltaTime
+	, unsigned int eob
+	, unsigned int* enemiesTex1
+	, unsigned int* enemiesTex2
+	, unsigned int* enemiesDD1
+	, unsigned int* enemiesDD2
+	, float* cameraTransform
+	, std::vector<Enemy>& enemies)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		Enemy e = enemies.at(i);
-		if ((e.m_Transform[0] + e.m_Vertices[2] < CameraTrasform[0] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[0] + e.m_Vertices[0] > CameraTrasform[0] - Window::halfWidthOfGameTransform) &&
-			(e.m_Transform[1] + e.m_Vertices[1] < CameraTrasform[1] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[1] + e.m_Vertices[3] > CameraTrasform[1] - Window::halfWidthOfGameTransform))
+		if ((e.m_Transform[0] + e.m_Vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[0] + e.m_Vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform) &&
+			(e.m_Transform[1] + e.m_Vertices[1] < cameraTransform[1] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[1] + e.m_Vertices[3] > cameraTransform[1] - Window::halfWidthOfGameTransform))
 		{
 			e.m_TimerOutOfCamera += deltaTime;
 			if (e.m_TimerOutOfCamera > 10)
@@ -480,6 +486,39 @@ void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Ene
 				
 				enemies.erase(enemies.begin() + i);
 			}
+		}
+	}
+	if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 < cameraTransform[1])
+	{
+		if (enemies.size() < 4)
+		{
+			float transform[2];
+			if (rand() % 2 == 0)
+			{
+
+			}
+			else
+			{
+
+			}
+			enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
+		}
+	}
+	else if(0 > cameraTransform[1])
+	{
+		if (enemies.size() < 6)
+		{
+			float transform[2];
+			if (rand() % 2 == 0)
+			{
+
+			}
+			else
+			{
+
+			}
+			enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
+
 		}
 	}
 }

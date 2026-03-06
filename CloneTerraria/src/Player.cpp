@@ -2573,7 +2573,22 @@ void Player::EveryFrame(float deltaTime
 	//health
 	int playerVertices[4] = { RoundFiveUp(verticesPlayer[0]), RoundFiveDown(verticesPlayer[1]), RoundFiveDown(verticesPlayer[2]), RoundFiveUp(verticesPlayer[3]) };
 	{
-		bool IsPlayerInBlock = blockInArea(blocks, playerVertices);
+		bool IsPlayerInBlock = false; 
+		for (int i = playerVertices[0] ; i < playerVertices[2]; i++)
+		{
+			for (int j = 0; j < blocks.at(i).size(); j++)
+			{
+				if (playerVertices[3] > blocks.at(i).at(j).m_Y)
+				{
+					break;
+				}
+				else if (playerVertices[1] > blocks.at(i).at(j).m_Y && blocks.at(i).at(j).m_BlockBehavior != b_Platform)
+				{
+					IsPlayerInBlock = true;
+					break;
+				}
+			}
+		}
 		m_DamageTimer += deltaTime;
 		if (m_DamageTimer > 0.5f)
 		{
