@@ -57,7 +57,13 @@ bool Projectile::HitEnemy(float deltaTime
 	}
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		float enemyVertices[4] = { enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[0], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[1], enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[2], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[3] };
+	
+		float enemyVertices[4];
+		GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+		enemyVertices[0] = enemies.at(i).m_Transform[0] + enemyVertices[0];
+		enemyVertices[1] = enemies.at(i).m_Transform[1] + enemyVertices[1];
+		enemyVertices[2] = enemies.at(i).m_Transform[0] + enemyVertices[2];
+		enemyVertices[3] = enemies.at(i).m_Transform[1] + enemyVertices[3];
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
 			if (burning)
@@ -106,7 +112,13 @@ bool Projectile::HitEnemies(float deltaTime
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		
-		float enemyVertices[4] = { enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[0], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[1], enemies.at(i).m_Transform[0] + enemies.at(i).m_Vertices[2], enemies.at(i).m_Transform[1] + enemies.at(i).m_Vertices[3] };
+
+		float enemyVertices[4];
+		GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+		enemyVertices[0] = enemies.at(i).m_Transform[0] + enemyVertices[0];
+		enemyVertices[1] = enemies.at(i).m_Transform[1] + enemyVertices[1];
+		enemyVertices[2] = enemies.at(i).m_Transform[0] + enemyVertices[2];
+		enemyVertices[3] = enemies.at(i).m_Transform[1] + enemyVertices[3];
 		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
 		{
 			bool wasHit = false;

@@ -2506,7 +2506,9 @@ void Player::EveryFrame(float deltaTime
 						if (enemies.at(i).m_Transform[0] - m_Transform[0] * m_DirectionLook >= 0)
 						{
 							float distance[2] = { enemies.at(i).m_Transform[0] - pointOfRotation[0], enemies.at(i).m_Transform[1] - pointOfRotation[1] };
-							float distanceVertices[4] = { distance[0] - enemies.at(i).m_Vertices[0], distance[1] - enemies.at(i).m_Vertices[1] , distance[0] - enemies.at(i).m_Vertices[2] , distance[1] - enemies.at(i).m_Vertices[2] };
+							float enemyVertices[4];
+							GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+							float distanceVertices[4] = { distance[0] - enemyVertices[0], distance[1] - enemyVertices[1] , distance[0] - enemyVertices[2] , distance[1] - enemyVertices[2] };
 							for (int j = 0; j < 2; j++)
 							{
 								float holder[2];

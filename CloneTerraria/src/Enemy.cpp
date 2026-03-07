@@ -1,10 +1,12 @@
 #include"Enemy.h"
+
 #include"ItemList.h"
 #include"glfw/input.h"
 #include"Opengl/Texture.h"
 #include"Opengl/DrawData.h"
 #include"math/matrix.h"
 #include"glfw/Window.h"
+#include"Collision.h"
 
 
 #define DESPAWNTIME 10
@@ -13,7 +15,27 @@
 #define SLIMEJUMPCOOLDOWN 4
 #define COOLDOWNHIT 3
 
-
+void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
+{
+	switch (typeOfEnemy)
+	{
+	case enemySlime:
+		vertices[0] = -0.9f;
+		vertices[1] = 0.8f;
+		vertices[2] = 0.9f;
+		vertices[3] = -1;
+		break;
+	case enemyZombie:
+		vertices[0] = -0.9f;
+		vertices[1] = 1.3f;
+		vertices[2] = 0.9f;
+		vertices[3] = -1.5f;
+		break;
+	default:
+		Assert(true);
+		break;
+	}
+}
 void Enemy::WhereIsPlayer(float* playerTransform
 	, float* distance
 	, int* direction)
@@ -165,21 +187,7 @@ Enemy::Enemy(std::vector<Enemy> enemies
 	{
 		m_ID = 0;
 	}
-	switch (m_TypeOfEnemy)
-	{
-	case enemySlime:
-		m_Vertices[0] = -0.9f;
-		m_Vertices[1] = 0.8f;
-		m_Vertices[2] = 0.9f;
-		m_Vertices[3] = -1;
-		break;
-	case enemyZombie:
-		m_Vertices[0] = -0.9f;
-		m_Vertices[1] = 1.3f;
-		m_Vertices[2] = 0.9f;
-		m_Vertices[3] = -1.5f;
-		break;
-	}
+	
 	m_PlayerHitTimer = 0;
 
 	int hp[2] = 
@@ -213,7 +221,9 @@ Enemy::Enemy(std::vector<Enemy> enemies
 	m_BurningTimer = 0;
 	m_BurnDamageNextTime = 0;
 	m_TimerOutOfCamera = 0;
-	m_OnFire.constructorFire(m_Vertices, 4, 0.2f);
+	float vertices[4];
+	GetEnemyVerticesByType(m_TypeOfEnemy, vertices);
+	m_OnFire.constructorFire(vertices, 4, 0.2f);
 
 }
 
@@ -228,6 +238,12 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	{
 		m_PlayerHitTimer += deltaTime;
 	}
+	float vertices[4];
+	GetEnemyVerticesByType(m_TypeOfEnemy, vertices);
+	vertices[0] = m_Transform[0] + vertices[0];
+	vertices[1] = m_Transform[1] + vertices[1];
+	vertices[2] = m_Transform[0] + vertices[2];
+	vertices[3] = m_Transform[1] + vertices[3];
 	switch (m_TypeOfEnemy)
 	{
 	case enemyZombie:
@@ -267,11 +283,6 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = GRAVITY;
 		}
 		bool hit[4] = { false, false, false, false };
-		float vertices[4];
-		vertices[0] = m_Transform[0] + m_Vertices[0];
-		vertices[1] = m_Transform[1] + m_Vertices[1];
-		vertices[2] = m_Transform[0] + m_Vertices[2];
-		vertices[3] = m_Transform[1] + m_Vertices[3];
 		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
@@ -354,11 +365,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	{
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
-		float vertices[4];
-		vertices[0] = m_Transform[0] + m_Vertices[0];
-		vertices[1] = m_Transform[1] + m_Vertices[1];
-		vertices[2] = m_Transform[0] + m_Vertices[2];
-		vertices[3] = m_Transform[1] + m_Vertices[3];
+		
 		if (m_AnimTimer > -0.5f * m_JumpTimer + 2)
 		{
 			m_AnimTimer = 0;
@@ -462,22 +469,86 @@ void Enemy::DrawEnemy(Shader& sh
 	
 
 
-void EnemySpawnControler(float deltaTime
+bool getLocationForEnemySpawn(unsigned int enemyType
+	, float* cameraTransform
+	, float* spawntransform
+	, std::vector< std::vector<Block>>& blocks)
+{
+	int spawnVertices[4];
+	spawnVertices[1] = RoundFiveDown(cameraTransform[1] + Window::halfHeightOfGameTransform) + 10;
+	spawnVertices[3] = RoundFiveUp(cameraTransform[1] - Window::halfHeightOfGameTransform) - 10;
+
+	if (rand() % 2)
+	{
+		spawnVertices[0] = RoundFiveUp(cameraTransform[0] - Window::halfWidthOfGameTransform) - 30;
+		spawnVertices[2] = RoundFiveDown(cameraTransform[0] - Window::halfWidthOfGameTransform);
+
+	}
+	else
+	{
+		spawnVertices[0] = RoundFiveUp(cameraTransform[0] + Window::halfWidthOfGameTransform);
+		spawnVertices[2] = RoundFiveDown(cameraTransform[0] + Window::halfWidthOfGameTransform) + 30;
+
+	}
+	memoryDefender(spawnVertices, 4);
+	for(int i  = spawnVertices[0]; i < spawnVertices[2]; i++)
+	{
+		int checked = 0;
+		for (int j = 0; j < blocks.at(i).size();j++)
+		{
+			if (spawnVertices[3] > blocks.at(i).at(j).m_Y)
+			{
+				break;
+			}
+			else if(spawnVertices[1] >= blocks.at(i).at(j).m_Y)
+			{
+				if (checked + spawnVertices[1] == blocks.at(i).at(j).m_Y)
+				{
+					checked++;
+				}
+				else
+				{
+					float enemyVertices[4];
+					GetEnemyVerticesByType(enemyType, enemyVertices);
+					int vertices[4];
+					vertices[0] = i;
+					vertices[1] = checked + spawnVertices[1];
+					vertices[2] = i + ceil(abs(enemyVertices[2] - enemyVertices[0]));
+					vertices[3] = checked + spawnVertices[1] - ceil(abs(enemyVertices[1] - enemyVertices[3]));
+					if (!blockInArea(blocks, vertices))
+					{
+						spawntransform[0] = vertices[0] + enemyVertices[2];
+						spawntransform[1] = vertices[1] + enemyVertices[3];
+						return true;
+					}	
+					checked = blocks.at(i).at(j).m_Y - spawnVertices[1] + 1;
+				}
+			}
+
+		}
+	}
+	return false;
+}
+
+void EnemySpawnManager(float deltaTime
 	, unsigned int eob
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
 	, unsigned int* enemiesDD1
 	, unsigned int* enemiesDD2
 	, float* cameraTransform
+	, std::vector< std::vector<Block>>& blocks
 	, std::vector<Enemy>& enemies)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		Enemy e = enemies.at(i);
-		if ((e.m_Transform[0] + e.m_Vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[0] + e.m_Vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform) &&
-			(e.m_Transform[1] + e.m_Vertices[1] < cameraTransform[1] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[1] + e.m_Vertices[3] > cameraTransform[1] - Window::halfWidthOfGameTransform))
+		float vertices[4];
+		GetEnemyVerticesByType(e.m_TypeOfEnemy, vertices);
+		if ((e.m_Transform[0] +vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[0] + vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform) &&
+			(e.m_Transform[1] +vertices[1] < cameraTransform[1] + Window::halfWidthOfGameTransform ||
+			e.m_Transform[1] + vertices[3] > cameraTransform[1] - Window::halfWidthOfGameTransform))
 		{
 			e.m_TimerOutOfCamera += deltaTime;
 			if (e.m_TimerOutOfCamera > 10)
@@ -488,20 +559,16 @@ void EnemySpawnControler(float deltaTime
 			}
 		}
 	}
-	if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 < cameraTransform[1])
+	float a = cameraTransform[1];
+	if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 <= cameraTransform[1])
 	{
 		if (enemies.size() < 4)
 		{
 			float transform[2];
-			if (rand() % 2 == 0)
+			if (getLocationForEnemySpawn(enemySlime, cameraTransform, transform, blocks))
 			{
-
+				enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
 			}
-			else
-			{
-
-			}
-			enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
 		}
 	}
 	else if(0 > cameraTransform[1])
@@ -509,16 +576,10 @@ void EnemySpawnControler(float deltaTime
 		if (enemies.size() < 6)
 		{
 			float transform[2];
-			if (rand() % 2 == 0)
+			if(getLocationForEnemySpawn(enemyZombie, cameraTransform, transform, blocks))
 			{
-
+				enemies.emplace_back(enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
 			}
-			else
-			{
-
-			}
-			enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
-
 		}
 	}
 }

@@ -24,7 +24,7 @@ public:
 		, unsigned int eob);
 	unsigned int m_ID;
 	char m_TypeOfEnemy;
-	float m_Vertices[4];
+
 	float m_Transform[2];
 	float m_Velocity[2];
 	float m_PlayerHitTimer;
@@ -70,5 +70,14 @@ public:
 		, float* scale);
 };
 
+void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices);
 
-void EnemySpawnControler(float deltaTime, float* CameraTrasform, std::vector<Enemy>& enemies);
+void EnemySpawnManager(float deltaTime
+	, unsigned int eob
+	, unsigned int* enemiesTex1
+	, unsigned int* enemiesTex2
+	, unsigned int* enemiesDD1
+	, unsigned int* enemiesDD2
+	, float* cameraTransform
+	, std::vector< std::vector<Block>>& blocks
+	, std::vector<Enemy>& enemies);

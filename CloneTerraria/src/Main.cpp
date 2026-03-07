@@ -309,10 +309,11 @@ int main()
 		
 
 		
-
 		float CameraCoordinates[2];
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+		EnemySpawnManager(deltaTime, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
+
 		for (int i = 0; i < seedlings.size(); i++)
 		{
 			if (seedlings.at(i).everyFrame(deltaTime, treeTextures, treeDD, blocks, seedlings, trees))
