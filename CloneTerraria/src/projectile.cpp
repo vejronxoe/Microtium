@@ -157,7 +157,7 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<tree>& trees
 	, std::vector<DroppedItem>& dropItems
 	, std::vector<BoomParticle>& particles
-	, std::vector<bool>& isSandOnX
+	, std::vector<int>& isSandOnX
 	, unsigned int* blockTextures)
 {
 	float vertices[4];
@@ -579,44 +579,44 @@ void Projectile::Draw(Shader& sh
 	ErrorGL(glBindVertexArray(m_DD));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
-void SandEveryFrame(std::vector<bool>& isSandOnX
+void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
-	,  unsigned int projectileSand
+	, unsigned int projectileSand
 	, unsigned int blockDD)
 {
 	bool checkNext = false;
 	int nextY;
 	for (int i = 0; i < isSandOnX.size(); i++)
 	{
-		if (isSandOnX.at(i))
+		int x = isSandOnX.at(i);
+		checkNext = false;
+		for (int j = 0; j < blocks.at(x).size(); j++)
 		{
-			checkNext = false;
-			for (int j = 0; j < blocks.at(i).size(); j++)
+			if (checkNext)
 			{
-				if (checkNext)
+				checkNext = false;
+				if (blocks.at(x).at(j).m_Y != nextY)
 				{
-					checkNext = false;
-					if (blocks.at(i).at(j).m_Y != nextY)
+					int sizeBefore = isSandOnX.size();
+					projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
+					DestroyBlock(blocks, walls, isSandOnX, x, nextY + 1);
+					j--;
+					if (sizeBefore == isSandOnX.size())
 					{
-					
-						projectiles.emplace_back(p_Sand, i, nextY + 1, 0, -5, 5,blockDD, projectileSand);
-						DestroyBlock(blocks, walls, isSandOnX, i, nextY + 1);
-						j--;
-						if(isSandOnX.at(i) == false)
-						{
-							break;
-						}
+						i--;
+						break;
 					}
-				}
-				
-				if(blocks.at(i).at(j).m_BlockBehavior == b_Sand)
-				{
-					checkNext = true;
-					nextY = blocks.at(i).at(j).m_Y - 1;
 					
 				}
+			}
+
+			if (blocks.at(x).at(j).m_BlockBehavior == b_Sand)
+			{
+				checkNext = true;
+				nextY = blocks.at(x).at(j).m_Y - 1;
+
 			}
 		}
 	}

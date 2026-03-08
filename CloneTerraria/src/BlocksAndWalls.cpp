@@ -204,7 +204,7 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 	, const char* filePathBlocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, int minX
 	, int maxX
 	, int minY
@@ -222,7 +222,6 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 	
 		std::vector<wall> emptyVectorWalls;
 		walls.push_back(emptyVectorWalls);
-		isThereSandOnX.push_back(false);
 	}
 	{
 		std::ifstream map(filePathBlocks);
@@ -365,9 +364,15 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	{
 		for (int i = 0; i < blocks.at(j).size(); i++)
 		{
-			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= blocks.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= blocks.at(j).at(i).m_Y)
+			int y = blocks.at(j).at(i).m_Y;
+			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > y)
+			{
+				break;
+			}
+			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) > y)
 			{
 				blocks.at(j).at(i).DrawBlock(basicSh, j, transform);
+
 			}
 		}
 	}
@@ -389,6 +394,21 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 	wallsSh.Bind();
 	wallsSh.SetUniform1i(basicSize + ShadowLocation, 1);
 	wallsSh.SetUniformMat4(basicCamera, camera);
+	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
+	{
+		for (int i = 0; i < walls.at(j).size(); i++)
+		{
+			int y = walls.at(j).at(i).m_Y;
+			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > y)
+			{
+				break;
+			}
+			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) > y)
+			{
+				walls.at(j).at(i).drawWalls(wallsSh, j, transform);
+			}
+		}
+	}
 	for (int j = 0; j < walls.size(); j++)
 	{
 		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform) < j)
@@ -399,7 +419,8 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 		{
 			for (int i = 0; i < walls.at(j).size(); i++)
 			{
-				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= walls.at(j).at(i).m_Y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls.at(j).at(i).m_Y)
+				int y = walls.at(j).at(i).m_Y;
+				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
 				{
 					walls.at(j).at(i).drawWalls(wallsSh, j, transform);
 
@@ -454,7 +475,7 @@ void CreateBlock(int x
 	, unsigned short int IDOfItemBlock
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, unsigned int* texturesIDs)
 {
 	int indexToPlace = 0;
@@ -493,7 +514,7 @@ void CreateBlock(int x
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], y, b_BasicSolid, 20, i_ForestPlank);
 		break;
 	case i_Sand:
-		isThereSandOnX.at(x) = true;
+		isThereSandOnX.emplace_back(x);
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_Sand, 20, i_Sand);
 		break;
 	}
@@ -502,7 +523,7 @@ void CreateBlock(int x
 
 void DestroyBlock(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y)
 {
@@ -522,13 +543,24 @@ void DestroyBlock(std::vector<std::vector<Block>>& blocks
 		}
 		if (blocks.at(x).at(index).m_BlockBehavior == b_Sand)
 		{
-
-			isThereSandOnX.at(x) = false;
+		
+			bool isThereSand = false;
 			for (int i = 0; i < blocks.at(x).size(); i++)
 			{
 				if (blocks.at(x).at(i).m_BlockBehavior == b_Sand && blocks.at(x).at(i).m_Y != y)
 				{
-					isThereSandOnX.at(x) = true;
+					isThereSand = true;
+				}
+			}
+			if (!isThereSand)
+			{
+				for (int i = 0; i < isThereSandOnX.size();i++)
+				{
+					if (isThereSandOnX.at(i) == x)
+					{
+						isThereSandOnX.erase(isThereSandOnX.begin() + i);
+						break;
+					}
 				}
 			}
 		}

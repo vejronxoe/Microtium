@@ -905,7 +905,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<Enemy>& enemies
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, std::vector<CraftStation>& craftStations
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
@@ -2503,10 +2503,11 @@ void Player::EveryFrame(float deltaTime
 					float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1] };
 					for (int i = 0; i < enemies.size(); i++)
 					{
-						if (enemies.at(i).m_Transform[0] - m_Transform[0] * m_DirectionLook >= 0)
+						if ((enemies.at(i).m_Transform[0] - m_Transform[0])*m_DirectionLook >= 0)
 						{
 							float distance[2] = { enemies.at(i).m_Transform[0] - pointOfRotation[0], enemies.at(i).m_Transform[1] - pointOfRotation[1] };
 							float enemyVertices[4];
+
 							GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
 							float distanceVertices[4] = { distance[0] - enemyVertices[0], distance[1] - enemyVertices[1] , distance[0] - enemyVertices[2] , distance[1] - enemyVertices[2] };
 							for (int j = 0; j < 2; j++)
@@ -2549,7 +2550,9 @@ void Player::EveryFrame(float deltaTime
 										}
 									}
 								}
+
 							}
+
 						}
 
 					}

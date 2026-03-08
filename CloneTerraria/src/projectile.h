@@ -60,7 +60,7 @@ struct Projectile
 		, std::vector<tree>& trees
 		, std::vector<DroppedItem>& dropItems
 		, std::vector<BoomParticle>& particles
-		, std::vector<bool>& isSandOnX
+		, std::vector<int>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh
 		, float* transform
@@ -68,7 +68,7 @@ struct Projectile
 		, float* rotation);
 };
 
-void SandEveryFrame(std::vector<bool>& isSandOnX
+void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls

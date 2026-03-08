@@ -8,7 +8,7 @@
 #include"glfw/Window.h"
 #include"Collision.h"
 
-
+#define SPAWNCOLDDOWN 4
 #define DESPAWNTIME 10
 #define ZOMBIEMOVEMENT 5
 #define ZOMBIEWALK 0.5f
@@ -512,15 +512,22 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 					GetEnemyVerticesByType(enemyType, enemyVertices);
 					int vertices[4];
 					vertices[0] = i;
-					vertices[1] = checked + spawnVertices[1];
+					vertices[1] = blocks.at(i).at(j).m_Y+1 + ceil(abs(enemyVertices[1] - enemyVertices[3]));
 					vertices[2] = i + ceil(abs(enemyVertices[2] - enemyVertices[0]));
-					vertices[3] = checked + spawnVertices[1] - ceil(abs(enemyVertices[1] - enemyVertices[3]));
-					if (!blockInArea(blocks, vertices))
+					vertices[3] = blocks.at(i).at(j).m_Y + 1;
+					
+					while (vertices[1] > checked + spawnVertices[1])
 					{
-						spawntransform[0] = vertices[0] + enemyVertices[2];
-						spawntransform[1] = vertices[1] + enemyVertices[3];
-						return true;
-					}	
+						if (!blockInArea(blocks, vertices))
+						{
+							spawntransform[0] = vertices[0] + enemyVertices[2];
+							spawntransform[1] = vertices[1] + enemyVertices[3];
+							return true;
+						}
+						vertices[1] += ceil(abs(enemyVertices[1] - enemyVertices[3]));
+						vertices[3] += ceil(abs(enemyVertices[1] - enemyVertices[3]));
+
+					}
 					checked = blocks.at(i).at(j).m_Y - spawnVertices[1] + 1;
 				}
 			}
@@ -531,6 +538,7 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 }
 
 void EnemySpawnManager(float deltaTime
+	, float& spawnTimer
 	, unsigned int eob
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
@@ -559,27 +567,34 @@ void EnemySpawnManager(float deltaTime
 			}
 		}
 	}
-	float a = cameraTransform[1];
-	if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 <= cameraTransform[1])
+	if (spawnTimer > SPAWNCOLDDOWN)
 	{
-		if (enemies.size() < 4)
+		if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 <= cameraTransform[1])
 		{
-			float transform[2];
-			if (getLocationForEnemySpawn(enemySlime, cameraTransform, transform, blocks))
+			if (enemies.size() < 4)
 			{
-				enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
+				float transform[2];
+				if (getLocationForEnemySpawn(enemySlime, cameraTransform, transform, blocks))
+				{
+					enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
+				}
 			}
 		}
+		else if (0 > cameraTransform[1])
+		{
+			if (enemies.size() < 6)
+			{
+				float transform[2];
+				if (getLocationForEnemySpawn(enemyZombie, cameraTransform, transform, blocks))
+				{
+					enemies.emplace_back(enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
+				}
+			}
+		}
+		spawnTimer = 0;
 	}
-	else if(0 > cameraTransform[1])
+	else
 	{
-		if (enemies.size() < 6)
-		{
-			float transform[2];
-			if(getLocationForEnemySpawn(enemyZombie, cameraTransform, transform, blocks))
-			{
-				enemies.emplace_back(enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, transform[0], transform[1], eob);
-			}
-		}
+		spawnTimer += deltaTime;
 	}
 }

@@ -73,6 +73,7 @@ public:
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices);
 
 void EnemySpawnManager(float deltaTime
+	, float& spawnTimer
 	, unsigned int eob
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2

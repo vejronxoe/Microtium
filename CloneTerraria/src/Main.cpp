@@ -248,7 +248,7 @@ int main()
 	std::vector<tree> trees;
 	std::vector<damagedWood> damagedTrees;
 	std::vector<seedling> seedlings;
-	std::vector<bool> isSandOnX;
+	std::vector<int> isSandOnX;
 	std::vector<Enemy> enemies;
 	std::vector<BoomParticle> boomParticles; 
 	std::vector<Projectile> projectiles;
@@ -299,6 +299,7 @@ int main()
 	float deltaTime;
 	float printFPSTimer = 1;
 	float oldDeltaTime;
+	float spawnTimer =0;
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -312,7 +313,7 @@ int main()
 		float CameraCoordinates[2];
 		CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 		CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
-		EnemySpawnManager(deltaTime, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
+		EnemySpawnManager(deltaTime, spawnTimer, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
 
 		for (int i = 0; i < seedlings.size(); i++)
 		{

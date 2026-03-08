@@ -106,7 +106,7 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 	, const char* filePathBlocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, int minX
 	, int maxX
 	, int minY
@@ -139,11 +139,11 @@ void CreateBlock(int x
 	, unsigned short int IDOfItemBlock
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, unsigned int* texturesIDs);
 void DestroyBlock(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
-	, std::vector<bool>& isThereSandOnX
+	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y);
 
