@@ -19,6 +19,29 @@ namespace Blocks
 	int yMin;
 };
 
+unsigned int getBehaviorByTexture(unsigned int texture)
+{
+	switch (texture)
+	{
+
+	case t_Ice:
+		return b_Slippery;
+		break;
+
+	case t_Asphalt:
+		return b_Asphalt;
+		break;
+
+	case t_Platform:
+		return b_Platform;
+		break;
+
+	default:
+		return b_BasicSolid;
+		break;
+	}
+}
+
 DamagedBlock::DamagedBlock(int x
 	, int y
 	, char HP)

@@ -47,28 +47,9 @@ void DrawCursor(unsigned int* CursorTextures
 		structuresSh.SetUniform1i(basicSize + structureLookAt, player.m_DirectionLook);
 
 
-		switch (player.m_PlayerSlots[0])
-		{
-		case i_Sapling:
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Sapling]));
-			ErrorGL(glBindVertexArray(structurteDD[s_Sapling]));
-			break;
-		case i_CraftingTable:
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_CraftingTable]));
-			ErrorGL(glBindVertexArray(structurteDD[s_CraftingTable]));
-			break;
-		case i_Forge:
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Forge]));
-			ErrorGL(glBindVertexArray(structurteDD[s_Forge]));
-			break;
-		case i_Anvil:
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[s_Anvil]));
-			ErrorGL(glBindVertexArray(structurteDD[s_Anvil]));
-			break;
-		default:
-			std::cout << "error cursor.cpp unknow structure"<< player.m_PlayerSlots[0] << std::endl;
-			break;
-		}
+		char structureID = GetStructureID(player.m_PlayerSlots[0]);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, structurteTextures[structureID]));
+		ErrorGL(glBindVertexArray(structurteDD[structureID]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		structuresSh.SetUniform1i(structureSize + ShadowLocation, 0);
 

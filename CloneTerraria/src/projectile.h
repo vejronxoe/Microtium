@@ -60,6 +60,7 @@ struct Projectile
 		, std::vector<tree>& trees
 		, std::vector<DroppedItem>& dropItems
 		, std::vector<BoomParticle>& particles
+		, std::vector<Chest>& chests
 		, std::vector<int>& isSandOnX
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh

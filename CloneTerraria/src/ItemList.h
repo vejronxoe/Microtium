@@ -14,6 +14,7 @@ enum Items
 	, i_CraftingTable
 	, i_Forge
 	, i_Anvil
+	, i_Chest
 	, i_Dirt
 	, i_Ice
 	, i_Asphalt
@@ -52,6 +53,8 @@ enum Structures
 	s_CraftingTable = 0
 	, s_Forge
 	, s_Anvil
+	, s_Chest
 	, s_Sapling
+	
 
 };

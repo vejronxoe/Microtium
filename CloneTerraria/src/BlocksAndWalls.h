@@ -49,6 +49,7 @@ enum BlockBehavior
 };
 
 void CreateAllBlockTextures(unsigned int* IDs);
+unsigned int getBehaviorByTexture(unsigned int texture);
 
 class Block
 {

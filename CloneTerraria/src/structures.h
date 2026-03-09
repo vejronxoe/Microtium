@@ -2,6 +2,7 @@
 #include"Opengl/Shader.h"
 #include"BlocksAndWalls.h"
 #include "DroppedItems.h"
+#include "flora.h"
 
 struct CraftStation
 {
@@ -9,6 +10,30 @@ struct CraftStation
 	int m_Transform[2];
 	char m_LookAt;
 };
+struct Chest
+{
+	int m_Transform[2];
+	bool m_Indestrucrtible;
+	short int m_Items[50];
+	short int m_amount[50];
+	Chest(int x
+		,int y
+		, std::vector<std::vector<Block>>& blocks);
+	void DestroyChest(std::vector<std::vector<Block>>& blocks);
+};
+int findChest(std::vector<Chest>& structures
+	, float x
+	, float y
+	, bool& found);
+bool IsInAreaChest(std::vector<Chest>& structures
+	, int* vertice);
+
+void DrawChests(std::vector<Chest>& structures
+	, Shader& sh
+	, float* transform
+	, unsigned int* structureDDs
+	, unsigned int* structureTexs);
+
 void DrawCraftStations(std::vector<CraftStation>& structures
 	, Shader& sh
 	, float* transform
@@ -30,3 +55,16 @@ void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<DroppedItem>& droppedItems);
 
+bool isAnythingOnThisTransform(int x
+	, int y
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<seedling>& seedlings
+	, std::vector<tree>& trees
+	, std::vector<CraftStation>& craftingStations
+	, std::vector<Chest>& chests);
+bool isAnythinginArea(int* vertices
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<seedling>& seedlings
+	, std::vector<tree>& trees
+	, std::vector<CraftStation>& craftingStations
+	, std::vector<Chest>& chests);

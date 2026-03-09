@@ -81,7 +81,8 @@ public:
 	float m_Transform[2];
 	float m_Velocity[2];
 	Player(unsigned int eob
-		, unsigned int* texturesIDs);
+		, unsigned int* texturesIDs
+		, unsigned int* structuretexs);
 
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
@@ -103,7 +104,8 @@ public:
 		, std::vector<tree>& trees
 		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems
-		, std::vector<Projectile>& projectiles);
+		, std::vector<Projectile>& projectiles
+		, std::vector<Chest>& chests);
 
 	void DrawPlayer(float deltaTime
 		, Shader& basicSh
@@ -178,7 +180,7 @@ public:
 	bool m_IsInventoryOpen;
 
 
-	unsigned int m_AllItemTextures[44];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[45];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60];

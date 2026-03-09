@@ -3,6 +3,7 @@
 #include "Collision.h"
 #include "itemList.h"
 #include "math/matrix.h"
+#include "structures.h"
 
 Projectile::Projectile(unsigned char projectileType
 	, float x
@@ -157,6 +158,7 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<tree>& trees
 	, std::vector<DroppedItem>& dropItems
 	, std::vector<BoomParticle>& particles
+	, std::vector<Chest>& chests
 	, std::vector<int>& isSandOnX
 	, unsigned int* blockTextures)
 {
@@ -194,20 +196,7 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			int x = roundf(m_Transform[0]);
 			int y = roundf(m_Transform[1]);
-			bool inBlock;
-			FindBlock(blocks, x, y, inBlock);
-			if (!inBlock)
-			{
-				FindWood(trees, x, y, inBlock);
-			}
-			if (!inBlock)
-			{
-				FindSeedling(seedlings, x, y,inBlock);
-			}
-			if (!inBlock)
-			{
-				FindCraftStation(craftStations, x, y, inBlock);
-			}
+			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,chests);
 			if (!inBlock)
 			{
 				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);

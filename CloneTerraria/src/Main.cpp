@@ -200,13 +200,14 @@ int main()
 	unsigned int cursorTextures[6];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
-	unsigned int structuresTextures[4];
+	unsigned int structuresTextures[5];
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
 	CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 	CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 	CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
 	structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
+	structuresTextures[s_Chest] = CreateTextureRGBA("res/textures/Chest.png");
 	structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
 	structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
 	structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
@@ -214,8 +215,9 @@ int main()
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 	unsigned int treeDD[3];
-	unsigned int structuresDD[4];
+	unsigned int structuresDD[5];
 	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+	structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
@@ -234,7 +236,7 @@ int main()
 	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
 
 
-	Player player(eob, blockTextures);
+	Player player(eob, blockTextures,structuresTextures);
 
 
 
@@ -253,6 +255,7 @@ int main()
 	std::vector<BoomParticle> boomParticles; 
 	std::vector<Projectile> projectiles;
 	std::vector<CraftStation> craftStations;
+	std::vector<Chest> chests;
 
 
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 1080, -500, 360, blockTextures);
@@ -260,13 +263,14 @@ int main()
 
 	//
 	// 
-	//
-	// 
-	
-
-	enemies.emplace_back(enemies, enemySlime,enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
+	enemies.emplace_back(enemies, enemySlime, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 100, 100, eob);
 	enemies.emplace_back(enemies, enemyZombie, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, 80, 100, eob);
 
+	chests.emplace_back(130,16,blocks);
+	
+	
+
+	
 
 	CraftStation forge;
 	forge.m_CraftStationtype = s_Forge;
@@ -337,12 +341,12 @@ int main()
 				}
 			}
 		}
-		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles);
+		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles,chests);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles, isSandOnX, blockTextures))
+			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles,chests, isSandOnX, blockTextures))
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}
@@ -429,6 +433,7 @@ int main()
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
 		DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
+		DrawChests(chests, structureSh, transform, structuresDD, structuresTextures);
 		shadowSh.Bind();
 		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 		ErrorGL(glBindVertexArray(itemDD));

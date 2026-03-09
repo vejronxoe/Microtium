@@ -6,6 +6,8 @@
 #include"glfw/input.h"
 #include"glfw/Window.h"
 
+
+
 bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	, float* objVertices
 	, int* vertices

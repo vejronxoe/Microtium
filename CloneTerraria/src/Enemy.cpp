@@ -8,7 +8,7 @@
 #include"glfw/Window.h"
 #include"Collision.h"
 
-#define SPAWNCOLDDOWN 4
+#define SPAWNCOLDDOWN 10
 #define DESPAWNTIME 10
 #define ZOMBIEMOVEMENT 5
 #define ZOMBIEWALK 0.5f
