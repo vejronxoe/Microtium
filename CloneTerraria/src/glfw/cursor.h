@@ -10,6 +10,7 @@ enum cursor
 	canAxeIt,
 	canHammerIt,
 	canPutBin,
+	canOpenChest,
 };
 
 unsigned int CreateCursorDrawData

@@ -17,6 +17,7 @@ unsigned int CreateCursorDrawData
 	CursorTextures[canAxeIt] = CreateTextureRGBA("res/textures/canAxeIt.png");
 	CursorTextures[canHammerIt] = CreateTextureRGBA("res/textures/canHammerIt.png");
 	CursorTextures[canPutBin] = CreateTextureRGBA("res/textures/canPutItInBin.png");
+	CursorTextures[canOpenChest] = CreateTextureRGBA("res/textures/CanChest.png");
 	return drawData;
 }
 void DrawCursor(unsigned int* CursorTextures
@@ -127,6 +128,11 @@ void DrawCursor(unsigned int* CursorTextures
 	else if (player.m_CursorOnMinableWood)
 	{
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canAxeIt]));
+	}
+	else if (player.m_AimingAtChest != -1)
+	{
+
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canOpenChest]));
 	}
 	else
 	{

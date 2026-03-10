@@ -122,6 +122,7 @@
     <Image Include="res\textures\bowInHand.png" />
     <Image Include="res\textures\bowInInv.png" />
     <Image Include="res\textures\canAxeIt.png" />
+    <Image Include="res\textures\CanChest.png" />
     <Image Include="res\textures\canClickon.png" />
     <Image Include="res\textures\canHammerIt.png" />
     <Image Include="res\textures\canNotDo.png" />
@@ -129,6 +130,7 @@
     <Image Include="res\textures\canonInv.png" />
     <Image Include="res\textures\canPickaxeIt.png" />
     <Image Include="res\textures\canPutItInBin.png" />
+    <Image Include="res\textures\Chest.png" />
     <Image Include="res\textures\ChestPlateSlot.png" />
     <Image Include="res\textures\copper.png" />
     <Image Include="res\textures\cooperAxe.png" />
@@ -176,6 +178,7 @@
     <Image Include="res\textures\missingTopGrassBlock.png" />
     <Image Include="res\textures\nothingIngredientSlot.png" />
     <Image Include="res\textures\Numbers.png" />
+    <Image Include="res\textures\OpenChest.png" />
     <Image Include="res\textures\PantsSlot.png" />
     <Image Include="res\textures\pistolHand.png" />
     <Image Include="res\textures\pistolInv.png" />
@@ -186,6 +189,7 @@
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingInv.png" />
     <Image Include="res\textures\scrapCannonBall.png" />
+    <Image Include="res\textures\ShoesSlot.png" />
     <Image Include="res\textures\slimeAnim.png" />
     <Image Include="res\textures\topDownGrassBlock.png" />
     <Image Include="res\textures\topGrassBlock.png" />

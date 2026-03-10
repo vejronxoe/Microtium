@@ -60,8 +60,7 @@ private:
 	float m_TimerCrafting;
 	float m_NumberOfRecipesDone;
 
-
-
+	
 private:
 	bool m_FloorHit;
 	bool m_CeilHit;
@@ -71,6 +70,9 @@ private:
 	float m_JumpTimer;
 	bool m_CanJump;
 public:
+	int m_AimingAtChest;
+	int m_IndexOfOpenChest;
+
 	short int m_DirectionLook;
 	unsigned int m_FloorBehaviour;
 	int m_JumpPower;
@@ -114,6 +116,7 @@ public:
 		, Shader& animSh
 		, Shader& handSh
 		, Shader& particlesSh
+		, std::vector<Chest>& chests
 		, float* transform
 		, float* scale
 		, float* rotation
@@ -173,6 +176,7 @@ public:
 	float m_HalfOfSlotLeanght;
 	unsigned char m_HUDUseSlot;
 	unsigned int m_UseSlotTexture;
+	unsigned int m_ChestSlotTexture;
 	unsigned int m_MissingSlotTexture;
 	unsigned int m_NothingSlotTexture;
 	unsigned char m_AimingAtSlot;

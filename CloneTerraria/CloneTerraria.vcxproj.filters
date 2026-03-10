@@ -510,5 +510,17 @@
     <Image Include="res\textures\dot.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\ShoesSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Chest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CanChest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\OpenChest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

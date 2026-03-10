@@ -197,10 +197,11 @@ int main()
 	unsigned int enemiesDD1[enemySize];
 	unsigned int enemiesDD2[enemySize];
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned int cursorTextures[6];
+	unsigned int cursorTextures[7];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
 	unsigned int structuresTextures[5];
+	unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
 	CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
@@ -433,7 +434,7 @@ int main()
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
 		DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
-		DrawChests(chests, structureSh, transform, structuresDD, structuresTextures);
+		DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
 		shadowSh.Bind();
 		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 		ErrorGL(glBindVertexArray(itemDD));
@@ -511,7 +512,7 @@ int main()
 		{
 			projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 		}
-		player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
+		player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, chests, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
 		fontSh.Bind();
 		ErrorGL(glBindVertexArray(fontDrawData));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));

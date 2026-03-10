@@ -10,11 +10,13 @@ Chest::Chest(int x
 	m_Indestrucrtible = false;
 	for (int i= 0; i < 50; i++)
 	{
-		m_amount[i] = 0;
-		m_Items[i] = 0;
+		m_amount[i] = 16;
+		m_Items[i] = 8;
 	}
+
 	m_Transform[0] = x;
 	m_Transform[1] = y;
+	m_Open = false;
 	bool found = false;
 	int index = FindBlock(blocks, x, y - 1, found);
 	blocks.at(x).at(index).m_BlockBehavior = b_Indestructible;
@@ -30,7 +32,7 @@ void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 	blocks.at(m_Transform[0] + 1).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0] + 1).at(index).m_te);
 
 }
-int findChest(std::vector<Chest>& structures
+int FindChest(std::vector<Chest>& structures
 	, float x
 	, float y
 	, bool& found)
@@ -64,6 +66,7 @@ bool IsInAreaChest(std::vector<Chest>& structures
 void DrawChests(std::vector<Chest>& structures
 	, Shader& sh
 	, float* transform
+	, unsigned int  openChestTex
 	, unsigned int* structureDDs
 	, unsigned int* structureTexs)
 {
@@ -72,10 +75,21 @@ void DrawChests(std::vector<Chest>& structures
 	ErrorGL(glBindVertexArray(structureDDs[s_Chest]));
 	for (int i = 0; i < structures.size(); i++)
 	{
-		ChangeTransform(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], transform);
-		sh.SetUniformMat4(basicTransform, transform);
+		if (structures.at(i).m_Open)
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, openChestTex));
+			ChangeTransform(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], transform);
+			sh.SetUniformMat4(basicTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structureTexs[s_Chest]));
+		}
+		else
+		{
+			ChangeTransform(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], transform);
+			sh.SetUniformMat4(basicTransform, transform);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
 	}
 }
 
@@ -252,7 +266,7 @@ bool isAnythingOnThisTransform(int x
 	{
 		return true;
 	}
-	findChest(chests,x,y,inBlock);
+	FindChest(chests,x,y,inBlock);
 	if (inBlock)
 	{
 		return true;

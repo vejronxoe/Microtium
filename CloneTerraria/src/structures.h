@@ -16,12 +16,13 @@ struct Chest
 	bool m_Indestrucrtible;
 	short int m_Items[50];
 	short int m_amount[50];
+	bool m_Open;
 	Chest(int x
 		,int y
 		, std::vector<std::vector<Block>>& blocks);
 	void DestroyChest(std::vector<std::vector<Block>>& blocks);
 };
-int findChest(std::vector<Chest>& structures
+int FindChest(std::vector<Chest>& structures
 	, float x
 	, float y
 	, bool& found);
@@ -31,6 +32,7 @@ bool IsInAreaChest(std::vector<Chest>& structures
 void DrawChests(std::vector<Chest>& structures
 	, Shader& sh
 	, float* transform
+	, unsigned int  openChestTex
 	, unsigned int* structureDDs
 	, unsigned int* structureTexs);
 

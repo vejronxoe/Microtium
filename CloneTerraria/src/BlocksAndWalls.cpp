@@ -392,7 +392,7 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 			{
 				break;
 			}
-			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) > y)
+			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
 			{
 				blocks.at(j).at(i).DrawBlock(basicSh, j, transform);
 
@@ -426,31 +426,13 @@ void drawWalls(std::vector<DamagedBlock>& damagedWalls
 			{
 				break;
 			}
-			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) > y)
+			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
 			{
 				walls.at(j).at(i).drawWalls(wallsSh, j, transform);
 			}
 		}
 	}
-	for (int j = 0; j < walls.size(); j++)
-	{
-		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform) < j)
-		{
-			break;
-		}
-		if (floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform) <= j)
-		{
-			for (int i = 0; i < walls.at(j).size(); i++)
-			{
-				int y = walls.at(j).at(i).m_Y;
-				if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) <= y && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
-				{
-					walls.at(j).at(i).drawWalls(wallsSh, j, transform);
 
-				}
-			}
-		}
-	}
 	for (int i = 0; i < damagedWalls.size(); i++)
 	{
 		damagedWalls.at(i).DrawDamage(wallsSh, transform, damageTextures);

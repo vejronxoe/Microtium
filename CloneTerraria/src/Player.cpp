@@ -14,6 +14,7 @@
 #define BULLETSTYPES 4
 #define REGENCOLDDOWN 4
 #define CRAFTINGOFFSET 3
+#define ChestReach 8.0f
 
 enum RangeWeaponTypes
 {
@@ -157,7 +158,6 @@ Player::Player(unsigned int eob
 	m_RecipeY = 0;
 
 
-
 	m_FloorHit = false;
 	m_CeilHit = false;
 	m_LeftWallHit = false;
@@ -226,6 +226,9 @@ Player::Player(unsigned int eob
 	m_OnFireTimer = 0;
 	m_SpeedMultiplier = 1;
 	m_IsBurning = false;
+	m_AimingAtChest = -1;
+	m_IndexOfOpenChest = -1;
+
 
 	m_BurningTimer = 0;
 	m_BurnDamageNextTime = 0;
@@ -433,6 +436,7 @@ Player::Player(unsigned int eob
 	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
 	m_MissingSlotTexture = CreateTextureRGBA("res/textures/missingIngredientSlot.png");
 	m_NothingSlotTexture = CreateTextureRGBA("res/textures/nothingIngredientSlot.png");
+	m_ChestSlotTexture = CreateTextureRGBA("res/textures/ChestSlot.png");
 
 	SwapItemStats();
 	
@@ -902,7 +906,18 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<Chest>& chests)
 {
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
-
+	if (chests.size() > m_IndexOfOpenChest && m_IndexOfOpenChest != -1)
+	{
+		if (ChestReach < Pyt2D(m_Transform[0] - chests.at(m_IndexOfOpenChest).m_Transform[0], m_Transform[1] - chests.at(m_IndexOfOpenChest).m_Transform[1]))
+		{
+			chests.at(m_IndexOfOpenChest).m_Open = false;
+			m_IndexOfOpenChest = -1;
+		}
+	}
+	else
+	{
+		m_IndexOfOpenChest = -1;
+	}
 	//Crafting 
 	if (m_IsInventoryOpen)
 	{
@@ -1477,6 +1492,11 @@ void Player::EveryFrame(float deltaTime
 		{
 			if (m_IsInventoryOpen)
 			{
+				if (m_IndexOfOpenChest != -1)
+				{
+					chests.at(m_IndexOfOpenChest).m_Open = false;
+					m_IndexOfOpenChest = -1;
+				}
 				m_IsInventoryOpen = false;
 				if (m_UseSlot != 0)
 				{
@@ -1519,6 +1539,7 @@ void Player::EveryFrame(float deltaTime
 		int seedlingIndex = -1;
 		int chestIndex = -1;
 		int wallIndex = -1;
+		m_AimingAtChest = -1;
 		int woodIndex = 0;
 		bool inBlock = false;
 
@@ -1548,10 +1569,36 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
 		m_CursorOnMinableWood = false;
+		if (ChestReach >= sqrtf(rangeX * rangeX + rangeY * rangeY))
+		{
+			bool found = false;
+			m_AimingAtChest = FindChest(chests, x, y, found);
+			if (Input::RightMousePress && found)
+			{
+				m_IsInventoryOpen = true;
 
+				if (m_IndexOfOpenChest == m_AimingAtChest)
+				{
+					chests.at(m_IndexOfOpenChest).m_Open = false;
+					m_IndexOfOpenChest = -1;
+				}
+				else
+				{
+					
+					if (m_IndexOfOpenChest != -1)
+					{
+						chests.at(m_IndexOfOpenChest).m_Open = false;
+					}
+					m_IndexOfOpenChest = m_AimingAtChest;
+					chests.at(m_IndexOfOpenChest).m_Open = true;
 
+				}
+			}
+		}
 		if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
+
+			
 			if (m_Placeable)
 			{
 
@@ -1625,7 +1672,7 @@ void Player::EveryFrame(float deltaTime
 				}
 				if (!m_CursorOnMinableBlock)
 				{
-					chestIndex = findChest(chests, x, y, m_CursorOnMinableBlock);
+					chestIndex = FindChest(chests, x, y, m_CursorOnMinableBlock);
 					if (m_CursorOnMinableBlock)
 					{
 						if (chests.at(chestIndex).m_Indestrucrtible)
@@ -1824,10 +1871,15 @@ void Player::EveryFrame(float deltaTime
 					}
 					else if (chestIndex != -1)
 					{
+						if (m_IndexOfOpenChest != -1)
+						{
+							chests.at(m_IndexOfOpenChest).m_Open = false;
+							m_IndexOfOpenChest = -1;
+						}
+
 						chests.at(chestIndex).DestroyChest(blocks);
 						droppedItems.emplace_back(x, y, 0, i_Chest, 1, true);
 						chests.erase(chests.begin() + chestIndex);
-
 					}
 					else if (seedlingIndex != -1)
 					{
@@ -2166,6 +2218,7 @@ void Player::EveryFrame(float deltaTime
 	// moving player 
 	m_CoyoteTimer += deltaTime;
 	{
+		
 		if (m_ArmsBehaviour != ArmUsing)
 		{
 			if (Input::DHold)
@@ -2590,6 +2643,7 @@ void Player::DrawPlayer(float deltaTime
 	, Shader& animSh
 	, Shader& handSh
 	, Shader& particlesSh
+	, std::vector<Chest>& chests
 	, float* transform
 	, float* scale
 	, float* rotation
@@ -2775,6 +2829,57 @@ void Player::DrawPlayer(float deltaTime
 			ChangeScale(1, 1, scale);
 			HUDSh.SetUniformMat4(HUDScale, scale);
 		}
+
+
+		if (m_IndexOfOpenChest != -1)
+		{
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ChestSlotTexture));
+			for (int i = 6; i < 11; i++)
+			{
+
+				for (int j = 0; j < 10; j++)
+				{
+					ChangeTransform(j* m_SlotGap, -i * m_SlotGap, transform);
+					HUDSh.SetUniformMat4(HUDTransform, transform);
+					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+				}
+				ChangeScale(0.8f, 0.8f, scale);
+				HUDSh.SetUniformMat4(HUDScale, scale);
+
+				for (int j = 0; j < 10; j++)
+				{
+
+					if (chests.at(m_IndexOfOpenChest).m_Items[((i - 6) * 10) + j ] != i_Nothing)
+					{
+						if (chests.at(m_IndexOfOpenChest).m_Items[((i-6) * 10) + (j + 1)] >= i_WallDirt && chests.at(m_IndexOfOpenChest).m_Items[(i * 10) + j ] <= i_WallIce)
+						{
+							HUDSh.SetUniform1i(HUDSize + HUDShadow, 1);
+							ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
+							HUDSh.SetUniformMat4(HUDTransform, transform);
+							ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[chests.at(m_IndexOfOpenChest).m_Items[((i - 6) * 10) + j ]]));
+							ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+						}
+						else
+						{
+							HUDSh.SetUniform1i(HUDSize + HUDShadow, 0);
+							ChangeTransform(j * m_SlotGap, -i * m_SlotGap, transform);
+							HUDSh.SetUniformMat4(HUDTransform, transform);
+							ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[chests.at(m_IndexOfOpenChest).m_Items[((i - 6) * 10) + j ]]));
+							ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+						}
+					}
+				}
+				HUDSh.SetUniform1i(HUDSize + HUDShadow, 0);
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ChestSlotTexture));
+				ChangeScale(1, 1, scale);
+				HUDSh.SetUniformMat4(HUDScale, scale);
+
+			}
+		}
+
+
 		for (int i = 0; i < m_NumberOfVisibleRecipes; i++)
 		{
 			if (!(i - m_RecipeY > 3 || i - m_RecipeY < -3))
@@ -2917,7 +3022,18 @@ void Player::DrawPlayer(float deltaTime
 				drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - i * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[(i * 10) + j + 1], scale, transform, fontSh);
 			}
 		}
-		
+		if (m_IndexOfOpenChest != -1)
+		{
+			for (int i = 6; i < 11; i++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+					float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
+					float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
+					drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - i * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, chests.at(m_IndexOfOpenChest).m_amount[((i-6) * 10) + j], scale, transform, fontSh);
+				}
+			}
+		}
 			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + 9 * m_SlotGap);
 			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + 9 * m_SlotGap);
 			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght - 5 * m_SlotGap, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[51], scale, transform, fontSh);
