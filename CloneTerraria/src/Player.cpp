@@ -2531,7 +2531,7 @@ void Player::EveryFrame(float deltaTime
 								holder[1] = distanceVertices[1 + 2 * j];
 								for (int l = 0; l < 2; l++)
 								{
-									holder[0] = distanceVertices[2 * i];
+									holder[0] = distanceVertices[2 * l];
 									if (Pyt2D(holder) < Pyt2D(distance))
 									{
 										distance[0] = holder[0];

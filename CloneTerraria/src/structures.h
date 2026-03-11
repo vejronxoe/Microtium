@@ -12,6 +12,7 @@ struct CraftStation
 };
 struct Chest
 {
+
 	int m_Transform[2];
 	bool m_Indestrucrtible;
 	short int m_Items[50];

@@ -73,6 +73,7 @@ public:
 	int m_AimingAtChest;
 	int m_IndexOfOpenChest;
 
+
 	short int m_DirectionLook;
 	unsigned int m_FloorBehaviour;
 	int m_JumpPower;
