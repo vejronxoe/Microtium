@@ -86,7 +86,10 @@ public:
 	Player(unsigned int eob
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
-
+	void slotsSwap(float deltaTime
+		, unsigned short* amount
+		, unsigned short* items
+		, int begin);
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
 	void DamagePlayer(float* transfromAttacker

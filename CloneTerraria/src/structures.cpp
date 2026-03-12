@@ -7,7 +7,7 @@ Chest::Chest(int x
 	, int y
 	, std::vector<std::vector<Block>>& blocks)
 {
-	
+	 
 	m_Indestrucrtible = false;
 	for (int i= 0; i < 50; i++)
 	{

@@ -15,8 +15,8 @@ struct Chest
 
 	int m_Transform[2];
 	bool m_Indestrucrtible;
-	short int m_Items[50];
-	short int m_amount[50];
+	unsigned short int m_Items[50];
+	unsigned short int m_amount[50];
 	bool m_Open;
 	Chest(int x
 		,int y

@@ -133,6 +133,149 @@ char WhatPartOfArmor(unsigned char item)
 
 }
 
+void Player::slotsSwap(float deltaTime
+	, unsigned short* amount
+	, unsigned short* items
+	, int begin)
+{
+	if (items[m_AimingAtSlot] == i_Nothing && (m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
+	{
+		m_AimingAtSlot = begin;
+	}
+	else if (Input::RightMouseHold && m_AimingAtSlot != begin && items[m_AimingAtSlot] && (m_PlayerSlots[0] == items[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0))
+	{
+		if (m_TimerSplitingItem == 1 && (m_AmountInSlots[0] != 9999 || m_UseSlot == 0))
+		{
+			if (m_UseSlot == 0)
+			{
+				m_AmountInSlots[0] = 0;
+			}
+			amount[m_AimingAtSlot]--;
+			m_AmountInSlots[0]++;
+			m_PlayerSlots[0] = items[m_AimingAtSlot];
+			if (amount[m_AimingAtSlot] <= 0)
+			{
+				items[m_AimingAtSlot] == i_Nothing;
+			}
+			m_UseSlot = m_AimingAtSlot;
+			SwapItemStats();
+		}
+		else if (amount[m_AimingAtSlot] - m_ItemsToTake < 0)
+		{
+			m_AmountInSlots[0] += amount[m_AimingAtSlot];
+			amount[m_AimingAtSlot] = 0;
+			m_AddNextFrameDropItem = 0;
+			items[m_AimingAtSlot] = i_Nothing;
+		}
+		else if (m_AmountInSlots[0] + floorf(m_ItemsToTake) >= 9999)
+		{
+			amount[m_AimingAtSlot] -= 9999 - m_AmountInSlots[0];
+			m_AmountInSlots[0] = 9999;
+			m_AddNextFrameDropItem = 0;
+		}
+		else
+		{
+			m_AmountInSlots[0] += floorf(m_ItemsToTake);
+			amount[m_AimingAtSlot] -= floorf(m_ItemsToTake);
+			m_AddNextFrameDropItem = m_ItemsToTake - floorf(m_ItemsToTake);
+		}
+		float oldTimer = m_TimerSplitingItem;
+		m_TimerSplitingItem += deltaTime;
+		m_ItemsToTake = 2 * m_TimerSplitingItem * deltaTime + 1.0f / 2.0f * (2 * m_TimerSplitingItem - oldTimer) * deltaTime + m_AddNextFrameDropItem;
+	}
+	else if (Input::LeftMouseHold && m_AimingAtSlot != begin)
+	{
+		if (m_UseSlot == 0)
+		{
+			m_PlayerSlots[0] = i_Nothing;
+			m_AmountInSlots[0] = 0;
+		}
+
+		if (m_AimingAtSlot == 51)
+		{
+
+			m_UseSlot = 51;
+			if (m_PlayerSlots[0] == i_Nothing)
+			{
+				m_PlayerSlots[0] = items[m_UseSlot];
+				m_AmountInSlots[0] = amount[m_UseSlot];
+				items[m_UseSlot] = i_Nothing;
+				amount[m_UseSlot] = 0;
+			}
+			else
+			{
+				items[m_UseSlot] = m_PlayerSlots[0];
+				amount[m_UseSlot] = m_AmountInSlots[0];
+				m_UseSlot = 0;
+				m_PlayerSlots[0] = items[m_HUDUseSlot];
+				m_AmountInSlots[0] = amount[m_HUDUseSlot];
+			}
+			SwapItemStats();
+		}
+		else if (Input::CtrlHold)
+		{
+			if (items[m_AimingAtSlot] != i_Nothing)
+			{
+				items[51] = items[m_AimingAtSlot];
+				amount[51] = amount[m_AimingAtSlot];
+				items[m_AimingAtSlot] = i_Nothing;
+				amount[m_AimingAtSlot] = 0;
+				if (m_UseSlot == 0)
+				{
+					m_PlayerSlots[0] = items[m_HUDUseSlot];
+					m_AmountInSlots[0] = amount[m_HUDUseSlot];
+					SwapItemStats();
+				}
+			}
+		}
+		else
+		{
+			m_UseSlot = m_AimingAtSlot;
+			if (items[m_UseSlot] == m_PlayerSlots[0] && IsItStackble(m_PlayerSlots[0]) && m_AmountInSlots[0] != 9999 && amount[m_UseSlot] != 9999)
+			{
+				if (m_AmountInSlots[0] + amount[m_UseSlot] <= 9999)
+				{
+					amount[m_UseSlot] += m_AmountInSlots[0];
+					m_UseSlot = 0;
+					m_PlayerSlots[0] = 0;
+					m_AmountInSlots[0] = 0;
+				}
+				else
+				{
+					short int holdForAmountInSlot = m_AmountInSlots[0] + amount[m_UseSlot] - 9999;
+					amount[m_UseSlot] += m_AmountInSlots[0] - holdForAmountInSlot;
+					m_AmountInSlots[0] = holdForAmountInSlot;
+				}
+			}
+			else if (m_PlayerSlots[0] == i_Nothing)
+			{
+				m_PlayerSlots[0] = items[m_UseSlot];
+				m_AmountInSlots[0] = amount[m_UseSlot];
+				items[m_UseSlot] = i_Nothing;
+				amount[m_UseSlot] = 0;
+			}
+			else if (items[m_UseSlot] == i_Nothing)
+			{
+				items[m_UseSlot] = m_PlayerSlots[0];
+				amount[m_UseSlot] = m_AmountInSlots[0];
+				m_UseSlot = 0;
+				m_PlayerSlots[0] = items[m_HUDUseSlot];
+				m_AmountInSlots[0] = amount[m_HUDUseSlot];
+			}
+			else
+			{
+				unsigned short int holdForPlyerSlot = items[m_UseSlot];
+				unsigned short int holdForAmountInSlot = amount[m_UseSlot];
+				items[m_UseSlot] = m_PlayerSlots[0];
+				amount[m_UseSlot] = m_AmountInSlots[0];
+				m_PlayerSlots[0] = holdForPlyerSlot;
+				m_AmountInSlots[0] = holdForAmountInSlot;
+			}
+			SwapItemStats();
+		}
+	}
+
+}
 
 Player::Player(unsigned int eob
 	, unsigned int* texturesIDs
@@ -1080,7 +1223,19 @@ void Player::EveryFrame(float deltaTime
 					}
 				}
 			}
-
+			if (m_IndexOfOpenChest != -1)
+			{
+				for (int i = 0; i < 11; i++)
+				{
+					if (slotVertices[1] + i * m_SlotGap <= Input::YRawMousePos && slotVertices[3] + i * m_SlotGap >= Input::YRawMousePos)
+					{
+						slotCoordinates[1] = i;
+						break;
+					}
+				}
+			}
+			else
+			{
 			for (int i = 0; i < 6; i++)
 			{
 				if (slotVertices[1] + i * m_SlotGap <= Input::YRawMousePos && slotVertices[3] + i * m_SlotGap >= Input::YRawMousePos)
@@ -1090,6 +1245,7 @@ void Player::EveryFrame(float deltaTime
 				}
 			}
 
+			}
 			slotVertices[0] = m_HPOffset[0] - m_HalfOfSlotLeanght;
 			slotVertices[1] = Window::height - m_HPOffset[1] - m_HalfOfSlotLeanght;
 			slotVertices[2] = m_HPOffset[0] + m_HalfOfSlotLeanght;
@@ -1136,7 +1292,7 @@ void Player::EveryFrame(float deltaTime
 							SwapAccessorise(0, m_AimingAtSlot);
 							if (m_UseSlot == 0)
 							{
-								m_UseSlot = m_AimingAtSlot;
+								m_UseSlot = 1;
 							}
 							SwapItemStats();
 						}
@@ -1160,7 +1316,7 @@ void Player::EveryFrame(float deltaTime
 							}
 							if (m_UseSlot == 0)
 							{
-								m_UseSlot = m_AimingAtSlot;
+								m_UseSlot = 1;
 							}
 							SwapItemStats();
 						}
@@ -1169,7 +1325,7 @@ void Player::EveryFrame(float deltaTime
 							SwapArmor(0, typeOfArmor);
 							if (m_UseSlot == 0)
 							{
-								m_UseSlot = m_AimingAtSlot;
+								m_UseSlot = 1;
 							}
 							SwapItemStats();
 						}
@@ -1275,152 +1431,34 @@ void Player::EveryFrame(float deltaTime
 				else if (slotCoordinates[0] != 10)
 				{
 					//inventory
-					if (slotCoordinates[1] == 5)
+					if (slotCoordinates[1] < 6)
 					{
-						m_AimingAtSlot = 51;
-					}
-					else
-					{
-						m_AimingAtSlot = slotCoordinates[0] + slotCoordinates[1] * 10 + 1;
-					}
-					if (m_PlayerSlots[m_AimingAtSlot] == i_Nothing && (m_UseSlot == 0 || m_PlayerSlots[0] == i_Nothing))
-					{
-						m_AimingAtSlot = 0;
-					}
-					if (Input::RightMouseHold && m_AimingAtSlot && m_PlayerSlots[m_AimingAtSlot] && (m_PlayerSlots[0] == m_PlayerSlots[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0))
-					{
-						if (m_TimerSplitingItem == 1 && (m_AmountInSlots[0] != 9999 || m_UseSlot == 0))
+						if (slotCoordinates[1] == 5)
 						{
-							if (m_UseSlot == 0)
-							{
-								m_AmountInSlots[0] = 0;
-							}
-							m_AmountInSlots[m_AimingAtSlot]--;
-							m_AmountInSlots[0]++;
-							m_PlayerSlots[0] = m_PlayerSlots[m_AimingAtSlot];
-							if (m_AmountInSlots[m_AimingAtSlot] <= 0)
-							{
-								m_PlayerSlots[m_AimingAtSlot] == i_Nothing;
-							}
-							m_UseSlot = m_AimingAtSlot;
-							SwapItemStats();
-						}
-						else if (m_AmountInSlots[m_AimingAtSlot] - m_ItemsToTake < 0)
-						{
-							m_AmountInSlots[0] += m_AmountInSlots[m_AimingAtSlot];
-							m_AmountInSlots[m_AimingAtSlot] = 0;
-							m_AddNextFrameDropItem = 0;
-							m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
-						}
-						else if (m_AmountInSlots[0] + floorf(m_ItemsToTake) >= 9999)
-						{
-							m_AmountInSlots[m_AimingAtSlot] -= 9999 - m_AmountInSlots[0];
-							m_AmountInSlots[0] = 9999;
-							m_AddNextFrameDropItem = 0;
+							m_AimingAtSlot = 51;
 						}
 						else
 						{
-							m_AmountInSlots[0] += floorf(m_ItemsToTake);
-							m_AmountInSlots[m_AimingAtSlot] -= floorf(m_ItemsToTake);
-							m_AddNextFrameDropItem = m_ItemsToTake - floorf(m_ItemsToTake);
+							m_AimingAtSlot = slotCoordinates[0] + slotCoordinates[1] * 10 + 1;
 						}
-						float oldTimer = m_TimerSplitingItem;
-						m_TimerSplitingItem += deltaTime;
-						m_ItemsToTake = 2 * m_TimerSplitingItem * deltaTime + 1.0f / 2.0f * (2 * m_TimerSplitingItem - oldTimer) * deltaTime + m_AddNextFrameDropItem;
+						slotsSwap(deltaTime, m_AmountInSlots ,m_PlayerSlots, 0);
+
 					}
-					else if (Input::LeftMouseHold && m_AimingAtSlot)
+					else if (m_IndexOfOpenChest != -1)
 					{
-						if (m_UseSlot == 0)
-						{
-							m_PlayerSlots[0] = i_Nothing;
-							m_AmountInSlots[0] = 0;
-						}
+						m_AimingAtSlot = slotCoordinates[0] + (slotCoordinates[1] - 6) * 10;
 
-						if (m_AimingAtSlot == 51)
+						slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
+						if (m_AimingAtSlot == 0)
 						{
-
-							m_UseSlot = 51;
-							if (m_PlayerSlots[0] == i_Nothing)
-							{
-								m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
-								m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
-								m_PlayerSlots[m_UseSlot] = i_Nothing;
-								m_AmountInSlots[m_UseSlot] = 0;
-							}
-							else
-							{
-								m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-								m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-								m_UseSlot = 0;
-								m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-								m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-							}
-							SwapItemStats();
+							m_AimingAtSlot = 1;
+							m_UseSlot = 1;
 						}
-						else if (Input::CtrlHold)
+						else if (m_AimingAtSlot == -1)
 						{
-							if (m_PlayerSlots[m_AimingAtSlot] != i_Nothing)
-							{
-								m_PlayerSlots[51] = m_PlayerSlots[m_AimingAtSlot];
-								m_AmountInSlots[51] = m_AmountInSlots[m_AimingAtSlot];
-								m_PlayerSlots[m_AimingAtSlot] = i_Nothing;
-								m_AmountInSlots[m_AimingAtSlot] = 0;
-								if (m_UseSlot == 0)
-								{
-									m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-									m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-									SwapItemStats();
-								}
-							}
-						}
-						else
-						{
-							m_UseSlot = m_AimingAtSlot;
-							if (m_PlayerSlots[m_UseSlot] == m_PlayerSlots[0] && IsItStackble(m_PlayerSlots[0]) && m_AmountInSlots[0] != 9999 && m_AmountInSlots[m_UseSlot] != 9999)
-							{
-								if (m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] <= 9999)
-								{
-									m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0];
-									m_UseSlot = 0;
-									m_PlayerSlots[0] = 0;
-									m_AmountInSlots[0] = 0;
-								}
-								else
-								{
-									short int holdForAmountInSlot = m_AmountInSlots[0] + m_AmountInSlots[m_UseSlot] - 9999;
-									m_AmountInSlots[m_UseSlot] += m_AmountInSlots[0] - holdForAmountInSlot;
-									m_AmountInSlots[0] = holdForAmountInSlot;
-								}
-							}
-							else if (m_PlayerSlots[0] == i_Nothing)
-							{
-								m_PlayerSlots[0] = m_PlayerSlots[m_UseSlot];
-								m_AmountInSlots[0] = m_AmountInSlots[m_UseSlot];
-								m_PlayerSlots[m_UseSlot] = i_Nothing;
-								m_AmountInSlots[m_UseSlot] = 0;
-							}
-							else if (m_PlayerSlots[m_UseSlot] == i_Nothing)
-							{
-								m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-								m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-								m_UseSlot = 0;
-								m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
-								m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
-							}
-							else
-							{
-								unsigned short int holdForPlyerSlot = m_PlayerSlots[m_UseSlot];
-								unsigned short int holdForAmountInSlot = m_AmountInSlots[m_UseSlot];
-								m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
-								m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
-								m_PlayerSlots[0] = holdForPlyerSlot;
-								m_AmountInSlots[0] = holdForAmountInSlot;
-							}
-							SwapItemStats();
+							m_AimingAtSlot = 0;
 						}
 					}
-					
-
 				}
 				else
 				{
