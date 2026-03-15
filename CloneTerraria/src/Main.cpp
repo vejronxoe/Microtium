@@ -180,7 +180,8 @@ int main()
 	CreateRotation(0, rotation);
 	CreateTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
-
+	advancedSh.Bind();
+	advancedSh.SetUniformMat4(advancedRotation,rotation);
 	handSh.Bind();
 	handSh.SetUniformMat4(handBeginTransform, transform);
 	treeSh.Bind();
@@ -201,6 +202,7 @@ int main()
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
 	unsigned int structuresTextures[5];
+	unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png")};
 	unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
@@ -216,12 +218,14 @@ int main()
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 	unsigned int treeDD[3];
-	unsigned int structuresDD[5];
+	unsigned int structuresDD[8];
+	
 	structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
 	structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
+	structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
 	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
 	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
@@ -257,6 +261,7 @@ int main()
 	std::vector<Projectile> projectiles;
 	std::vector<CraftStation> craftStations;
 	std::vector<Chest> chests;
+	std::vector<Door> doors;
 
 
 	LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks,isSandOnX, 0, 1080, -500, 360, blockTextures);
@@ -271,7 +276,7 @@ int main()
 	
 	
 
-	
+	doors.emplace_back(140, 15,s_Door, isSandOnX, walls, blocks);
 
 	CraftStation forge;
 	forge.m_CraftStationtype = s_Forge;
@@ -433,6 +438,7 @@ int main()
 		{
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
+		DrawDoors(doors, advancedSh, structuresDD[s_Door], DoorTextures, transform, scale, rotation);
 		DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 		DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
 		shadowSh.Bind();

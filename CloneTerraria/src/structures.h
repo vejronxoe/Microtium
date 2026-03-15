@@ -23,6 +23,37 @@ struct Chest
 		, std::vector<std::vector<Block>>& blocks);
 	void DestroyChest(std::vector<std::vector<Block>>& blocks);
 };
+struct Door
+{
+	int m_Transform[2];
+	short m_Type;
+	short m_OpenSide;
+	int m_Vertices[4];
+	Door(int x
+		,int y
+		, short type
+		, std::vector<int>& sandX
+		, std::vector< std::vector<wall>>& walls
+		, std::vector<std::vector<Block>>& blocks);
+	void DoorInteract(std::vector<std::vector<Block>>& blocks
+		, std::vector< std::vector<wall>>& walls
+		, std::vector<seedling>& seedlings
+		, std::vector<tree>& trees
+		, std::vector<CraftStation>& craftingStations
+		, std::vector<Chest>& chests
+		, std::vector<int>& sandX
+		, float* playerTransform);
+	void DestroyDoor(std::vector<std::vector<Block>>& blocks
+		, std::vector< std::vector<wall>>& walls
+		, std::vector<int>& sandX);
+};
+void DrawDoors(std::vector<Door>& doors
+	, Shader& sh
+	, unsigned int doorDD
+	, unsigned int* doorTexture
+	, float* transform
+	, float* scale
+	, float* rotation);
 int FindChest(std::vector<Chest>& structures
 	, float x
 	, float y

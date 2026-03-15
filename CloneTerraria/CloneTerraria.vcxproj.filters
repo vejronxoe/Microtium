@@ -522,5 +522,14 @@
     <Image Include="res\textures\OpenChest.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\CloseDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\openDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ChestSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

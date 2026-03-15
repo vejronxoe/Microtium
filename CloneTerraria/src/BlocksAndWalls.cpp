@@ -73,10 +73,13 @@ void Block::DrawBlock(Shader& basicShader
 	, int x
 	, float* transform)
 {
-	ChangeTransform(x, m_Y, transform);
-	basicShader.SetUniformMat4( basicTransform, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	if (m_BlockBehavior != b_Door)
+	{
+		ChangeTransform(x, m_Y, transform);
+		basicShader.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
 }
 
 wall::wall(unsigned int texture
@@ -494,7 +497,7 @@ void CreateBlock(int x
 
 	bool isThereWall;
 	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
-	if (i_Platform != IDOfItemBlock)
+	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
 	{
 		if (isThereWall)
 		{
@@ -522,6 +525,9 @@ void CreateBlock(int x
 		isThereSandOnX.emplace_back(x);
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_Sand, 20, i_Sand);
 		break;
+	case i_DoorBlock:
+		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, 0, y, b_Door, 0, i_Nothing);
+		break;
 	}
 
 }
@@ -537,7 +543,7 @@ void DestroyBlock(std::vector<std::vector<Block>>& blocks
 
 	if (isThererBlock)
 	{
-		if (blocks.at(x).at(index).m_BlockBehavior != b_Platform)
+		if (blocks.at(x).at(index).m_BlockBehavior != b_Platform && blocks.at(x).at(index).m_BlockBehavior != b_Door)
 		{
 			bool isThereWall;
 			int	indexOfTheWall = FindWall(walls, x, y, isThereWall);

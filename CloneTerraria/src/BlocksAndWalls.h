@@ -45,7 +45,7 @@ enum BlockBehavior
 	, b_BasicSolid
 	, b_Slippery
 	, b_Asphalt
-
+	, b_Door
 };
 
 void CreateAllBlockTextures(unsigned int* IDs);

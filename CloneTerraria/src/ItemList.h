@@ -47,6 +47,7 @@ enum Items
 	, i_AccessoriseWallClimb
 	, i_AccessoriseShackle
 	, i_AccessoriseFastShoes
+	, i_DoorBlock
 };
 enum Structures
 {
@@ -55,6 +56,8 @@ enum Structures
 	, s_Anvil
 	, s_Chest
 	, s_Sapling
-	
+	, s_Gate
+	, s_Door
+	, s_TrapDoor
 
 };

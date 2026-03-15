@@ -11,8 +11,8 @@ Chest::Chest(int x
 	m_Indestrucrtible = false;
 	for (int i= 0; i < 50; i++)
 	{
-		m_amount[i] = 16;
-		m_Items[i] = 8;
+		m_amount[i] = 0;
+		m_Items[i] = 0;
 	}
 
 	m_Transform[0] = x;
@@ -24,6 +24,7 @@ Chest::Chest(int x
 	index = FindBlock(blocks, x + 1, y - 1, found);
 	blocks.at(x + 1).at(index).m_BlockBehavior = b_Indestructible;
 }
+
 void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 {
 	bool found = false;
@@ -32,6 +33,255 @@ void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 	index = FindBlock(blocks, m_Transform[0] + 1, m_Transform[1] - 1, found);
 	blocks.at(m_Transform[0] + 1).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0] + 1).at(index).m_te);
 
+}
+Door::Door(int x
+	, int y
+	, short type
+	, std::vector<int>& sandX
+	, std::vector < std::vector<wall>>& walls
+	, std::vector<std::vector<Block>>& blocks)
+	:m_Transform{x, y}
+	, m_Type(type)
+	, m_OpenSide(0)
+	, m_Vertices{}
+{
+	getStructureVertices(x, y, type, m_Vertices);
+	switch (type)
+	{
+	case s_Gate:
+	case s_Door:
+		for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+		{
+			CreateBlock(m_Transform[0], i, i_DoorBlock, walls, blocks, sandX, NULL);
+		}
+		break;
+	case s_TrapDoor:
+		for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+		{
+			CreateBlock(i, m_Transform[1], i_DoorBlock, walls, blocks, sandX, NULL);
+		}
+		break;
+	default:
+		Assert(true);
+		break;
+	}
+
+
+}
+void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
+	, std::vector< std::vector<wall>>& walls
+	, std::vector<seedling>& seedlings
+	, std::vector<tree>& trees
+	, std::vector<CraftStation>& craftingStations
+	, std::vector<Chest>& chests
+	, std::vector<int>& sandX
+	, float* playerTransform)
+{
+	if (m_OpenSide)
+	{
+		getStructureVertices(m_Transform[0], m_Transform[0], m_Type, m_Vertices);
+		switch (m_Type)
+		{
+		case s_Gate:
+		case s_Door:
+			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+			{
+				CreateBlock(m_Transform[0], i, i_DoorBlock, walls, blocks, sandX, NULL);
+			}
+			break;
+		case s_TrapDoor:
+			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+			{
+				CreateBlock(i, m_Transform[1], i_DoorBlock, walls, blocks, sandX, NULL);
+			}
+			break;
+		default:
+			Assert(true);
+			break;
+		}
+		m_OpenSide = 0;
+	}
+	else
+	{
+		if (m_Type != s_TrapDoor)
+		{
+			playerTransform[0] -= m_Transform[0];
+			int preferSide = 0;
+			if (playerTransform[0])
+			{
+				preferSide = abs(playerTransform[0]) / playerTransform[0];
+			}
+			else
+			{
+				preferSide = 1;
+			}
+			int vertices[4] = { preferSide + m_Vertices[0], m_Vertices[1],preferSide + m_Vertices[2] ,m_Vertices[3] };
+			if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+			{
+
+				for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+				{
+					DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+				}
+				m_Vertices[0] = vertices[0];
+				m_Vertices[1] = vertices[1];
+				m_Vertices[2] = vertices[2];
+				m_Vertices[3] = vertices[3];
+
+				m_OpenSide = preferSide;
+			}
+			else
+			{
+				vertices[0] = m_Vertices[0] - preferSide;
+				vertices[1] = m_Vertices[1];
+				vertices[2] = m_Vertices[2] - preferSide;
+				vertices[3] = m_Vertices[3];
+				if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+				{
+					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+					{
+						DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+					}
+					m_Vertices[0] = vertices[0];
+					m_Vertices[1] = vertices[1];
+					m_Vertices[2] = vertices[2];
+					m_Vertices[3] = vertices[3];
+
+					m_OpenSide = -preferSide;
+				}
+			}
+		}
+		else
+		{
+			playerTransform[1] -= m_Transform[1];
+			int preferSide = 0;
+			if (playerTransform[1])
+			{
+				preferSide = abs(playerTransform[1]) / playerTransform[1];
+			}
+			else
+			{
+				preferSide = 1;
+			}
+			int vertices[4] = {m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
+			if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+			{
+				for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+				{
+					DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+				}
+				
+				m_Vertices[0] = vertices[0];
+				m_Vertices[1] = vertices[1];
+				m_Vertices[2] = vertices[2];
+				m_Vertices[3] = vertices[3];
+
+				m_OpenSide = preferSide;
+			}
+			else
+			{
+				
+				vertices[0] = m_Vertices[0];
+				vertices[1] = m_Vertices[1] - preferSide;
+				vertices[2] = m_Vertices[2];
+				vertices[3] = m_Vertices[3] - preferSide;
+				if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+				{
+					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+					{
+						DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+					}
+					m_Vertices[0] = vertices[0];
+					m_Vertices[1] = vertices[1];
+					m_Vertices[2] = vertices[2];
+					m_Vertices[3] = vertices[3];
+
+					m_OpenSide = -preferSide;
+					
+				}
+			}
+		}
+	}
+}
+
+void DrawDoors(std::vector<Door>& doors
+	, Shader& sh
+	, unsigned int doorDD
+	, unsigned int* doorTexture
+	, float* transform
+	, float* scale
+	, float* rotation)
+{
+	sh.Bind();
+	ChangeRotation(0, rotation);
+	sh.SetUniformMat4(advancedRotation, rotation);
+	for (int i = 0; i < doors.size(); i++)
+	{
+		switch (doors.at(i).m_Type)
+		{
+		case s_Door:
+		{
+			ErrorGL(glBindVertexArray(doorDD));
+			if (!doors.at(i).m_OpenSide)
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, doorTexture[0]));
+				ChangeScale(1, 1, scale);
+				sh.SetUniformMat4(advancedScale, scale);
+			}
+			else
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, doorTexture[1]));
+				ChangeScale(doors.at(i).m_OpenSide, 1, scale);
+				sh.SetUniformMat4(advancedScale, scale);
+			}
+			break;
+		}
+		case s_Gate:
+		{
+
+			break;
+		}
+		case s_TrapDoor:
+		{
+
+			break;
+		}
+		default:
+			Assert(true);
+			break;
+		}
+		ChangeTransform(doors.at(i).m_Transform[0], doors.at(i).m_Transform[1], transform);
+		sh.SetUniformMat4(advancedTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+}
+void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
+	, std::vector< std::vector<wall>>& walls
+	, std::vector<int>& sandX)
+{
+	if (m_OpenSide)
+	{
+		getStructureVertices(m_Transform[0], m_Transform[0], m_Type, m_Vertices);
+		switch (m_Type)
+		{
+		case s_Gate:
+		case s_Door:
+			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+			{
+				DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+			}
+			break;
+		case s_TrapDoor:
+			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+			{
+				DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+			}
+			break;
+		default:
+			Assert(true);
+			break;
+		}
+	}
 }
 int FindChest(std::vector<Chest>& structures
 	, float x
@@ -93,6 +343,7 @@ void DrawChests(std::vector<Chest>& structures
 		}
 	}
 }
+
 
 void DrawCraftStations(std::vector<CraftStation>& structures
 	, Shader& sh
@@ -158,6 +409,7 @@ void getStructureVertices(int x
 		vertices[3] = y;
 		break;
 	case s_Anvil:
+	case s_TrapDoor:
 	case s_CraftingTable:
 		vertices[0] = x;
 		vertices[1] = y;
@@ -174,6 +426,18 @@ void getStructureVertices(int x
 		vertices[0] = x;
 		vertices[1] = y + 1;
 		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+	case s_Door:
+		vertices[0] = x;
+		vertices[1] = y + 2;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	case s_Gate:
+		vertices[0] = x;
+		vertices[1] = y + 4;
+		vertices[2] = x;
 		vertices[3] = y;
 		break;
 	default:
@@ -197,6 +461,7 @@ char GetStructureID(unsigned char Item)
 		return s_Forge;
 	case i_Chest:
 		return s_Chest;
+
 	default:
 		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
 		return s_CraftingTable;
@@ -290,24 +555,21 @@ bool isAnythinginArea(int* vertices
 	bool inBlock = false;
 	if (vertices[0] <= Blocks::xMin)
 	{
-		inBlock = true;
+		return true;
 	}
 	else if (vertices[1] >= Blocks::yMax)
 	{
-		inBlock = true;
+		return true;
 	}
 	else if (vertices[2] >= Blocks::xMax)
 	{
-		inBlock = true;
+		return true;
 
 	}
 	else if (vertices[3] <= Blocks::yMin)
 	{
-		inBlock = true;
-	}
-	if (inBlock)
-	{
 		return true;
+
 	}
 	inBlock = blockInArea(blocks, vertices);
 	if (inBlock)
@@ -331,6 +593,5 @@ bool isAnythinginArea(int* vertices
 		return true;
 	}
 
-	inBlock = IsInAreaChest(chests, vertices);
-	return inBlock;
+	return IsInAreaChest(chests, vertices);
 }

@@ -132,6 +132,8 @@
     <Image Include="res\textures\canPutItInBin.png" />
     <Image Include="res\textures\Chest.png" />
     <Image Include="res\textures\ChestPlateSlot.png" />
+    <Image Include="res\textures\ChestSlot.png" />
+    <Image Include="res\textures\CloseDoor.png" />
     <Image Include="res\textures\copper.png" />
     <Image Include="res\textures\cooperAxe.png" />
     <Image Include="res\textures\cooperHammer.png" />
@@ -179,6 +181,7 @@
     <Image Include="res\textures\nothingIngredientSlot.png" />
     <Image Include="res\textures\Numbers.png" />
     <Image Include="res\textures\OpenChest.png" />
+    <Image Include="res\textures\openDoor.png" />
     <Image Include="res\textures\PantsSlot.png" />
     <Image Include="res\textures\pistolHand.png" />
     <Image Include="res\textures\pistolInv.png" />

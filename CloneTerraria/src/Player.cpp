@@ -1449,6 +1449,15 @@ void Player::EveryFrame(float deltaTime
 						m_AimingAtSlot = slotCoordinates[0] + (slotCoordinates[1] - 6) * 10;
 
 						slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
+						chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
+						for (int i = 0;i < 50;i++)
+						{
+							if (chests.at(m_IndexOfOpenChest).m_Items[i] != i_Nothing)
+							{
+								chests.at(m_IndexOfOpenChest).m_Indestrucrtible = true;
+
+							}
+						}
 						if (m_AimingAtSlot == 0)
 						{
 							m_AimingAtSlot = 1;
@@ -1606,7 +1615,7 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnPlaceableSpot = false;
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
-		m_CursorOnMinableWood = false;
+		m_CursorOnMinableWood = false;	
 		if (ChestReach >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
 			bool found = false;
@@ -1699,7 +1708,7 @@ void Player::EveryFrame(float deltaTime
 
 				blockIndex = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
 
-				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
+				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_BlockBehavior == b_Door || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
 				{
 					m_CursorOnMinableBlock = false;
 				}
@@ -1715,6 +1724,7 @@ void Player::EveryFrame(float deltaTime
 					{
 						if (chests.at(chestIndex).m_Indestrucrtible)
 						{
+							m_CursorOnMinableBlock = false;
 							chestIndex = -1;
 						}
 					}
@@ -1859,9 +1869,7 @@ void Player::EveryFrame(float deltaTime
 				default:
 					if (!m_Consume)
 					{
-
 						m_ArmsBehaviour = ArmUsing;
-
 					}
 					break;
 				}
