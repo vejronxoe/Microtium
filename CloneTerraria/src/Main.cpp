@@ -198,7 +198,7 @@ int main()
 	unsigned int enemiesDD1[enemySize];
 	unsigned int enemiesDD2[enemySize];
 	unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned int cursorTextures[7];
+	unsigned int cursorTextures[8];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
 	unsigned int structuresTextures[5];
@@ -347,12 +347,12 @@ int main()
 				}
 			}
 		}
-		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles,chests);
+		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles,doors,chests);
 		SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
 		
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles,chests, isSandOnX, blockTextures))
+			if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles, doors,chests, isSandOnX, blockTextures))
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}

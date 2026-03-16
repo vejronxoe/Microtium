@@ -531,5 +531,8 @@
     <Image Include="res\textures\ChestSlot.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\CanOpenDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

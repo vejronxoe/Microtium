@@ -14,7 +14,7 @@
 #define BULLETSTYPES 4
 #define REGENCOLDDOWN 4
 #define CRAFTINGOFFSET 3
-#define ChestReach 8.0f
+#define CHESTANDDOORSREACH 8.0f
 
 enum RangeWeaponTypes
 {
@@ -377,6 +377,7 @@ Player::Player(unsigned int eob
 	m_BurnDamageNextTime = 0;
 	float playerVertice[4] = { -1,1.5f,1,-1.5f };
 	m_OnFire.constructorFire(playerVertice, 4, 0.2f);
+	m_AimingAtDoors = -1;
 
 
 	m_PlayerSlots[0] = i_Cannon;
@@ -1046,12 +1047,13 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<seedling>& seedlings
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Projectile>& projectiles
+	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 {
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 	if (chests.size() > m_IndexOfOpenChest && m_IndexOfOpenChest != -1)
 	{
-		if (ChestReach < Pyt2D(m_Transform[0] - chests.at(m_IndexOfOpenChest).m_Transform[0], m_Transform[1] - chests.at(m_IndexOfOpenChest).m_Transform[1]))
+		if (CHESTANDDOORSREACH < Pyt2D(m_Transform[0] - chests.at(m_IndexOfOpenChest).m_Transform[0], m_Transform[1] - chests.at(m_IndexOfOpenChest).m_Transform[1]))
 		{
 			chests.at(m_IndexOfOpenChest).m_Open = false;
 			m_IndexOfOpenChest = -1;
@@ -1587,6 +1589,7 @@ void Player::EveryFrame(float deltaTime
 		int chestIndex = -1;
 		int wallIndex = -1;
 		m_AimingAtChest = -1;
+		m_AimingAtDoors = -1;
 		int woodIndex = 0;
 		bool inBlock = false;
 
@@ -1616,7 +1619,7 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableBlock = false;
 		m_CursorOnMinableWall = false;
 		m_CursorOnMinableWood = false;	
-		if (ChestReach >= sqrtf(rangeX * rangeX + rangeY * rangeY))
+		if (CHESTANDDOORSREACH >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
 			bool found = false;
 			m_AimingAtChest = FindChest(chests, x, y, found);
@@ -1641,6 +1644,15 @@ void Player::EveryFrame(float deltaTime
 
 				}
 			}
+			else
+			{
+				found = false;
+				m_AimingAtDoors = FindDoors(doors, x, y, found);
+				if (Input::RightMousePress && found)
+				{
+					doors.at(m_AimingAtDoors).DoorInteract(blocks, walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
+				}
+			}
 		}
 		if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
@@ -1659,7 +1671,7 @@ void Player::EveryFrame(float deltaTime
 					bool inWall;
 					wallIndex = FindWall(walls, x, y, inWall);
 					m_CursorOnPlaceableSpot = inWall;
-					inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations, chests);
+					inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,doors, chests);
 
 					if (!m_CursorOnPlaceableSpot)
 					{
@@ -1756,7 +1768,7 @@ void Player::EveryFrame(float deltaTime
 				int  vertices[4];
 				bool floors = true;
 				getStructureVertices(x, y, GetStructureID(m_PlayerSlots[0]), vertices);
-				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations, chests);
+				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations,doors, chests);
 				if (!inBlock)
 				{
 					for (int i = vertices[0]; i <= vertices[2]; i++)

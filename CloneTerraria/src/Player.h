@@ -73,6 +73,7 @@ public:
 	int m_AimingAtChest;
 	int m_IndexOfOpenChest;
 
+	int m_AimingAtDoors;
 
 	short int m_DirectionLook;
 	unsigned int m_FloorBehaviour;
@@ -111,6 +112,7 @@ public:
 		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems
 		, std::vector<Projectile>& projectiles
+		, std::vector<Door>& door
 		, std::vector<Chest>& chests);
 
 	void DrawPlayer(float deltaTime

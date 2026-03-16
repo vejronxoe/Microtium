@@ -17,7 +17,7 @@ Chest::Chest(int x
 
 	m_Transform[0] = x;
 	m_Transform[1] = y;
-	m_Open = false;
+	m_Open = 0;
 	bool found = false;
 	int index = FindBlock(blocks, x, y - 1, found);
 	blocks.at(x).at(index).m_BlockBehavior = b_Indestructible;
@@ -68,18 +68,49 @@ Door::Door(int x
 
 
 }
+int FindDoors(std::vector<Door>& structures
+	, float x
+	, float y
+	, bool& found)
+{
+	for (int i = 0; i < structures.size(); i++)
+	{
+		if (structures.at(i).m_Vertices[0] <= x && structures.at(i).m_Vertices[2] >= x && structures.at(i).m_Vertices[3] <= y && structures.at(i).m_Vertices[1] >= y)
+		{
+			found = true;
+			return i;
+		}
+	}
+	return -1;
+}
+bool IsInAreaDoors(std::vector<Door>& structures
+	, int* vertice)
+{
+
+	for (int i = 0; i < structures.size(); i++)
+	{
+		if (structures.at(i).m_Vertices[0] <= vertice[2] && structures.at(i).m_Vertices[2] >= vertice[0] && structures.at(i).m_Vertices[3] <= vertice[1] && structures.at(i).m_Vertices[1] >= vertice[3])
+		{
+			return true;
+		}
+	}
+	return false;
+
+}
 void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 	, std::vector< std::vector<wall>>& walls
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Chest>& chests
+	, std::vector<Door>& doors
 	, std::vector<int>& sandX
-	, float* playerTransform)
+	, float* playerTransforms)
 {
+
 	if (m_OpenSide)
 	{
-		getStructureVertices(m_Transform[0], m_Transform[0], m_Type, m_Vertices);
+		getStructureVertices(m_Transform[0], m_Transform[1], m_Type, m_Vertices);
 		switch (m_Type)
 		{
 		case s_Gate:
@@ -103,6 +134,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 	}
 	else
 	{
+		float playerTransform[2] = {playerTransforms[0],playerTransforms[1]};
 		if (m_Type != s_TrapDoor)
 		{
 			playerTransform[0] -= m_Transform[0];
@@ -116,14 +148,14 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				preferSide = 1;
 			}
 			int vertices[4] = { preferSide + m_Vertices[0], m_Vertices[1],preferSide + m_Vertices[2] ,m_Vertices[3] };
-			if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+			if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 			{
 
 				for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 				{
 					DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
 				}
-				m_Vertices[0] = vertices[0];
+				m_Vertices[0] = vertices[0] - preferSide;
 				m_Vertices[1] = vertices[1];
 				m_Vertices[2] = vertices[2];
 				m_Vertices[3] = vertices[3];
@@ -136,7 +168,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				vertices[1] = m_Vertices[1];
 				vertices[2] = m_Vertices[2] - preferSide;
 				vertices[3] = m_Vertices[3];
-				if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 				{
 					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 					{
@@ -144,7 +176,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					}
 					m_Vertices[0] = vertices[0];
 					m_Vertices[1] = vertices[1];
-					m_Vertices[2] = vertices[2];
+					m_Vertices[2] = vertices[2] + preferSide;
 					m_Vertices[3] = vertices[3];
 
 					m_OpenSide = -preferSide;
@@ -164,7 +196,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				preferSide = 1;
 			}
 			int vertices[4] = {m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
-			if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+			if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 			{
 				for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 				{
@@ -185,7 +217,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				vertices[1] = m_Vertices[1] - preferSide;
 				vertices[2] = m_Vertices[2];
 				vertices[3] = m_Vertices[3] - preferSide;
-				if (isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, chests))
+				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 				{
 					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 					{
@@ -516,6 +548,7 @@ bool isAnythingOnThisTransform(int x
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
+	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 {
 
@@ -532,7 +565,7 @@ bool isAnythingOnThisTransform(int x
 	{
 		return true;
 	}
-	FindChest(chests,x,y,inBlock);
+	FindChest(chests, x, y, inBlock);
 	if (inBlock)
 	{
 		return true;
@@ -543,6 +576,11 @@ bool isAnythingOnThisTransform(int x
 		return true;
 	}
 	FindSeedling(seedlings, x, y, inBlock);
+	if (inBlock)
+	{
+		return true;
+	}
+	FindDoors(doors, x, y, inBlock);
 	return inBlock;
 }
 bool isAnythinginArea(int* vertices
@@ -550,6 +588,7 @@ bool isAnythinginArea(int* vertices
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
+	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 	{
 	bool inBlock = false;
@@ -587,6 +626,12 @@ bool isAnythinginArea(int* vertices
 		return true;
 	}
 	inBlock = SeedlingInArea(seedlings, vertices);
+
+	if (inBlock)
+	{
+		return true;
+	}
+	inBlock = IsInAreaDoors(doors, vertices);
 
 	if (inBlock)
 	{

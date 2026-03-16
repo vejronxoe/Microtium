@@ -41,12 +41,19 @@ struct Door
 		, std::vector<tree>& trees
 		, std::vector<CraftStation>& craftingStations
 		, std::vector<Chest>& chests
+		, std::vector<Door>& doors
 		, std::vector<int>& sandX
 		, float* playerTransform);
 	void DestroyDoor(std::vector<std::vector<Block>>& blocks
 		, std::vector< std::vector<wall>>& walls
 		, std::vector<int>& sandX);
 };
+int FindDoors(std::vector<Door>& structures
+	, float x
+	, float y
+	, bool& found);
+bool IsInAreaDoors(std::vector<Door>& structures
+	, int* vertice);
 void DrawDoors(std::vector<Door>& doors
 	, Shader& sh
 	, unsigned int doorDD
@@ -79,6 +86,13 @@ int FindCraftStation(std::vector<CraftStation>& structures
 	, bool& found);
 bool IsInAreaCraftStation(std::vector<CraftStation>& structures
 	, int* vertice);
+int FindCraftStation(std::vector<Door>& structures
+	, float x
+	, float y
+	, bool& found);
+bool IsInAreaCraftStation(std::vector<Door>& structures
+	, int* vertice);
+
 void getStructureVertices(int x
 	, int y
 	, unsigned int ID
@@ -95,10 +109,12 @@ bool isAnythingOnThisTransform(int x
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
+	, std::vector<Door>& doors
 	, std::vector<Chest>& chests);
 bool isAnythinginArea(int* vertices
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
+	, std::vector<Door>& doors
 	, std::vector<Chest>& chests);
