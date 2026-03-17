@@ -389,15 +389,8 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[3] = i_Pistol;
 	m_AmountInSlots[3] = 1;
 
-	m_PlayerSlots[4] = i_BasicArrow;
-	m_PlayerSlots[5] = i_PierceArrow;
-	m_PlayerSlots[6] = i_BouncingArrow;
-	m_PlayerSlots[7] = i_FireArrow;
-	m_PlayerSlots[8] = i_BasicCannonBall;
-	m_PlayerSlots[9] = i_PierceCannonBall;
-	m_PlayerSlots[10] = i_BouncingCannonBall;
-	m_PlayerSlots[11] = i_FireCannonBall;
-	m_PlayerSlots[12] = i_BasicBullet;
+
+	m_PlayerSlots[12] = i_Door;
 	m_PlayerSlots[13] = i_PierceBullet;
 	m_PlayerSlots[14] = i_BouncingBullet;
 	m_PlayerSlots[15] = i_FireBullet;
@@ -414,14 +407,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[26] = i_Anvil;
 	m_PlayerSlots[27] = i_CopperIngot;
 	m_PlayerSlots[28] = i_ForestPlank;
-	m_AmountInSlots[4] = 9999;
-	m_AmountInSlots[5] = 20;
-	m_AmountInSlots[6] = 20;
-	m_AmountInSlots[7] = 20;
-	m_AmountInSlots[8] = 20;
-	m_AmountInSlots[9] = 20;
-	m_AmountInSlots[10] = 20;
-	m_AmountInSlots[11] = 20;
+
 	m_AmountInSlots[12] = 20;
 	m_AmountInSlots[13] = 20;
 	m_AmountInSlots[14] = 20;
@@ -506,6 +492,7 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
 	m_AllItemTextures[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
 	m_AllItemTextures[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
+	m_AllItemTextures[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
 
 	m_ArmorSlotsTex[0] = CreateTextureRGBA("res/textures/HelmetSlot.png");
 	m_ArmorSlotsTex[1] = CreateTextureRGBA("res/textures/ChestPlateSlot.png");
@@ -675,6 +662,7 @@ void Player::SwapItemStats()
 		case i_Forge:
 		case i_Anvil:
 		case i_Chest:
+		case i_Door:
 			m_CooldownToUse = 0.1f;
 			m_LargePlaceable = true;
 			break;
@@ -1585,6 +1573,7 @@ void Player::EveryFrame(float deltaTime
 
 		int blockIndex = 0;
 		int craftingStationIndex = -1;
+		int doorsIndex = -1;
 		int seedlingIndex = -1;
 		int chestIndex = -1;
 		int wallIndex = -1;
@@ -1723,6 +1712,7 @@ void Player::EveryFrame(float deltaTime
 				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_BlockBehavior == b_Door || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
 				{
 					m_CursorOnMinableBlock = false;
+					blockIndex = -1;
 				}
 
 				if (!m_CursorOnMinableBlock)
@@ -1744,6 +1734,10 @@ void Player::EveryFrame(float deltaTime
 				if (!m_CursorOnMinableBlock)
 				{
 					seedlingIndex = FindSeedling(seedlings, x, y, m_CursorOnMinableBlock);
+				}
+				if (!m_CursorOnMinableBlock)
+				{
+					doorsIndex = FindDoors(doors, x, y, m_CursorOnMinableBlock);
 				}
 				
 			}
@@ -1769,30 +1763,41 @@ void Player::EveryFrame(float deltaTime
 				bool floors = true;
 				getStructureVertices(x, y, GetStructureID(m_PlayerSlots[0]), vertices);
 				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations,doors, chests);
-				if (!inBlock)
+				switch (m_PlayerSlots[0])
 				{
-					for (int i = vertices[0]; i <= vertices[2]; i++)
+				case i_Door:
+					floors = false;
+					FindBlock(blocks,x,vertices[1] + 1,floors);
+					if (!floors)
 					{
-						floors = false;
-						for (int j = 0; j < blocks.at(i).size(); j++)
+						break;
+					}
+				default:
+					if (!inBlock)
+					{
+						for (int i = vertices[0]; i <= vertices[2]; i++)
 						{
-							if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
+							floors = false;
+							for (int j = 0; j < blocks.at(i).size(); j++)
 							{
-								floors = true;
+								if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
+								{
+									floors = true;
+									break;
+								}
+								if (blocks.at(i).at(j).m_Y < vertices[3] - 1)
+								{
+									break;
+								}
+							}
+							if (!floors)
+							{
 								break;
 							}
-							if (blocks.at(i).at(j).m_Y < vertices[3] - 1)
-							{
-								break;
-							}
-						}
-						if (!floors)
-						{
-							break;
 						}
 					}
+					break;
 				}
-
 				if (floors)
 				{
 
@@ -1943,6 +1948,13 @@ void Player::EveryFrame(float deltaTime
 					{
 						droppedItems.emplace_back(x, y, 0, i_Sapling, 1, true);
 						seedlings.erase(seedlingIndex + seedlings.begin());
+					}
+					else if (doorsIndex != -1)
+					{
+						droppedItems.emplace_back(x, y, 0, GetItemIDByStructure(doors.at(doorsIndex).m_Type), 1, true);
+						doors.at(doorsIndex).DestroyDoor(blocks, walls, isThereSandOnX);
+						doors.erase(doorsIndex + doors.begin());
+
 					}
 
 				}
@@ -2196,6 +2208,9 @@ void Player::EveryFrame(float deltaTime
 
 						break;
 					}
+					case i_Door:
+						doors.emplace_back(x, y, s_Door, isThereSandOnX, walls, blocks);
+						break;
 					}
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)

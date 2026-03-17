@@ -201,7 +201,7 @@ int main()
 	unsigned int cursorTextures[8];
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
-	unsigned int structuresTextures[5];
+	unsigned int structuresTextures[8];
 	unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png")};
 	unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
@@ -214,6 +214,7 @@ int main()
 	structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
 	structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
 	structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
+	structuresTextures[s_Door] = DoorTextures[0];
 	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
@@ -276,8 +277,6 @@ int main()
 	
 	
 
-	doors.emplace_back(140, 15,s_Door, isSandOnX, walls, blocks);
-
 	CraftStation forge;
 	forge.m_CraftStationtype = s_Forge;
 	forge.m_LookAt = 1;
@@ -334,17 +333,27 @@ int main()
 
 		}
 		CheckFloorCraftStations(craftStations, blocks, dropItems);
+		for (int i = 0; i < doors.size(); i++)
+		{
+			if (doors.at(i).CheckFloorAndCeil(doors,blocks,dropItems))
+			{
+				Door d = doors.at(i);
+				dropItems.emplace_back(d.m_Transform[0], d.m_Transform[1], 0, GetItemIDByStructure(d.m_Type), 1, true);
+				doors.at(i).DestroyDoor(blocks, walls, isSandOnX);
+				doors.erase(i + doors.begin());
+			}
+		}
 		for (int i = 0; i < enemies.size(); i++)
 		{
 			int damage = enemies.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
 			if (damage)
 			{
-				player.DamagePlayer(enemies.at(i).m_Transform, damage);
 				if (enemies.at(i).m_IsBurning)
 				{
 					player.m_IsBurning = true;
 					player.m_BurningTimer = 0;
 				}
+				player.DamagePlayer(enemies.at(i).m_Transform, damage);
 			}
 		}
 		player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles,doors,chests);

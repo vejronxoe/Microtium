@@ -190,7 +190,7 @@ public:
 	bool m_IsInventoryOpen;
 
 
-	unsigned int m_AllItemTextures[45];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[46];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60];

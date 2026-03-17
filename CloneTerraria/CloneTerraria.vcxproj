@@ -147,6 +147,7 @@
     <Image Include="res\textures\cut4.png" />
     <Image Include="res\textures\DamageBlock.png" />
     <Image Include="res\textures\dirtBlock.png" />
+    <Image Include="res\textures\DoorInv.png" />
     <Image Include="res\textures\dot.png" />
     <Image Include="res\textures\downGrassBlock.png" />
     <Image Include="res\textures\downLeftGrassBlock.png" />

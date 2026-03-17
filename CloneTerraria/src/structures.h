@@ -47,6 +47,9 @@ struct Door
 	void DestroyDoor(std::vector<std::vector<Block>>& blocks
 		, std::vector< std::vector<wall>>& walls
 		, std::vector<int>& sandX);
+	bool CheckFloorAndCeil(std::vector<Door>& doors
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<DroppedItem>& droppedItems);
 };
 int FindDoors(std::vector<Door>& structures
 	, float x

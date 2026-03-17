@@ -155,11 +155,15 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				{
 					DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
 				}
-				m_Vertices[0] = vertices[0] - preferSide;
-				m_Vertices[1] = vertices[1];
-				m_Vertices[2] = vertices[2];
-				m_Vertices[3] = vertices[3];
-
+				if (preferSide == -1)
+				{
+					m_Vertices[0] += -1;
+					
+				}
+				else
+				{
+					m_Vertices[2] += 1;
+				}
 				m_OpenSide = preferSide;
 			}
 			else
@@ -174,11 +178,15 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
 					}
-					m_Vertices[0] = vertices[0];
-					m_Vertices[1] = vertices[1];
-					m_Vertices[2] = vertices[2] + preferSide;
-					m_Vertices[3] = vertices[3];
+					if (preferSide == -1)
+					{
+						m_Vertices[0] += -1;
 
+					}
+					else
+					{
+						m_Vertices[2] += 1;
+					}
 					m_OpenSide = -preferSide;
 				}
 			}
@@ -235,7 +243,24 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 		}
 	}
 }
+bool Door::CheckFloorAndCeil(std::vector<Door>& doors
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<DroppedItem>& droppedItems)
+{
+	bool found =false;
+	FindBlock(blocks, m_Transform[0], m_Vertices[1]+1, found);
+	if (found)
+	{
+		found = false;
+		FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
+		if (found)
+		{
+			return false;
+		}
+	}
+	return true;
 
+}
 void DrawDoors(std::vector<Door>& doors
 	, Shader& sh
 	, unsigned int doorDD
@@ -291,9 +316,9 @@ void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
 	, std::vector< std::vector<wall>>& walls
 	, std::vector<int>& sandX)
 {
-	if (m_OpenSide)
+	if (!m_OpenSide)
 	{
-		getStructureVertices(m_Transform[0], m_Transform[0], m_Type, m_Vertices);
+		getStructureVertices(m_Transform[0], m_Transform[1], m_Type, m_Vertices);
 		switch (m_Type)
 		{
 		case s_Gate:
@@ -493,9 +518,12 @@ char GetStructureID(unsigned char Item)
 		return s_Forge;
 	case i_Chest:
 		return s_Chest;
+	case i_Door:
+		return s_Door;
 
 	default:
 		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
+		Assert(true);
 		return s_CraftingTable;
 	}
 }
@@ -514,6 +542,8 @@ unsigned char GetItemIDByStructure(char structure)
 		return i_Forge;
 	case s_Chest:
 		return i_Chest;
+	case s_Door:
+		return i_Door;
 	default:
 		std::cout << "error structure.cpp unknown structure :" << (unsigned int)structure << std::endl;
 		return i_CraftingTable;
@@ -542,6 +572,7 @@ void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 		}
 	}
 }
+
 bool isAnythingOnThisTransform(int x
 	, int y 
 	, std::vector<std::vector<Block>>& blocks
