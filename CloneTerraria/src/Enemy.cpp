@@ -283,7 +283,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = GRAVITY;
 		}
 		bool hit[4] = { false, false, false, false };
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], blocks, hit[0], hit[2], hit[3], hit[1]);
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
@@ -365,7 +365,9 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	{
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
-		
+		int direction[2];
+		float distance[2];
+		WhereIsPlayer(playerTransform, distance, direction);
 		if (m_AnimTimer > -0.5f * m_JumpTimer + 2)
 		{
 			m_AnimTimer = 0;
@@ -385,15 +387,13 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 		else
 		{
-			int direction[2];
-			float distance[2];
-			WhereIsPlayer(playerTransform, distance, direction);
-			m_JumpTimer = 0;
+			
 			m_Velocity[0] = 15 * direction[0];
+			m_JumpTimer = 0;
 			m_Velocity[1] = 15;
 			m_AnimPhase = 0;
 		}
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, blocks, hit[0], hit[2], hit[3], hit[1]);
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], blocks, hit[0], hit[2], hit[3], hit[1]);
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
@@ -401,6 +401,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 	
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		m_Velocity[0] += 5 * direction[0] * deltaTime;
 		if (hit[3])
 		{
 			m_Velocity[0] = 0;
@@ -516,7 +517,7 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 					vertices[2] = i + ceil(abs(enemyVertices[2] - enemyVertices[0]));
 					vertices[3] = blocks.at(i).at(j).m_Y + 1;
 					
-					while (vertices[1] > checked + spawnVertices[1])
+					while (vertices[1] < checked + spawnVertices[1])
 					{
 						if (!blockInArea(blocks, vertices))
 						{
@@ -553,18 +554,26 @@ void EnemySpawnManager(float deltaTime
 		Enemy e = enemies.at(i);
 		float vertices[4];
 		GetEnemyVerticesByType(e.m_TypeOfEnemy, vertices);
-		if ((e.m_Transform[0] +vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[0] + vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform) &&
-			(e.m_Transform[1] +vertices[1] < cameraTransform[1] + Window::halfWidthOfGameTransform ||
-			e.m_Transform[1] + vertices[3] > cameraTransform[1] - Window::halfWidthOfGameTransform))
+		vertices[0] += e.m_Transform[0];
+		vertices[1] += e.m_Transform[0];
+		vertices[2] += e.m_Transform[1];
+		vertices[3] += e.m_Transform[1];
+		if (!(vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform &&
+			vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform &&
+			vertices[1] < cameraTransform[1] + Window::halfHeightOfGameTransform &&
+			vertices[3] > cameraTransform[1] - Window::halfHeightOfGameTransform))
 		{
-			e.m_TimerOutOfCamera += deltaTime;
+			enemies.at(i) .m_TimerOutOfCamera += deltaTime;
 			if (e.m_TimerOutOfCamera > 10)
 			{
 			
 				
 				enemies.erase(enemies.begin() + i);
 			}
+		}
+		else
+		{
+			enemies.at(i).m_TimerOutOfCamera = 0;
 		}
 	}
 	if (spawnTimer > SPAWNCOLDDOWN)

@@ -12,6 +12,7 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	, float* objVertices
 	, int* vertices
 	, int index
+	, bool platformIgnore
 	, int& behavior
 	,int& closest)
 {
@@ -26,7 +27,7 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 			}
 			if (blocks.at(j).at(i).m_Y <= vertices[1])
 			{
-				if (blocks.at(j).at(i).m_BlockBehavior != b_Platform || blocks.at(j).at(i).m_BlockBehavior == b_Platform && (objVertices[3] > blocks.at(j).at(i).m_Y + 0.5f || objVertices[3] == blocks.at(j).at(i).m_Y + 0.5f && !Input::SHold))
+				if (blocks.at(j).at(i).m_BlockBehavior != b_Platform || blocks.at(j).at(i).m_BlockBehavior == b_Platform && (objVertices[3] > blocks.at(j).at(i).m_Y + 0.5f || objVertices[3] == blocks.at(j).at(i).m_Y + 0.5f && !platformIgnore))
 				{
 					int chooser[4] = { j, blocks.at(j).at(i).m_Y, j, blocks.at(j).at(i).m_Y };
 					if (count)
@@ -125,6 +126,7 @@ unsigned int OneDirectionCheck(int* vertices
 	, std::vector<std::vector<Block>>& hitbox
 	, int blockIndex
 	, int playerIndex
+	, bool platformIgnore
 	, float& transform
 	, float& velocity
 	, float& oldVelocity
@@ -132,7 +134,7 @@ unsigned int OneDirectionCheck(int* vertices
 {
 	int closest;
 	int behavior = b_Air;
-	sideHit = FindClosestBlockInArea(hitbox, objectVertices4f, vertices, blockIndex, behavior, closest);
+	sideHit = FindClosestBlockInArea(hitbox, objectVertices4f, vertices, blockIndex, platformIgnore, behavior, closest);
 	if (sideHit)
 	{
 		float couner[4] = { -0.5, 0.5, 0.5, -0.5 };
@@ -152,6 +154,7 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 	, int YHitboxIndex
 	, int XplayerIndex
 	, int YplayerIndex
+	, bool platformIgnore
 	, float* transform
 	, float* velocity
 	, float* oldVelocity
@@ -161,10 +164,10 @@ unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
 	int closest[4];
 	bool edgehit[2];
 	int behavior[2];
-	wallHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesX, XHitboxIndex, behavior[0], closest[0]);
-	floorHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesY, YHitboxIndex, behavior[0], closest[1]);
-	edgehit[0] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, XHitboxIndex, behavior[1], closest[2]);
-	edgehit[1] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, YHitboxIndex, behavior[1], closest[3]);
+	wallHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesX, XHitboxIndex, platformIgnore, behavior[0], closest[0]);
+	floorHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesY, YHitboxIndex, platformIgnore, behavior[0], closest[1]);
+	edgehit[0] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, XHitboxIndex, platformIgnore, behavior[1], closest[2]);
+	edgehit[1] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, YHitboxIndex, platformIgnore, behavior[1], closest[3]);
 	float couner[4] = { -0.5, 0.5, 0.5, -0.5 };
 
 	if (!wallHit && !floorHit && (edgehit[0] || edgehit[1]))
@@ -283,6 +286,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	, float* velocity
 	, float* oldVelocity
 	, float* objectVertices4f
+	, bool platformIgnore
 	, std::vector<std::vector<Block>>& hitbox
 	, bool& leftWallHit
 	, bool& rightWallHit
@@ -340,20 +344,20 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	unsigned int behavior = b_Air;
 	if (velocity[0] > 0 && velocity[1] > 0)
 	{
-		TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 3, 2, 1, transform, velocity, oldVelocity, ceilHit, rightWallHit);
+		TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 3, 2, 1, platformIgnore, transform, velocity, oldVelocity, ceilHit, rightWallHit);
 	}
 	else if (velocity[0] < 0 && velocity[1] < 0)
 	{
-		behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 1, 0, 3, transform, velocity, oldVelocity, floorHit, leftWallHit);
+		behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 1, 0, 3, platformIgnore, transform, velocity, oldVelocity, floorHit, leftWallHit);
 		return behavior;
 	}
 	else if (velocity[0] < 0 && velocity[1] > 0)
 	{
-		TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 3, 0, 1, transform, velocity, oldVelocity, ceilHit, leftWallHit);
+		TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 3, 0, 1, platformIgnore, transform, velocity, oldVelocity, ceilHit, leftWallHit);
 	}
 	else if (velocity[0] > 0 && velocity[1] < 0)
 	{
-		behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 1, 2, 3, transform, velocity, oldVelocity, floorHit, rightWallHit);
+		behavior = TwoDirectionCheck(hitbox, wallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 1, 2, 3, platformIgnore, transform, velocity, oldVelocity, floorHit, rightWallHit);
 	
 
 		return behavior;
@@ -362,21 +366,21 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	else if (velocity[1] > 0)
 	{
 
-		OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 3, 1, transform[1], velocity[1], oldVelocity[1], ceilHit);
+		OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 3, 1, platformIgnore, transform[1], velocity[1], oldVelocity[1], ceilHit);
 
 	}
 	else if (velocity[1] < 0)
 	{
-		behavior = OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 1, 3, transform[1], velocity[1], oldVelocity[1], floorHit);
+		behavior = OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 1, 3, platformIgnore, transform[1], velocity[1], oldVelocity[1], floorHit);
 	}
 	else if (velocity[0] > 0)
 	{
-		OneDirectionCheck(wallVertices, objectVertices4f, hitbox, 0, 2, transform[0], velocity[0], oldVelocity[0], leftWallHit);
+		OneDirectionCheck(wallVertices, objectVertices4f, hitbox, 0, 2, platformIgnore, transform[0], velocity[0], oldVelocity[0], leftWallHit);
 	}
 	else if (velocity[0] < 0)
 	{
 
-		OneDirectionCheck(wallVertices, objectVertices4f, hitbox, 2, 0, transform[0], velocity[0], oldVelocity[0], rightWallHit);
+		OneDirectionCheck(wallVertices, objectVertices4f, hitbox, 2, 0, platformIgnore, transform[0], velocity[0], oldVelocity[0], rightWallHit);
 
 	}
 

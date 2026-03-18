@@ -1654,8 +1654,23 @@ void Player::EveryFrame(float deltaTime
 				playerVertices[1] = RoundFiveDown(playerVertices[1]);
 				playerVertices[2] = RoundFiveDown(playerVertices[2]);
 				playerVertices[3] = RoundFiveUp(playerVertices[3]);
+				bool inCreature = false;
+				for (int i = 0; i < enemies.size(); i++)
+				{
+					float enemyVertices[4];
+					GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+					enemyVertices[0] = RoundFiveUp(enemyVertices[0] + enemies.at(i).m_Transform[0]);
+					enemyVertices[1] = RoundFiveDown(enemyVertices[1] + enemies.at(i).m_Transform[1]);
+					enemyVertices[2] = RoundFiveDown(enemyVertices[2] + enemies.at(i).m_Transform[0]);
+					enemyVertices[3] = RoundFiveUp(enemyVertices[3] + enemies.at(i).m_Transform[1]);
 
-				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]))
+					if (x >= enemyVertices[0] && x <= enemyVertices[2] && y <= enemyVertices[1] && y >= enemyVertices[3])
+					{
+						inCreature = true;
+						break;
+					}
+				}
+				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]) && !inCreature)
 				{
 					bool inWall;
 					wallIndex = FindWall(walls, x, y, inWall);
@@ -2363,7 +2378,7 @@ void Player::EveryFrame(float deltaTime
 		m_LeftWallHit = false;
 		m_RightWallHit = false;
 	
-		m_FloorBehaviour = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
+		m_FloorBehaviour = DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, Input::SHold, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
 		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, oldVelocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
 		{
 			m_FloorBehaviour = b_BasicSolid;
