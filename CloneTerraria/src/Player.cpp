@@ -403,8 +403,8 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[22] = i_AccessoriseFastShoes;
 	m_PlayerSlots[23] = i_AccessoriseShackle;
 	m_PlayerSlots[24] = i_Forge;
-	m_PlayerSlots[25] = i_CraftingTable;
-	m_PlayerSlots[26] = i_Anvil;
+	m_PlayerSlots[25] = i_TrapDoor;
+	m_PlayerSlots[26] = i_Gate;
 	m_PlayerSlots[27] = i_CopperIngot;
 	m_PlayerSlots[28] = i_ForestPlank;
 
@@ -493,6 +493,8 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
 	m_AllItemTextures[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
 	m_AllItemTextures[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
+	m_AllItemTextures[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
+	m_AllItemTextures[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
 
 	m_ArmorSlotsTex[0] = CreateTextureRGBA("res/textures/HelmetSlot.png");
 	m_ArmorSlotsTex[1] = CreateTextureRGBA("res/textures/ChestPlateSlot.png");
@@ -627,7 +629,7 @@ void Player::SwapItemStats()
 	m_PickaxeStreanght = 0;
 	m_AxeStreanght = 0;
 	m_HammerStreanght = 0;
-	m_Range = 4;
+	m_Range = 6;
 	m_Damage = 0;
 	m_WeaponType = weaponNot;
 	m_Consume = false;
@@ -663,6 +665,8 @@ void Player::SwapItemStats()
 		case i_Anvil:
 		case i_Chest:
 		case i_Door:
+		case i_Gate:
+		case i_TrapDoor:
 			m_CooldownToUse = 0.1f;
 			m_LargePlaceable = true;
 			break;
@@ -1635,12 +1639,61 @@ void Player::EveryFrame(float deltaTime
 			}
 			else
 			{
+
+				
 				found = false;
 				m_AimingAtDoors = FindDoors(doors, x, y, found);
-				if (Input::RightMousePress && found)
+				if (found)
 				{
-					doors.at(m_AimingAtDoors).DoorInteract(blocks, walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
+					playerVertices[0] = RoundFiveUp(playerVertices[0]);
+					playerVertices[1] = RoundFiveDown(playerVertices[1]);
+					playerVertices[2] = RoundFiveDown(playerVertices[2]);
+					playerVertices[3] = RoundFiveUp(playerVertices[3]);
+					int doorVertices[4];
+					getStructureVertices(doors.at(m_AimingAtDoors).m_Transform[0], doors.at(m_AimingAtDoors).m_Transform[1], s_Door, doorVertices);
+					if (!(doorVertices[2] >= playerVertices[0]
+						&& doorVertices[0] <= playerVertices[2]
+						&& doorVertices[3] <= playerVertices[1]
+						&& doorVertices[1] >= playerVertices[3]))
+					{
+						bool inCreature = false;
+						for (int i = 0; i < enemies.size(); i++)
+						{
+							float enemyVertices[4];
+							GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+							enemyVertices[0] = RoundFiveUp(enemyVertices[0] + enemies.at(i).m_Transform[0]);
+							enemyVertices[1] = RoundFiveDown(enemyVertices[1] + enemies.at(i).m_Transform[1]);
+							enemyVertices[2] = RoundFiveDown(enemyVertices[2] + enemies.at(i).m_Transform[0]);
+							enemyVertices[3] = RoundFiveUp(enemyVertices[3] + enemies.at(i).m_Transform[1]);
+							if (doorVertices[2] >= enemyVertices[0]
+								&& doorVertices[0] <= enemyVertices[2]
+								&& doorVertices[3] <= enemyVertices[1]
+								&& doorVertices[1] >= enemyVertices[3])
+							{
+								inCreature = true;
+								break;
+							}
+						}
+						if (inCreature)
+						{
+							m_AimingAtDoors = -1;
+
+						}
+						else if (Input::RightMousePress )
+						{
+							doors.at(m_AimingAtDoors).DoorInteract(blocks, walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
+						}
+						
+					}
+					else
+					{
+					
+							m_AimingAtDoors = -1;
+
+						
+					}
 				}
+
 			}
 		}
 		if (m_Range >= sqrtf(rangeX * rangeX + rangeY * rangeY))
@@ -1780,7 +1833,19 @@ void Player::EveryFrame(float deltaTime
 				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations,doors, chests);
 				switch (m_PlayerSlots[0])
 				{
+				case i_TrapDoor:
+				{
+					floors = false;
+					FindBlock(blocks, x-1, y, floors);
+					if (!floors)
+					{
+						break;
+					}
+					FindBlock(blocks, vertices[2] + 1, y, floors);
+					break;
+				}
 				case i_Door:
+				case i_Gate:
 					floors = false;
 					FindBlock(blocks,x,vertices[1] + 1,floors);
 					if (!floors)
@@ -2224,7 +2289,9 @@ void Player::EveryFrame(float deltaTime
 						break;
 					}
 					case i_Door:
-						doors.emplace_back(x, y, s_Door, isThereSandOnX, walls, blocks);
+					case i_TrapDoor:
+					case i_Gate:
+						doors.emplace_back(x, y, GetStructureID(m_PlayerSlots[0]), isThereSandOnX, walls, blocks);
 						break;
 					}
 					m_AmountInSlots[0]--;
@@ -2384,6 +2451,7 @@ void Player::EveryFrame(float deltaTime
 			m_FloorBehaviour = b_BasicSolid;
 		}
 		
+		
 		if (m_FloorHit)
 		{
 			if (m_LastStandingY - m_Transform[1] > 20)
@@ -2419,6 +2487,7 @@ void Player::EveryFrame(float deltaTime
 			break;
 		case(b_BasicSolid):
 		case(b_Platform):
+		case(b_Door):
 		case(b_Sand):
 			m_Acceleration = 25.0f;
 			m_Friction = 40;

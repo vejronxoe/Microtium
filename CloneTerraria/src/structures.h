@@ -59,8 +59,10 @@ bool IsInAreaDoors(std::vector<Door>& structures
 	, int* vertice);
 void DrawDoors(std::vector<Door>& doors
 	, Shader& sh
-	, unsigned int doorDD
+	, unsigned int* structuresDD
+	, unsigned int* structuresTexs
 	, unsigned int* doorTexture
+	, unsigned int* trapDoorTexture
 	, float* transform
 	, float* scale
 	, float* rotation);

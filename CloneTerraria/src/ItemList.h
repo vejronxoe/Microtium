@@ -48,6 +48,8 @@ enum Items
 	, i_AccessoriseShackle
 	, i_AccessoriseFastShoes
 	, i_Door
+	, i_TrapDoor
+	, i_Gate
 	, i_DoorBlock
 };
 enum Structures

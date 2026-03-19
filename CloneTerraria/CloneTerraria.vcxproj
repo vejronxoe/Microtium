@@ -135,6 +135,8 @@
     <Image Include="res\textures\ChestPlateSlot.png" />
     <Image Include="res\textures\ChestSlot.png" />
     <Image Include="res\textures\CloseDoor.png" />
+    <Image Include="res\textures\CloseGate.png" />
+    <Image Include="res\textures\CloseTrapDoor.png" />
     <Image Include="res\textures\copper.png" />
     <Image Include="res\textures\cooperAxe.png" />
     <Image Include="res\textures\cooperHammer.png" />
@@ -184,6 +186,7 @@
     <Image Include="res\textures\Numbers.png" />
     <Image Include="res\textures\OpenChest.png" />
     <Image Include="res\textures\openDoor.png" />
+    <Image Include="res\textures\OpenTrapDoor.png" />
     <Image Include="res\textures\PantsSlot.png" />
     <Image Include="res\textures\pistolHand.png" />
     <Image Include="res\textures\pistolInv.png" />
@@ -222,26 +225,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

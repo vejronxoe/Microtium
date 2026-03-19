@@ -134,46 +134,25 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 	}
 	else
 	{
-		float playerTransform[2] = {playerTransforms[0],playerTransforms[1]};
-		if (m_Type != s_TrapDoor)
+		float playerTransform[2] = { playerTransforms[0],playerTransforms[1] };
+		switch (m_Type)
 		{
-			playerTransform[0] -= m_Transform[0];
-			int preferSide = 0;
-			if (playerTransform[0])
+		case s_Door:
 			{
-				preferSide = abs(playerTransform[0]) / playerTransform[0];
-			}
-			else
-			{
-				preferSide = 1;
-			}
-			int vertices[4] = { preferSide + m_Vertices[0], m_Vertices[1],preferSide + m_Vertices[2] ,m_Vertices[3] };
-			if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
-			{
-
-				for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+				playerTransform[0] -= m_Transform[0];
+				int preferSide = 0;
+				if (playerTransform[0])
 				{
-					DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
-				}
-				if (preferSide == -1)
-				{
-					m_Vertices[0] += -1;
-					
+					preferSide = abs(playerTransform[0]) / playerTransform[0];
 				}
 				else
 				{
-					m_Vertices[2] += 1;
+					preferSide = 1;
 				}
-				m_OpenSide = preferSide;
-			}
-			else
-			{
-				vertices[0] = m_Vertices[0] - preferSide;
-				vertices[1] = m_Vertices[1];
-				vertices[2] = m_Vertices[2] - preferSide;
-				vertices[3] = m_Vertices[3];
+				int vertices[4] = { preferSide + m_Vertices[0], m_Vertices[1],preferSide + m_Vertices[2] ,m_Vertices[3] };
 				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 				{
+
 					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 					{
 						DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
@@ -187,59 +166,97 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						m_Vertices[2] += 1;
 					}
-					m_OpenSide = -preferSide;
+					m_OpenSide = preferSide;
 				}
-			}
-		}
-		else
-		{
-			playerTransform[1] -= m_Transform[1];
-			int preferSide = 0;
-			if (playerTransform[1])
-			{
-				preferSide = abs(playerTransform[1]) / playerTransform[1];
-			}
-			else
-			{
-				preferSide = 1;
-			}
-			int vertices[4] = {m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
-			if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
-			{
-				for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+				else
 				{
-					DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
-				}
-				
-				m_Vertices[0] = vertices[0];
-				m_Vertices[1] = vertices[1];
-				m_Vertices[2] = vertices[2];
-				m_Vertices[3] = vertices[3];
+					vertices[0] = m_Vertices[0] - preferSide;
+					vertices[1] = m_Vertices[1];
+					vertices[2] = m_Vertices[2] - preferSide;
+					vertices[3] = m_Vertices[3];
+					if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+					{
+						for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+						{
+							DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+						}
+						if (preferSide == -1)
+						{
+							m_Vertices[0] += -1;
 
-				m_OpenSide = preferSide;
+						}
+						else
+						{
+							m_Vertices[2] += 1;
+						}
+						m_OpenSide = -preferSide;
+					}
+				}
+				break;
 			}
-			else
+		case s_TrapDoor:
 			{
-				
-				vertices[0] = m_Vertices[0];
-				vertices[1] = m_Vertices[1] - preferSide;
-				vertices[2] = m_Vertices[2];
-				vertices[3] = m_Vertices[3] - preferSide;
+				playerTransform[1] -= m_Transform[1];
+				int preferSide = 0;
+				if (playerTransform[1])
+				{
+					preferSide = abs(playerTransform[1]) / playerTransform[1];
+				}
+				else
+				{
+					preferSide = 1;
+				}
+				int vertices[4] = { m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
 				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
 				{
 					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 					{
 						DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
 					}
+
 					m_Vertices[0] = vertices[0];
 					m_Vertices[1] = vertices[1];
 					m_Vertices[2] = vertices[2];
 					m_Vertices[3] = vertices[3];
 
-					m_OpenSide = -preferSide;
-					
+					m_OpenSide = preferSide;
 				}
+				else
+				{
+
+					vertices[0] = m_Vertices[0];
+					vertices[1] = m_Vertices[1] - preferSide;
+					vertices[2] = m_Vertices[2];
+					vertices[3] = m_Vertices[3] - preferSide;
+					if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+					{
+						for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+						{
+							DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+						}
+						m_Vertices[0] = vertices[0];
+						m_Vertices[1] = vertices[1];
+						m_Vertices[2] = vertices[2];
+						m_Vertices[3] = vertices[3];
+
+						m_OpenSide = -preferSide;
+
+					}
+				}
+				break;
 			}
+		case s_Gate:
+		{
+			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
+			{
+				DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+			}
+			m_OpenSide = 1;
+			break;
+		}
+			default:
+				Assert(true);
+				break;
 		}
 	}
 }
@@ -247,24 +264,46 @@ bool Door::CheckFloorAndCeil(std::vector<Door>& doors
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<DroppedItem>& droppedItems)
 {
-	bool found =false;
-	FindBlock(blocks, m_Transform[0], m_Vertices[1]+1, found);
-	if (found)
+	switch (m_Type)
 	{
-		found = false;
-		FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
+	case s_TrapDoor:
+	{
+		bool found = false;
+		FindBlock(blocks, m_Transform[0] - 1, m_Transform[1], found);
 		if (found)
 		{
-			return false;
+			FindBlock(blocks, m_Vertices[2] + 1, m_Transform[1], found);
+			
+			return !found;
+			
 		}
+		break;
+	}
+	default:
+	{
+		bool found = false;
+		FindBlock(blocks, m_Transform[0], m_Vertices[1] + 1, found);
+		if (found)
+		{
+			found = false;
+			FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
+			
+				return !found;
+
+		
+		}
+		break;
+	}
 	}
 	return true;
 
 }
 void DrawDoors(std::vector<Door>& doors
 	, Shader& sh
-	, unsigned int doorDD
+	, unsigned int* structuresDD
+	, unsigned int* structuresTexs
 	, unsigned int* doorTexture
+	, unsigned int* trapDoorTexture
 	, float* transform
 	, float* scale
 	, float* rotation)
@@ -278,7 +317,7 @@ void DrawDoors(std::vector<Door>& doors
 		{
 		case s_Door:
 		{
-			ErrorGL(glBindVertexArray(doorDD));
+			ErrorGL(glBindVertexArray(structuresDD[s_Door]));
 			if (!doors.at(i).m_OpenSide)
 			{
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, doorTexture[0]));
@@ -295,12 +334,35 @@ void DrawDoors(std::vector<Door>& doors
 		}
 		case s_Gate:
 		{
-
+			ChangeScale(1, 1, scale);
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, structuresTexs[s_Gate]));
+			sh.SetUniformMat4(advancedScale, scale);
+			ErrorGL(glBindVertexArray(structuresDD[s_Gate]));
+			if (!doors.at(i).m_OpenSide)
+			{
+				sh.SetUniform1i(advancedSize + ShadowLocation, 0);
+			}
+			else
+			{
+				sh.SetUniform1i(advancedSize + ShadowLocation, 1);
+			}
 			break;
 		}
 		case s_TrapDoor:
 		{
-
+			ErrorGL(glBindVertexArray(structuresDD[s_TrapDoor]));
+			if (!doors.at(i).m_OpenSide)
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, trapDoorTexture[0]));
+				ChangeScale(1, 1, scale);
+				sh.SetUniformMat4(advancedScale, scale);
+			}
+			else
+			{
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, trapDoorTexture[1]));
+				ChangeScale(1, doors.at(i).m_OpenSide, scale);
+				sh.SetUniformMat4(advancedScale, scale);
+			}
 			break;
 		}
 		default:
@@ -310,6 +372,8 @@ void DrawDoors(std::vector<Door>& doors
 		ChangeTransform(doors.at(i).m_Transform[0], doors.at(i).m_Transform[1], transform);
 		sh.SetUniformMat4(advancedTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		sh.SetUniform1i(advancedSize + ShadowLocation, 0);
+
 	}
 }
 void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
@@ -493,7 +557,7 @@ void getStructureVertices(int x
 		break;
 	case s_Gate:
 		vertices[0] = x;
-		vertices[1] = y + 4;
+		vertices[1] = y + 3;
 		vertices[2] = x;
 		vertices[3] = y;
 		break;
@@ -520,6 +584,10 @@ char GetStructureID(unsigned char Item)
 		return s_Chest;
 	case i_Door:
 		return s_Door;
+	case i_Gate:
+		return s_Gate;
+	case i_TrapDoor:
+		return s_TrapDoor;
 
 	default:
 		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
@@ -544,8 +612,13 @@ unsigned char GetItemIDByStructure(char structure)
 		return i_Chest;
 	case s_Door:
 		return i_Door;
+	case s_Gate:
+		return i_Gate;
+	case s_TrapDoor:
+		return i_TrapDoor;
 	default:
 		std::cout << "error structure.cpp unknown structure :" << (unsigned int)structure << std::endl;
+		Assert(true);
 		return i_CraftingTable;
 	}
 }

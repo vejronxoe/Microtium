@@ -133,7 +133,7 @@ bool Enemy::PlayerInWay(float deltatime
 }
 
 void Enemy::DDAndTexManager(unsigned int eob
-	, std::vector<Enemy> enemies
+	, std::vector<Enemy>& enemies
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
 	, unsigned int* enemiesDD1
@@ -167,7 +167,7 @@ void Enemy::DDAndTexManager(unsigned int eob
 	}
 }
 
-Enemy::Enemy(std::vector<Enemy> enemies
+Enemy::Enemy(std::vector<Enemy>& enemies
 	, unsigned int type
 	, unsigned int* enemiesTex1
 	, unsigned int* enemiesTex2
@@ -555,8 +555,8 @@ void EnemySpawnManager(float deltaTime
 		float vertices[4];
 		GetEnemyVerticesByType(e.m_TypeOfEnemy, vertices);
 		vertices[0] += e.m_Transform[0];
-		vertices[1] += e.m_Transform[0];
-		vertices[2] += e.m_Transform[1];
+		vertices[1] += e.m_Transform[1];
+		vertices[2] += e.m_Transform[0];
 		vertices[3] += e.m_Transform[1];
 		if (!(vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform &&
 			vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform &&

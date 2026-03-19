@@ -537,5 +537,14 @@
     <Image Include="res\textures\DoorInv.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\CloseTrapDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\OpenTrapDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CloseGate.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

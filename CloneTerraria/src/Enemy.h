@@ -13,7 +13,7 @@ class Enemy
 {
 
 public:
-	Enemy(std::vector<Enemy> enemies
+	Enemy(std::vector<Enemy>& enemies
 		, unsigned int type
 		, unsigned int* enemiesTex1
 		, unsigned int* enemiesTex2
@@ -43,7 +43,7 @@ public:
 	FireParticle m_OnFire;
 
 	void DDAndTexManager(unsigned int eob
-		, std::vector<Enemy> enemies
+		, std::vector<Enemy>& enemies
 		, unsigned int* enemiesTex1
 		, unsigned int* enemiesTex2
 		, unsigned int* enemiesDD1

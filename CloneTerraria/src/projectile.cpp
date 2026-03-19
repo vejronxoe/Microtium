@@ -438,11 +438,7 @@ bool Projectile::EveryFrame(float deltaTime
 	}
 	case p_PierceBullet:
 	{
-		m_Velocity[1] -= 4 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
+		
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
@@ -461,11 +457,7 @@ bool Projectile::EveryFrame(float deltaTime
 	}
 	case p_BasicBullet:
 	{
-		m_Velocity[1] -= 4 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
+	
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
@@ -484,11 +476,7 @@ bool Projectile::EveryFrame(float deltaTime
 	}
 	case p_FireBullet:
 	{
-		m_Velocity[1] -= 8 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
+	
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
@@ -507,11 +495,6 @@ bool Projectile::EveryFrame(float deltaTime
 	}
 	case p_BouncingBullet:
 	{
-		m_Velocity[1] -= 4 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
 					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);

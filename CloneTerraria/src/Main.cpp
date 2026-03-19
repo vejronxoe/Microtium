@@ -147,12 +147,13 @@ int main()
 	handSh.GetUniformLocation("scale");
 	handSh.GetUniformLocation("rotation");
 	handSh.GetUniformLocation("beginTransform");
-	Shader advancedSh("res/shaders/verAdvanced.txt", "res/shaders/fragBasic.txt");
+	Shader advancedSh("res/shaders/verAdvanced.txt", "res/shaders/fragShadow.txt");
 	advancedSh.Bind();
 	advancedSh.GetUniformLocation("camera");
 	advancedSh.GetUniformLocation("transform");
 	advancedSh.GetUniformLocation("scale");
 	advancedSh.GetUniformLocation("rotation");
+	advancedSh.GetUniformLocation("shadow");
 	Shader backgroundSh("res/shaders/verBasic.txt", "res/shaders/fragBackground.txt");
 	backgroundSh.Bind();
 	backgroundSh.GetUniformLocation("camera");
@@ -181,6 +182,7 @@ int main()
 	CreateTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
 	advancedSh.Bind();
+	advancedSh.SetUniform1i(advancedSize + ShadowLocation, 0);	
 	advancedSh.SetUniformMat4(advancedRotation,rotation);
 	handSh.Bind();
 	handSh.SetUniformMat4(handBeginTransform, transform);
@@ -202,7 +204,8 @@ int main()
 	unsigned int treeTextures[3];
 	unsigned int CutTextures[4];
 	unsigned int structuresTextures[8];
-	unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png")};
+	unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png") };
+	unsigned int trapDoorTextures[2] = { CreateTextureRGBA("res/textures/CloseTrapDoor.png"), CreateTextureRGBA("res/textures/OpenTrapDoor.png")};
 	unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
 	unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
 	CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
@@ -215,6 +218,8 @@ int main()
 	structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
 	structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
 	structuresTextures[s_Door] = DoorTextures[0];
+	structuresTextures[s_TrapDoor] = trapDoorTextures[0];
+	structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
 	treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
 	treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 	treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
@@ -227,6 +232,8 @@ int main()
 	structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
 	structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
 	structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+	structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
+	structuresDD[s_Gate] = CreateDrawData(eob, 3.5f, -0.5f, 0.5f, -0.5f);
 	treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
 	treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
 	treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
@@ -275,7 +282,7 @@ int main()
 
 	chests.emplace_back(130,16,blocks);
 	
-	
+	doors.emplace_back(150, 14, s_Gate, isSandOnX, walls, blocks);
 
 	CraftStation forge;
 	forge.m_CraftStationtype = s_Forge;
@@ -447,7 +454,7 @@ int main()
 		{
 			damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 		}
-		DrawDoors(doors, advancedSh, structuresDD[s_Door], DoorTextures, transform, scale, rotation);
+		DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures,trapDoorTextures, transform, scale, rotation);
 		DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 		DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
 		shadowSh.Bind();
