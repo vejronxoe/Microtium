@@ -14,8 +14,7 @@ enum cursor
 	canOpenDoors
 };
 
-unsigned int CreateCursorDrawData
-(unsigned int* CursorTextures
+unsigned int CreateCursorDrawData(unsigned int* CursorTextures
 , unsigned int eob);
 void DrawCursor(unsigned int* CursorTextures
 	, unsigned int* structurteTextures
@@ -32,3 +31,9 @@ void DrawCursor(unsigned int* CursorTextures
 	, unsigned int numberTexture
 	, Player& player
 	, float* cameraCoordinates);
+void DrawCursor(unsigned int* CursorTextures
+	, int aimingAtSomething
+	, unsigned int cursorDrawData
+	, Shader& basicSh
+	, float* transform
+	, float* camera);

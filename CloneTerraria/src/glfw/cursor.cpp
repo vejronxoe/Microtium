@@ -6,8 +6,7 @@
 #include"../glfw/Window.h"
 #include"../math/matrix.h"
 #include"../NumberRender.h"
-unsigned int CreateCursorDrawData
-(unsigned int* CursorTextures
+unsigned int CreateCursorDrawData(unsigned int* CursorTextures
 , unsigned int eob)
 {
 	unsigned int drawData = CreateDrawData(eob, 0, -28, 28, 0);
@@ -20,6 +19,29 @@ unsigned int CreateCursorDrawData
 	CursorTextures[canOpenChest] = CreateTextureRGBA("res/textures/CanChest.png");
 	CursorTextures[canOpenDoors] = CreateTextureRGBA("res/textures/CanOpenDoor.png");
 	return drawData;
+}
+
+void DrawCursor(unsigned int* CursorTextures
+	, int aimingAtSomething
+	, unsigned int cursorDrawData
+	, Shader& basicSh
+	, float* transform
+	, float* camera)
+{
+	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
+	basicSh.SetUniformMat4(basicTransform, transform);
+	if (aimingAtSomething)
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
+	}
+	else
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canNotDoIt]));
+	}
+	
+
+	ErrorGL(glBindVertexArray(cursorDrawData));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
 void DrawCursor(unsigned int* CursorTextures
 	, unsigned int* structurteTextures

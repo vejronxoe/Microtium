@@ -64,3 +64,9 @@ enum Structures
 	, s_TrapDoor
 
 };
+enum GameState
+{
+	stateMainMenu = 0
+	, stateInGame
+	, stateEditor
+};
