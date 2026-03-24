@@ -9,7 +9,7 @@
 #include"Opengl/DrawData.h"
 #include"Opengl/Texture.h"
 #include"Math/matrix.h"
-#include"imageLoader/stb_image.h"
+#include"libraries/stb_image.h"
 #include"glfw/Window.h"
 #include"glfw/cursor.h"
 #include"glfw/input.h"
@@ -24,11 +24,12 @@
 #include"background.h"
 #include"particles.h"
 #include"structures.h"
+#include"glfw/Font.h"
 
 
 int main()
 {
-	unsigned int gameState = stateInGame;
+	unsigned int gameState = stateMainMenu;
 	srand(time(0));
 	if (!glfwInit())
 	{
@@ -80,6 +81,9 @@ int main()
 	}
 
 
+	std::vector<Letter> letters;	
+	LoadFont(letters, "res/font/atlas.json");
+	unsigned int fontTex = CreateTextureRGB("res/font/atlas.png");
 
 	double pastTime = glfwGetTime();
 
@@ -97,7 +101,11 @@ int main()
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
 	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
 
-
+	Shader fontSh("res/shaders/verBAsic.txt", "res/shaders/fragFont.txt");
+	fontSh.Bind();
+	fontSh.GetUniformLocation("camera");
+	fontSh.GetUniformLocation("transform");
+	fontSh.GetUniformLocation("uColor");
 	Shader basicSh("res/shaders/verBasic.txt", "res/shaders/fragBasic.txt");
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
@@ -105,6 +113,11 @@ int main()
 	unsigned int cursorTextures[8];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
+	//
+	char b = 'b'-32;
+	Letter letter = letters.at(b);
+	unsigned int A = CreateDrawData(eob, 200, 0, 200, 0,letter.UVCoordinates[3], letter.UVCoordinates[1], letter.UVCoordinates[2], letter.UVCoordinates[0]);
+	//
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -112,7 +125,10 @@ int main()
 	CreateTransform(0, 0, transform);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
 	basicSh.SetUniformMat4(basicCamera, camera);		
-
+	fontSh.Bind();
+	fontSh.SetUniformMat4(basicCamera, camera);
+	fontSh.SetUniformMat4(basicTransform, transform);
+	fontSh.SetUniform4f(basicSize + fragFontColor, 0.5f, 0.5f, 0.5f, 1);
 	float deltaTime;
 	float printFPSTimer = 1;
 	float oldDeltaTime;
@@ -131,6 +147,14 @@ int main()
 				{
 					gameState = stateInGame;
 				}
+				fontSh.Bind();
+				ChangeTransform(0, 0, transform);
+				fontSh.SetUniformMat4(basicTransform, transform);
+		
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+				ErrorGL(glBindVertexArray(A));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+				basicSh.Bind();
 				DrawCursor(cursorTextures, 0, cursorDD, basicSh, transform, camera);
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
@@ -140,15 +164,15 @@ int main()
 		}
 		case stateInGame:
 		{
-			Shader fontSh("res/shaders/verfont.txt", "res/shaders/fragHUD.txt");
-			fontSh.Bind();
-			fontSh.GetUniformLocation("fontCamera");
-			fontSh.GetUniformLocation("fontTransform");
-			fontSh.GetUniformLocation("fontScale");
-			fontSh.GetUniformLocation("fontLetter");
-			fontSh.GetUniformLocation("shadow");
-			fontSh.GetUniformLocation("craftingY");
-			fontSh.SetUniform1f(fontSize + HUDCraftingY, 0);
+			Shader numberSh("res/shaders/verNumber.txt", "res/shaders/fragHUD.txt");
+			numberSh.Bind();
+			numberSh.GetUniformLocation("fontCamera");
+			numberSh.GetUniformLocation("fontTransform");
+			numberSh.GetUniformLocation("fontScale");
+			numberSh.GetUniformLocation("fontLetter");
+			numberSh.GetUniformLocation("shadow");
+			numberSh.GetUniformLocation("craftingY");
+			numberSh.SetUniform1f(fontSize + HUDCraftingY, 0);
 
 			Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt ");
 			HUDSh.Bind();
@@ -224,8 +248,8 @@ int main()
 			treeSh.SetUniformMat4(treeRotation, rotation);
 			HUDSh.Bind();
 			HUDSh.SetUniformMat4(HUDCamera, camera);
-			fontSh.Bind();
-			fontSh.SetUniformMat4(fontCamera, camera);
+			numberSh.Bind();
+			numberSh.SetUniformMat4(fontCamera, camera);
 			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
 
@@ -526,8 +550,8 @@ int main()
 				{
 					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 				}
-				player.DrawPlayer(deltaTime, basicSh, HUDSh, fontSh, animSh, handSh, particlesSh, chests, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
-				fontSh.Bind();
+				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, animSh, handSh, particlesSh, chests, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
+				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 				printFPSTimer += deltaTime;
@@ -536,9 +560,9 @@ int main()
 					printFPSTimer = 0;
 					oldDeltaTime = deltaTime;
 				}
-				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, fontSh);
+				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
 
-				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, fontSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
+				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, numberSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 
 
 				Input::EndOfLoop();

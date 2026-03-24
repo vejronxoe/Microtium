@@ -26,11 +26,13 @@
     <ClCompile Include="src\BlocksAndWalls.cpp" />
     <ClCompile Include="src\DroppedItems.cpp" />
     <ClCompile Include="src\glfw\cursor.cpp" />
+    <ClCompile Include="src\glfw\Font.cpp" />
     <ClCompile Include="src\glfw\Input.cpp" />
+    <ClCompile Include="src\libraries\ImageLoader.cpp" />
+    <ClCompile Include="src\libraries\json.cpp" />
     <ClCompile Include="src\math\VectorOperation.cpp" />
     <ClCompile Include="src\Opengl\DrawData.cpp" />
     <ClCompile Include="src\Opengl\ErrorSystem.cpp" />
-    <ClCompile Include="src\imageLoader\ImageLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\math\matrix.cpp" />
     <ClCompile Include="src\NumberRender.cpp" />
@@ -50,8 +52,11 @@
     <ClInclude Include="src\Enemy.h" />
     <ClInclude Include="src\flora.h" />
     <ClInclude Include="src\glfw\cursor.h" />
+    <ClInclude Include="src\glfw\Font.h" />
     <ClInclude Include="src\glfw\input.h" />
     <ClInclude Include="src\ItemList.h" />
+    <ClInclude Include="src\libraries\json.hpp" />
+    <ClInclude Include="src\libraries\stb_image.h" />
     <ClInclude Include="src\math\VectorOperation.h" />
     <ClInclude Include="src\NumberRender.h" />
     <ClInclude Include="src\Opengl\DrawData.h" />
@@ -71,6 +76,7 @@
     <Text Include="res\save\mapWalls.txt" />
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragBackground.txt" />
+    <Text Include="res\shaders\fragFont.txt" />
     <Text Include="res\shaders\fragHUD.txt" />
     <Text Include="res\shaders\fragShadow.txt" />
     <Text Include="res\shaders\fragStructures.txt" />
@@ -80,13 +86,14 @@
     <Text Include="res\shaders\verBasic.txt" />
     <Text Include="res\shaders\fragBasic.txt" />
     <Text Include="res\shaders\verAdvanced.txt" />
-    <Text Include="res\shaders\verFont.txt" />
+    <Text Include="res\shaders\verNumber.txt" />
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verHand.txt" />
     <Text Include="res\shaders\verParticles.txt" />
     <Text Include="res\shaders\verTree.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\font\atlas.png" />
     <Image Include="res\textures\0To5HP.png" />
     <Image Include="res\textures\10To15HP.png" />
     <Image Include="res\textures\15To20HP.png" />
@@ -212,6 +219,9 @@
     <Image Include="res\textures\woodShoes.png" />
     <Image Include="res\textures\zombieAnim.png" />
     <Image Include="res\textures\zombieBody.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\font\atlas.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

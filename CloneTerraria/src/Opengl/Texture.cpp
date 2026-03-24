@@ -3,7 +3,8 @@
 #include<gl/glew.h>
 
 #include"ErrorSystem.h"
-#include"../imageLoader/stb_image.h"
+#include"../libraries/stb_image.h"
+
 
 
 unsigned int CreateTextureRGB(const char* filePath)

@@ -1,33 +1,33 @@
 ﻿  Main.cpp
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(32,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(113,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(113,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(217,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(217,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(315,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(326,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(335,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(340,91): warning C4244: 'argument': conversion from 'short' to 'char', possible loss of data
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(345,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(361,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(384,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(393,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(396,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(434,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(440,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(445,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(455,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(33,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(126,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(126,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(241,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(241,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(339,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(350,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(359,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(364,91): warning C4244: 'argument': conversion from 'short' to 'char', possible loss of data
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(369,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(385,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(408,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(417,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(420,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(458,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(464,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(469,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(483,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(489,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(525,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(479,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(493,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(507,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(513,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(549,23): warning C4018: '<': signed/unsigned mismatch
 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory(736,103): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'src/Main.cpp')
       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory(736,103):
       the template instantiation context (the oldest one first) is
-          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(340,17):
+          C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(364,17):
           see reference to function template instantiation 'void std::vector<DroppedItem,std::allocator<DroppedItem>>::emplace_back<int&,int&,int,unsigned char,int,bool>(int &,int &,int &&,unsigned char &&,int &&,bool &&)' being compiled
-              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(340,29):
+              C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp(364,29):
               see the first reference to 'std::vector<DroppedItem,std::allocator<DroppedItem>>::emplace_back' in 'main'
           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector(924,24):
           see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<int&,int&,int,unsigned char,int,bool>(int &,int &,int &&,unsigned char &&,int &&,bool &&)' being compiled

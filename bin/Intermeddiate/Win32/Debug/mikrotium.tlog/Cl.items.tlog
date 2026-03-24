@@ -5,11 +5,13 @@ C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Collision.cpp;C:\Users\le
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\BlocksAndWalls.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\BlocksAndWalls.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\DroppedItems.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\DroppedItems.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\cursor.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\cursor.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Font.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Font.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\glfw\Input.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Input.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\libraries\ImageLoader.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\ImageLoader.obj
+C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\libraries\json.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\json.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\VectorOperation.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\VectorOperation.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\DrawData.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\DrawData.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Opengl\ErrorSystem.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\ErrorSystem.obj
-C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\imageLoader\ImageLoader.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\ImageLoader.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\Main.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\Main.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\math\matrix.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\matrix.obj
 C:\Users\leosz\Desktop\Cpp\mikrotium\CloneTerraria\src\NumberRender.cpp;C:\Users\leosz\Desktop\Cpp\mikrotium\bin\Intermeddiate\Win32\Debug\NumberRender.obj

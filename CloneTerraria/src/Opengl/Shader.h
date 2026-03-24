@@ -94,6 +94,10 @@ enum craftingHUDFragSh
 	, HUDCraftingY
 	, fragHUDSize
 };
+enum fontFragSh
+{
+	fragFontColor =0
+};
 class Shader
 {
 private:

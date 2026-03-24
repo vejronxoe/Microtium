@@ -7,12 +7,24 @@
       "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\glfw\\cursor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\glfw\\Font.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\glfw\\cursor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\shaders\\fragFont.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\res\\shaders\\fragFont.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\font\\atlas.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\res\\font\\atlas.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Opengl\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\Opengl\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|solutionrelative:CloneTerraria\\src\\glfw\\Font.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6027E6E6-FCFF-4DC6-81BB-A54D2D3DE7F5}|CloneTerraria\\CloneTerraria.vcxproj|C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\ItemList.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -26,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 2714,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,15 +50,42 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "atlas.json",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\font\\atlas.json",
+              "RelativeDocumentMoniker": "CloneTerraria\\res\\font\\atlas.json",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\font\\atlas.json",
+              "RelativeToolTip": "CloneTerraria\\res\\font\\atlas.json",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-24T18:16:17.15Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "cursor.cpp",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.cpp",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\cursor.cpp",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.cpp",
-              "RelativeToolTip": "CloneTerraria\\src\\glfw\\cursor.cpp",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABwAAAARAAAAAAAAAA==",
+              "Title": "fragFont.txt",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\shaders\\fragFont.txt",
+              "RelativeDocumentMoniker": "CloneTerraria\\res\\shaders\\fragFont.txt",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\res\\shaders\\fragFont.txt",
+              "RelativeToolTip": "CloneTerraria\\res\\shaders\\fragFont.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-03-24T17:46:08.507Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Font.cpp",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.cpp",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\Font.cpp",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.cpp",
+              "RelativeToolTip": "CloneTerraria\\src\\glfw\\Font.cpp",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAUwCEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-03-22T07:43:55.911Z"
+              "WhenOpened": "2026-03-24T16:56:33.471Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -56,7 +95,7 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Main.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Main.cpp",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAUwDEAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAHkAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-03-15T20:23:19.501Z",
               "EditorCaption": ""
@@ -77,20 +116,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "cursor.h",
-              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.h",
-              "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\cursor.h",
-              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\cursor.h",
-              "RelativeToolTip": "CloneTerraria\\src\\glfw\\cursor.h",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAACYAAAARAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "Shader.h",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Opengl\\Shader.h",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\Opengl\\Shader.h",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Opengl\\Shader.h",
+              "RelativeToolTip": "CloneTerraria\\src\\Opengl\\Shader.h",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAAAGIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-03-22T07:44:02.329Z",
+              "WhenOpened": "2026-03-24T18:00:36.969Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
+              "Title": "Font.h",
+              "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.h",
+              "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\Font.h",
+              "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.h",
+              "RelativeToolTip": "CloneTerraria\\src\\glfw\\Font.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-03-24T16:57:29.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "ItemList.h",
               "DocumentMoniker": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\ItemList.h",
               "RelativeDocumentMoniker": "CloneTerraria\\src\\ItemList.h",
@@ -98,7 +150,8 @@
               "RelativeToolTip": "CloneTerraria\\src\\ItemList.h",
               "ViewState": "AgIAABgAAAAAAAAAAAAAACMAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-03-09T17:07:37.14Z"
+              "WhenOpened": "2026-03-09T17:07:37.14Z",
+              "EditorCaption": ""
             }
           ]
         }
