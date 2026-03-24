@@ -21,17 +21,7 @@ void LoadFont(std::vector<Letter>& letters
 	for (int i = 0; i < glyphs.size(); ++i)
 	{
 		const auto& glyph = glyphs[i];
-/*if (glyph.contains("planeBounds"))
-		{
-			letters[i].UVCoordinates[0] = glyph["planeBounds"]["left"];
-			letters[i].UVCoordinates[1] = glyph["planeBounds"]["bottom"];
-			letters[i].UVCoordinates[2] = glyph["planeBounds"]["right"];
-			letters[i].UVCoordinates[3] = glyph["planeBounds"]["top"];
 
-			
-
-		}
-		*///broken
 		if (glyph.contains("atlasBounds"))
 		{
 			float pixelLeft = glyph["atlasBounds"]["left"];
@@ -40,9 +30,9 @@ void LoadFont(std::vector<Letter>& letters
 			float pixelTop = glyph["atlasBounds"]["top"];
 
 			letters[i].UVCoordinates[0] = pixelLeft / atlasWidth;
-			letters[i].UVCoordinates[1] = pixelBottom / atlasHeight;
+			letters[i].UVCoordinates[1] = 1.0f - (pixelBottom / atlasHeight);
 			letters[i].UVCoordinates[2] = pixelRight / atlasWidth;
-			letters[i].UVCoordinates[3] = pixelTop / atlasHeight;
+			letters[i].UVCoordinates[3] = 1.0f - (pixelTop / atlasHeight);
 		}
 		else
 		{

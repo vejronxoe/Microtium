@@ -114,7 +114,7 @@ int main()
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
 	//
-	char b = 'b'-32;
+	char b = 'j'-32;
 	Letter letter = letters.at(b);
 	unsigned int A = CreateDrawData(eob, 200, 0, 200, 0,letter.UVCoordinates[3], letter.UVCoordinates[1], letter.UVCoordinates[2], letter.UVCoordinates[0]);
 	//
