@@ -321,6 +321,11 @@ bool seedling::everyFrame(float deltaTime
 			noGround = !noGround;
 		}
 	}
+	else
+	{
+		m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, noGround);
+		noGround = !noGround;
+	}
 	m_Timer += deltaTime;
 	if (m_Timer > TIMETOGROW && !noGround)
 	{

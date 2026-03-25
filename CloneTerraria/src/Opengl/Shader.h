@@ -25,13 +25,13 @@ enum BasicVertexSh
 	, basicTransform
 	, basicSize
 };
-enum FontVertexSh
+enum numberVertexSh
 {
-	fontCamera = 0
-	, fontTransform
-	, fontScale
-	, fontLetter
-	, fontSize
+	numberCamera = 0
+	, numberTransform
+	, numberScale
+	, numberLetter
+	, numberSize
 };
 enum HandVertexSh
 {
@@ -96,7 +96,12 @@ enum craftingHUDFragSh
 };
 enum fontFragSh
 {
-	fragFontColor =0
+	fontColor =0
+};
+enum fontVertexSh
+{
+	fontCamera = 0
+	, fontSize
 };
 class Shader
 {

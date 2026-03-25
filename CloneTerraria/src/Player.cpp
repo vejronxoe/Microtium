@@ -1878,9 +1878,31 @@ void Player::EveryFrame(float deltaTime
 					}
 					break;
 				}
+				
 				if (floors)
 				{
-
+					if (!inBlock)
+					{
+						float verticesf[4] = { vertices[0] - 0.5f, vertices[1] + 0.5f, vertices[2]+ 0.5f, vertices[3] -0.5f};
+						inBlock = DoTheyIntersect(verticesf, playerVertices);
+						if (!inBlock)
+						{
+							for (int i = 0; i < enemies.size(); i++)
+							{
+								float enemyVertices[4];
+								GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
+								enemyVertices[0] += enemies.at(i).m_Transform[0];
+								enemyVertices[1] += enemies.at(i).m_Transform[1];
+								enemyVertices[2] += enemies.at(i).m_Transform[0];
+								enemyVertices[3] += enemies.at(i).m_Transform[1];
+								if (DoTheyIntersect(verticesf, enemyVertices))
+								{
+									inBlock = true;
+									break;
+								}
+							}
+						}
+					}
 					if (!inBlock)
 					{
 						m_CursorOnPlaceableForStructure = true;

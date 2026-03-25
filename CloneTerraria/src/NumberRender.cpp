@@ -36,32 +36,32 @@ void drawNumber(float bottom
 
 		float oneLeterSize = (right - left) / 4;
 		ChangeScale(oneLeterSize, oneLeterSize, scale);
-		Sh.SetUniformMat4(fontScale, scale);
+		Sh.SetUniformMat4(numberScale, scale);
 	
 
-		Sh.SetUniform1i( fontLetter, firstDigit);
+		Sh.SetUniform1i(numberLetter, firstDigit);
 		ChangeTransform(left + oneLeterSize * 3, bottom, transform);
-		Sh.SetUniformMat4(fontTransform, transform);
+		Sh.SetUniformMat4(numberTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		if (secondDigit || thirdDigit || fourthDigit)
 		{
-			Sh.SetUniform1i(fontLetter, secondDigit);
+			Sh.SetUniform1i(numberLetter, secondDigit);
 			ChangeTransform(left + oneLeterSize * 2, bottom, transform);
-			Sh.SetUniformMat4(fontTransform, transform);
+			Sh.SetUniformMat4(numberTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		if (thirdDigit || fourthDigit)
 		{
-			Sh.SetUniform1i(fontLetter, thirdDigit);
+			Sh.SetUniform1i(numberLetter, thirdDigit);
 			ChangeTransform(left + oneLeterSize, bottom, transform);
-			Sh.SetUniformMat4(fontTransform, transform);
+			Sh.SetUniformMat4(numberTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		if (fourthDigit)
 		{
-			Sh.SetUniform1i(fontLetter, fourthDigit);
+			Sh.SetUniform1i(numberLetter, fourthDigit);
 			ChangeTransform(left , bottom, transform);
-			Sh.SetUniformMat4(fontTransform, transform);
+			Sh.SetUniformMat4(numberTransform, transform);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 	}
@@ -81,25 +81,25 @@ void drawTwoNumbersWithZero(float bottom
 
 	float oneLeterSize = (right - left) / 2;
 	ChangeScale(oneLeterSize, oneLeterSize, scale);
-	Sh.SetUniformMat4(fontScale, scale);
+	Sh.SetUniformMat4(numberScale, scale);
 	
 	if (secondDigit)
 	{
-		Sh.SetUniform1i(fontLetter, secondDigit);
+		Sh.SetUniform1i(numberLetter, secondDigit);
 		ChangeTransform(left, bottom, transform);
-		Sh.SetUniformMat4(fontTransform, transform);
+		Sh.SetUniformMat4(numberTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-		Sh.SetUniform1i(fontLetter, firstDigit);
+		Sh.SetUniform1i(numberLetter, firstDigit);
 		ChangeTransform(left + oneLeterSize, bottom, transform);
-		Sh.SetUniformMat4(fontTransform, transform);
+		Sh.SetUniformMat4(numberTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 	else
 	{
-		Sh.SetUniform1i(fontLetter, firstDigit);
+		Sh.SetUniform1i(numberLetter, firstDigit);
 		ChangeTransform(((right - left)/4.0f)+ left, bottom, transform);
-		Sh.SetUniformMat4(fontTransform, transform);
+		Sh.SetUniformMat4(numberTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
@@ -135,29 +135,29 @@ void drawFloat(float bottom
 
 
 	ChangeScale(10, 10, scale);
-	Sh.SetUniformMat4(fontScale, scale);
+	Sh.SetUniformMat4(numberScale, scale);
 	for (i = 0; i < digits.size(); i++)
 	{
-		Sh.SetUniform1i(fontLetter, digits.at(i));
+		Sh.SetUniform1i(numberLetter, digits.at(i));
 		ChangeTransform(left + 10 * (digits.size()-1) - 10 * i, bottom, transform);
-		Sh.SetUniformMat4(fontTransform, transform);
+		Sh.SetUniformMat4(numberTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
 	
 	ErrorGL(glBindVertexArray(dotDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, dotTex));
-	Sh.SetUniform1i(fontLetter, 0);
+	Sh.SetUniform1i(numberLetter, 0);
 	ChangeTransform(left + 10 * digits.size()  , bottom, transform);
-	Sh.SetUniformMat4(fontTransform, transform);
+	Sh.SetUniformMat4(numberTransform, transform);
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	
 	ErrorGL(glBindVertexArray(numberDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTex));
-	Sh.SetUniform1i(fontLetter, floorf((value - floorf(value)) * 10));
+	Sh.SetUniform1i(numberLetter, floorf((value - floorf(value)) * 10));
 	ChangeTransform(left + 10 * (digits.size()+1), bottom, transform);
-	Sh.SetUniformMat4(fontTransform, transform);
+	Sh.SetUniformMat4(numberTransform, transform);
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 

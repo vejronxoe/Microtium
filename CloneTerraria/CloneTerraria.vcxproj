@@ -86,6 +86,7 @@
     <Text Include="res\shaders\verBasic.txt" />
     <Text Include="res\shaders\fragBasic.txt" />
     <Text Include="res\shaders\verAdvanced.txt" />
+    <Text Include="res\shaders\verFont.txt" />
     <Text Include="res\shaders\verNumber.txt" />
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verHand.txt" />

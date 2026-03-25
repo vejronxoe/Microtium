@@ -80,9 +80,9 @@ int main()
 		return -1;
 	}
 
-
+	float lineHeight;
 	std::vector<Letter> letters;	
-	LoadFont(letters, "res/font/atlas.json");
+	LoadFont(letters, lineHeight, "res/font/atlas.json");
 	unsigned int fontTex = CreateTextureRGB("res/font/atlas.png");
 
 	double pastTime = glfwGetTime();
@@ -101,10 +101,9 @@ int main()
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
 	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
 
-	Shader fontSh("res/shaders/verBAsic.txt", "res/shaders/fragFont.txt");
+	Shader fontSh("res/shaders/verFont.txt", "res/shaders/fragFont.txt");
 	fontSh.Bind();
 	fontSh.GetUniformLocation("camera");
-	fontSh.GetUniformLocation("transform");
 	fontSh.GetUniformLocation("uColor");
 	Shader basicSh("res/shaders/verBasic.txt", "res/shaders/fragBasic.txt");
 	basicSh.Bind();
@@ -114,9 +113,9 @@ int main()
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
 	//
-	char b = 'j'-32;
+	char b = 'A'-32;
 	Letter letter = letters.at(b);
-	unsigned int A = CreateDrawData(eob, 200, 0, 200, 0,letter.UVCoordinates[3], letter.UVCoordinates[1], letter.UVCoordinates[2], letter.UVCoordinates[0]);
+	unsigned int A = CreateDrawData(eob, 100+letter.DefalutSize[1]*10, 100, 100 + letter.DefalutSize[0]* 10, 100, letter.UVCoordinates[3], letter.UVCoordinates[1], letter.UVCoordinates[2], letter.UVCoordinates[0]);
 	//
 	float camera[16];
 	float scale[16];
@@ -126,9 +125,8 @@ int main()
 	CreateCamera(0, Window::width, 0, Window::height, camera);
 	basicSh.SetUniformMat4(basicCamera, camera);		
 	fontSh.Bind();
-	fontSh.SetUniformMat4(basicCamera, camera);
-	fontSh.SetUniformMat4(basicTransform, transform);
-	fontSh.SetUniform4f(basicSize + fragFontColor, 0.5f, 0.5f, 0.5f, 1);
+	fontSh.SetUniformMat4(fontCamera, camera);
+	fontSh.SetUniform4f(fontSize + fontColor, 0.5f, 0.5f, 0.5f, 1);
 	float deltaTime;
 	float printFPSTimer = 1;
 	float oldDeltaTime;
@@ -148,8 +146,6 @@ int main()
 					gameState = stateInGame;
 				}
 				fontSh.Bind();
-				ChangeTransform(0, 0, transform);
-				fontSh.SetUniformMat4(basicTransform, transform);
 		
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 				ErrorGL(glBindVertexArray(A));
@@ -172,7 +168,7 @@ int main()
 			numberSh.GetUniformLocation("fontLetter");
 			numberSh.GetUniformLocation("shadow");
 			numberSh.GetUniformLocation("craftingY");
-			numberSh.SetUniform1f(fontSize + HUDCraftingY, 0);
+			numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
 
 			Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt ");
 			HUDSh.Bind();
@@ -249,7 +245,7 @@ int main()
 			HUDSh.Bind();
 			HUDSh.SetUniformMat4(HUDCamera, camera);
 			numberSh.Bind();
-			numberSh.SetUniformMat4(fontCamera, camera);
+			numberSh.SetUniformMat4(numberCamera, camera);
 			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
 

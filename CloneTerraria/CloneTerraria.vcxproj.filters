@@ -185,6 +185,7 @@
     <Text Include="res\shaders\fragStructures.txt" />
     <Text Include="res\shaders\fragHUD.txt" />
     <Text Include="res\shaders\fragFont.txt" />
+    <Text Include="res\shaders\verFont.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">

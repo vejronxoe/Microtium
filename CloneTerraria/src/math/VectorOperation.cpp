@@ -17,3 +17,44 @@ void NormalizeVector(float* vector2D)
 	vector2D[0] = vector2D[0] / lenght;
 	vector2D[1] = vector2D[1] / lenght;
 }
+bool DoTheyIntersect(float* vec4fa, float* vec4fb)
+{
+	return	(vec4fa[0] <= vec4fb[2] && vec4fa[2] >= vec4fb[0] && vec4fa[3] <= vec4fb[1] && vec4fa[1] >= vec4fb[3]);
+}
+bool IsInArea(float* vec4f, float x, float y)
+{
+	return	(x <= vec4f[2] && x >= vec4f[0] && y <= vec4f[1] && y >= vec4f[3]);
+}
+bool IsInArea(float* vec4f, float* trasform)
+{
+	return	(trasform[0] <= vec4f[2] && trasform[0] >= vec4f[0] && trasform[1] <= vec4f[1] && trasform[1] >= vec4f[3]);
+}
+float GetVisibleScale(float heightParts
+	, float widthParts
+	, float height
+	, float width)
+{
+	if (height / heightParts <= width/widthParts)
+	{
+		return height / heightParts;
+	}
+	else
+	{
+		return width / widthParts;
+	}
+}
+float Clamp(float value, float min, float max)
+{
+	if (value < min)
+	{
+		return min;
+	}
+	else if (value > max)
+	{
+		return max;
+	}
+	else
+	{
+		return value;
+	}
+}
