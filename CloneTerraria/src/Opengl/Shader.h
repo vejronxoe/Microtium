@@ -94,13 +94,11 @@ enum craftingHUDFragSh
 	, HUDCraftingY
 	, fragHUDSize
 };
-enum fontFragSh
-{
-	fontColor =0
-};
+
 enum fontVertexSh
 {
 	fontCamera = 0
+	, fontTransform
 	, fontSize
 };
 class Shader

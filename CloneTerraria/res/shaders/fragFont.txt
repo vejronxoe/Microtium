@@ -5,16 +5,16 @@ float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
 }
 
-in vec2 texCoord;
+in vec2 vTexCoord;
+in vec4 vColor;
 
 uniform sampler2D ourTexture;
-uniform vec4 uColor;
 
 void main()
 {
-	vec3 msdf = texture(ourTexture, texCoord).rgb;
+	vec3 msdf = texture(ourTexture, vTexCoord).rgb;
 	float sd = median(msdf.r, msdf.g, msdf.b);
 	float edge = fwidth(sd);
 	float alpha = smoothstep(0.5 - edge, 0.5 + edge, sd);
-	FragColor = vec4(uColor.rgb, alpha * uColor.a);
+	FragColor = vec4(vColor.rgb, alpha * vColor.a);
 }

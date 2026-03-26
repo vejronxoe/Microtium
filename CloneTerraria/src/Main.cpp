@@ -3,6 +3,8 @@
 
 #include<vector>
 #include<ctime>
+#include<iostream>
+#include<string.h>
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/shader.h"
@@ -104,7 +106,7 @@ int main()
 	Shader fontSh("res/shaders/verFont.txt", "res/shaders/fragFont.txt");
 	fontSh.Bind();
 	fontSh.GetUniformLocation("camera");
-	fontSh.GetUniformLocation("uColor");
+	fontSh.GetUniformLocation("transform");
 	Shader basicSh("res/shaders/verBasic.txt", "res/shaders/fragBasic.txt");
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
@@ -113,10 +115,11 @@ int main()
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
 	//
-	char b = 'A'-32;
-	Letter letter = letters.at(b);
-	unsigned int A = CreateDrawData(eob, 100+letter.DefalutSize[1]*10, 100, 100 + letter.DefalutSize[0]* 10, 100, letter.UVCoordinates[3], letter.UVCoordinates[1], letter.UVCoordinates[2], letter.UVCoordinates[0]);
 	//
+	Text text("Hello \n World!", std::vector<Format>{ Format(5, 8, 1, 0, 0, 1), Format(15, 6, 0, 1, 0, 1) }, letters, lineHeight, leftBottom, 0, 0);
+	
+	//
+	///
 	float camera[16];
 	float scale[16];
 	float transform[16];
@@ -126,7 +129,7 @@ int main()
 	basicSh.SetUniformMat4(basicCamera, camera);		
 	fontSh.Bind();
 	fontSh.SetUniformMat4(fontCamera, camera);
-	fontSh.SetUniform4f(fontSize + fontColor, 0.5f, 0.5f, 0.5f, 1);
+	
 	float deltaTime;
 	float printFPSTimer = 1;
 	float oldDeltaTime;
@@ -146,16 +149,14 @@ int main()
 					gameState = stateInGame;
 				}
 				fontSh.Bind();
-		
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
-				ErrorGL(glBindVertexArray(A));
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+				text.Draw(fontSh, transform, fontTex);
 				basicSh.Bind();
 				DrawCursor(cursorTextures, 0, cursorDD, basicSh, transform, camera);
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
 				glfwPollEvents();
 			}
+			text.deleteText();
 			break;
 		}
 		case stateInGame:
