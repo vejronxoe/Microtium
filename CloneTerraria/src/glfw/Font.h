@@ -38,22 +38,37 @@ struct Format
 };
 struct Text
 {
-	unsigned int m_DrawData;
-	unsigned int m_VBO;
-	unsigned int m_EOB;
-	int m_OrderSize;
+
+	unsigned int m_BackgroundDrawData =-1;
+	unsigned int m_BackgroundVBO = -1;
+	unsigned int m_DrawData = -1;
+	unsigned int m_VBO = -1;
+	unsigned int m_EOB = -1;
+	int m_OrderSize = -1;
 	float m_Transform[2] = {};
 	float m_TextVertices[4] = {};
-
+	Text() = default;
 	Text(std::string Letters
 		, std::vector<Format> formats
 		, std::vector<Letter>& Anscii
+		, unsigned int eob
+		, float lineHeight
+		, char stablePoint
+		, float x
+		, float y);
+	void CreateText(std::string Letters
+		, std::vector<Format> formats
+		, std::vector<Letter>& Anscii
+		, unsigned int eob
 		, float lineHeight
 		, char stablePoint
 		, float x
 		, float y);
 	void Draw(Shader& fontSh
+		, Shader& basicSh
 		,float* transform
-		,unsigned int fontTex);
+		,unsigned int fontTex
+		, unsigned int BackgroundTex
+		, bool BackGround);
 	void deleteText();
 };

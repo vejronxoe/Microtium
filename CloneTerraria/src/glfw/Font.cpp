@@ -8,6 +8,7 @@
 #include "window.h"
 #include "../libraries/json.hpp"
 #include "../Opengl/ErrorSystem.h"
+#include "../Opengl/DrawData.h"
 #define BEGINLETTER 32	
 
 void LoadFont(std::vector<Letter>& letters
@@ -81,15 +82,19 @@ Format::Format(int LastLetterOfFormat
 	m_LastLetterOfFormat = LastLetterOfFormat;
 	m_SizeOfLetter = sizeOfLetter;
 }
-
-Text::Text(std::string Letters
+void Text::CreateText(std::string Letters
 	, std::vector<Format> formats
 	, std::vector<Letter>& Anscii
+	, unsigned int eob
 	, float lineHeight
 	, char stablePoint
 	, float x
 	, float y)
 {
+	if (m_DrawData != -1)
+	{
+		deleteText();
+	}
 	if (Letters.length() == 0)
 	{
 		assert(true);
@@ -138,7 +143,7 @@ Text::Text(std::string Letters
 		}
 		if (Letters.at(i) != '\n')
 		{
-			
+
 			if (Letters[i] != ' ')
 			{
 				m_TextVertices[2] += Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter;
@@ -236,7 +241,7 @@ Text::Text(std::string Letters
 
 		if (Letters.at(i) != '\n')
 		{
-			
+
 
 
 
@@ -294,7 +299,7 @@ Text::Text(std::string Letters
 
 
 				order.resize(order.size() + 6);
-				order[order.size() - 6] = n ;
+				order[order.size() - 6] = n;
 				order[order.size() - 5] = n + 1;
 				order[order.size() - 4] = n + 3;
 				order[order.size() - 3] = n + 1;
@@ -320,7 +325,7 @@ Text::Text(std::string Letters
 	}
 	m_OrderSize = order.size();
 
-
+	m_BackgroundDrawData = CreateDrawData(eob, m_TextVertices[1], m_TextVertices[3], m_TextVertices[2], m_TextVertices[0], m_BackgroundVBO);
 
 	ErrorGL(glGenVertexArrays(1, &m_DrawData));
 	ErrorGL(glBindVertexArray(m_DrawData));
@@ -342,20 +347,46 @@ Text::Text(std::string Letters
 
 	ErrorGL(glBindVertexArray(0));
 }
+Text::Text(std::string Letters
+	, std::vector<Format> formats
+	, std::vector<Letter>& Anscii
+	, unsigned int eob
+	, float lineHeight
+	, char stablePoint
+	, float x
+	, float y)
+{
+	CreateText(Letters, formats, Anscii, eob, lineHeight, stablePoint, x, y);
+}
 void Text::Draw(Shader& fontSh
+	, Shader& basicSh
 	, float* transform
-	, unsigned int fontTex)
+	, unsigned int fontTex
+	, unsigned int BackgroundTex
+	, bool BackGround)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	if (BackGround)
+	{
+		basicSh.Bind();
+		basicSh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, BackgroundTex));
+		ErrorGL(glBindVertexArray(m_BackgroundDrawData));
+		ErrorGL(glDrawElements(GL_TRIANGLES, m_OrderSize, GL_UNSIGNED_BYTE, 0));
+		fontSh.Bind();
+	}
 	fontSh.SetUniformMat4(fontTransform, transform);	
 
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 	ErrorGL(glBindVertexArray(m_DrawData));
 	ErrorGL(glDrawElements(GL_TRIANGLES, m_OrderSize, GL_UNSIGNED_BYTE, 0));
+	
 }
 void Text::deleteText()
 {
+	glDeleteBuffers(1, &m_BackgroundVBO);
 	glDeleteBuffers(1, &m_EOB);
 	glDeleteBuffers(1, &m_VBO);
+	glDeleteVertexArrays(1, &m_BackgroundDrawData);
 	glDeleteVertexArrays(1, &m_DrawData);
 }

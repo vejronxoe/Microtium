@@ -27,6 +27,7 @@
 #include"particles.h"
 #include"structures.h"
 #include"glfw/Font.h"
+#include"math/VectorOperation.h"
 
 
 int main()
@@ -114,18 +115,20 @@ int main()
 	unsigned int cursorTextures[8];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
-	//
-	//
-	Text text("Hello \n World!", std::vector<Format>{ Format(5, 8, 1, 0, 0, 1), Format(15, 6, 0, 1, 0, 1) }, letters, lineHeight, leftBottom, 0, 0);
-	
-	//
-	///
+	unsigned int numberTexture;
+	unsigned int dotTex;
+	unsigned int dotDD;
+	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
+	unsigned int TextBackGroundTex = CreateTextureRGBA("res/textures/blue.png");
+
+
 	float camera[16];
 	float scale[16];
 	float transform[16];
 	float rotation[16];
 	CreateTransform(0, 0, transform);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
+	basicSh.Bind();
 	basicSh.SetUniformMat4(basicCamera, camera);		
 	fontSh.Bind();
 	fontSh.SetUniformMat4(fontCamera, camera);
@@ -140,23 +143,97 @@ int main()
 		{
 		case stateMainMenu:
 		{
+			unsigned int backGroundVBO;
+			unsigned int backGroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, backGroundVBO);
+			unsigned int backGroundTex;
 
+			{
+				int randomNumber = rand() % 3;
+				switch (randomNumber)
+				{
+				case 0:
+					backGroundTex = CreateTextureRGBA("res/textures/BackgroundForest.png");
+					break;
+				case 1:
+					backGroundTex = CreateTextureRGBA("res/textures/BackgroundSand.png");
+					break;
+				default:
+					backGroundTex = CreateTextureRGBA("res/textures/BackgroundSnow.png");
+					break;
+				}
+			}
+			Text menu[4];
+			std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
+			for(int i = 0;i < 4 ; i++)
+			{ 
+				menu[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 8, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+			}
+			
 			while (!glfwWindowShouldClose(window) && gameState == stateMainMenu)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
-				if (Input::SpacePress)
+				int aimingAt = -1;
+				for (int i = 0; i < 4; i++)
 				{
-					gameState = stateInGame;
+					float vertices[4] =
+					{
+						menu[i].m_TextVertices[0] + menu[i].m_Transform[0]
+						, menu[i].m_TextVertices[1] + menu[i].m_Transform[1]
+						, menu[i].m_TextVertices[2] + menu[i].m_Transform[0]
+						, menu[i].m_TextVertices[3] + menu[i].m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						aimingAt = i;
+						break;
+					}
 				}
-				fontSh.Bind();
-				text.Draw(fontSh, transform, fontTex);
+				if (Input::LeftMousePress)
+				{
+					switch (aimingAt)
+					{
+					case 0:
+						gameState = stateInGame;
+						break;
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3:	
+						glfwSetWindowShouldClose(window, true);
+						break;
+
+					default:
+						break;
+					}
+				}
 				basicSh.Bind();
-				DrawCursor(cursorTextures, 0, cursorDD, basicSh, transform, camera);
+				ChangeTransform(0, 0, transform);
+				basicSh.SetUniformMat4(basicTransform, transform);
+				ErrorGL(glBindVertexArray(backGroundDD));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, backGroundTex));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+				fontSh.Bind();
+				for (int i = 0; i < 4; i++)
+				{
+					menu[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, i == aimingAt);
+				}
+
+				
+				basicSh.Bind();
+				DrawCursor(cursorTextures, aimingAt + 1, cursorDD, basicSh, transform, camera);
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
 				glfwPollEvents();
 			}
-			text.deleteText();
+			for (int i = 0; i < 4; i++)
+			{
+				menu[i].deleteText();
+			}
+			ErrorGL(glDeleteTextures(1, &backGroundTex));
+			ErrorGL(glDeleteBuffers(1, &backGroundVBO));
+			glDeleteVertexArrays(1, &backGroundDD);
 			break;
 		}
 		case stateInGame:
@@ -293,10 +370,7 @@ int main()
 			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
 			CreateAllBlockTextures(blockTextures);
-			unsigned int numberTexture;
-			unsigned int dotTex;
-			unsigned int dotDD;
-			unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
+			
 			unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
 			unsigned int particlesDD = CreateDrawData(eob, 0.125f, -0.125f, 0.125f, -0.125f);
 			unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
