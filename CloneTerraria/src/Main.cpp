@@ -4,7 +4,7 @@
 #include<vector>
 #include<ctime>
 #include<iostream>
-#include<string.h>
+#include<string>
 
 #include"Opengl/ErrorSystem.h"
 #include"Opengl/shader.h"
@@ -28,7 +28,18 @@
 #include"structures.h"
 #include"glfw/Font.h"
 #include"math/VectorOperation.h"
+void LoadGame(std::string pathToSave
+, std::vector<std::vector<wall>>& walls
+, std::vector< std::vector<Block>>& blocks
+, std::vector<int>& isSandOnX
+, unsigned int* blockTextures)
+{
+	walls.clear();
+	blocks.clear();
+	isSandOnX.clear();
+	LoadMapBlocksAndWalls((pathToSave  + "mapWalls.txt").c_str(), (pathToSave + "mapBlocks.txt").c_str(), walls, blocks, isSandOnX, 0, 1080, -500, 360, blockTextures);
 
+}
 
 int main()
 {
@@ -115,11 +126,18 @@ int main()
 	unsigned int cursorTextures[8];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
-	unsigned int numberTexture;
-	unsigned int dotTex;
-	unsigned int dotDD;
-	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
+	
 	unsigned int TextBackGroundTex = CreateTextureRGBA("res/textures/blue.png");
+	std::string pathToSave = "res/save";
+	Text saveText[3];
+	Text loadText[3];
+	Text backText("Back", std::vector<Format>{ Format(4, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f );;
+	for (int i = 0; i < 3; i++)
+	{
+		saveText[i].CreateText("Save " + std::to_string(i + 1), std::vector<Format>{ Format(6, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+		loadText[i].CreateText("Load " + std::to_string(i + 1), std::vector<Format>{ Format(6, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+	}
+	
 
 
 	float camera[16];
@@ -162,63 +180,131 @@ int main()
 					break;
 				}
 			}
-			Text menu[4];
-			std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
-			for(int i = 0;i < 4 ; i++)
-			{ 
-				menu[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 8, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+			Text menuDefault[4];
+			{
+				std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
+				for (int i = 0; i < 4; i++)
+				{
+					menuDefault[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 8, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+				}
 			}
-			
+			unsigned int menuState = stateDefault;
+			unsigned int loadGameState = stateInGame;
 			while (!glfwWindowShouldClose(window) && gameState == stateMainMenu)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
 				int aimingAt = -1;
-				for (int i = 0; i < 4; i++)
-				{
-					float vertices[4] =
-					{
-						menu[i].m_TextVertices[0] + menu[i].m_Transform[0]
-						, menu[i].m_TextVertices[1] + menu[i].m_Transform[1]
-						, menu[i].m_TextVertices[2] + menu[i].m_Transform[0]
-						, menu[i].m_TextVertices[3] + menu[i].m_Transform[1]
-					};
-					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
-					{
-						aimingAt = i;
-						break;
-					}
-				}
-				if (Input::LeftMousePress)
-				{
-					switch (aimingAt)
-					{
-					case 0:
-						gameState = stateInGame;
-						break;
-					case 1:
-						break;
-					case 2:
-						break;
-					case 3:	
-						glfwSetWindowShouldClose(window, true);
-						break;
-
-					default:
-						break;
-					}
-				}
+				
 				basicSh.Bind();
 				ChangeTransform(0, 0, transform);
 				basicSh.SetUniformMat4(basicTransform, transform);
 				ErrorGL(glBindVertexArray(backGroundDD));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, backGroundTex));
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-
 				fontSh.Bind();
-				for (int i = 0; i < 4; i++)
+
+				switch (menuState)
 				{
-					menu[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, i == aimingAt);
+				case stateDefault:
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						float vertices[4] =
+						{
+							menuDefault[i].m_TextVertices[0] + menuDefault[i].m_Transform[0]
+							, menuDefault[i].m_TextVertices[1] + menuDefault[i].m_Transform[1]
+							, menuDefault[i].m_TextVertices[2] + menuDefault[i].m_Transform[0]
+							, menuDefault[i].m_TextVertices[3] + menuDefault[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							break;
+						}
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+
+							menuState = stateLoad;
+							loadGameState = stateInGame;
+							break;
+						case 1:
+							break;
+						case 2:
+							break;
+						case 3:
+							glfwSetWindowShouldClose(window, true);
+							break;
+
+						default:
+							break;
+						}
+					}
+					for (int i = 0; i < 4; i++)
+					{
+						menuDefault[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, i == aimingAt);
+					}
+					break;
 				}
+				case stateOptions:
+				{
+					break;
+				}
+				case stateLoad:
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						float vertices[4] =
+						{
+							loadText[i].m_TextVertices[0] + loadText[i].m_Transform[0]
+							, loadText[i].m_TextVertices[1] + loadText[i].m_Transform[1]
+							, loadText[i].m_TextVertices[2] + loadText[i].m_Transform[0]
+							, loadText[i].m_TextVertices[3] + loadText[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							break;
+						}
+					}
+					float vertices[4] =
+					{
+						backText.m_TextVertices[0] + backText.m_Transform[0]
+						, backText.m_TextVertices[1] + backText.m_Transform[1]
+						, backText.m_TextVertices[2] + backText.m_Transform[0]
+						, backText.m_TextVertices[3] + backText.m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						aimingAt = 3;
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+						case 2:
+						case 1:
+							pathToSave += std::to_string(aimingAt) + "/";
+							gameState = stateInGame;
+							break;
+						case 3:
+							menuState = stateDefault;
+							break;
+						}
+					}
+					for (int i = 0; i < 3 ; i++)
+					{
+						loadText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, i== aimingAt);
+					}
+					backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
+				break;
+				}
+				}
+				
 
 				
 				basicSh.Bind();
@@ -227,9 +313,10 @@ int main()
 				glfwSwapBuffers(window);
 				glfwPollEvents();
 			}
+			
 			for (int i = 0; i < 4; i++)
 			{
-				menu[i].deleteText();
+				menuDefault[i].deleteText();
 			}
 			ErrorGL(glDeleteTextures(1, &backGroundTex));
 			ErrorGL(glDeleteBuffers(1, &backGroundVBO));
@@ -370,7 +457,10 @@ int main()
 			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
 			CreateAllBlockTextures(blockTextures);
-			
+			unsigned int numberTexture;
+			unsigned int dotTex;
+			unsigned int dotDD;
+			unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
 			unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
 			unsigned int particlesDD = CreateDrawData(eob, 0.125f, -0.125f, 0.125f, -0.125f);
 			unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
@@ -398,8 +488,7 @@ int main()
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
 
-
-			LoadMapBlocksAndWalls("res/save/mapWalls.txt", "res/save/mapBlocks.txt", walls, blocks, isSandOnX, 0, 1080, -500, 360, blockTextures);
+			LoadGame(pathToSave, walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
 
 
@@ -645,7 +734,6 @@ int main()
 		}
 	}
 	glfwTerminate();
-	std::cin.get();
 	return 0;
 
 }

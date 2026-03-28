@@ -167,13 +167,13 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shaders\fragBasic.txt" />
-    <Text Include="res\save\mapBlocks.txt" />
+    <Text Include="res\save0\mapBlocks.txt" />
     <Text Include="res\shaders\verBasic.txt" />
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragtTest.txt" />
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verNumber.txt" />
-    <Text Include="res\save\mapWalls.txt" />
+    <Text Include="res\save0\mapWalls.txt" />
     <Text Include="res\shaders\fragShadow.txt" />
     <Text Include="res\shaders\verTree.txt" />
     <Text Include="res\shaders\verAnimation.txt" />
@@ -186,6 +186,10 @@
     <Text Include="res\shaders\fragHUD.txt" />
     <Text Include="res\shaders\fragFont.txt" />
     <Text Include="res\shaders\verFont.txt" />
+    <Text Include="res\save1\mapBlocks.txt" />
+    <Text Include="res\save1\mapWalls.txt" />
+    <Text Include="res\save2\mapBlocks.txt" />
+    <Text Include="res\save2\mapWalls.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Asphalt.png">

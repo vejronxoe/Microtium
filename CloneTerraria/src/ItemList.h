@@ -70,3 +70,10 @@ enum GameState
 	, stateInGame
 	, stateEditor
 };
+enum MenuState
+{
+	stateDefault = 0
+	, stateLoad
+	, stateSave
+	, stateOptions
+};

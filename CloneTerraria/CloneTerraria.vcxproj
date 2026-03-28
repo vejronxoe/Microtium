@@ -72,8 +72,12 @@
     <ClInclude Include="src\structures.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\save\mapBlocks.txt" />
-    <Text Include="res\save\mapWalls.txt" />
+    <Text Include="res\save0\mapBlocks.txt" />
+    <Text Include="res\save0\mapWalls.txt" />
+    <Text Include="res\save1\mapBlocks.txt" />
+    <Text Include="res\save1\mapWalls.txt" />
+    <Text Include="res\save2\mapBlocks.txt" />
+    <Text Include="res\save2\mapWalls.txt" />
     <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragBackground.txt" />
     <Text Include="res\shaders\fragFont.txt" />
