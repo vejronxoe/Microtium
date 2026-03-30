@@ -77,3 +77,15 @@ enum MenuState
 	, stateSave
 	, stateOptions
 };
+enum StablePoint
+{
+	leftTop = 0
+	, leftMiddle
+	, leftBottom
+	, middleTop
+	, middleMiddle
+	, middleBottom
+	, rightTop
+	, rightMiddle
+	, rightBottom
+};

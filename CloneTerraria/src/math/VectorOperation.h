@@ -14,7 +14,11 @@ bool DoTheyIntersect(float* vec4fa
 float Clamp(float value
 	, float min
 	, float max);
-float GetVisibleScale(float heightParts
-	, float widthParts
-	, float height
-	, float width);
+void UITranslatorToPixels(float leftCoordinates
+	, float downCoordinates
+	, float rightCoordinates
+	, float upCoordinates
+	, float* vertices4fOutput
+	, int stablePoint);
+
+	float DistanceOnUI(float distance);

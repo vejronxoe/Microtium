@@ -9,6 +9,7 @@
 #include "../libraries/json.hpp"
 #include "../Opengl/ErrorSystem.h"
 #include "../Opengl/DrawData.h"
+#include "../ItemList.h"
 #define BEGINLETTER 32	
 
 void LoadFont(std::vector<Letter>& letters
@@ -19,7 +20,7 @@ void LoadFont(std::vector<Letter>& letters
 	nlohmann::json j = nlohmann::json::parse(f);
 	float atlasWidth = j["atlas"]["width"];
 	float atlasHeight = j["atlas"]["height"];
-	float sizeDefalut = GetVisibleScale(60,120,Window::height,Window::width);
+	float sizeDefalut = DistanceOnUI(1.0f/60.0f);
 	float pixelDefalut = 16;
 	auto glyphs = j["glyphs"];
 	if('A' - BEGINLETTER < glyphs.size())

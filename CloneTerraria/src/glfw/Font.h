@@ -3,18 +3,7 @@
 #include<iostream>
 #include"../Opengl/Shader.h"
 
-enum StablePoint
-{
-	leftTop = 0
-	, leftMiddle
-	, leftBottom
-	, middleTop
-	, middleMiddle
-	, middleBottom
-	, rightTop
-	, rightMiddle
-	, rightBottom
-};
+
 struct Letter
 {
 	float m_DefalutSize[2] = {};

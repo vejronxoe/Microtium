@@ -497,7 +497,7 @@ int main()
 				glClear(GL_COLOR_BUFFER_BIT);
 
 				deltaTime = glfwGetTime() - pastTime;
-				pastTime = glfwGetTime();
+				pastTime = glfwGetTime();	
 
 
 

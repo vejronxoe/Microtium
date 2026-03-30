@@ -536,27 +536,23 @@ Player::Player(unsigned int eob
 	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
 	m_BodyAnimDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 	m_HeadDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1);
-	unsigned int inventoryVertexBuffer;
-	float inventoryVertices[20];
-	float left = 0.02f * Window::width;
-	float top = Window::height - 0.01f * Window::height;
-	float workSpace = (Window::width / 2.0f) - left;
-	float canNotDivide = ((int)std::floor(workSpace) % (18 + Window::scaleOfHUD)) - std::floor(workSpace) + workSpace;
-	float right = ((workSpace - canNotDivide) / (18.0f + Window::scaleOfHUD)) + left;
-	float down = top - (right - left);
-	m_SlotGap = right - left + (right - left)/16.0f;
 	
-	
-	m_InvOffset[0] = (left + right) / 2.0f;
-	m_HPOffset[0] = Window::width - (left + right) / 2.0f;
-	m_InvOffset[1] = (top + down) / 2.0f;
+	float verticesSlot[4];
+	float slotGap = DistanceOnUI(0.01f);
+	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f,verticesSlot,leftTop);
+	m_InvOffset[0] = (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_HPOffset[0] = Window::width - (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_InvOffset[1] = (verticesSlot[1] + verticesSlot[3]) / 2.0f;
 	m_HPOffset[1] = m_InvOffset[1];
-	down -= m_InvOffset[1];
-	top -= m_InvOffset[1];
-	left -= m_InvOffset[0];
-	right -= m_InvOffset[0];
-	m_HalfOfSlotLeanght = -left;
-	m_HUDDD = CreateDrawData(eob, top, down, right, left);
+	m_SlotGap = verticesSlot[2] - verticesSlot[0] + slotGap;
+	m_HalfOfSlotLeanght = (verticesSlot[2] - verticesSlot[0])/2.0f;
+
+	verticesSlot[0] -= m_InvOffset[0];
+	verticesSlot[1] -= m_InvOffset[1];
+	verticesSlot[2] -= m_InvOffset[0];
+	verticesSlot[3] -= m_InvOffset[1];
+
+	m_HUDDD = CreateDrawData(eob, verticesSlot[1], verticesSlot[3], verticesSlot[2], verticesSlot[0]);
 	m_HPTexture[0] = CreateTextureRGBA("res/textures/0To5HP.png");
 	m_HPTexture[1] = CreateTextureRGBA("res/textures/5To10HP.png");
 	m_HPTexture[2] = CreateTextureRGBA("res/textures/10To15HP.png");

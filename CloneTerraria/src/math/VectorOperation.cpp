@@ -2,6 +2,9 @@
 
 #include<iostream>
 
+#include"../glfw/Window.h"
+#include"../ItemList.h"
+
 float Pyt2D(float x, float y)
 {
 	return sqrt(pow(y, 2) + pow(x, 2));
@@ -29,21 +32,95 @@ bool IsInArea(float* vec4f, float* trasform)
 {
 	return	(trasform[0] <= vec4f[2] && trasform[0] >= vec4f[0] && trasform[1] <= vec4f[1] && trasform[1] >= vec4f[3]);
 }
-float GetVisibleScale(float heightParts
-	, float widthParts
-	, float height
-	, float width)
+void UITranslatorToPixels(float leftCoordinates
+	, float downCoordinates
+	, float rightCoordinates
+	, float upCoordinates
+	, float* vertices4fOutput
+	, int stablePoint)
 {
-	if (height / heightParts <= width/widthParts)
+	float Scale = 0;
+	float sizeDifference[2] = {};
+	if (Window::height > Window::width)
 	{
-		return height / heightParts;
+		Scale = Window::width;
+		
 	}
 	else
 	{
-		return width / widthParts;
+		Scale = Window::height;
 	}
+
+	vertices4fOutput[0] = leftCoordinates * Scale;
+	vertices4fOutput[1] = upCoordinates * Scale;
+	vertices4fOutput[2] = rightCoordinates * Scale;
+	vertices4fOutput[3] = downCoordinates * Scale;
+
+	switch (stablePoint)
+	{
+	case leftTop:
+	case leftMiddle:
+	case leftBottom:
+		break;
+	case middleTop:
+	case middleMiddle:
+	case middleBottom:
+		vertices4fOutput[0] += sizeDifference[0];
+		vertices4fOutput[2] += sizeDifference[0];
+		break;
+	case rightTop:
+	case rightMiddle:
+	case rightBottom:
+		vertices4fOutput[0] += sizeDifference[0] * 2;
+		vertices4fOutput[2] += sizeDifference[0] * 2;
+
+		break;
+	default:
+		
+		std::cout << "Error vectorOperation.cpp wrong stable point" << std::endl;
+		break;
+	}
+	switch (stablePoint)
+	{
+	case leftTop:
+	case middleTop:
+	case rightTop:
+		vertices4fOutput[1] += sizeDifference[1] * 2;
+		vertices4fOutput[3] += sizeDifference[1] * 2;
+		break;
+	case leftMiddle:
+	case middleMiddle:
+	case rightMiddle:
+		vertices4fOutput[1] += sizeDifference[1];
+		vertices4fOutput[3] += sizeDifference[1];
+		break;
+	case leftBottom:
+	case middleBottom:
+	case rightBottom:
+		break;
+	default:
+		std::cout << "Error vectorOperation.cpp wrong stable point" << std::endl;
+		break;
+	}
+	
 }
-float Clamp(float value, float min, float max)
+float DistanceOnUI(float distance)
+{
+	float Scale = 0;
+	if (Window::height > Window::width)
+	{
+		Scale = Window::width;
+
+	}
+	else
+	{
+		Scale = Window::height;
+	}
+	return distance * Scale;
+}
+float Clamp(float value
+	, float min
+	, float max)
 {
 	if (value < min)
 	{
