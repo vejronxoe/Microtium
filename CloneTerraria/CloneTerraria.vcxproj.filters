@@ -87,6 +87,9 @@
     <ClCompile Include="src\libraries\json.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\glfw\UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -162,6 +165,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\glfw\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -574,6 +580,21 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\TrapDoorInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Slider.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Trail.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\blue.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canSlide.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\UncheckBox.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

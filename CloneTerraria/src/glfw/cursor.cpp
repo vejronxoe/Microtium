@@ -18,6 +18,7 @@ unsigned int CreateCursorDrawData(unsigned int* CursorTextures
 	CursorTextures[canPutBin] = CreateTextureRGBA("res/textures/canPutItInBin.png");
 	CursorTextures[canOpenChest] = CreateTextureRGBA("res/textures/CanChest.png");
 	CursorTextures[canOpenDoors] = CreateTextureRGBA("res/textures/CanOpenDoor.png");
+	CursorTextures[canSlideIt] = CreateTextureRGBA("res/textures/CanSlide.png");
 	return drawData;
 }
 
@@ -30,16 +31,7 @@ void DrawCursor(unsigned int* CursorTextures
 {
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
 	basicSh.SetUniformMat4(basicTransform, transform);
-	if (aimingAtSomething)
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canClickOnIt]));
-	}
-	else
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[canNotDoIt]));
-	}
-	
-
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, CursorTextures[aimingAtSomething]));
 	ErrorGL(glBindVertexArray(cursorDrawData));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }

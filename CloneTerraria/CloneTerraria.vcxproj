@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -28,6 +28,7 @@
     <ClCompile Include="src\glfw\cursor.cpp" />
     <ClCompile Include="src\glfw\Font.cpp" />
     <ClCompile Include="src\glfw\Input.cpp" />
+    <ClCompile Include="src\glfw\UI.cpp" />
     <ClCompile Include="src\libraries\ImageLoader.cpp" />
     <ClCompile Include="src\libraries\json.cpp" />
     <ClCompile Include="src\math\VectorOperation.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\glfw\cursor.h" />
     <ClInclude Include="src\glfw\Font.h" />
     <ClInclude Include="src\glfw\input.h" />
+    <ClInclude Include="src\glfw\UI.h" />
     <ClInclude Include="src\ItemList.h" />
     <ClInclude Include="src\libraries\json.hpp" />
     <ClInclude Include="src\libraries\stb_image.h" />
@@ -124,6 +126,7 @@
     <Image Include="res\textures\benchInv.png" />
     <Image Include="res\textures\bleedArrow.png" />
     <Image Include="res\textures\bleedBullet.png" />
+    <Image Include="res\textures\blue.png" />
     <Image Include="res\textures\bodyAnimDefault.png" />
     <Image Include="res\textures\bodyAnimWood.png" />
     <Image Include="res\textures\bootsAnimDefault.png" />
@@ -143,6 +146,7 @@
     <Image Include="res\textures\CanOpenDoor.png" />
     <Image Include="res\textures\canPickaxeIt.png" />
     <Image Include="res\textures\canPutItInBin.png" />
+    <Image Include="res\textures\canSlide.png" />
     <Image Include="res\textures\Chest.png" />
     <Image Include="res\textures\ChestPlateSlot.png" />
     <Image Include="res\textures\ChestSlot.png" />
@@ -211,13 +215,16 @@
     <Image Include="res\textures\saplingInv.png" />
     <Image Include="res\textures\scrapCannonBall.png" />
     <Image Include="res\textures\ShoesSlot.png" />
+    <Image Include="res\textures\Slider.png" />
     <Image Include="res\textures\slimeAnim.png" />
     <Image Include="res\textures\topDownGrassBlock.png" />
     <Image Include="res\textures\topGrassBlock.png" />
     <Image Include="res\textures\topLeftGrassBlock.png" />
     <Image Include="res\textures\topRightGrassBlock.png" />
+    <Image Include="res\textures\Trail.png" />
     <Image Include="res\textures\TrapDoorInv.png" />
     <Image Include="res\textures\trash.png" />
+    <Image Include="res\textures\UncheckBox.png" />
     <Image Include="res\textures\useInventorySlot.png" />
     <Image Include="res\textures\woodChestPlate.png" />
     <Image Include="res\textures\woodHelmet.png" />

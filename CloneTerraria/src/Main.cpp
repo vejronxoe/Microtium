@@ -123,7 +123,7 @@ int main()
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
 	basicSh.GetUniformLocation("transform");
-	unsigned int cursorTextures[8];
+	unsigned int cursorTextures[9];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
 	
@@ -131,11 +131,11 @@ int main()
 	std::string pathToSave = "res/save";
 	Text saveText[3];
 	Text loadText[3];
-	Text backText("Back", std::vector<Format>{ Format(4, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f );;
+	Text backText("Back", std::vector<Format>{ Format(4, 13, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f );;
 	for (int i = 0; i < 3; i++)
 	{
-		saveText[i].CreateText("Save " + std::to_string(i + 1), std::vector<Format>{ Format(6, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
-		loadText[i].CreateText("Load " + std::to_string(i + 1), std::vector<Format>{ Format(6, 8, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+		saveText[i].CreateText("Save " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+		loadText[i].CreateText("Load " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
 	}
 	
 
@@ -161,10 +161,14 @@ int main()
 		{
 		case stateMainMenu:
 		{
+
 			unsigned int backGroundVBO;
 			unsigned int backGroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, backGroundVBO);
 			unsigned int backGroundTex;
-
+			unsigned int sliderTex = CreateTextureRGBA("res/textures/Slider.png");
+			unsigned int trailTex = CreateTextureRGBA("res/textures/Trail.png");
+			unsigned int checkBoxTex[2] = { CreateTextureRGBA("res/textures/UncheckBox.png"), CreateTextureRGBA("res/textures/CheckBox.png") };
+			
 			{
 				int randomNumber = rand() % 3;
 				switch (randomNumber)
@@ -185,7 +189,29 @@ int main()
 				std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
 				for (int i = 0; i < 4; i++)
 				{
-					menuDefault[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 8, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+					menuDefault[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 13, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+				}
+			}
+			unsigned int sliderVBO = -1;
+			unsigned int sliderDD = -1;
+			{
+				float sideLength = DistanceOnUI(0.05f);
+				sliderDD = CreateDrawData(eob, sideLength, -sideLength, sideLength, -sideLength, sliderVBO);
+			}
+			Slider optionsSliders[3];
+			for (int i = 0; i < 3; i++)
+			{
+				optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, 0, middleMiddle, 0.5f, 0.4f + 0.15f* i, 1, 0.5f + 0.15f *i);
+			}
+			CheckBox fullScreenCheckBox( checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 3, 0.6f, 0.5f + 0.15f * 3, Window::fullScreen);
+			
+			Text optionsText[4];
+			{
+				float distance = DistanceOnUI(0.15f);
+				std::string Texts[4] = { "Volume  ", "GameZoom  ", "HUDZoom  ","Full Screen  " };
+				for (int i = 0; i < 4; i++)
+				{
+					optionsText[i].CreateText(Texts[i], std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * i);
 				}
 			}
 			unsigned int menuState = stateDefault;
@@ -194,12 +220,13 @@ int main()
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
 				int aimingAt = -1;
+				int cursorState = canNotDoIt;
 				
 				basicSh.Bind();
 				ChangeTransform(0, 0, transform);
 				basicSh.SetUniformMat4(basicTransform, transform);
 				ErrorGL(glBindVertexArray(backGroundDD));
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, backGroundTex));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, backGroundTex));	
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				fontSh.Bind();
 
@@ -219,6 +246,7 @@ int main()
 						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
 						{
 							aimingAt = i;
+							cursorState = canClickOnIt;
 							break;
 						}
 					}
@@ -234,6 +262,7 @@ int main()
 						case 1:
 							break;
 						case 2:
+							menuState = stateOptions;
 							break;
 						case 3:
 							glfwSetWindowShouldClose(window, true);
@@ -251,6 +280,42 @@ int main()
 				}
 				case stateOptions:
 				{
+					for (int i = 0; i < 4; i++)
+					{
+						optionsText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+					}
+					float Textvertices[4] =
+					{
+						backText.m_TextVertices[0] + backText.m_Transform[0]
+						, backText.m_TextVertices[1] + backText.m_Transform[1]
+						, backText.m_TextVertices[2] + backText.m_Transform[0]
+						, backText.m_TextVertices[3] + backText.m_Transform[1]
+					};
+					if (IsInArea(Textvertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						cursorState = canClickOnIt;
+						if (Input::LeftMousePress)
+						{
+							menuState = stateDefault;
+						}
+					}
+					backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+					basicSh.Bind();
+
+					for (int i = 0; i< 3; i++)
+					{
+						if (optionsSliders[i].Update(Input::LeftMouseHold))
+						{
+							cursorState = canSlideIt;
+						}
+						optionsSliders[i].Draw(basicSh, transform);
+					}
+					if (fullScreenCheckBox.Update(Input::LeftMousePress))
+					{
+						cursorState = canClickOnIt;
+					}
+					fullScreenCheckBox.Draw(basicSh, transform);
+
 					break;
 				}
 				case stateLoad:
@@ -308,19 +373,27 @@ int main()
 
 				
 				basicSh.Bind();
-				DrawCursor(cursorTextures, aimingAt + 1, cursorDD, basicSh, transform, camera);
+				DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
 				glfwPollEvents();
 			}
-			
+			for (int i = 0; i < 3;i++)
+			{
+				optionsSliders[i].Delete();
+			}
 			for (int i = 0; i < 4; i++)
 			{
 				menuDefault[i].deleteText();
 			}
+			fullScreenCheckBox.Delete();
 			ErrorGL(glDeleteTextures(1, &backGroundTex));
+			ErrorGL(glDeleteTextures(1, &sliderTex));
+			ErrorGL(glDeleteTextures(1, &trailTex));
 			ErrorGL(glDeleteBuffers(1, &backGroundVBO));
-			glDeleteVertexArrays(1, &backGroundDD);
+			ErrorGL(glDeleteBuffers(1, &sliderVBO));
+			ErrorGL(glDeleteVertexArrays(1, &backGroundDD));
+			ErrorGL(glDeleteVertexArrays(1, &sliderDD));
 			break;
 		}
 		case stateInGame:

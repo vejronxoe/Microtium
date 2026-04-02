@@ -1,0 +1,76 @@
+#pragma once
+#include"../opengl/Shader.h"
+
+struct Slider
+{
+	unsigned int m_SliderDD = -1;
+	unsigned int m_TrailDD = -1;
+	unsigned int m_TrailVBO = -1;
+	unsigned int m_SliderTex = -1;
+	unsigned int m_TrailTex = -1;
+	float m_SliderX = 0;
+	float m_Value = 0;
+	float m_Vertices[4] = {};
+	Slider() = default;
+	Slider(unsigned int SliderTex
+		, unsigned int trailTex
+		, unsigned int sliderDD
+		, unsigned int eob
+		, float slideX
+		, int stablePoint
+		, float left
+		, float down
+		, float right
+		, float top);
+	void CreateSlider(unsigned int SliderTex
+		, unsigned int trailTex
+		, unsigned int sliderDD
+		, unsigned int eob
+		, float slideX
+		, int stablePoint
+		, float left
+		, float down
+		, float right
+		, float top);
+	bool Update(bool isActive);
+	void Draw(Shader sh,float* transform);
+	void Delete();
+};
+struct CheckBox
+{
+	bool m_Check = false;
+	unsigned int m_DD = -1;
+	unsigned int m_VBO = -1;
+	unsigned int m_Tex[2] = {};
+	float m_Vertices[4] = {};
+	CheckBox() = default;
+	CheckBox(unsigned int* tex
+		, unsigned int eob
+		, int stablePoint
+		, float left
+		, float down
+		, float right
+		, float top
+		, bool check);
+	void Create(unsigned int* tex
+		, unsigned int eob
+		, int stablePoint
+		, float left
+		, float down
+		, float right
+		, float top
+		, bool check);
+	bool Update(bool isActive);
+	void Draw(Shader sh
+		, float* transform);
+	void Delete();
+};
+
+void UITranslatorToPixels(float leftCoordinates
+	, float downCoordinates
+	, float rightCoordinates
+	, float upCoordinates
+	, float* vertices4fOutput
+	, int stablePoint);
+
+float DistanceOnUI(float distance);

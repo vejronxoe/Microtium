@@ -5,6 +5,7 @@
 enum cursor
 {
 	canNotDoIt = 0,
+	canSlideIt,
 	canClickOnIt,
 	canPickaxeIt,
 	canAxeIt,
@@ -12,6 +13,7 @@ enum cursor
 	canPutBin,
 	canOpenChest,
 	canOpenDoors
+
 };
 
 unsigned int CreateCursorDrawData(unsigned int* CursorTextures
