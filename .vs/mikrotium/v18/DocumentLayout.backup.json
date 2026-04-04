@@ -41,7 +41,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 2714,
+          "DockedWidth": 2712,
           "SelectedChildIndex": 6,
           "Children": [
             {
@@ -60,9 +60,10 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\Font.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\Font.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\glfw\\Font.cpp",
-              "ViewState": "AgIAAGQBAAAAAAAAAAAUwHIBAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAADoBAAAAAAAAAAAiwHIBAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-02T18:20:19.498Z"
+              "WhenOpened": "2026-04-02T18:20:19.498Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -108,7 +109,7 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\Main.cpp",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\Main.cpp",
               "RelativeToolTip": "CloneTerraria\\src\\Main.cpp",
-              "ViewState": "AgIAAIYAAAAAAAAAAAAiwKIAAAADAAAAAAAAAA==",
+              "ViewState": "AgIAAPsAAAAAAAAAAAAkwD8BAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-03-15T20:23:19.501Z",
               "EditorCaption": ""
@@ -116,7 +117,7 @@
           ]
         },
         {
-          "DockedWidth": 1312,
+          "DockedWidth": 1314,
           "SelectedChildIndex": 3,
           "Children": [
             {
@@ -147,7 +148,7 @@
               "RelativeDocumentMoniker": "CloneTerraria\\src\\glfw\\UI.h",
               "ToolTip": "C:\\Users\\leosz\\Desktop\\Cpp\\mikrotium\\CloneTerraria\\src\\glfw\\UI.h",
               "RelativeToolTip": "CloneTerraria\\src\\glfw\\UI.h",
-              "ViewState": "AgIAACAAAAAAAAAAAAAiwEMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAADwv0MAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-31T16:32:48.726Z",
               "EditorCaption": ""

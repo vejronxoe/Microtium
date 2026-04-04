@@ -71,12 +71,6 @@ int main()
 	{
 		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", NULL, NULL);
 	}
-	Window::PostWindowSettings(window);
-	glfwSetCursorPosCallback(window, Input::CursorPositionCallback);
-	glfwSetKeyCallback(window, Input::KeyCallback);
-	glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
-	glfwSetScrollCallback(window, Input::ScrollCallback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -84,7 +78,13 @@ int main()
 		std::cin.get();
 		return -1;
 	}
-
+	Window::PostWindowSettings(window);
+	glfwSetCursorPosCallback(window, Input::CursorPositionCallback);
+	glfwSetKeyCallback(window, Input::KeyCallback);
+	glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
+	glfwSetScrollCallback(window, Input::ScrollCallback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	
 
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK)
@@ -114,6 +114,23 @@ int main()
 	ErrorGL(glGenBuffers(1, &eob));
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
 	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(order), order, GL_STATIC_DRAW));
+	Shader numberSh("res/shaders/verNumber.txt", "res/shaders/fragHUD.txt");
+	numberSh.Bind();
+	numberSh.GetUniformLocation("fontCamera");
+	numberSh.GetUniformLocation("fontTransform");
+	numberSh.GetUniformLocation("fontScale");
+	numberSh.GetUniformLocation("fontLetter");
+	numberSh.GetUniformLocation("shadow");
+	numberSh.GetUniformLocation("craftingY");
+	numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
+	unsigned int numberTexture;
+	unsigned int dotTex;
+	unsigned int dotDD;
+	unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
+	unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
+	unsigned int particlesDD = CreateDrawData(eob, 0.125f, -0.125f, 0.125f, -0.125f);
+	unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
+
 
 	Shader fontSh("res/shaders/verFont.txt", "res/shaders/fragFont.txt");
 	fontSh.Bind();
@@ -145,15 +162,19 @@ int main()
 	float transform[16];
 	float rotation[16];
 	CreateTransform(0, 0, transform);
+	CreateRotation(0, rotation);
+	CreateScale(1, 1, scale);
 	CreateCamera(0, Window::width, 0, Window::height, camera);
+	numberSh.Bind();
+	numberSh.SetUniformMat4(numberCamera, camera);
 	basicSh.Bind();
 	basicSh.SetUniformMat4(basicCamera, camera);		
 	fontSh.Bind();
 	fontSh.SetUniformMat4(fontCamera, camera);
 	
-	float deltaTime;
+	float deltaTime = 0;
 	float printFPSTimer = 1;
-	float oldDeltaTime;
+	float oldDeltaTime = 0;
 	float spawnTimer =0;
 	while (!glfwWindowShouldClose(window))
 	{
@@ -185,13 +206,7 @@ int main()
 				}
 			}
 			Text menuDefault[4];
-			{
-				std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
-				for (int i = 0; i < 4; i++)
-				{
-					menuDefault[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 13, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
-				}
-			}
+			
 			unsigned int sliderVBO = -1;
 			unsigned int sliderDD = -1;
 			{
@@ -199,19 +214,33 @@ int main()
 				sliderDD = CreateDrawData(eob, sideLength, -sideLength, sideLength, -sideLength, sliderVBO);
 			}
 			Slider optionsSliders[3];
+			CheckBox fullScreenCheckBox( checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 3, 0.6f, 0.5f + 0.15f * 3, Window::fullScreen);
+			Text optionsText[4];
+			Text optionsTextValues[3];
+			int optionsValues[3] = { 100, 100, 100 };
 			for (int i = 0; i < 3; i++)
 			{
-				optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, 0, middleMiddle, 0.5f, 0.4f + 0.15f* i, 1, 0.5f + 0.15f *i);
+				optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, 0, middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
 			}
-			CheckBox fullScreenCheckBox( checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 3, 0.6f, 0.5f + 0.15f * 3, Window::fullScreen);
-			
-			Text optionsText[4];
 			{
-				float distance = DistanceOnUI(0.15f);
-				std::string Texts[4] = { "Volume  ", "GameZoom  ", "HUDZoom  ","Full Screen  " };
+				std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
 				for (int i = 0; i < 4; i++)
 				{
-					optionsText[i].CreateText(Texts[i], std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * i);
+					menuDefault[i].CreateText(Texts[i], std::vector<Format>{ Format(6, 13, 0, 0, 0, 1)}, letters, eob, lineHeight, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+				}
+			}
+			{
+				float distance = DistanceOnUI(0.15f);
+				for (int i = 0; i < 3; i++)
+				{
+					optionsTextValues[i].CreateText("100  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * i);
+				}
+			
+				std::string Texts[3] = { "Volume: ", "GameZoom: ", "HUDZoom: "};
+				optionsText[3].CreateText("Full Screen:  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * 3);
+				for (int i = 0; i < 3; i++)
+				{
+					optionsText[i].CreateText(Texts[i], std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, rightBottom, optionsTextValues[i].m_TextVertices[0] + optionsTextValues[i].m_Transform[0],optionsTextValues[i].m_TextVertices[3] + optionsTextValues[i].m_Transform[1]);
 				}
 			}
 			unsigned int menuState = stateDefault;
@@ -219,6 +248,8 @@ int main()
 			while (!glfwWindowShouldClose(window) && gameState == stateMainMenu)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
+				deltaTime = glfwGetTime() - pastTime;
+				pastTime = glfwGetTime();
 				int aimingAt = -1;
 				int cursorState = canNotDoIt;
 				
@@ -283,6 +314,15 @@ int main()
 					for (int i = 0; i < 4; i++)
 					{
 						optionsText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (optionsValues[i] != optionsSliders[i].m_Value * 100)
+						{
+							optionsValues[i] = optionsSliders[i].m_Value * 100;
+							optionsTextValues[i].CreateText(std::to_string(optionsValues[i]), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, lineHeight, leftBottom, optionsText[i].m_TextVertices[2] + optionsText[i].m_Transform[0], optionsText[i].m_TextVertices[3] + optionsText[i].m_Transform[1]);
+						}
+						optionsTextValues[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 					}
 					float Textvertices[4] =
 					{
@@ -371,7 +411,17 @@ int main()
 				}
 				
 
-				
+				printFPSTimer += deltaTime;
+				if (printFPSTimer > 0.1f)
+				{
+					printFPSTimer = 0;
+					oldDeltaTime = deltaTime;
+				}
+				numberSh.Bind();
+				ErrorGL(glBindVertexArray(fontDrawData));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
+
 				basicSh.Bind();
 				DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
 				Input::EndOfLoop();
@@ -398,16 +448,7 @@ int main()
 		}
 		case stateInGame:
 		{
-			Shader numberSh("res/shaders/verNumber.txt", "res/shaders/fragHUD.txt");
-			numberSh.Bind();
-			numberSh.GetUniformLocation("fontCamera");
-			numberSh.GetUniformLocation("fontTransform");
-			numberSh.GetUniformLocation("fontScale");
-			numberSh.GetUniformLocation("fontLetter");
-			numberSh.GetUniformLocation("shadow");
-			numberSh.GetUniformLocation("craftingY");
-			numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
-
+			
 			Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt ");
 			HUDSh.Bind();
 			HUDSh.GetUniformLocation("HUDCamera");
@@ -530,14 +571,7 @@ int main()
 			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
 			CreateAllBlockTextures(blockTextures);
-			unsigned int numberTexture;
-			unsigned int dotTex;
-			unsigned int dotDD;
-			unsigned int fontDrawData = CreateDrawDataNumbers(eob, numberTexture, dotTex, dotDD);
-			unsigned int blocksDrawData = CreateDrawData(eob, 0.5f, -0.5, -0.5f, 0.5f, 1, 0, 0, 1);
-			unsigned int particlesDD = CreateDrawData(eob, 0.125f, -0.125f, 0.125f, -0.125f);
-			unsigned int itemDD = CreateDrawData(eob, 0.4f, -0.4f, 0.4f, -0.4f);
-
+			
 
 			Player player(eob, blockTextures, structuresTextures);
 
