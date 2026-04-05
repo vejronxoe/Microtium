@@ -5,13 +5,17 @@ namespace Window
 {
 	extern int height;
 	extern int width;
+	extern int windowHeight;
+	extern int windowWidth;
 	extern float halfHeightOfGameTransform;
 	extern float halfWidthOfGameTransform;
 	extern bool fullScreen;
 	extern float gameZoom;
 	extern float UIZoom;
+	extern float volume;
 	extern float lineHeight;
 	extern float FontSize;
 	bool GetInfoForWindow(const char* filepath);
-	
+	void SaveSetting(const char* filePath);
+
 }

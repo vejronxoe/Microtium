@@ -1,6 +1,6 @@
 #pragma once
 #define GRAVITY -40
-#define BlockSize 1.0f/60.0f
+#define BlockSize 1.0f/(60.0f - (Window::gameZoom-50))
 
 enum Items
 {

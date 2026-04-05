@@ -63,15 +63,10 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	GLFWwindow* window;
-	if (Window::fullScreen)
-	{
-		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", glfwGetPrimaryMonitor(), NULL);
-	}
-	else
-	{
+	
+		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", (Window::fullScreen ? glfwGetPrimaryMonitor():NULL) , NULL);
 		
-		window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", NULL, NULL);
-	}
+	
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -83,8 +78,11 @@ int main()
 
 	glfwGetWindowSize(window, &Window::width, &Window::height);
 	float blockSize = DistanceOnUI(BlockSize);
+
 	Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 	Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
+
+
 
 	glfwSetCursorPosCallback(window, Input::CursorPositionCallback);
 	glfwSetKeyCallback(window, Input::KeyCallback);
@@ -226,10 +224,11 @@ int main()
 			CheckBox fullScreenCheckBox(checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 3, 0.6f, 0.5f + 0.15f * 3, Window::fullScreen);
 			Text optionsText[4];
 			Text optionsTextValues[3];
-			int optionsValues[3] = { 100, 100, 100 };
+			
 			for (int i = 0; i < 3; i++)
 			{
-				optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, 0, middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
+				float optionsValues[3] = { Window::volume, Window::UIZoom , Window::gameZoom };
+				optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, optionsValues[i], middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
 			}
 			{
 				std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
@@ -244,13 +243,17 @@ int main()
 				{
 					optionsTextValues[i].CreateText("100  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * i);
 				}
+				std::string Texts[3] = { "Volume: ", "UIZoom:  ", "GameZoom: " };
 
-				std::string Texts[3] = { "Volume: ", "GameZoom: ", "HUDZoom: " };
 				optionsText[3].CreateText("Full Screen:  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * 3);
 				for (int i = 0; i < 3; i++)
 				{
 					optionsText[i].CreateText(Texts[i], std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, rightBottom, optionsTextValues[i].m_TextVertices[0] + optionsTextValues[i].m_Transform[0], optionsTextValues[i].m_TextVertices[3] + optionsTextValues[i].m_Transform[1]);
 				}
+				optionsTextValues[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[0].m_TextVertices[2] + optionsText[0].m_Transform[0], optionsText[0].m_TextVertices[3] + optionsText[0].m_Transform[1]);
+				optionsTextValues[1].CreateText(std::to_string(int(Window::UIZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[1].m_TextVertices[2] + optionsText[1].m_Transform[0], optionsText[1].m_TextVertices[3] + optionsText[1].m_Transform[1]);
+				optionsTextValues[2].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[2].m_TextVertices[2] + optionsText[2].m_Transform[0], optionsText[2].m_TextVertices[3] + optionsText[2].m_Transform[1]);
+
 			}
 			unsigned int menuState = stateDefault;
 			unsigned int loadGameState = stateInGame;
@@ -271,7 +274,8 @@ int main()
 					}
 					for (int i = 0; i < 3; i++)
 					{
-						optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, 0, middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
+						float optionsValues[3] = { Window::volume, Window::UIZoom , Window::gameZoom };
+						optionsSliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, optionsValues[i], middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
 					}
 					{
 						std::string Texts[4] = { "Start", "Editor", "Options", "Exit" };
@@ -287,7 +291,8 @@ int main()
 							optionsTextValues[i].CreateText("100  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * i);
 						}
 
-						std::string Texts[3] = { "Volume: ", "GameZoom: ", "HUDZoom: " };
+						std::string Texts[3] = { "Volume: ", "UIZoom:  ", "GameZoom: " };
+
 						optionsText[3].CreateText("Full Screen:  ", std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, optionsSliders[0].m_Vertices[3] + distance * 3);
 						for (int i = 0; i < 3; i++)
 						{
@@ -302,6 +307,10 @@ int main()
 						saveText[i].CreateText("Save " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
 						loadText[i].CreateText("Load " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
 					}
+					optionsTextValues[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[0].m_TextVertices[2] + optionsText[0].m_Transform[0], optionsText[0].m_TextVertices[3] + optionsText[0].m_Transform[1]);
+					optionsTextValues[1].CreateText(std::to_string(int(Window::UIZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[1].m_TextVertices[2] + optionsText[1].m_Transform[0], optionsText[1].m_TextVertices[3] + optionsText[1].m_Transform[1]);
+					optionsTextValues[2].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[2].m_TextVertices[2] + optionsText[2].m_Transform[0], optionsText[2].m_TextVertices[3] + optionsText[2].m_Transform[1]);
+
 					ChangeCamera(0,Window::width,0, Window::height, camera);
 					numberSh.Bind();
 					numberSh.SetUniformMat4(numberCamera, camera);
@@ -387,12 +396,28 @@ int main()
 					{
 						optionsText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 					}
-					for (int i = 0; i < 3; i++)
+					for (int i = 0; i < 3; i++)	
 					{
-						if (optionsValues[i] != optionsSliders[i].m_Value * 100)
+
+						if (Window::volume != optionsSliders[0].m_Value)
 						{
-							optionsValues[i] = optionsSliders[i].m_Value * 100;
-							optionsTextValues[i].CreateText(std::to_string(optionsValues[i]), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[i].m_TextVertices[2] + optionsText[i].m_Transform[0], optionsText[i].m_TextVertices[3] + optionsText[i].m_Transform[1]);
+							Window::volume = optionsSliders[0].m_Value;
+							optionsTextValues[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[0].m_TextVertices[2] + optionsText[0].m_Transform[0], optionsText[0].m_TextVertices[3] + optionsText[0].m_Transform[1]);
+
+						}
+						if (Window::UIZoom != optionsSliders[1].m_Value)
+						{
+							Window::UIZoom = optionsSliders[1].m_Value;
+							optionsTextValues[1].CreateText(std::to_string(int(Window::UIZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[1].m_TextVertices[2] + optionsText[1].m_Transform[0], optionsText[1].m_TextVertices[3] + optionsText[1].m_Transform[1]);
+						}
+						if (Window::gameZoom != optionsSliders[2].m_Value)
+						{
+							Window::gameZoom  = optionsSliders[2].m_Value;
+							blockSize = DistanceOnUI(BlockSize);
+							Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
+							Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
+
+							optionsTextValues[2].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, optionsText[2].m_TextVertices[2] + optionsText[2].m_Transform[0], optionsText[2].m_TextVertices[3] + optionsText[2].m_Transform[1]);
 						}
 						optionsTextValues[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 					}
@@ -408,6 +433,7 @@ int main()
 						cursorState = canClickOnIt;
 						if (Input::LeftMousePress)
 						{
+							Window::SaveSetting("res/settings.txt");
 							menuState = stateDefault;
 						}
 					}
@@ -424,6 +450,24 @@ int main()
 					}
 					if (fullScreenCheckBox.Update(Input::LeftMousePress))
 					{
+						if (Input::LeftMousePress)
+						{
+							Window::fullScreen = !Window::fullScreen;
+							if (Window::fullScreen)
+							{
+								GLFWmonitor* primary = glfwGetPrimaryMonitor();
+
+								const GLFWvidmode* mode = glfwGetVideoMode(primary);
+
+								int maxHeight = mode->height;
+								int maxWidth = mode->width;
+								glfwSetWindowMonitor(window, primary, 0, 0, maxWidth, maxHeight, GLFW_DONT_CARE);
+							}
+							else
+							{
+								glfwSetWindowMonitor(window, NULL, 0, 100, Window::windowWidth, Window::windowHeight, GLFW_DONT_CARE);
+							}
+						}
 						cursorState = canClickOnIt;
 					}
 					fullScreenCheckBox.Draw(basicSh, transform);

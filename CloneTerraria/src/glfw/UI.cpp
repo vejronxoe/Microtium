@@ -127,7 +127,7 @@ void Slider::CreateSlider(unsigned int SliderTex
 	}
 	m_Value = value;
 	UITranslatorToPixels(left, down, right, top, m_Vertices, stablePoint);
-	m_SliderX = (value * (m_Vertices[2] - m_Vertices[0]) + m_Vertices[0]);
+	m_SliderX = (value/100.0f * (m_Vertices[2] - m_Vertices[0]) + m_Vertices[0]);
 	m_SliderDD = sliderDD;
 	m_TrailDD = CreateDrawData(eob ,m_Vertices[1], m_Vertices[3], m_Vertices[2], m_Vertices[0], m_TrailVBO);
 	m_SliderTex = SliderTex;
@@ -140,7 +140,7 @@ bool Slider::Update(bool isActive)
 		if (isActive)
 		{
 			m_SliderX = Input::XRawMousePos;
-			m_Value = ((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0]));
+			m_Value = ((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0])) *100;
 		}
 		return true;
 	}
@@ -230,12 +230,17 @@ void CheckBox::Delete()
 }
 void ChangeScreenSize( int newWidth, int newHeight)
 {
+	if (!Window::fullScreen)
+	{
+		Window::windowWidth = newWidth;
+		Window::windowHeight = newHeight;
+	}	
 	Window::width = newWidth;
 	Window::height = newHeight;
 	glViewport(0, 0, Window::width, Window::height);
 	float blockSize = DistanceOnUI(BlockSize);
-	Window::halfHeightOfGameTransform = (Window::height / blockSize)/2.0f;
-	Window::halfWidthOfGameTransform = (Window::width / blockSize)/2.0f;
+	Window::halfHeightOfGameTransform = (Window::height / blockSize )/ 2.0f;
+	Window::halfWidthOfGameTransform = (Window::width / blockSize )/ 2.0f;
 	Window::FontSize = DistanceOnUI(1.0f / 100.0f);
 
 	
