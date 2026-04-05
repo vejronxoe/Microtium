@@ -1,5 +1,7 @@
 #pragma once
 #define GRAVITY -40
+#define BlockSize 1.0f/60.0f
+
 enum Items
 {
 	i_Nothing = 0

@@ -72,5 +72,6 @@ void UITranslatorToPixels(float leftCoordinates
 	, float upCoordinates
 	, float* vertices4fOutput
 	, int stablePoint);
+void ChangeScreenSize(int newWidth, int newHeight);
 
 float DistanceOnUI(float distance);

@@ -228,3 +228,15 @@ void CheckBox::Delete()
 	glDeleteVertexArrays(1, &m_DD);
 	glDeleteBuffers(1, &m_VBO);
 }
+void ChangeScreenSize( int newWidth, int newHeight)
+{
+	Window::width = newWidth;
+	Window::height = newHeight;
+	glViewport(0, 0, Window::width, Window::height);
+	float blockSize = DistanceOnUI(BlockSize);
+	Window::halfHeightOfGameTransform = (Window::height / blockSize)/2.0f;
+	Window::halfWidthOfGameTransform = (Window::width / blockSize)/2.0f;
+	Window::FontSize = DistanceOnUI(1.0f / 100.0f);
+
+	
+}

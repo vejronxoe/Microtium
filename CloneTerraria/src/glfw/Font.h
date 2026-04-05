@@ -41,7 +41,6 @@ struct Text
 		, std::vector<Format> formats
 		, std::vector<Letter>& Anscii
 		, unsigned int eob
-		, float lineHeight
 		, char stablePoint
 		, float x
 		, float y);
@@ -49,7 +48,6 @@ struct Text
 		, std::vector<Format> formats
 		, std::vector<Letter>& Anscii
 		, unsigned int eob
-		, float lineHeight
 		, char stablePoint
 		, float x
 		, float y);

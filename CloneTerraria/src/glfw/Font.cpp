@@ -21,22 +21,20 @@ void LoadFont(std::vector<Letter>& letters
 	nlohmann::json j = nlohmann::json::parse(f);
 	float atlasWidth = j["atlas"]["width"];
 	float atlasHeight = j["atlas"]["height"];
-	float sizeDefalut = DistanceOnUI(1.0f/100.0f);
+	 Window::FontSize = DistanceOnUI(1.0f/100.0f);
 	float pixelDefalut = 16;
 	auto glyphs = j["glyphs"];
 	if('A' - BEGINLETTER < glyphs.size())
 	{
 		
-		float pixelLeft = glyphs['A' - BEGINLETTER]["atlasBounds"]["left"];
 		float pixelBottom = glyphs['A' - BEGINLETTER]["atlasBounds"]["bottom"];
-		float pixelRight = glyphs['A' - BEGINLETTER]["atlasBounds"]["right"];
 		float pixelTop = glyphs['A' - BEGINLETTER]["atlasBounds"]["top"];
 		pixelDefalut = pixelTop - pixelBottom;
 
 	}
 
 	letters.resize(glyphs.size());
-	lineHeight = sizeDefalut;
+	Window::lineHeight = 1;
 	for (int i = 0; i < glyphs.size(); ++i)
 	{
 		const auto& glyph = glyphs[i];
@@ -47,11 +45,11 @@ void LoadFont(std::vector<Letter>& letters
 			float pixelBottom = glyph["atlasBounds"]["bottom"];
 			float pixelRight = glyph["atlasBounds"]["right"];
 			float pixelTop = glyph["atlasBounds"]["top"];
-			letters[i].m_DefalutSize[0] = sizeDefalut * (pixelRight - pixelLeft) / pixelDefalut;
-			letters[i].m_DefalutSize[1] = sizeDefalut * (pixelTop - pixelBottom) / pixelDefalut;
+			letters[i].m_DefalutSize[0] = (pixelRight - pixelLeft) / pixelDefalut;
+			letters[i].m_DefalutSize[1] = (pixelTop - pixelBottom) / pixelDefalut;
 			if (lineHeight < letters[i].m_DefalutSize[1])
 			{
-				lineHeight = letters[i].m_DefalutSize[1];
+				Window::lineHeight = letters[i].m_DefalutSize[1];
 			}
 			letters[i].m_UVCoordinates[0] = pixelLeft / atlasWidth;
 			letters[i].m_UVCoordinates[1] = 1.0f - (pixelBottom / atlasHeight);
@@ -88,7 +86,6 @@ void Text::CreateText(std::string Letters
 	, std::vector<Format> formats
 	, std::vector<Letter>& Anscii
 	, unsigned int eob
-	, float lineHeight
 	, char stablePoint
 	, float x
 	, float y)
@@ -148,24 +145,24 @@ void Text::CreateText(std::string Letters
 
 			if (Letters[i] != ' ')
 			{
-				m_TextVertices[2] += Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter;
+				m_TextVertices[2] += Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter * Window::FontSize;
 			}
 			else
 			{
-				m_TextVertices[2] += sizeOfLetter * lineHeight / 2;
+				m_TextVertices[2] += sizeOfLetter * Window::FontSize / 2;
 			}
 		}
 		else
 		{
-			m_TextVertices[3] -= lineHeight * biggestSizeOfLetter;
-			lineHeights.emplace(lineHeights.begin(), lineHeight * biggestSizeOfLetter);
+			m_TextVertices[3] -= Window::lineHeight * Window::FontSize * biggestSizeOfLetter;
+			lineHeights.emplace(lineHeights.begin(), Window::lineHeight * Window::FontSize * biggestSizeOfLetter);
 			biggestSizeOfLetter = 1;
 
 		}
 
 	}
-	m_TextVertices[3] -= lineHeight * biggestSizeOfLetter;
-	lineHeights.emplace(lineHeights.begin(), lineHeight * biggestSizeOfLetter);
+	m_TextVertices[3] -= Window::lineHeight * Window::FontSize * biggestSizeOfLetter;
+	lineHeights.emplace(lineHeights.begin(), Window::lineHeight * Window::FontSize * biggestSizeOfLetter);
 
 
 	switch (stablePoint)
@@ -254,7 +251,7 @@ void Text::CreateText(std::string Letters
 				vertices.resize(vertices.size() + 32);
 				//1
 				vertices[vertices.size() - 32] = textVertices[0];
-				vertices[vertices.size() - 31] = textVertices[1] + Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[1] * sizeOfLetter;
+				vertices[vertices.size() - 31] = textVertices[1] + Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
 
 				vertices[vertices.size() - 30] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[0];
 				vertices[vertices.size() - 29] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
@@ -275,7 +272,7 @@ void Text::CreateText(std::string Letters
 				vertices[vertices.size() - 18] = color[2];
 				vertices[vertices.size() - 17] = color[3];
 				//3							 
-				vertices[vertices.size() - 16] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * sizeOfLetter;
+				vertices[vertices.size() - 16] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
 				vertices[vertices.size() - 15] = textVertices[1];
 
 				vertices[vertices.size() - 14] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
@@ -286,8 +283,8 @@ void Text::CreateText(std::string Letters
 				vertices[vertices.size() - 10] = color[2];
 				vertices[vertices.size() - 9] = color[3];
 				//4							
-				vertices[vertices.size() - 8] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * sizeOfLetter;
-				vertices[vertices.size() - 7] = textVertices[1] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[1] * sizeOfLetter;
+				vertices[vertices.size() - 8] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
+				vertices[vertices.size() - 7] = textVertices[1] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
 
 				vertices[vertices.size() - 6] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
 				vertices[vertices.size() - 5] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
@@ -307,11 +304,11 @@ void Text::CreateText(std::string Letters
 				order[order.size() - 3] = n + 1;
 				order[order.size() - 2] = n + 2;
 				order[order.size() - 1] = n + 3;
-				textVertices[0] += Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * sizeOfLetter;
+				textVertices[0] += Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
 			}
 			else
 			{
-				textVertices[0] += sizeOfLetter * lineHeight / 2;
+				textVertices[0] += sizeOfLetter * Window::FontSize / 2;
 			}
 
 
@@ -353,12 +350,11 @@ Text::Text(std::string Letters
 	, std::vector<Format> formats
 	, std::vector<Letter>& Anscii
 	, unsigned int eob
-	, float lineHeight
 	, char stablePoint
 	, float x
 	, float y)
 {
-	CreateText(Letters, formats, Anscii, eob, lineHeight, stablePoint, x, y);
+	CreateText(Letters, formats, Anscii, eob, stablePoint, x, y);
 }
 void Text::Draw(Shader& fontSh
 	, Shader& basicSh
