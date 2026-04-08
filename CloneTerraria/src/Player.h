@@ -15,7 +15,16 @@
 
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
+enum RangeWeaponTypes
+{
+	weaponNot = 0
+	, weaponMelee
+	, weaponBow
+	, weaponCanon
+	, weaponGun
+	, weaponAutomatic
 
+};
 enum Effects
 {
 	effectWallClimb = 0
@@ -56,35 +65,35 @@ private:
 	Recipe m_Recipes[5];
 	int m_NumberOfVisibleRecipes;
 	Recipe m_VisibleRecipes[5];
-	int m_UsingIndexRecipe;
-	float m_RecipeY;
-	float m_TimerCrafting;
+	int m_UsingIndexRecipe = 0;
+	float m_RecipeY = 0;
+	float m_TimerCrafting;//////////////
 	float m_NumberOfRecipesDone;
 
 	
 private:
-	bool m_FloorHit;
-	bool m_CeilHit;
-	bool m_LeftWallHit;
-	bool m_RightWallHit;
-	float m_CoyoteTimer;
-	float m_JumpTimer;
-	bool m_CanJump;
+	bool m_FloorHit = false;
+	bool m_CeilHit = false;
+	bool m_LeftWallHit = false;
+	bool m_RightWallHit = false;
+	float m_CoyoteTimer = false;
+	float m_JumpTimer = false;
+	bool m_CanJump = false;
 public:
-	int m_AimingAtChest;
-	int m_IndexOfOpenChest;
+	int m_AimingAtChest = -1;
+	int m_IndexOfOpenChest = -1;
 
-	int m_AimingAtDoors;
+	int m_AimingAtDoors = -1;
 
-	short int m_DirectionLook;
-	unsigned int m_FloorBehaviour;
-	int m_JumpPower;
-	float m_Gravity;
-	int m_Acceleration;
-	int m_Friction;
-	float m_MaxMovementSpeed;
-	float m_Transform[2];
-	float m_Velocity[2];
+	short int m_DirectionLook = -1;
+	unsigned int m_FloorBehaviour = b_BasicSolid;
+	int m_JumpPower = 12;
+
+	int m_Acceleration = 0;
+	int m_Friction = 0;
+	float m_MaxMovementSpeed = 0;
+	float m_Transform[2] = {150,30};
+	float m_Velocity[2] = {0,0};
 	Player(unsigned int eob
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
@@ -92,6 +101,7 @@ public:
 		, unsigned short* amount
 		, unsigned short* items
 		, int begin);
+	void ResizeHUD(unsigned int eob);
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
 	void DamagePlayer(float* transfromAttacker
@@ -135,102 +145,103 @@ public:
 
 	void SwapItemStats();
 private:
-	float m_ArmTimer;
-	char m_ArmPhase;
-	char m_ArmsBehaviour;
-	float m_WalkingTimer;
-	char m_WalkingPhase;
-	float m_ArmRotation;
+	float m_ArmTimer = 0;
+	char m_ArmPhase = 0;
+	char m_ArmsBehaviour = 0;
+	float m_WalkingTimer = 0;
+	char m_WalkingPhase = 0;
+	float m_ArmRotation = 0;
 	
-	unsigned int m_BulletsDD;
-	unsigned int m_BottomAnimDD;
-	unsigned int m_HandDD;
-	unsigned int m_BodyAnimDD;
-	unsigned int m_HeadDD;
-	unsigned int m_BootsAnimTex;
-	unsigned int m_ItemInHandDD;
-	unsigned int m_BlockInHandDD;
-	unsigned int m_HandTex;
-	unsigned int m_LegAnimTex;
-	unsigned int m_BodyAnimTex;
-	unsigned int m_HeadTex;
+	unsigned int m_BulletsDD = 0;
+	unsigned int m_BottomAnimDD = 0;
+	unsigned int m_HandDD = 0;
+	unsigned int m_BodyAnimDD = 0;
+	unsigned int m_HeadDD = 0;
+	unsigned int m_BootsAnimTex = 0;
+	unsigned int m_ItemInHandDD = 0;
+	unsigned int m_BlockInHandDD = 0;
+	unsigned int m_HandTex = 0;
+	unsigned int m_LegAnimTex = 0;
+	unsigned int m_BodyAnimTex = 0;
+	unsigned int m_HeadTex = 0;
 
 
-	unsigned int m_HUDDD;
-	unsigned int m_SlotTexture;
-	unsigned int m_TrashCanSlotTexture;
-	float m_SlotGap;
-	float m_TimerSplitingItem;
-	float m_AddNextFrameDropItem;
-	float m_ItemsToTake;
+	unsigned int m_HUDDD = 0;
+	unsigned int m_SlotTexture = 0;
+	unsigned int m_TrashCanSlotTexture =0;
+	float m_SlotGap = 0;
+	float m_TimerSplitingItem = 0;
+	float m_AddNextFrameDropItem = 0;
+	float m_ItemsToTake = 0;
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
 	char FindOneOfItemsInInv(unsigned char* items, int sizeOfArray);
 public:
 
-	float m_LastStandingY;
-	float m_HPOffset[2];
-	unsigned int m_HPTexture[5];
-	float m_TimerSinceLastHit;
-	float m_AddNextFrameHP;
-	int m_HPRegen;
-	int m_CurrentHealth;
-	int m_maxHealth;
+	float m_LastStandingY = 0;
+	float m_HPOffset[2] = {};
+	unsigned int m_HPTexture[5] = {0};
+	float m_TimerSinceLastHit = 0;
+	float m_AddNextFrameHP = 0;
+	int m_HPRegen = 2;
+	int m_CurrentHealth = 50;
+	int m_maxHealth = 100;
+
+	
+	float m_InvOffset[2] = {};
+	float m_HalfOfSlotLeanght = 0;
+	unsigned char m_HUDUseSlot = 0;
+	unsigned int m_UseSlotTexture = 0;
+	unsigned int m_slotVBO = 0;
+	unsigned int m_ChestSlotTexture = 0;
+	unsigned int m_MissingSlotTexture = 0;
+	unsigned int m_NothingSlotTexture = 0;
+	unsigned char m_AimingAtSlot = 0;
+	unsigned char m_UseSlot = 0;
+	bool m_IsInventoryOpen = false;
 
 
-	float m_InvOffset[2];
-	float m_HalfOfSlotLeanght;
-	unsigned char m_HUDUseSlot;
-	unsigned int m_UseSlotTexture;
-	unsigned int m_ChestSlotTexture;
-	unsigned int m_MissingSlotTexture;
-	unsigned int m_NothingSlotTexture;
-	unsigned char m_AimingAtSlot;
-	unsigned char m_UseSlot;
-	bool m_IsInventoryOpen;
+	unsigned int m_AllItemTextures[48] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_ItemsInHandDD[3] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_ItemsInHandTexture[3] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned short int m_PlayerSlots[60] = {};
+	unsigned short int m_AmountInSlots[52] = {};
 
 
-	unsigned int m_AllItemTextures[48];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned int m_ItemsInHandDD[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned int m_ItemsInHandTexture[3];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned short int m_PlayerSlots[60];
-	unsigned short int m_AmountInSlots[52];
-
-
-	float m_UseItemTimer;
-	bool m_CursorOnMinableBlock;
-	bool m_CursorOnMinableWall;
-	bool m_CursorOnMinableWood;
-	bool m_CursorOnPlaceableForStructure;
-	bool m_CursorOnPlaceableSpot;
-	char m_LocationAmmunition;
-	float m_CooldownToUse;
+	float m_UseItemTimer = 0;
+	bool m_CursorOnMinableBlock = false;
+	bool m_CursorOnMinableWall = false;
+	bool m_CursorOnMinableWood = false;
+	bool m_CursorOnPlaceableForStructure = false;
+	bool m_CursorOnPlaceableSpot = false;
+	char m_LocationAmmunition = -1;
+	float m_CooldownToUse = 6;
 	std::vector<unsigned int> m_HitEnemies;
-	unsigned char m_WeaponType;
-	unsigned char m_PickaxeStreanght;
-	unsigned char m_AxeStreanght;
-	unsigned char m_HammerStreanght;
-	unsigned char m_Range;
-	short int m_Damage;
-	short int m_ArmorClass;
-	unsigned int m_ArmorClassTex;
-	unsigned int m_ArmorSlotsTex[4];
-	bool m_Placeable;
-	bool m_LargePlaceable;
-	bool m_Consume;
+	unsigned char m_WeaponType = weaponNot;
+	unsigned char m_PickaxeStreanght = 0;
+	unsigned char m_AxeStreanght = 0;
+	unsigned char m_HammerStreanght = 0;
+	unsigned char m_Range = 0;
+	short int m_Damage = 0;
+	short int m_ArmorClass = 0;
+	unsigned int m_ArmorClassTex = -1;
+	unsigned int m_ArmorSlotsTex[4] = {0};
+	bool m_Placeable = false;
+	bool m_LargePlaceable = false;
+	bool m_Consume = false;
 
 	void SwapAccessorise(unsigned char invSlotIndex
 		, unsigned char accessoriseSlotIndex);
-	bool m_Effects[3];
-	float m_OnFireTimer;
-	float m_DamageTimer;
-	bool m_CanDoubleJump;
-	int m_SpeedMultiplier;
-	bool m_Accessorise;
-	bool m_IsBurning;
-	float m_BurningTimer;
-	int m_BurnDamageNextTime;
+	bool m_Effects[3] =  {false};
+	float m_OnFireTimer = 0;
+	float m_DamageTimer = 0;
+	bool m_CanDoubleJump = false;
+	int m_SpeedMultiplier = 1;
+	bool m_Accessorise = false;
+	bool m_IsBurning = false;
+	float m_BurningTimer = 0;
+	int m_BurnDamageNextTime = 0;
 	FireParticle m_OnFire;
 };
 

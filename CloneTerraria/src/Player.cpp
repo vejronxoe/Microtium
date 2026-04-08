@@ -16,16 +16,7 @@
 #define CRAFTINGOFFSET 3
 #define CHESTANDDOORSREACH 8.0f
 
-enum RangeWeaponTypes
-{
-	weaponNot = 0
-	, weaponMelee
-	, weaponBow
-	, weaponCanon
-	, weaponGun
-	, weaponAutomatic
-	
-};
+
 enum ArmBehaviour
 {
 	ArmStanding = 0
@@ -297,84 +288,9 @@ Player::Player(unsigned int eob
 	m_Recipes[4].CreateRecipe(i_BasicArrow, 2, -1);
 	m_Recipes[4].m_Ingredients.emplace_back(i_ForestPlank, 3);
 
-	m_UsingIndexRecipe = 0;
-	m_RecipeY = 0;
 
 
-	m_FloorHit = false;
-	m_CeilHit = false;
-	m_LeftWallHit = false;
-	m_RightWallHit = false;
-	m_CoyoteTimer = 0;
-	m_JumpTimer = 0;
-	m_ArmorClass = 0;
-	m_CanJump = false;
-	m_DirectionLook = -1;
-	m_JumpPower = 12;
-	m_Gravity = GRAVITY;
-	m_Acceleration = 0;
-	m_Friction = 0;
-	m_MaxMovementSpeed = 0;
-	m_Transform[0] = 150;
-	m_Transform[1] = 30;
-	m_Velocity[0] = 0;
-	m_Velocity[1] = -2;
-	m_ArmTimer = 0;
-	m_ArmPhase = 0;
-	m_ArmsBehaviour = 0;
-	m_WalkingTimer = 0;
-	m_WalkingPhase = 0;
-	m_ArmRotation = 0;
-	m_IsInventoryOpen = false;
-	m_TimerSplitingItem = 0;
-	m_AddNextFrameDropItem = 0;
-	m_UseSlot = 0;
-	m_HUDUseSlot = 1;
-	m_AimingAtSlot = -1;
-	for (int i = 0; i < 60; i++)
-	{
-		m_PlayerSlots[i] = i_Nothing;
-	}
-	for (int i = 0; i < 52; i++)
-	{
-		m_AmountInSlots[i] = 0;
-	}
-	m_UseItemTimer = 0;
-	m_CursorOnMinableBlock = false;
-	m_CursorOnMinableWall = false;
-	m_CursorOnMinableWood = false;
-	m_CursorOnPlaceableForStructure = false;
-	m_CursorOnPlaceableSpot = false;
-	m_CooldownToUse = 6;
-	m_WeaponType = weaponNot;
-	m_PickaxeStreanght = 0;
-	m_AxeStreanght = 0;
-	m_HammerStreanght = 0;
-	m_Range = 0;
-	m_Damage = 0;
-	m_Placeable = 0;
-	m_LargePlaceable = 0;
-	m_LocationAmmunition = -1;
-	m_TimerSinceLastHit = 0;
-	m_AddNextFrameHP = 0;
-	m_HPRegen = 2;
-	m_CurrentHealth = 55;
-	m_maxHealth = 100;
-	m_LastStandingY = 0;
-	m_CanDoubleJump = false;
-	m_Accessorise = false;
-	m_Effects[0] = false;
-	m_Effects[1] = false;
-	m_Effects[2] = false;
-	m_OnFireTimer = 0;
-	m_SpeedMultiplier = 1;
-	m_IsBurning = false;
-	m_AimingAtChest = -1;
-	m_IndexOfOpenChest = -1;
 
-
-	m_BurningTimer = 0;
-	m_BurnDamageNextTime = 0;
 	float playerVertice[4] = { -1,1.5f,1,-1.5f };
 	m_OnFire.constructorFire(playerVertice, 4, 0.2f);
 	m_AimingAtDoors = -1;
@@ -552,7 +468,7 @@ Player::Player(unsigned int eob
 	verticesSlot[2] -= m_InvOffset[0];
 	verticesSlot[3] -= m_InvOffset[1];
 
-	m_HUDDD = CreateDrawData(eob, verticesSlot[1], verticesSlot[3], verticesSlot[2], verticesSlot[0]);
+	m_HUDDD = CreateDrawData(eob, verticesSlot[1], verticesSlot[3], verticesSlot[2], verticesSlot[0], m_slotVBO);
 	m_HPTexture[0] = CreateTextureRGBA("res/textures/0To5HP.png");
 	m_HPTexture[1] = CreateTextureRGBA("res/textures/5To10HP.png");
 	m_HPTexture[2] = CreateTextureRGBA("res/textures/10To15HP.png");
@@ -566,6 +482,9 @@ Player::Player(unsigned int eob
 	m_MissingSlotTexture = CreateTextureRGBA("res/textures/missingIngredientSlot.png");
 	m_NothingSlotTexture = CreateTextureRGBA("res/textures/nothingIngredientSlot.png");
 	m_ChestSlotTexture = CreateTextureRGBA("res/textures/ChestSlot.png");
+
+
+
 
 	SwapItemStats();
 	
@@ -1016,6 +935,27 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 		}
 	}
 	return isItDone;
+}
+void Player::ResizeHUD(unsigned int eob)
+{
+	ErrorGL(glDeleteBuffers(1, &m_slotVBO));
+	ErrorGL(glDeleteVertexArrays(1, &m_HUDDD));
+	float verticesSlot[4];
+	float slotGap = DistanceOnUI(0.01f);
+	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f, verticesSlot, leftTop);
+	m_InvOffset[0] = (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_HPOffset[0] = Window::width - (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_InvOffset[1] = (verticesSlot[1] + verticesSlot[3]) / 2.0f;
+	m_HPOffset[1] = m_InvOffset[1];
+	m_SlotGap = verticesSlot[2] - verticesSlot[0] + slotGap;
+	m_HalfOfSlotLeanght = (verticesSlot[2] - verticesSlot[0]) / 2.0f;
+
+	verticesSlot[0] -= m_InvOffset[0];
+	verticesSlot[1] -= m_InvOffset[1];
+	verticesSlot[2] -= m_InvOffset[0];
+	verticesSlot[3] -= m_InvOffset[1];
+
+	m_HUDDD = CreateDrawData(eob, verticesSlot[1], verticesSlot[3], verticesSlot[2], verticesSlot[0], m_slotVBO);
 }
 
 void Player::EveryFrame(float deltaTime
@@ -2450,7 +2390,7 @@ void Player::EveryFrame(float deltaTime
 		}
 		else
 		{
-			m_Velocity[1] += m_Gravity * deltaTime;
+			m_Velocity[1] += GRAVITY * deltaTime;
 			if (-30 > m_Velocity[1])
 			{
 				m_Velocity[1] = -30;
@@ -3397,3 +3337,78 @@ void Player::DrawPlayer(float deltaTime
 		}
 	}
 }
+/*
+	m_FloorHit = false;
+	m_CeilHit = false;
+	m_LeftWallHit = false;
+	m_RightWallHit = false;
+	m_CoyoteTimer = 0;
+	m_JumpTimer = 0;
+	m_ArmorClass = 0;
+	m_CanJump = false;
+	m_DirectionLook = -1;
+	m_JumpPower = 12;
+
+	m_Acceleration = 0;
+	m_Friction = 0;
+	m_MaxMovementSpeed = 0;
+	m_Transform[0] = 150;
+	m_Transform[1] = 30;
+	m_Velocity[0] = 0;
+	m_Velocity[1] = -2;
+	m_ArmTimer = 0;
+	m_ArmPhase = 0;
+	m_ArmsBehaviour = 0;
+	m_WalkingTimer = 0;
+	m_WalkingPhase = 0;
+	m_ArmRotation = 0;
+	m_IsInventoryOpen = false;
+	m_TimerSplitingItem = 0;
+	m_AddNextFrameDropItem = 0;
+	m_UseSlot = 0;
+	m_HUDUseSlot = 1;
+	m_AimingAtSlot = -1;
+	for (int i = 0; i < 60; i++)
+	{
+		m_PlayerSlots[i] = i_Nothing;
+	}
+	for (int i = 0; i < 52; i++)
+	{
+		m_AmountInSlots[i] = 0;
+	}
+	m_UseItemTimer = 0;
+	m_CursorOnMinableBlock = false;
+	m_CursorOnMinableWall = false;
+	m_CursorOnMinableWood = false;
+	m_CursorOnPlaceableForStructure = false;
+	m_CursorOnPlaceableSpot = false;
+	m_CooldownToUse = 6;
+	m_WeaponType = weaponNot;
+	m_PickaxeStreanght = 0;
+	m_AxeStreanght = 0;
+	m_HammerStreanght = 0;
+	m_Range = 0;
+	m_Damage = 0;
+	m_Placeable = 0;
+	m_LargePlaceable = 0;
+	m_LocationAmmunition = -1;
+	m_TimerSinceLastHit = 0;
+	m_AddNextFrameHP = 0;
+	m_HPRegen = 2;
+	m_CurrentHealth = 55;
+	m_maxHealth = 100;
+	m_LastStandingY = 0;
+	m_CanDoubleJump = false;
+	m_Accessorise = false;
+	m_Effects[0] = false;
+	m_Effects[1] = false;
+	m_Effects[2] = false;
+	m_OnFireTimer = 0;
+	m_SpeedMultiplier = 1;
+	m_IsBurning = false;
+	m_AimingAtChest = -1;
+	m_IndexOfOpenChest = -1;
+
+
+	m_BurningTimer = 0;
+	m_BurnDamageNextTime = 0;*/

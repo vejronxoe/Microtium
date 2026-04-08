@@ -183,6 +183,15 @@ int main()
 	float printFPSTimer = 1;
 	float oldDeltaTime = 0;
 	float spawnTimer =0;
+
+	///////////////////////////////////////////////
+	gameState = stateInGame;
+
+	pathToSave += "0/";
+
+
+
+	//////////////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window))
 	{
 		switch (gameState)
@@ -746,7 +755,7 @@ int main()
 					numberSh.SetUniformMat4(numberCamera, camera);
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
-
+					player.ResizeHUD(eob);
 
 				}
 
@@ -768,8 +777,7 @@ int main()
 				{
 					if (doors.at(i).CheckFloorAndCeil(doors, blocks, dropItems))
 					{
-						Door d = doors.at(i);
-						dropItems.emplace_back(d.m_Transform[0], d.m_Transform[1], 0, GetItemIDByStructure(d.m_Type), 1, true);
+						dropItems.emplace_back(doors[i].m_Transform[0], doors[i].m_Transform[1], 0, GetItemIDByStructure(doors[i].m_Type), 1, true);
 						doors.at(i).DestroyDoor(blocks, walls, isSandOnX);
 						doors.erase(i + doors.begin());
 					}
