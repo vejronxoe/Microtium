@@ -15,8 +15,21 @@
 #define REGENCOLDDOWN 4
 #define CRAFTINGOFFSET 3
 #define CHESTANDDOORSREACH 8.0f
+#define TEXSLOTDISTANCE 1.0f/9.0f
+enum SlotTextures
+{
+	defaultSlot = 0
+	, useSlot
+	, missingSlot
+	, nothingSlot
+	, chestSlot
+	, helmetSlot
+	, chestPlateSlot
+	, pantsSlot
+	, shoesSlot
 
 
+};
 enum ArmBehaviour
 {
 	ArmStanding = 0
@@ -38,6 +51,235 @@ enum PartsOfArmor
 	, armorShoes
 };
 
+void Player::createHUD()
+{
+	
+	float verticesSlot[4];
+	float slotGap = DistanceOnUI(0.01f);
+	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f, verticesSlot, leftTop);
+	m_InvOffset[0] = (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_HPOffset[0] = Window::width - (verticesSlot[0] + verticesSlot[2]) / 2.0f;
+	m_InvOffset[1] = (verticesSlot[1] + verticesSlot[3]) / 2.0f;
+	m_HPOffset[1] = m_InvOffset[1];
+	m_SlotGap = verticesSlot[2] - verticesSlot[0] + slotGap;
+	m_HalfOfSlotLeanght = (verticesSlot[2] - verticesSlot[0]) / 2.0f;
+
+	slotGap = m_SlotGap;
+
+	std::vector<float> HUDVertices;
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[1] - j * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * defaultSlot);
+			HUDVertices.emplace_back(1);
+			HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[3] - j * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * defaultSlot);
+			HUDVertices.emplace_back(0);
+			HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[3] - j * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * (defaultSlot + 1));
+			HUDVertices.emplace_back(0);
+			HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[1] - j * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * (defaultSlot + 1));
+			HUDVertices.emplace_back(1);
+		}
+	}
+	std::vector<unsigned char> HUDEOB;
+	for (int i = 0; i < HUDVertices.size() / 4.0f; i++)
+	{
+
+		HUDEOB.emplace_back(i);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 3);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 2);
+		HUDEOB.emplace_back(i + 3);
+	}
+	ErrorGL(glGenVertexArrays(5, m_HUDDD));
+	ErrorGL(glGenBuffers(5, m_HUDVBO));
+
+	ErrorGL(glGenBuffers(5, m_HUDEOB));
+	
+	ErrorGL(glBindVertexArray(m_HUDDD[HUDInventory]));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDInventory]));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data() , GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_HUDEOB[HUDInventory]));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, HUDEOB.size(), HUDEOB.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+	HUDEOB.clear();
+	HUDVertices.clear();
+
+	for (int i = 0; i < 10; i++)
+	{
+		HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+		HUDVertices.emplace_back(verticesSlot[1]);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * defaultSlot);
+		HUDVertices.emplace_back(1);
+		HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+		HUDVertices.emplace_back(verticesSlot[3]);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * defaultSlot);
+		HUDVertices.emplace_back(0);
+		HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+		HUDVertices.emplace_back(verticesSlot[3]);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * (defaultSlot + 1));
+		HUDVertices.emplace_back(0);
+		HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+		HUDVertices.emplace_back(verticesSlot[1]);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * (defaultSlot + 1));
+		HUDVertices.emplace_back(1);
+	}
+	for (int i = 0; i < HUDVertices.size() / 4.0f; i++)
+	{
+
+		HUDEOB.emplace_back(i);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 3);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 2);
+		HUDEOB.emplace_back(i + 3);
+	}
+	ErrorGL(glBindVertexArray(m_HUDDD[HUDHotBar]));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDHotBar]));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_HUDEOB[HUDHotBar]));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, HUDEOB.size(), HUDEOB.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+	HUDEOB.clear();
+	HUDVertices.clear();
+
+	HUDVertices.emplace_back(verticesSlot[0]);
+	HUDVertices.emplace_back(verticesSlot[1]);
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(1);
+	HUDVertices.emplace_back(verticesSlot[0]);
+	HUDVertices.emplace_back(verticesSlot[3]);
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(verticesSlot[2]);
+	HUDVertices.emplace_back(verticesSlot[3]);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE);
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(verticesSlot[2]);
+	HUDVertices.emplace_back(verticesSlot[1]);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE);
+	HUDVertices.emplace_back(1);
+
+
+	HUDEOB.emplace_back(0);
+	HUDEOB.emplace_back(1);
+	HUDEOB.emplace_back(3);
+	HUDEOB.emplace_back(1);
+	HUDEOB.emplace_back(2);
+	HUDEOB.emplace_back(3);
+
+	ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDSlot]));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_HUDEOB[HUDSlot]));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, HUDEOB.size(), HUDEOB.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+	HUDEOB.clear();
+	HUDVertices.clear();
+
+	verticesSlot[0] -= m_InvOffset[0];
+	verticesSlot[1] -= m_InvOffset[1];
+	verticesSlot[2] -= m_InvOffset[0];
+	verticesSlot[3] -= m_InvOffset[1];
+
+	verticesSlot[0] += m_HPOffset[0];
+	verticesSlot[1] += m_HPOffset[1];
+	verticesSlot[2] += m_HPOffset[0];
+	verticesSlot[3] += m_HPOffset[1];
+
+	for (int i = 3; i < 11; i++)
+	{
+		int TexSlot = defaultSlot;
+		switch (i)
+		{
+		case 3:
+			TexSlot = helmetSlot;
+			break;
+		case 4:
+			TexSlot = chestSlot;
+			break;
+		case 5:
+			TexSlot = pantsSlot;
+			break;
+		case 6:
+			TexSlot = shoesSlot;
+			break;
+		}
+		HUDVertices.emplace_back(verticesSlot[0]);
+		HUDVertices.emplace_back(verticesSlot[1] - i * slotGap);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * TexSlot);
+		HUDVertices.emplace_back(1);
+		HUDVertices.emplace_back(verticesSlot[0]);
+		HUDVertices.emplace_back(verticesSlot[3] - i * slotGap);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * TexSlot);
+		HUDVertices.emplace_back(0);
+		HUDVertices.emplace_back(verticesSlot[2]);
+		HUDVertices.emplace_back(verticesSlot[3] - i * slotGap);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * (TexSlot + 1));
+		HUDVertices.emplace_back(0);
+		HUDVertices.emplace_back(verticesSlot[2]);
+		HUDVertices.emplace_back(verticesSlot[1] - i * slotGap);
+		HUDVertices.emplace_back(TEXSLOTDISTANCE * (TexSlot + 1));
+		HUDVertices.emplace_back(1);
+	}
+	for (int i = 0; i < HUDVertices.size() / 4.0f; i++)
+	{
+
+		HUDEOB.emplace_back(i);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 3);
+		HUDEOB.emplace_back(i + 1);
+		HUDEOB.emplace_back(i + 2);
+		HUDEOB.emplace_back(i + 3);
+	}
+	ErrorGL(glBindVertexArray(m_HUDDD[HUDHotBar]));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDHotBar]));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_HUDEOB[HUDHotBar]));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, HUDEOB.size(), HUDEOB.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+	HUDEOB.clear();
+	HUDVertices.clear();
+
+
+}
 Ingredient::Ingredient(short int item, short int amount)
 	:m_Item(item)
 	, m_Amount(amount)
@@ -412,10 +654,7 @@ Player::Player(unsigned int eob
 	m_AllItemTextures[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
 	m_AllItemTextures[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
 
-	m_ArmorSlotsTex[0] = CreateTextureRGBA("res/textures/HelmetSlot.png");
-	m_ArmorSlotsTex[1] = CreateTextureRGBA("res/textures/ChestPlateSlot.png");
-	m_ArmorSlotsTex[2] = CreateTextureRGBA("res/textures/PantsSlot.png");
-	m_ArmorSlotsTex[3] = CreateTextureRGBA("res/textures/ShoesSlot.png");
+	
 	m_ArmorClassTex = CreateTextureRGBA("res/textures/ArmorClass.png");
 
 	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
@@ -447,28 +686,17 @@ Player::Player(unsigned int eob
 	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eob));
 
 	ErrorGL(glBindVertexArray(0));
+
+	
 	m_BlockInHandDD = CreateDrawData(eob, 2, 1, 0, -1);
 	m_HandDD = CreateDrawData(eob, 1.5f, 0, -0.2f, 0.2f, 0, 1);
-	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0,  0, 1.0f / 5.0f);
+	m_BottomAnimDD = CreateDrawData(eob, -0.2f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 	m_BodyAnimDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 	m_HeadDD = CreateDrawData(eob, 1.5f, -0.3, -1, 1, 1, 0, 0, 1);
+
 	
-	float verticesSlot[4];
-	float slotGap = DistanceOnUI(0.01f);
-	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f,verticesSlot,leftTop);
-	m_InvOffset[0] = (verticesSlot[0] + verticesSlot[2]) / 2.0f;
-	m_HPOffset[0] = Window::width - (verticesSlot[0] + verticesSlot[2]) / 2.0f;
-	m_InvOffset[1] = (verticesSlot[1] + verticesSlot[3]) / 2.0f;
-	m_HPOffset[1] = m_InvOffset[1];
-	m_SlotGap = verticesSlot[2] - verticesSlot[0] + slotGap;
-	m_HalfOfSlotLeanght = (verticesSlot[2] - verticesSlot[0])/2.0f;
 
-	verticesSlot[0] -= m_InvOffset[0];
-	verticesSlot[1] -= m_InvOffset[1];
-	verticesSlot[2] -= m_InvOffset[0];
-	verticesSlot[3] -= m_InvOffset[1];
-
-	m_HUDDD = CreateDrawData(eob, verticesSlot[1], verticesSlot[3], verticesSlot[2], verticesSlot[0], m_slotVBO);
+	
 	m_HPTexture[0] = CreateTextureRGBA("res/textures/0To5HP.png");
 	m_HPTexture[1] = CreateTextureRGBA("res/textures/5To10HP.png");
 	m_HPTexture[2] = CreateTextureRGBA("res/textures/10To15HP.png");
@@ -476,13 +704,8 @@ Player::Player(unsigned int eob
 	m_HPTexture[4] = CreateTextureRGBA("res/textures/20To25HP.png");
 
 
-	m_SlotTexture = CreateTextureRGBA("res/textures/inventorySlot.png");
-	m_UseSlotTexture = CreateTextureRGBA("res/textures/useInventorySlot.png");
-	m_TrashCanSlotTexture = CreateTextureRGBA("res/textures/trash.png");
-	m_MissingSlotTexture = CreateTextureRGBA("res/textures/missingIngredientSlot.png");
-	m_NothingSlotTexture = CreateTextureRGBA("res/textures/nothingIngredientSlot.png");
-	m_ChestSlotTexture = CreateTextureRGBA("res/textures/ChestSlot.png");
-
+	m_SlotTextures = CreateTextureRGBA("res/textures/inventorySlot.png");
+	
 
 
 
@@ -938,8 +1161,7 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 }
 void Player::ResizeHUD(unsigned int eob)
 {
-	ErrorGL(glDeleteBuffers(1, &m_slotVBO));
-	ErrorGL(glDeleteVertexArrays(1, &m_HUDDD));
+
 	float verticesSlot[4];
 	float slotGap = DistanceOnUI(0.01f);
 	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f, verticesSlot, leftTop);

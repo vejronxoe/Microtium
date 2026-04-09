@@ -37,6 +37,15 @@ enum CraftingState
 	, missingToCraft
 	, ReadyToCraft
 };
+enum HUDParts
+{
+	HUDHotBar = 0
+	, HUDHealth
+	, HUDArmors
+	, HUDInventory
+	, HUDSlot
+	
+};
 struct Ingredient
 {
 	Ingredient(short int item, short int amount);
@@ -67,8 +76,6 @@ private:
 	Recipe m_VisibleRecipes[5];
 	int m_UsingIndexRecipe = 0;
 	float m_RecipeY = 0;
-	float m_TimerCrafting;//////////////
-	float m_NumberOfRecipesDone;
 
 	
 private:
@@ -94,6 +101,8 @@ public:
 	float m_MaxMovementSpeed = 0;
 	float m_Transform[2] = {150,30};
 	float m_Velocity[2] = {0,0};
+	void createHUD();
+
 	Player(unsigned int eob
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
@@ -166,12 +175,13 @@ private:
 	unsigned int m_HeadTex = 0;
 
 
-	unsigned int m_HUDDD = 0;
-	unsigned int m_SlotTexture = 0;
-	unsigned int m_TrashCanSlotTexture =0;
+	unsigned int m_HUDDD[5] = {};
+	unsigned int m_HUDVBO[5] = {};
+	unsigned int m_HUDEOB[5] = {};
+	unsigned int m_SlotTextures = 0;
 	float m_SlotGap = 0;
-	float m_TimerSplitingItem = 0;
-	float m_AddNextFrameDropItem = 0;
+	float m_TimerSpliting = 0;
+	float m_AddNextFrameDrop = 0;
 	float m_ItemsToTake = 0;
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
@@ -192,11 +202,12 @@ public:
 	float m_InvOffset[2] = {};
 	float m_HalfOfSlotLeanght = 0;
 	unsigned char m_HUDUseSlot = 0;
-	unsigned int m_UseSlotTexture = 0;
-	unsigned int m_slotVBO = 0;
-	unsigned int m_ChestSlotTexture = 0;
-	unsigned int m_MissingSlotTexture = 0;
-	unsigned int m_NothingSlotTexture = 0;
+
+
+
+	
+	
+	
 	unsigned char m_AimingAtSlot = 0;
 	unsigned char m_UseSlot = 0;
 	bool m_IsInventoryOpen = false;
@@ -226,7 +237,6 @@ public:
 	short int m_Damage = 0;
 	short int m_ArmorClass = 0;
 	unsigned int m_ArmorClassTex = -1;
-	unsigned int m_ArmorSlotsTex[4] = {0};
 	bool m_Placeable = false;
 	bool m_LargePlaceable = false;
 	bool m_Consume = false;
