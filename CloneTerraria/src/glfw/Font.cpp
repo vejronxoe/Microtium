@@ -84,7 +84,7 @@ Format::Format(int LastLetterOfFormat
 }
 void Text::CreateText(std::string Letters
 	, std::vector<Format> formats
-	, std::vector<Letter>& Anscii
+	, std::vector<Letter>& Ascii
 	, unsigned int eob
 	, char stablePoint
 	, float x
@@ -145,7 +145,7 @@ void Text::CreateText(std::string Letters
 
 			if (Letters[i] != ' ')
 			{
-				m_TextVertices[2] += Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter * Window::FontSize;
+				m_TextVertices[2] += Ascii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter * Window::FontSize;
 			}
 			else
 			{
@@ -251,10 +251,10 @@ void Text::CreateText(std::string Letters
 				vertices.resize(vertices.size() + 32);
 				//1
 				vertices[vertices.size() - 32] = textVertices[0];
-				vertices[vertices.size() - 31] = textVertices[1] + Anscii.at(Letters[i] - BEGINLETTER).m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
+				vertices[vertices.size() - 31] = textVertices[1] + Ascii.at(Letters[i] - BEGINLETTER).m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
 
-				vertices[vertices.size() - 30] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[0];
-				vertices[vertices.size() - 29] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
+				vertices[vertices.size() - 30] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[0];
+				vertices[vertices.size() - 29] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
 
 				vertices[vertices.size() - 28] = color[0];
 				vertices[vertices.size() - 27] = color[1];
@@ -264,30 +264,30 @@ void Text::CreateText(std::string Letters
 				vertices[vertices.size() - 24] = textVertices[0];
 				vertices[vertices.size() - 23] = textVertices[1];
 
-				vertices[vertices.size() - 22] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[0];
-				vertices[vertices.size() - 21] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[1];
+				vertices[vertices.size() - 22] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[0];
+				vertices[vertices.size() - 21] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[1];
 
 				vertices[vertices.size() - 20] = color[0];
 				vertices[vertices.size() - 19] = color[1];
 				vertices[vertices.size() - 18] = color[2];
 				vertices[vertices.size() - 17] = color[3];
 				//3							 
-				vertices[vertices.size() - 16] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
+				vertices[vertices.size() - 16] = textVertices[0] + Ascii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
 				vertices[vertices.size() - 15] = textVertices[1];
 
-				vertices[vertices.size() - 14] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
-				vertices[vertices.size() - 13] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[1];
+				vertices[vertices.size() - 14] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
+				vertices[vertices.size() - 13] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[1];
 
 				vertices[vertices.size() - 12] = color[0];
 				vertices[vertices.size() - 11] = color[1];
 				vertices[vertices.size() - 10] = color[2];
 				vertices[vertices.size() - 9] = color[3];
 				//4							
-				vertices[vertices.size() - 8] = textVertices[0] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
-				vertices[vertices.size() - 7] = textVertices[1] + Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
+				vertices[vertices.size() - 8] = textVertices[0] + Ascii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
+				vertices[vertices.size() - 7] = textVertices[1] + Ascii[Letters[i] - BEGINLETTER].m_DefalutSize[1] * Window::FontSize * sizeOfLetter;
 
-				vertices[vertices.size() - 6] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
-				vertices[vertices.size() - 5] = Anscii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
+				vertices[vertices.size() - 6] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[2];
+				vertices[vertices.size() - 5] = Ascii[Letters[i] - BEGINLETTER].m_UVCoordinates[3];
 
 				vertices[vertices.size() - 4] = color[0];
 				vertices[vertices.size() - 3] = color[1];
@@ -304,7 +304,7 @@ void Text::CreateText(std::string Letters
 				order[order.size() - 3] = n + 1;
 				order[order.size() - 2] = n + 2;
 				order[order.size() - 1] = n + 3;
-				textVertices[0] += Anscii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
+				textVertices[0] += Ascii[Letters[i] - BEGINLETTER].m_DefalutSize[0] * Window::FontSize * sizeOfLetter;
 			}
 			else
 			{

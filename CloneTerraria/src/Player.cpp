@@ -1,4 +1,8 @@
-   #include"Player.h"
+#include"Player.h"
+
+#include<iostream>
+#include<string>
+#include<sstream>
 
 #include"Opengl/Texture.h"
 #include"Opengl/drawData.h"
@@ -7,6 +11,7 @@
 #include"math/matrix.h"
 #include"math/VectorOperation.h"
 #include"NumberRender.h"
+
 
 #define SPEEDOFANIM 0.5f
 #define ARROWSTYPES 4
@@ -37,12 +42,13 @@ enum PartsOfArmor
 	, armorShoes
 };
 
-void Player::createHUD(unsigned int eob)
+void Player::createHUD(unsigned int eob
+	, std::vector<Letter>& ASCII)
 {
-	
+
 	float verticesSlot[4];
-	float slotGap = DistanceOnUI(0.01f);
-	UITranslatorToPixels(0.005f, 1 - 0.075f, 0.075f, 1 - 0.005f, verticesSlot, leftTop);
+	float slotGap = DistanceOnUI(0.005f);
+	UITranslatorToPixels(0.005f, 1 - 1.0f /16.0f, 1.0f / 16.0f, 1 - 0.005f, verticesSlot, leftTop);
 	m_InvOffset[0] = (verticesSlot[0] + verticesSlot[2]) / 2.0f;
 	m_HPOffset[0] = Window::width - (verticesSlot[0] + verticesSlot[2]) / 2.0f;
 	m_InvOffset[1] = (verticesSlot[1] + verticesSlot[3]) / 2.0f;
@@ -75,25 +81,41 @@ void Player::createHUD(unsigned int eob)
 			HUDVertices.emplace_back(1);
 		}
 	}
+	HUDVertices.emplace_back(verticesSlot[0] + 9 * slotGap);
+	HUDVertices.emplace_back(verticesSlot[1] - 5 * slotGap);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE * trashSlot);
+	HUDVertices.emplace_back(1);
+	HUDVertices.emplace_back(verticesSlot[0] + 9 * slotGap);
+	HUDVertices.emplace_back(verticesSlot[3] - 5 * slotGap);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE * trashSlot);
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(verticesSlot[2] + 9 * slotGap);
+	HUDVertices.emplace_back(verticesSlot[3] - 5 * slotGap);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE * (trashSlot + 1));
+	HUDVertices.emplace_back(0);
+	HUDVertices.emplace_back(verticesSlot[2] + 9 * slotGap);
+	HUDVertices.emplace_back(verticesSlot[1] - 5 * slotGap);
+	HUDVertices.emplace_back(TEXSLOTDISTANCE * (trashSlot + 1));
+	HUDVertices.emplace_back(1);
 	std::vector<unsigned char> HUDEOB;
 	for (int i = 0; i < HUDVertices.size() / 16.0f; i++)
 	{
 
-		HUDEOB.emplace_back(4*i);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 3);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 2);
-		HUDEOB.emplace_back(4*i + 3);
+		HUDEOB.emplace_back(4 * i);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 3);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 2);
+		HUDEOB.emplace_back(4 * i + 3);
 	}
 	ErrorGL(glGenVertexArrays(3, m_HUDDD));
 	ErrorGL(glGenBuffers(3, m_HUDVBO));
 
 	ErrorGL(glGenBuffers(3, m_HUDEOB));
-	
+
 	ErrorGL(glBindVertexArray(m_HUDDD[HUDInventory]));
 	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDInventory]));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data() , GL_STATIC_DRAW));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data(), GL_STATIC_DRAW));
 
 	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
 	ErrorGL(glEnableVertexAttribArray(0));
@@ -130,12 +152,12 @@ void Player::createHUD(unsigned int eob)
 	for (int i = 0; i < HUDVertices.size() / 16.0f; i++)
 	{
 
-		HUDEOB.emplace_back(4*i);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 3);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 2);
-		HUDEOB.emplace_back(4*i + 3);
+		HUDEOB.emplace_back(4 * i);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 3);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 2);
+		HUDEOB.emplace_back(4 * i + 3);
 	}
 	ErrorGL(glBindVertexArray(m_HUDDD[HUDHotBar]));
 	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDHotBar]));
@@ -203,12 +225,12 @@ void Player::createHUD(unsigned int eob)
 	for (int i = 0; i < HUDVertices.size() / 16.0f; i++)
 	{
 
-		HUDEOB.emplace_back(4*i);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 3);
-		HUDEOB.emplace_back(4*i + 1);
-		HUDEOB.emplace_back(4*i + 2);
-		HUDEOB.emplace_back(4*i + 3);
+		HUDEOB.emplace_back(4 * i);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 3);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 2);
+		HUDEOB.emplace_back(4 * i + 3);
 	}
 	ErrorGL(glBindVertexArray(m_HUDDD[HUDArmors]));
 	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDArmors]));
@@ -225,7 +247,23 @@ void Player::createHUD(unsigned int eob)
 	ErrorGL(glBindVertexArray(0));
 	m_HUDEOBSize[HUDArmors] = HUDEOB.size();
 
-	
+
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			if (m_AmountInSlots[i * 10 + j + 1] > 1)
+			{
+				m_AmountText[i * 10 + j].CreateText(std::to_string(m_AmountInSlots[i * 10 + j + 1]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
+
+			}
+			else
+			{
+				m_AmountText[i * 10 + j].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
+			}
+		}
+	}
+	m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
 
 	m_HUDDD[HUDSlot] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDSlot], 1, 0, TEXSLOTDISTANCE, 0);
 	m_HUDDD[HUDDefault] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDDefault]);
@@ -461,6 +499,7 @@ void Player::slotsSwap(float deltaTime
 }
 
 Player::Player(unsigned int eob
+	, std::vector<Letter>& Ascii
 	, unsigned int* texturesIDs
 	, unsigned int* structuretexs)
 {
@@ -510,7 +549,7 @@ Player::Player(unsigned int eob
 	m_PlayerSlots[21] = i_AccessoriseWallClimb;
 	m_PlayerSlots[22] = i_AccessoriseFastShoes;
 	m_PlayerSlots[23] = i_AccessoriseShackle;
-	m_PlayerSlots[24] = i_Forge;
+	m_PlayerSlots[24] = i_Anvil;
 	m_PlayerSlots[25] = i_TrapDoor;
 	m_PlayerSlots[26] = i_Gate;
 	m_PlayerSlots[27] = i_CopperIngot;
@@ -656,7 +695,7 @@ Player::Player(unsigned int eob
 
 	m_SlotTextures = CreateTextureRGBA("res/textures/inventorySlot.png");
 	
-	createHUD(eob);
+	createHUD(eob,Ascii);
 
 
 	SwapItemStats();
@@ -1109,12 +1148,13 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 	}
 	return isItDone;
 }
-void Player::ResizeHUD(unsigned int eob)
+void Player::ResizeHUD(unsigned int eob
+	, std::vector<Letter>& Ascii)
 {
 	ErrorGL(glDeleteBuffers(4, m_HUDVBO));
 	ErrorGL(glDeleteBuffers(4, m_HUDEOB));
 	ErrorGL(glDeleteVertexArrays(4, m_HUDDD));
-	createHUD(eob);
+	createHUD(eob, Ascii);
 }
 
 void Player::EveryFrame(float deltaTime
@@ -1126,8 +1166,10 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
+	, std::vector<Letter>& Ascii
 	, float* CameraCoordinates
 	, unsigned int blockDD
+	, unsigned int eob
 	, unsigned int* texturesIDs
 	, unsigned int* structuresTextures
 	, std::vector<tree>& trees
@@ -1137,6 +1179,11 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 {
+	int oldAmountInSlot[51];
+	for (int i = 0; i < 51;i++)
+	{
+		oldAmountInSlot[i] = m_AmountInSlots[i+1];
+	}
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 	if (chests.size() > m_IndexOfOpenChest && m_IndexOfOpenChest != -1)
 	{
@@ -2858,6 +2905,37 @@ void Player::EveryFrame(float deltaTime
 				break;
 			}
 		}
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				if (oldAmountInSlot[i+j*10] != m_AmountInSlots[i + 1 + j * 10])
+				{
+					if (m_AmountInSlots[i * 10 + j + 1] > 1)
+					{
+						m_AmountText[i * 10 + j].CreateText(std::to_string(m_AmountInSlots[i * 10 + j + 1]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
+
+					}
+					else
+					{
+						m_AmountText[i * 10 + j].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
+					}
+				}
+			}
+		}
+		if (oldAmountInSlot[50] != m_AmountInSlots[51])
+		{
+			if (m_AmountInSlots[51] > 1)
+			{
+				m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+
+			}
+			else
+			{
+				m_AmountText[50].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+
+			}
+		}
 	}
 		
 			
@@ -2911,6 +2989,7 @@ void Player::EveryFrame(float deltaTime
 void Player::DrawPlayer(float deltaTime
 	, Shader& basicSh
 	, Shader& HUDSh
+	, Shader& numberSh
 	, Shader& fontSh
 	, Shader& animSh
 	, Shader& handSh
@@ -2920,6 +2999,7 @@ void Player::DrawPlayer(float deltaTime
 	, float* scale
 	, float* rotation
 	, float* camera
+	, unsigned int fontTex
 	, unsigned int fontDD
 	, unsigned int particlesDD
 	, unsigned int numberTexture)
@@ -3032,11 +3112,17 @@ void Player::DrawPlayer(float deltaTime
 		m_OnFire.DrawParticles(particlesSh, deltaTime, false, m_Transform, transform);
 	}
 	
-	basicSh.Bind();
+	animSh.Bind();
+	animSh.SetUniform1f(animSize + HUDCraftingY, 0);
+
 	ChangeCamera(0, Window::width, 0, Window::height, camera);
-	basicSh.SetUniformMat4(basicCamera, camera);
+	animSh.SetUniformMat4(animCamera, camera);
+	ChangeScale(1, 1, scale);
 	ChangeTransform(0, 0, transform);
-	basicSh.SetUniformMat4(basicTransform, transform);
+	animSh.SetUniformMat4(basicTransform, transform);
+	animSh.SetUniformMat4(animScale, scale);
+	animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
+	animSh.SetUniform1i(animNumber, 0);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 
 	if (m_IsInventoryOpen)
@@ -3046,8 +3132,60 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDInventory], GL_UNSIGNED_BYTE, 0));
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDArmors]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDArmors], GL_UNSIGNED_BYTE, 0));
+		if (!m_UseSlot)
+		{
+			animSh.Bind();
+			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 
+			ChangeCamera(0, Window::width, 0, Window::height, camera);
+			animSh.SetUniformMat4(animCamera, camera);
+			ChangeScale(1.2f, 1.2f, scale);
+			ChangeTransform(m_InvOffset[0] + m_SlotGap * (m_HUDUseSlot - 1), m_InvOffset[1], transform);
+			animSh.SetUniformMat4(basicTransform, transform);
+			animSh.SetUniformMat4(animScale, scale);
+			animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
+			animSh.SetUniform1i(animNumber, useSlot);
+			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		animSh.SetUniform1i(animNumber, 0);
+		ChangeScale(0.8f, 0.8f, scale);
+		animSh.SetUniformMat4(animScale, scale);
 
+		ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
+
+		for (int j = 0; j < 5; j++)
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (m_PlayerSlots[i + 1 + j * 10])
+				{
+					
+					ChangeTransform(m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1] - m_SlotGap * j, transform);
+					animSh.SetUniformMat4(animTransform, transform);
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1 + j * 10]]));
+					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+				}
+
+			}
+		}
+		
+		for (int i = 0; i < 8; i++)
+		{
+			if (m_PlayerSlots[i + 51])
+			{
+				ChangeTransform(m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), transform);
+				animSh.SetUniformMat4(animTransform, transform);
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 51]]));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			}
+		}
+		fontSh.Bind();
+		for (int i = 0; i < 51;i++)
+		{
+			m_AmountText[i].Draw(fontSh,basicSh,transform, fontTex, fontTex, false);
+		}
 		animSh.Bind();
 		ChangeCamera(0, Window::width, 0, Window::height, camera);
 		animSh.SetUniformMat4(animCamera, camera);
@@ -3058,6 +3196,7 @@ void Player::DrawPlayer(float deltaTime
 		animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
 		animSh.SetUniform1i(animNumber, defaultSlot);
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 
 		
 		for (int i = 0; i < m_NumberOfVisibleRecipes; i++)
@@ -3146,16 +3285,16 @@ void Player::DrawPlayer(float deltaTime
 				ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
 				animSh.SetUniform1i(animNumber, 0);
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_VisibleRecipes[i].m_ItemOutput]));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 				ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 				ChangeScale(1, 1, scale);
 				animSh.SetUniformMat4(animScale, scale);
 
 			}
-			fontSh.Bind();
+			numberSh.Bind();
 			ErrorGL(glBindVertexArray(fontDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 
@@ -3165,7 +3304,7 @@ void Player::DrawPlayer(float deltaTime
 				{
 					float x = 10 * m_SlotGap + 2 * (m_SlotGap - 2 * m_HalfOfSlotLeanght) + m_InvOffset[0];
 					float y = m_RecipeY * m_SlotGap - m_SlotGap * i - 2 * m_SlotGap + m_InvOffset[1] - m_HalfOfSlotLeanght;
-					fontSh.SetUniform1f(numberSize + HUDCraftingY, i - m_RecipeY);
+					numberSh.SetUniform1f(numberSize + HUDCraftingY, i - m_RecipeY);
 					if (m_UsingIndexRecipe == i)
 					{
 
@@ -3175,36 +3314,81 @@ void Player::DrawPlayer(float deltaTime
 
 							float right = x + m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
 							float left = x - m_HalfOfSlotLeanght * 0.8f + (j + 1) * m_SlotGap;
-							drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, scale, transform, fontSh);
+							drawNumber((y + m_HalfOfSlotLeanght) - m_HalfOfSlotLeanght * 0.8f, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_Ingredients.at(j).m_Amount, scale, transform, numberSh);
 
 						}
 
 					}
 					float right = x + m_HalfOfSlotLeanght;
 					float left = x - m_HalfOfSlotLeanght;
-					drawNumber(y, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_AmountOutput, scale, transform, fontSh);
+					drawNumber(y, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_VisibleRecipes[i].m_AmountOutput, scale, transform, numberSh);
 
 
 				}
 			}
-			fontSh.SetUniform1f(numberSize + HUDCraftingY, 0);
-
+			numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
+			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 		}
-		fontSh.Bind();
+		numberSh.Bind();
 		ErrorGL(glBindVertexArray(fontDD));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 		for (int j = 0; j < 10; j++)
 		{
 			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
 			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
-			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[j + 1], scale, transform, fontSh);
+			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[j + 1], scale, transform, numberSh);
 		}
+		numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
+		animSh.Bind();
+		animSh.SetUniform1i(animNumber, 0);
 
 	}
+		
 	else
 	{
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDHotBar]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDHotBar], GL_UNSIGNED_BYTE, 0));
+		if (!m_UseSlot)
+		{
+			animSh.Bind();
+			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
+
+			ChangeCamera(0, Window::width, 0, Window::height, camera);
+			animSh.SetUniformMat4(animCamera, camera);
+			ChangeScale(1.2f, 1.2f, scale);
+			ChangeTransform(m_InvOffset[0] + m_SlotGap * (m_HUDUseSlot - 1), m_InvOffset[1], transform);
+			animSh.SetUniformMat4(basicTransform, transform);
+			animSh.SetUniformMat4(animScale, scale);
+			animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
+			animSh.SetUniform1i(animNumber, useSlot);
+			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		animSh.SetUniform1i(animNumber, 0);
+		ChangeScale(0.8f, 0.8f, scale);
+		animSh.SetUniformMat4(animScale, scale);
+
+		ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
+		for (int i = 0; i < 10; i++)
+		{
+			if (m_PlayerSlots[i+1])
+			{
+			
+				ChangeTransform(m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], transform);
+				animSh.SetUniformMat4(animTransform, transform);
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1]]));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			}
+
+		}
+		fontSh.Bind();
+		for (int i = 0; i < 10; i++)
+		{
+			m_AmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+		}
+
 
 	}
 	int DrawHP = m_CurrentHealth;

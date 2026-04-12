@@ -688,6 +688,7 @@ int main()
 			treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
 			unsigned int treeDD[3];
 			unsigned int structuresDD[8];
+			unsigned int alternativeBlockDD = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f, 1, 0, TEXSLOTDISTANCE, 0);
 
 			structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
 			structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
@@ -701,10 +702,12 @@ int main()
 			treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
 			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
+
+
 			CreateAllBlockTextures(blockTextures);
 			
 
-			Player player(eob, blockTextures, structuresTextures);
+			Player player(eob, letters, blockTextures, structuresTextures);
 
 
 
@@ -759,7 +762,7 @@ int main()
 					numberSh.SetUniformMat4(numberCamera, camera);
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
-					player.ResizeHUD(eob);
+					player.ResizeHUD(eob,letters);
 
 				}
 
@@ -799,7 +802,7 @@ int main()
 						player.DamagePlayer(enemies.at(i).m_Transform, damage);
 					}
 				}
-				player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, CameraCoordinates, blocksDrawData, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+				player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
 				SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
 
 				for (int i = 0; i < projectiles.size(); i++)
@@ -973,7 +976,7 @@ int main()
 				{
 					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 				}
-				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, animSh, handSh, particlesSh, chests, transform, scale, rotation,camera, fontDrawData, particlesDD, numberTexture);
+				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, fontSh, animSh, handSh, particlesSh, chests, transform, scale, rotation,camera, fontTex, fontDrawData, particlesDD, numberTexture);
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
@@ -987,7 +990,7 @@ int main()
 				animSh.Bind();
 				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
 				animSh.SetUniformMat4(animCamera, camera);
-				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, numberSh, animSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
+				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, alternativeBlockDD, shadowSh, structureSh, numberSh, animSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 
 
 				Input::EndOfLoop();

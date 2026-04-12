@@ -12,10 +12,10 @@
 #include"projectile.h"
 #include"structures.h"
 #include"glfw/UI.h"
-
+#include "glfw/Font.h"
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
-#define TEXSLOTDISTANCE 1.0f/9.0f
+#define TEXSLOTDISTANCE 1.0f/10.0f
 
 enum RangeWeaponTypes
 {
@@ -107,13 +107,15 @@ public:
 	float m_Velocity[2] = {0,0};
 
 	Player(unsigned int eob
+		, std::vector<Letter>& Ascii
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
 	void slotsSwap(float deltaTime
 		, unsigned short* amount
 		, unsigned short* items
 		, int begin);
-	void ResizeHUD(unsigned int eob);
+		void ResizeHUD(unsigned int eob
+			, std::vector<Letter>& Ascii);
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
 	void DamagePlayer(float* transfromAttacker
@@ -127,8 +129,10 @@ public:
 		, std::vector<damagedWood>& damagedWood
 		, std::vector<DamagedBlock>& damageblocks
 		, std::vector<DamagedBlock>& damagedWalls
+		, std::vector<Letter>& Ascii
 		, float* CameraCoordinates
 		, unsigned int blockDD
+		, unsigned int eob
 		, unsigned int* texturesIDs
 		, unsigned int* structuresTextures
 		, std::vector<tree>& trees
@@ -141,6 +145,7 @@ public:
 	void DrawPlayer(float deltaTime
 		, Shader& basicSh
 		, Shader& HUDSh
+		, Shader& numberSh
 		, Shader& fontSh
 		, Shader& animSh
 		, Shader& handSh
@@ -150,6 +155,7 @@ public:
 		, float* scale
 		, float* rotation
 		, float* camera
+		, unsigned int fontTex
 		, unsigned int fontDD
 		, unsigned int particlesDD
 		, unsigned int numberTexture);
@@ -185,7 +191,8 @@ private:
 	float m_AddNextFrameDrop = 0;
 	float m_ItemsToTake = 0;
 	float m_NumberOfRecipesDone;
-	void createHUD(unsigned int eob);
+	void createHUD(unsigned int eob
+		, std::vector<Letter>& ASCII);
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
@@ -225,7 +232,7 @@ public:
 	unsigned int m_ItemsInHandTexture[3] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60] = {};
 	unsigned short int m_AmountInSlots[52] = {};
-
+	Text m_AmountText[51];
 
 	float m_UseItemTimer = 0;
 	bool m_CursorOnMinableBlock = false;
@@ -273,6 +280,6 @@ enum SlotTextures
 	, chestPlateSlot
 	, pantsSlot
 	, shoesSlot
-
+	, trashSlot
 
 };

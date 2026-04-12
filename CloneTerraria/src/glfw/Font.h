@@ -39,7 +39,7 @@ struct Text
 	Text() = default;
 	Text(std::string Letters
 		, std::vector<Format> formats
-		, std::vector<Letter>& Anscii
+		, std::vector<Letter>& Ascii
 		, unsigned int eob
 		, char stablePoint
 		, float x
