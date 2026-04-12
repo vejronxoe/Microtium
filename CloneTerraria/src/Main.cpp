@@ -596,13 +596,17 @@ int main()
 			treeSh.GetUniformLocation("treeCamera");
 			treeSh.GetUniformLocation("treeTransform");
 			treeSh.GetUniformLocation("treeRotation");
-			Shader animSh("res/shaders/verAnimation.txt", "res/shaders/fragBasic.txt ");
+			Shader animSh("res/shaders/verAnimation.txt", "res/shaders/fragHUD.txt");
 			animSh.Bind();
 			animSh.GetUniformLocation("animCamera");
 			animSh.GetUniformLocation("animTransform");
 			animSh.GetUniformLocation("animScale");
 			animSh.GetUniformLocation("animNumber");
 			animSh.GetUniformLocation("animLeangth");
+			animSh.GetUniformLocation("shadow");
+			animSh.GetUniformLocation("craftingY");
+			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
+			animSh.SetUniform1i(animSize + HUDShadow, 0);
 			Shader handSh("res/shaders/verHand.txt", "res/shaders/fragBasic.txt");
 			handSh.Bind();
 			handSh.GetUniformLocation("camera");
@@ -851,6 +855,8 @@ int main()
 				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
 				animSh.Bind();
 				animSh.SetUniformMat4(animCamera, camera);
+				basicSh.Bind();
+				basicSh.SetUniformMat4(basicCamera, camera);
 				handSh.Bind();
 				handSh.SetUniformMat4(handCamera, camera);
 				advancedSh.Bind();
@@ -961,12 +967,13 @@ int main()
 					}
 
 				}
+				
 				advancedSh.Bind();
 				for (int i = 0; i < projectiles.size(); i++)
 				{
 					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 				}
-				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, animSh, handSh, particlesSh, chests, transform, scale, rotation, fontDrawData, particlesDD, numberTexture);
+				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, animSh, handSh, particlesSh, chests, transform, scale, rotation,camera, fontDrawData, particlesDD, numberTexture);
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
@@ -977,8 +984,10 @@ int main()
 					oldDeltaTime = deltaTime;
 				}
 				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
-
-				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, numberSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
+				animSh.Bind();
+				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+				animSh.SetUniformMat4(animCamera, camera);
+				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, blocksDrawData, shadowSh, structureSh, numberSh, animSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
 
 
 				Input::EndOfLoop();

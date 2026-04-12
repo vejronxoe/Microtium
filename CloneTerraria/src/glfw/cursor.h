@@ -26,6 +26,7 @@ void DrawCursor(unsigned int* CursorTextures
 	, Shader& basicSh
 	, Shader& structuresSh
 	, Shader& fontSh
+	, Shader& animSh
 	, float* transform
 	, float* camera
 	, float* scale

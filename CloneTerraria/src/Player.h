@@ -15,6 +15,8 @@
 
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
+#define TEXSLOTDISTANCE 1.0f/9.0f
+
 enum RangeWeaponTypes
 {
 	weaponNot = 0
@@ -40,12 +42,14 @@ enum CraftingState
 enum HUDParts
 {
 	HUDHotBar = 0
-	, HUDHealth
 	, HUDArmors
 	, HUDInventory
+	, HUDChest
 	, HUDSlot
+	, HUDDefault
 	
 };
+
 struct Ingredient
 {
 	Ingredient(short int item, short int amount);
@@ -101,7 +105,6 @@ public:
 	float m_MaxMovementSpeed = 0;
 	float m_Transform[2] = {150,30};
 	float m_Velocity[2] = {0,0};
-	void createHUD();
 
 	Player(unsigned int eob
 		, unsigned int* texturesIDs
@@ -146,6 +149,7 @@ public:
 		, float* transform
 		, float* scale
 		, float* rotation
+		, float* camera
 		, unsigned int fontDD
 		, unsigned int particlesDD
 		, unsigned int numberTexture);
@@ -175,20 +179,23 @@ private:
 	unsigned int m_HeadTex = 0;
 
 
-	unsigned int m_HUDDD[5] = {};
-	unsigned int m_HUDVBO[5] = {};
-	unsigned int m_HUDEOB[5] = {};
-	unsigned int m_SlotTextures = 0;
+	
 	float m_SlotGap = 0;
 	float m_TimerSpliting = 0;
 	float m_AddNextFrameDrop = 0;
 	float m_ItemsToTake = 0;
+	float m_NumberOfRecipesDone;
+	void createHUD(unsigned int eob);
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
 	char FindOneOfItemsInInv(unsigned char* items, int sizeOfArray);
 public:
-
+	unsigned int m_HUDDD[6] = {};
+	unsigned int m_HUDVBO[6] = {};
+	unsigned int m_HUDEOB[4] = {};
+	unsigned int m_HUDEOBSize[4] = {};
+	unsigned int m_SlotTextures = 0;
 	float m_LastStandingY = 0;
 	float m_HPOffset[2] = {};
 	unsigned int m_HPTexture[5] = {0};
@@ -255,3 +262,17 @@ public:
 	FireParticle m_OnFire;
 };
 
+enum SlotTextures
+{
+	defaultSlot = 0
+	, useSlot
+	, missingSlot
+	, nothingSlot
+	, chestSlot
+	, helmetSlot
+	, chestPlateSlot
+	, pantsSlot
+	, shoesSlot
+
+
+};

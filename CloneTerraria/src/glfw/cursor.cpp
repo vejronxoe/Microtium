@@ -43,6 +43,7 @@ void DrawCursor(unsigned int* CursorTextures
 	, Shader& basicSh
 	, Shader& structuresSh
 	, Shader& fontSh
+	, Shader& animSh
 	, float* transform
 	, float* camera
 	, float* scale
@@ -70,17 +71,22 @@ void DrawCursor(unsigned int* CursorTextures
 		structuresSh.SetUniform1i(structureSize + ShadowLocation, 0);
 
 	}
-	basicSh.Bind();
-
 	if (player.m_CursorOnPlaceableSpot && player.m_PlayerSlots[0])
 	{
-
+		animSh.Bind();
 		ChangeTransform(x, y, transform);
-		basicSh.SetUniformMat4(basicTransform, transform);
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_UseSlotTexture));
+		animSh.SetUniformMat4(animTransform, transform);
+		ChangeScale(1, 1, scale);
+		animSh.SetUniformMat4(animScale, scale);
+		animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
+		animSh.SetUniform1i(animNumber, useSlot);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_SlotTextures));
 		ErrorGL(glBindVertexArray(blockDrawData));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
+	basicSh.Bind();
+
+	
 
 	ChangeTransform(Input::XRawMousePos, Window::height - Input::YRawMousePos, transform);
 	basicSh.SetUniformMat4(basicTransform, transform);
