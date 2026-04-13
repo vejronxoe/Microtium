@@ -263,7 +263,16 @@ void Player::createHUD(unsigned int eob
 			}
 		}
 	}
-	m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+
+	if (m_AmountInSlots[51] > 1)
+	{
+		m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+
+	}
+	else
+	{
+		m_AmountText[50].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+	}	
 
 	m_HUDDD[HUDSlot] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDSlot], 1, 0, TEXSLOTDISTANCE, 0);
 	m_HUDDD[HUDDefault] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDDefault]);
@@ -494,6 +503,11 @@ void Player::slotsSwap(float deltaTime
 			}
 			SwapItemStats();
 		}
+	}
+	else
+	{
+		m_TimerSpliting = 1;
+		m_AddNextFrameDrop = 0;
 	}
 
 }
@@ -1180,9 +1194,9 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<Chest>& chests)
 {
 	int oldAmountInSlot[51];
-	for (int i = 0; i < 51;i++)
+	for (int i = 0; i < 51; i++)
 	{
-		oldAmountInSlot[i] = m_AmountInSlots[i+1];
+		oldAmountInSlot[i] = m_AmountInSlots[i + 1];
 	}
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 	if (chests.size() > m_IndexOfOpenChest && m_IndexOfOpenChest != -1)
@@ -1257,7 +1271,7 @@ void Player::EveryFrame(float deltaTime
 					canCraft = false;
 					m_Recipes[l].m_Ingredients.at(i).m_CraftingState = cantCraft;
 				}
-				else 
+				else
 				{
 					canCraft = false;
 					missingCraft = true;
@@ -1278,7 +1292,7 @@ void Player::EveryFrame(float deltaTime
 				}
 				m_VisibleRecipes[m_NumberOfVisibleRecipes] = m_Recipes[l];
 				m_NumberOfVisibleRecipes++;
-				
+
 			}
 			else if (missingCraft)
 			{
@@ -1308,7 +1322,7 @@ void Player::EveryFrame(float deltaTime
 			}
 
 		}
-		
+
 		if (m_RecipeY <= 0)
 		{
 			m_RecipeY = 0;
@@ -1317,32 +1331,21 @@ void Player::EveryFrame(float deltaTime
 		{
 			m_RecipeY = (m_NumberOfVisibleRecipes - 1);
 		}
-		if (Input::MouseWheel)
-		{
-			m_UsingIndexRecipe += Input::MouseWheel;
 
-			if (m_UsingIndexRecipe <= 0)
-			{
-				m_UsingIndexRecipe = 0;
-			}
-			else if (m_UsingIndexRecipe >= m_NumberOfVisibleRecipes)
-			{
-				m_UsingIndexRecipe = m_NumberOfVisibleRecipes - 1;
-			}
-		}
 	}
 
 	// inventory moving 
-	if (m_ArmsBehaviour != ArmUsing && (!Input::LeftMouseHold || Input::LeftMousePress || m_TimerSpliting != 1 && !Input::RightMouseHold) && !Input::LeftMouseRelease)
+	if (m_ArmsBehaviour != ArmUsing && (!Input::LeftMouseHold || Input::LeftMousePress || m_TimerSpliting != 1) && !Input::LeftMouseRelease)
 	{
+		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
+									   , Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
+									   , m_InvOffset[0] + m_HalfOfSlotLeanght
+									   , Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght };
+
 		m_AimingAtSlot = 0;
 		int slotCoordinates[2] = { -1,-1 };
 		// get slotCoordinates
 		{
-			float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
-									, Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
-									, m_InvOffset[0] + m_HalfOfSlotLeanght
-									, Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght };
 			if (slotVertices[0] + m_SlotGap * 10 + CRAFTINGOFFSET * (m_SlotGap - 2 * m_HalfOfSlotLeanght) <= Input::XRawMousePos &&
 				slotVertices[2] + m_SlotGap * 10 + CRAFTINGOFFSET * (m_SlotGap - 2 * m_HalfOfSlotLeanght) >= Input::XRawMousePos)
 			{
@@ -1372,14 +1375,14 @@ void Player::EveryFrame(float deltaTime
 			}
 			else
 			{
-			for (int i = 0; i < 6; i++)
-			{
-				if (slotVertices[1] + i * m_SlotGap <= Input::YRawMousePos && slotVertices[3] + i * m_SlotGap >= Input::YRawMousePos)
+				for (int i = 0; i < 6; i++)
 				{
-					slotCoordinates[1] = i;
-					break;
+					if (slotVertices[1] + i * m_SlotGap <= Input::YRawMousePos && slotVertices[3] + i * m_SlotGap >= Input::YRawMousePos)
+					{
+						slotCoordinates[1] = i;
+						break;
+					}
 				}
-			}
 
 			}
 			slotVertices[0] = m_HPOffset[0] - m_HalfOfSlotLeanght;
@@ -1399,7 +1402,7 @@ void Player::EveryFrame(float deltaTime
 				}
 			}
 		}
-		if (slotCoordinates[0] != -1 && slotCoordinates[1] != -1 )
+		if (slotCoordinates[0] != -1 && slotCoordinates[1] != -1)
 		{
 			if (m_IsInventoryOpen)
 			{
@@ -1563,6 +1566,11 @@ void Player::EveryFrame(float deltaTime
 						}
 						m_UsingIndexRecipe += aimingSlot;
 					}
+					else
+					{
+						m_TimerSpliting = 1;
+						m_AddNextFrameDrop = 0;
+					}
 				}
 				else if (slotCoordinates[0] != 10)
 				{
@@ -1577,7 +1585,7 @@ void Player::EveryFrame(float deltaTime
 						{
 							m_AimingAtSlot = slotCoordinates[0] + slotCoordinates[1] * 10 + 1;
 						}
-						slotsSwap(deltaTime, m_AmountInSlots ,m_PlayerSlots, 0);
+						slotsSwap(deltaTime, m_AmountInSlots, m_PlayerSlots, 0);
 
 					}
 					else if (m_IndexOfOpenChest != -1)
@@ -1586,7 +1594,7 @@ void Player::EveryFrame(float deltaTime
 
 						slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
 						chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
-						for (int i = 0;i < 50;i++)
+						for (int i = 0; i < 50; i++)
 						{
 							if (chests.at(m_IndexOfOpenChest).m_Items[i] != i_Nothing)
 							{
@@ -1608,14 +1616,14 @@ void Player::EveryFrame(float deltaTime
 				else
 				{
 					m_TimerSpliting = 1;
-				
+
 					m_AddNextFrameDrop = 0;
 				}
 			}
 			else if (slotCoordinates[0] > -1 && slotCoordinates[0] < 10 && slotCoordinates[1] == 0)
 			{
 				m_AimingAtSlot = slotCoordinates[0] + 1;
-				if(Input::LeftMouseHold)
+				if (Input::LeftMouseHold)
 				{
 					m_HUDUseSlot = m_AimingAtSlot;
 					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
@@ -1635,8 +1643,75 @@ void Player::EveryFrame(float deltaTime
 			m_TimerSpliting = 1;
 			m_AddNextFrameDrop = 0;
 		}
+		slotVertices[0] = m_InvOffset[0] - m_HalfOfSlotLeanght;
+		slotVertices[1] = Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght;
+		slotVertices[2] = m_InvOffset[0] + m_HalfOfSlotLeanght;
+		slotVertices[3] = Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght;
+
+		float CraftingVertices[4] = {
+		 slotVertices[0] + m_SlotGap * 10 + CRAFTINGOFFSET * (m_SlotGap - 2 * m_HalfOfSlotLeanght)
+		, slotVertices[3] + m_SlotGap * 4
+		, slotVertices[2] + m_SlotGap * 10 + CRAFTINGOFFSET * (m_SlotGap - 2 * m_HalfOfSlotLeanght)
+		, slotVertices[1] };
+		if (m_IsInventoryOpen && IsInArea(CraftingVertices, Input::XRawMousePos, Input::YRawMousePos))
+		{
+			if (Input::MouseWheel)
+			{
+				m_UsingIndexRecipe += Input::MouseWheel;
+
+				if (m_UsingIndexRecipe <= 0)
+				{
+					m_UsingIndexRecipe = 0;
+				}
+				else if (m_UsingIndexRecipe >= m_NumberOfVisibleRecipes)
+				{
+					m_UsingIndexRecipe = m_NumberOfVisibleRecipes - 1;
+				}
+			}
+		}
+		else if (Input::MouseWheel)
+		{
+			if (m_UseSlot != 0 && m_IsInventoryOpen)
+			{
+				if (m_PlayerSlots[m_UseSlot] != i_Nothing)
+				{
+					if (!ItermGetToInventory(m_AmountInSlots[0], m_PlayerSlots[0]))
+					{
+						droppedItems.emplace_back(m_Transform[0], m_Transform[1], m_DirectionLook, m_PlayerSlots[0], m_AmountInSlots[0], false);
+						m_PlayerSlots[0] = i_Nothing;
+						m_AmountInSlots[0] = 0;
+						SwapItemStats();
+					}
+				}
+				else
+				{
+					m_PlayerSlots[m_UseSlot] = m_PlayerSlots[0];
+					m_AmountInSlots[m_UseSlot] = m_AmountInSlots[0];
+
+				}
+				m_PlayerSlots[0] = i_Nothing;
+				m_AmountInSlots[0] = 0;
+				m_UseSlot = 0;
+
+			}
+			m_HUDUseSlot += Input::MouseWheel;
+			if(m_HUDUseSlot < 1)
+			{
+				m_HUDUseSlot = 10;
+			}
+			else if(m_HUDUseSlot > 10)
+			{
+				m_HUDUseSlot = 1;
+			}
+			m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+			m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
+			SwapItemStats();
+		}
+	
 
 	
+
+		
 		for (int i = 0; i < 10; i++)
 		{
 			if (Input::NumberPress[i])
@@ -2682,7 +2757,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				if (m_UseSlot == 0 && itemSwapCheck != m_PlayerSlots[m_HUDUseSlot])
 				{
-					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];
+					m_PlayerSlots[0] = m_PlayerSlots[m_HUDUseSlot];												
 					m_AmountInSlots[0] = m_AmountInSlots[m_HUDUseSlot];
 					SwapItemStats();
 				}
@@ -3170,10 +3245,17 @@ void Player::DrawPlayer(float deltaTime
 
 			}
 		}
-		
+		if (m_PlayerSlots[51])
+		{
+			ChangeTransform(m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_SlotGap * 5, transform);
+			animSh.SetUniformMat4(animTransform, transform);
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[51]]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+
 		for (int i = 0; i < 8; i++)
 		{
-			if (m_PlayerSlots[i + 51])
+			if (m_PlayerSlots[i + 52])
 			{
 				ChangeTransform(m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), transform);
 				animSh.SetUniformMat4(animTransform, transform);
@@ -3205,7 +3287,7 @@ void Player::DrawPlayer(float deltaTime
 			if (!(i - m_RecipeY > 3 || i - m_RecipeY < -3))
 			{
 
-				float x = 10 * m_SlotGap + 2 * (m_SlotGap - 2 * m_HalfOfSlotLeanght + m_InvOffset[0]);
+				float x = 10 * m_SlotGap + CRAFTINGOFFSET * (m_SlotGap - 2 * m_HalfOfSlotLeanght) + m_InvOffset[0];
 				float y = m_RecipeY * m_SlotGap - m_SlotGap * i - 2 * m_SlotGap + m_InvOffset[1];
 				animSh.SetUniform1f(animSize + HUDCraftingY, i - m_RecipeY);
 

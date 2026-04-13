@@ -215,7 +215,7 @@ public:
 	
 	float m_InvOffset[2] = {};
 	float m_HalfOfSlotLeanght = 0;
-	unsigned char m_HUDUseSlot = 0;
+	unsigned char m_HUDUseSlot = 1;
 
 
 
