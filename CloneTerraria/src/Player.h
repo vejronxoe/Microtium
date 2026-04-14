@@ -107,6 +107,7 @@ public:
 	float m_Velocity[2] = {0,0};
 
 	Player(unsigned int eob
+		, std::vector<Chest>& chests
 		, std::vector<Letter>& Ascii
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
@@ -115,6 +116,7 @@ public:
 		, unsigned short* items
 		, int begin);
 		void ResizeHUD(unsigned int eob
+			, std::vector<Chest>& chests
 			, std::vector<Letter>& Ascii);
 	bool ItermGetToInventory(unsigned short int& amount
 		, unsigned short int item);
@@ -191,7 +193,21 @@ private:
 	float m_AddNextFrameDrop = 0;
 	float m_ItemsToTake = 0;
 	float m_NumberOfRecipesDone;
+	void ChangeAmountText(Text& text
+		, std::vector<Letter>& ascii
+		, unsigned int eob
+		, int oldAmount
+		, int amount
+		, float x
+		, float y);
+	void DrawItem(Shader sh
+		, int sizeOfVertex
+		, float* transform
+		, float x
+		, float y
+		, unsigned int item);
 	void createHUD(unsigned int eob
+		, std::vector<Chest>& chests
 		, std::vector<Letter>& ASCII);
 	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
@@ -233,6 +249,8 @@ public:
 	unsigned short int m_PlayerSlots[60] = {};
 	unsigned short int m_AmountInSlots[52] = {};
 	Text m_AmountText[51];
+	bool newChest = true;
+	Text m_ChestAmountText[50];
 
 	float m_UseItemTimer = 0;
 	bool m_CursorOnMinableBlock = false;

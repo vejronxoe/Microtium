@@ -707,7 +707,6 @@ int main()
 			CreateAllBlockTextures(blockTextures);
 			
 
-			Player player(eob, letters, blockTextures, structuresTextures);
 
 
 
@@ -728,6 +727,7 @@ int main()
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
+			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
 			LoadGame(pathToSave, walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
@@ -762,7 +762,7 @@ int main()
 					numberSh.SetUniformMat4(numberCamera, camera);
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
-					player.ResizeHUD(eob,letters);
+					player.ResizeHUD(eob,chests,letters);
 
 				}
 

@@ -41,8 +41,37 @@ enum PartsOfArmor
 	, armorPants
 	, armorShoes
 };
+void Player::DrawItem(Shader sh
+	, int sizeOfVertex
+	, float* transform
+	, float x
+	, float y
+	, unsigned int item)	
+{
+	if (item)
+	{
+		if (i_WallDirt <= item && i_WallIce >= item)
+		{
+
+			sh.SetUniform1i(sizeOfVertex + ShadowLocation, 1);
+			ChangeTransform(x, y, transform);
+			sh.SetUniformMat4(basicTransform, transform);
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[item]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			sh.SetUniform1i(sizeOfVertex + ShadowLocation, 0);
+		}
+		else
+		{
+			ChangeTransform(x, y, transform);
+			sh.SetUniformMat4(basicTransform, transform);
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[item]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+	}
+}
 
 void Player::createHUD(unsigned int eob
+	, std::vector<Chest>& chests
 	, std::vector<Letter>& ASCII)
 {
 
@@ -108,10 +137,10 @@ void Player::createHUD(unsigned int eob
 		HUDEOB.emplace_back(4 * i + 2);
 		HUDEOB.emplace_back(4 * i + 3);
 	}
-	ErrorGL(glGenVertexArrays(3, m_HUDDD));
-	ErrorGL(glGenBuffers(3, m_HUDVBO));
+	ErrorGL(glGenVertexArrays(4, m_HUDDD));
+	ErrorGL(glGenBuffers(4, m_HUDVBO));
 
-	ErrorGL(glGenBuffers(3, m_HUDEOB));
+	ErrorGL(glGenBuffers(4, m_HUDEOB));
 
 	ErrorGL(glBindVertexArray(m_HUDDD[HUDInventory]));
 	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDInventory]));
@@ -173,6 +202,54 @@ void Player::createHUD(unsigned int eob
 
 	ErrorGL(glBindVertexArray(0));
 	m_HUDEOBSize[HUDHotBar] = HUDEOB.size();
+	HUDEOB.clear();
+	HUDVertices.clear();
+	for (int j = 0; j < 5;j++)
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[1] - (j + 6) * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * chestSlot);
+			HUDVertices.emplace_back(1);
+			HUDVertices.emplace_back(verticesSlot[0] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[3] - (j + 6) * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * chestSlot);
+			HUDVertices.emplace_back(0);
+			HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[3] - (j + 6) * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * (chestSlot + 1));
+			HUDVertices.emplace_back(0);
+			HUDVertices.emplace_back(verticesSlot[2] + i * slotGap);
+			HUDVertices.emplace_back(verticesSlot[1] - (j + 6) * slotGap);
+			HUDVertices.emplace_back(TEXSLOTDISTANCE * (chestSlot + 1));
+			HUDVertices.emplace_back(1);
+		}
+	}
+	for (int i = 0; i < HUDVertices.size() / 16.0f; i++)
+	{
+
+		HUDEOB.emplace_back(4 * i);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 3);
+		HUDEOB.emplace_back(4 * i + 1);
+		HUDEOB.emplace_back(4 * i + 2);
+		HUDEOB.emplace_back(4 * i + 3);
+	}
+	ErrorGL(glBindVertexArray(m_HUDDD[HUDChest]));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_HUDVBO[HUDChest]));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, HUDVertices.size() * sizeof(float), HUDVertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_HUDEOB[HUDChest]));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, HUDEOB.size(), HUDEOB.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glBindVertexArray(0));
+	m_HUDEOBSize[HUDChest] = HUDEOB.size();
 	HUDEOB.clear();
 	HUDVertices.clear();
 
@@ -252,27 +329,24 @@ void Player::createHUD(unsigned int eob
 	{
 		for (int j = 0; j < 10; j++)
 		{
-			if (m_AmountInSlots[i * 10 + j + 1] > 1)
-			{
-				m_AmountText[i * 10 + j].CreateText(std::to_string(m_AmountInSlots[i * 10 + j + 1]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
+			ChangeAmountText(m_AmountText[i * 10 + j], ASCII, eob, 0, m_AmountInSlots[i * 10 + j + 1], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
 
-			}
-			else
-			{
-				m_AmountText[i * 10 + j].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
-			}
 		}
 	}
 
-	if (m_AmountInSlots[51] > 1)
-	{
-		m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+	ChangeAmountText(m_AmountText[50], ASCII, eob, 0, m_AmountInSlots[51], m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
 
-	}
-	else
+	if (m_IndexOfOpenChest != -1)
 	{
-		m_AmountText[50].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ASCII, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
-	}	
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				ChangeAmountText(m_ChestAmountText[i * 10 + j], ASCII, eob, 0, chests.at(m_IndexOfOpenChest).m_amount[i * 10 + j], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * (i + 6));
+
+			}
+		}
+	}
 
 	m_HUDDD[HUDSlot] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDSlot], 1, 0, TEXSLOTDISTANCE, 0);
 	m_HUDDD[HUDDefault] = CreateDrawData(eob, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HalfOfSlotLeanght, -m_HalfOfSlotLeanght, m_HUDVBO[HUDDefault]);
@@ -509,10 +583,26 @@ void Player::slotsSwap(float deltaTime
 		m_TimerSpliting = 1;
 		m_AddNextFrameDrop = 0;
 	}
-
+	
 }
-
+void Player::ChangeAmountText(Text& text
+	, std::vector<Letter>& ascii
+	, unsigned int eob
+	, int oldAmount
+	, int amount
+	, float x
+	, float y)
+{
+	if (oldAmount != amount )
+	{
+		if (amount > 1)
+		{
+			text.CreateText(std::to_string(amount), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, ascii, eob, middleBottom, x, y);
+		}
+	}
+}
 Player::Player(unsigned int eob
+	, std::vector<Chest>& chests
 	, std::vector<Letter>& Ascii
 	, unsigned int* texturesIDs
 	, unsigned int* structuretexs)
@@ -709,9 +799,7 @@ Player::Player(unsigned int eob
 
 	m_SlotTextures = CreateTextureRGBA("res/textures/inventorySlot.png");
 	
-	createHUD(eob,Ascii);
-
-
+	createHUD(eob, chests, Ascii);
 	SwapItemStats();
 	
 }
@@ -1163,12 +1251,13 @@ bool Player::ItermGetToInventory(unsigned short int& amount
 	return isItDone;
 }
 void Player::ResizeHUD(unsigned int eob
+	, std::vector<Chest>& chests
 	, std::vector<Letter>& Ascii)
 {
 	ErrorGL(glDeleteBuffers(4, m_HUDVBO));
 	ErrorGL(glDeleteBuffers(4, m_HUDEOB));
 	ErrorGL(glDeleteVertexArrays(4, m_HUDDD));
-	createHUD(eob, Ascii);
+	createHUD(eob, chests, Ascii);
 }
 
 void Player::EveryFrame(float deltaTime
@@ -1193,6 +1282,32 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 {
+	int oldAmountInChest[50];
+	if (m_IndexOfOpenChest != -1)
+	{
+		for (int i = 0; i < 50; i++)
+		{
+			oldAmountInChest[i] = chests.at(m_IndexOfOpenChest).m_amount[i];		
+		}
+		if (newChest)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+				
+					ChangeAmountText(m_ChestAmountText[i * 10 + j], Ascii, eob, 0, chests.at(m_IndexOfOpenChest).m_amount[i * 10 + j], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * (i + 6));
+				}
+			}
+			newChest = false;
+		}
+		
+	}
+	else
+	{
+		newChest = true;
+	}
+
 	int oldAmountInSlot[51];
 	for (int i = 0; i < 51; i++)
 	{
@@ -2984,31 +3099,19 @@ void Player::EveryFrame(float deltaTime
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				if (oldAmountInSlot[i+j*10] != m_AmountInSlots[i + 1 + j * 10])
-				{
-					if (m_AmountInSlots[i * 10 + j + 1] > 1)
-					{
-						m_AmountText[i * 10 + j].CreateText(std::to_string(m_AmountInSlots[i * 10 + j + 1]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
-
-					}
-					else
-					{
-						m_AmountText[i * 10 + j].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
-					}
-				}
+				ChangeAmountText(m_AmountText[i * 10 + j], Ascii, eob, oldAmountInSlot[i * 10 + j], m_AmountInSlots[i * 10 + j + 1], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * i);
 			}
 		}
-		if (oldAmountInSlot[50] != m_AmountInSlots[51])
+		ChangeAmountText(m_AmountText[50], Ascii, eob, oldAmountInSlot[50], m_AmountInSlots[51], m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
+
+		if (m_IndexOfOpenChest != -1)
 		{
-			if (m_AmountInSlots[51] > 1)
+			for (int i = 0; i < 5; i++)
 			{
-				m_AmountText[50].CreateText(std::to_string(m_AmountInSlots[51]), std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
-
-			}
-			else
-			{
-				m_AmountText[50].CreateText(" ", std::vector<Format>{Format(5, 1.5f, 1, 1, 1, 1)}, Ascii, eob, middleBottom, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * 5);
-
+				for (int j = 0; j < 10; j++)
+				{
+					ChangeAmountText(m_ChestAmountText[i * 10 + j], Ascii, eob, oldAmountInChest[i * 10 + j], chests.at(m_IndexOfOpenChest).m_amount[i * 10 + j], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * (i+6));
+				}
 			}
 		}
 	}
@@ -3202,14 +3305,47 @@ void Player::DrawPlayer(float deltaTime
 
 	if (m_IsInventoryOpen)
 	{
+		if (m_IndexOfOpenChest != -1)
+		{
+			ErrorGL(glBindVertexArray(m_HUDDD[HUDChest]));
+			ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDChest], GL_UNSIGNED_BYTE, 0));
+		
+			ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
+			ChangeScale(0.8f, 0.8f, scale);
+			animSh.SetUniformMat4(animScale, scale);
 
+			for (int i = 6; i < 11; i++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+					DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_SlotGap * i, chests.at(m_IndexOfOpenChest).m_Items[j + (i - 6) * 10]);
+				}
+			}
+			ChangeTransform(0, 0, transform);
+			animSh.SetUniformMat4(animTransform, transform);
+			ChangeScale(1, 1, scale);
+			animSh.SetUniformMat4(animScale, scale);
+			fontSh.Bind();
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+			for (int i = 0; i < 50; i++) 
+			{
+				if (chests.at(m_IndexOfOpenChest).m_amount[i])
+				{
+					m_ChestAmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+
+				}
+			}
+			animSh.Bind(); 
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
+
+		}
+		
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDInventory]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDInventory], GL_UNSIGNED_BYTE, 0));
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDArmors]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDArmors], GL_UNSIGNED_BYTE, 0));
 		if (!m_UseSlot)
 		{
-			animSh.Bind();
 			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 
 			ChangeCamera(0, Window::width, 0, Window::height, camera);
@@ -3218,7 +3354,6 @@ void Player::DrawPlayer(float deltaTime
 			ChangeTransform(m_InvOffset[0] + m_SlotGap * (m_HUDUseSlot - 1), m_InvOffset[1], transform);
 			animSh.SetUniformMat4(basicTransform, transform);
 			animSh.SetUniformMat4(animScale, scale);
-			animSh.SetUniform1i(animLeangth, 1.0f / (TEXSLOTDISTANCE));
 			animSh.SetUniform1i(animNumber, useSlot);
 			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
@@ -3234,39 +3369,25 @@ void Player::DrawPlayer(float deltaTime
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				if (m_PlayerSlots[i + 1 + j * 10])
-				{
-					
-					ChangeTransform(m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1] - m_SlotGap * j, transform);
-					animSh.SetUniformMat4(animTransform, transform);
-					ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1 + j * 10]]));
-					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-				}
-
+				DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1] - m_SlotGap * j, m_PlayerSlots[i + 1 + j * 10]);
 			}
 		}
-		if (m_PlayerSlots[51])
-		{
-			ChangeTransform(m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_SlotGap * 5, transform);
-			animSh.SetUniformMat4(animTransform, transform);
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[51]]));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-		}
+		DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_SlotGap * 5, m_PlayerSlots[51]);
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (m_PlayerSlots[i + 52])
-			{
-				ChangeTransform(m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), transform);
-				animSh.SetUniformMat4(animTransform, transform);
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 51]]));
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			}
+			
+			DrawItem(animSh, animSize, transform, m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), m_PlayerSlots[i + 52]);
+			
 		}
 		fontSh.Bind();
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 		for (int i = 0; i < 51;i++)
 		{
-			m_AmountText[i].Draw(fontSh,basicSh,transform, fontTex, fontTex, false);
+			if (m_AmountInSlots[i+1] > 1)
+			{
+				m_AmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+			}
 		}
 		animSh.Bind();
 		ChangeCamera(0, Window::width, 0, Window::height, camera);
@@ -3455,7 +3576,7 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
 		for (int i = 0; i < 10; i++)
 		{
-			if (m_PlayerSlots[i+1])
+			if (m_AmountInSlots[i+1])
 			{
 			
 				ChangeTransform(m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], transform);
@@ -3468,7 +3589,11 @@ void Player::DrawPlayer(float deltaTime
 		fontSh.Bind();
 		for (int i = 0; i < 10; i++)
 		{
-			m_AmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+			if (m_AmountInSlots[i + 1] > 1)
+			{
+
+				m_AmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+			}
 		}
 
 
