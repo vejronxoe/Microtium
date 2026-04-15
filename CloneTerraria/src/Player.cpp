@@ -459,7 +459,7 @@ void Player::slotsSwap(float deltaTime
 			m_PlayerSlots[0] = items[m_AimingAtSlot];
 			if (amount[m_AimingAtSlot] <= 0)
 			{
-				items[m_AimingAtSlot] == i_Nothing;
+				items[m_AimingAtSlot] = i_Nothing;
 			}
 			m_UseSlot = m_AimingAtSlot;
 			SwapItemStats();

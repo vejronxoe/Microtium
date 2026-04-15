@@ -14,8 +14,8 @@ namespace Window
 	float halfHeightOfGameTransform;
 	float halfWidthOfGameTransform;
 	bool fullScreen;
+	bool VSync;
 	float gameZoom;
-	float UIZoom;
 	float volume;
 	float lineHeight;
 	float FontSize;
@@ -37,9 +37,9 @@ namespace Window
 		windowHeight = maxHeight / 2.0f;
 		windowWidth = maxWidth / 2.0f;
 		fullScreen = false;
+		VSync = false;
 		volume = 50;
 		gameZoom = 50;
-		UIZoom = 50;
 		std::string line;
 		std::ifstream settings(filepath);
 		bool corrupted = true;
@@ -62,19 +62,30 @@ namespace Window
 					}
 					break;
 				case 1:
-					windowWidth = atoi(line.c_str());
-					windowWidth = Clamp(width, 400, maxWidth);
-					if(fullScreen)
+					if (line.length() == 1)
 					{
-						width = maxWidth;
+						VSync = (line[0] == '1');
 					}
 					else
-					{	
-						width = windowWidth;
+					{
+						corrupted = true;
 					}
 
 					break;
 				case 2:
+					windowWidth = atoi(line.c_str());
+					windowWidth = Clamp(width, 400, maxWidth);
+					if (fullScreen)
+					{
+						width = maxWidth;
+					}
+					else
+					{
+						width = windowWidth;
+					}
+
+					break;
+				case 3:
 					windowHeight = atoi(line.c_str());
 					windowHeight = Clamp(height, 400, maxHeight);
 					if (fullScreen)
@@ -86,17 +97,13 @@ namespace Window
 						height = windowHeight;
 					}
 					break;
-				case 3:
+				case 4:
 					volume = atof(line.c_str());
 					volume = Clamp(volume, 0, 100);
 					break;
-				case 4:
+				case 5:
 					gameZoom = atof(line.c_str());
 					gameZoom = Clamp(gameZoom, 0, 100);
-					break;
-				case 5:
-					UIZoom = atof(line.c_str());
-					UIZoom = Clamp(UIZoom, 0, 100);
 					break;
 				default:
 					corrupted = true;
@@ -118,10 +125,12 @@ namespace Window
 		{
 			height = maxHeight / 2.0f;
 			width = maxWidth / 2.0f;
+			windowHeight = maxHeight / 2.0f;
+			windowWidth = maxWidth / 2.0f;
 			fullScreen = false;
+			VSync = false;
 			volume = 50;
 			gameZoom = 50;
-			UIZoom = 50;
 			SaveSetting(filepath);
 		}
 		 
@@ -132,11 +141,11 @@ namespace Window
 	{
 		std::ofstream settings(filePath);
 		settings << (fullScreen ? '1' : '0') << std::endl;
+		settings << (VSync ? '1' : '0') << std::endl;
 		settings << windowWidth << std::endl;
 		settings << windowHeight << std::endl;
 		settings << volume << std::endl;
-		settings << gameZoom << std::endl;
-		settings << UIZoom;
+		settings << gameZoom;
 		settings.close();
 	}
 

@@ -1,5 +1,7 @@
 #include"UI.h"
 
+#include<string>
+
 #include"Window.h"
 #include"input.h"
 #include"../math/VectorOperation.h"
@@ -133,15 +135,31 @@ void Slider::CreateSlider(unsigned int SliderTex
 	m_SliderTex = SliderTex;
 	m_TrailTex = trailTex;
 }
-bool Slider::Update(bool isActive)
+bool Slider::Update()
 {
-	if (IsInArea(m_Vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+
+	if (!m_IsActive && IsInArea(m_Vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
 	{
-		if (isActive)
+		
+		if(Input::LeftMousePress)
 		{
-			m_SliderX = Input::XRawMousePos;
-			m_Value = ((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0])) *100;
+			m_IsActive = true;
+
 		}
+		else
+		{
+			return true;
+		}
+	}
+	if (Input::LeftMouseRelease)
+	{
+		m_IsActive = false;
+	}
+	if (m_IsActive)
+	{
+		m_SliderX = Clamp(Input::XRawMousePos, m_Vertices[0], m_Vertices[2]);
+		m_Value = Clamp(((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0])),0,1) * 100;
+
 		return true;
 	}
 	return false;
@@ -212,7 +230,7 @@ void CheckBox::Create(unsigned int* tex
 	m_Tex[1] = tex[1];
 	UITranslatorToPixels(left, down, right, top, m_Vertices, stablePoint);
 	m_DD = CreateDrawData(eob, m_Vertices[1], m_Vertices[3], m_Vertices[2], m_Vertices[0], m_VBO);
-
+	m_Check = check;
 }
 bool CheckBox::Update(bool isActive)
 {

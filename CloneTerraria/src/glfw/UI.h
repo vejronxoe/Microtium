@@ -1,6 +1,5 @@
 #pragma once
 #include"../opengl/Shader.h"
-
 struct Slider
 {
 	unsigned int m_SliderDD = -1;
@@ -11,6 +10,7 @@ struct Slider
 	float m_SliderX = 0;
 	float m_Value = 0;
 	float m_Vertices[4] = {};
+	bool m_IsActive = false;
 	Slider() = default;
 	Slider(unsigned int SliderTex
 		, unsigned int trailTex
@@ -32,7 +32,7 @@ struct Slider
 		, float down
 		, float right
 		, float top);
-	bool Update(bool isActive);
+	bool Update();
 	void Draw(Shader sh,float* transform);
 	void Delete();
 };

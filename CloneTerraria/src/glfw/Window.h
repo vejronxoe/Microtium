@@ -10,8 +10,8 @@ namespace Window
 	extern float halfHeightOfGameTransform;
 	extern float halfWidthOfGameTransform;
 	extern bool fullScreen;
+	extern bool VSync;
 	extern float gameZoom;
-	extern float UIZoom;
 	extern float volume;
 	extern float lineHeight;
 	extern float FontSize;
