@@ -1706,23 +1706,29 @@ void Player::EveryFrame(float deltaTime
 					else if (m_IndexOfOpenChest != -1)
 					{
 						m_AimingAtSlot = slotCoordinates[0] + (slotCoordinates[1] - 6) * 10;
-
-						slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
-						chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
-						for (int i = 0; i < 50; i++)
+						if (chests.at(m_IndexOfOpenChest).m_Items[m_AimingAtSlot])
 						{
-							if (chests.at(m_IndexOfOpenChest).m_Items[i] != i_Nothing)
+							slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
+							chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
+							for (int i = 0; i < 50; i++)
 							{
-								chests.at(m_IndexOfOpenChest).m_Indestrucrtible = true;
+								if (chests.at(m_IndexOfOpenChest).m_Items[i] != i_Nothing)
+								{
+									chests.at(m_IndexOfOpenChest).m_Indestrucrtible = true;
 
+								}
+							}
+							if (m_AimingAtSlot == 0)
+							{
+								m_AimingAtSlot = 1;
+								m_UseSlot = 1;
+							}
+							else if (m_AimingAtSlot == -1)
+							{
+								m_AimingAtSlot = 0;
 							}
 						}
-						if (m_AimingAtSlot == 0)
-						{
-							m_AimingAtSlot = 1;
-							m_UseSlot = 1;
-						}
-						else if (m_AimingAtSlot == -1)
+						else
 						{
 							m_AimingAtSlot = 0;
 						}
@@ -3533,21 +3539,11 @@ void Player::DrawPlayer(float deltaTime
 			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 		}
-		numberSh.Bind();
-		ErrorGL(glBindVertexArray(fontDD));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
-		for (int j = 0; j < 10; j++)
-		{
-			float right = (m_InvOffset[0] + m_HalfOfSlotLeanght + j * m_SlotGap);
-			float left = (m_InvOffset[0] - m_HalfOfSlotLeanght + j * m_SlotGap);
-			drawNumber(m_InvOffset[1] - m_HalfOfSlotLeanght, right - (right - left) * 0.1f, left + (right - left) * 0.1f, m_AmountInSlots[j + 1], scale, transform, numberSh);
-		}
-		numberSh.SetUniform1f(numberSize + HUDCraftingY, 0);
+		
 		animSh.Bind();
 		animSh.SetUniform1i(animNumber, 0);
 
-	}
-		
+	}	
 	else
 	{
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDHotBar]));
@@ -3587,6 +3583,7 @@ void Player::DrawPlayer(float deltaTime
 
 		}
 		fontSh.Bind();
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 		for (int i = 0; i < 10; i++)
 		{
 			if (m_AmountInSlots[i + 1] > 1)

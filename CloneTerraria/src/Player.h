@@ -103,7 +103,7 @@ public:
 	int m_Acceleration = 0;
 	int m_Friction = 0;
 	float m_MaxMovementSpeed = 0;
-	float m_Transform[2] = {150,30};
+	float m_Transform[2] = {10,30};
 	float m_Velocity[2] = {0,0};
 
 	Player(unsigned int eob
