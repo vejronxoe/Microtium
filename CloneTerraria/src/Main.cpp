@@ -106,6 +106,114 @@ void CreateMenu(bool first
 
 
 }
+void optionsUpdate(Menu& menu
+	, Shader& fontSh
+	, Shader& basicSh
+	, GLFWwindow* window
+	, std::vector<Letter>& letters
+	, unsigned int eob
+	, unsigned int fontTex
+	, unsigned int TextBackGroundTex
+	, float* transform
+	, float& blockSize
+	, int& cursorState
+	,unsigned int& menuState)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		menu.description[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+	}
+	if (Window::volume != menu.sliders[0].m_Value)
+	{
+		Window::volume = menu.sliders[0].m_Value;
+		menu.values[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0], menu.description[0].m_TextVertices[3] + menu.description[0].m_Transform[1]);
+
+	}
+	if (Window::gameZoom != menu.sliders[1].m_Value)
+	{
+		Window::gameZoom = menu.sliders[1].m_Value;
+		blockSize = DistanceOnUI(BlockSize);
+		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
+		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
+
+		menu.values[1].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[1].m_TextVertices[2] + menu.description[1].m_Transform[0], menu.description[1].m_TextVertices[3] + menu.description[1].m_Transform[1]);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		menu.values[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+	}
+	float Textvertices[4] =
+	{
+		menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
+		, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
+		, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
+		, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
+	};
+	if (IsInArea(Textvertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+	{
+		cursorState = canClickOnIt;
+		if (Input::LeftMousePress)
+		{
+			Window::SaveSetting("res/settings.txt");
+			menuState = stateDefault;
+		}
+	}
+	menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+	basicSh.Bind();
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (menu.sliders[i].Update())
+		{
+			cursorState = canSlideIt;
+		}
+		menu.sliders[i].Draw(basicSh, transform);
+	}
+	if (menu.checkBoxs[1].Update(Input::LeftMousePress))
+	{
+		if (Input::LeftMousePress)
+		{
+			Window::fullScreen = !Window::fullScreen;
+			if (Window::fullScreen)
+			{
+				GLFWmonitor* primary = glfwGetPrimaryMonitor();
+
+				const GLFWvidmode* mode = glfwGetVideoMode(primary);
+
+				int maxHeight = mode->height;
+				int maxWidth = mode->width;
+				glfwSetWindowMonitor(window, primary, 0, 0, maxWidth, maxHeight, GLFW_DONT_CARE);
+			}
+			else
+			{
+				glfwSetWindowMonitor(window, NULL, 0, 100, Window::windowWidth, Window::windowHeight, GLFW_DONT_CARE);
+			}
+		}
+		cursorState = canClickOnIt;
+	}
+	if (menu.checkBoxs[0].Update(Input::LeftMousePress))
+	{
+		if (Input::LeftMousePress)
+		{
+			Window::VSync = !Window::VSync;
+			if (Window::VSync)
+			{
+				glfwSwapInterval(1);
+			}
+			else
+			{
+				glfwSwapInterval(0);
+			}
+		}
+		cursorState = canClickOnIt;
+	}
+	basicSh.Bind();
+	for (int i = 0; i < 2; i++)
+	{
+		menu.checkBoxs[i].Draw(basicSh, transform);
+	}
+
+}
 int main()
 {
 	unsigned int gameState = stateMainMenu;
@@ -248,6 +356,7 @@ int main()
 	float printFPSTimer = 1;
 	float oldDeltaTime = 0;
 	float spawnTimer =0;
+	unsigned int menuState = stateDefault;
 
 	/*/////////////////////////////////////////////
 	gameState = stateInGame;
@@ -296,7 +405,6 @@ int main()
 				}
 			}
 		
-			unsigned int menuState = stateDefault;
 			unsigned int loadGameState = stateInGame;
 			while (!glfwWindowShouldClose(window) && gameState == stateMainMenu)
 			{
@@ -397,100 +505,7 @@ int main()
 				}
 				case stateOptions:
 				{
-					for (int i = 0; i < 4; i++)
-					{
-						menu.description[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
-					}
-					if (Window::volume != menu.sliders[0].m_Value)
-					{
-						Window::volume = menu.sliders[0].m_Value;
-						menu.values[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0], menu.description[0].m_TextVertices[3] + menu.description[0].m_Transform[1]);
-
-					}
-					if (Window::gameZoom != menu.sliders[1].m_Value)
-					{
-						Window::gameZoom = menu.sliders[1].m_Value;
-						blockSize = DistanceOnUI(BlockSize);
-						Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
-						Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
-
-						menu.values[1].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 5, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[1].m_TextVertices[2] + menu.description[1].m_Transform[0], menu.description[1].m_TextVertices[3] + menu.description[1].m_Transform[1]);
-					}
-					for (int i = 0; i < 2; i++)	
-					{	
-						menu.values[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
-					}
-					float Textvertices[4] =
-					{
-						menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
-						, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
-						, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
-						, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
-					};
-					if (IsInArea(Textvertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
-					{
-						cursorState = canClickOnIt;
-						if (Input::LeftMousePress)
-						{
-							Window::SaveSetting("res/settings.txt");
-							menuState = stateDefault;
-						}
-					}
-					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
-					basicSh.Bind();
-
-					for (int i = 0; i < 2; i++)
-					{
-						if (menu.sliders[i].Update())
-						{
-							cursorState = canSlideIt;
-						}
-						menu.sliders[i].Draw(basicSh, transform);
-					}
-					if (menu.checkBoxs[1].Update(Input::LeftMousePress))
-					{
-						if (Input::LeftMousePress)
-						{
-							Window::fullScreen = !Window::fullScreen;
-							if (Window::fullScreen)
-							{
-								GLFWmonitor* primary = glfwGetPrimaryMonitor();
-
-								const GLFWvidmode* mode = glfwGetVideoMode(primary);
-
-								int maxHeight = mode->height;
-								int maxWidth = mode->width;
-								glfwSetWindowMonitor(window, primary, 0, 0, maxWidth, maxHeight, GLFW_DONT_CARE);
-							}
-							else
-							{
-								glfwSetWindowMonitor(window, NULL, 0, 100, Window::windowWidth, Window::windowHeight, GLFW_DONT_CARE);
-							}
-						}
-						cursorState = canClickOnIt;
-					}
-					if (menu.checkBoxs[0].Update(Input::LeftMousePress))
-					{
-						if (Input::LeftMousePress)
-						{
-							Window::VSync = !Window::VSync;
-							if (Window::VSync)
-							{
-								glfwSwapInterval(1);
-							}
-							else
-							{
-								glfwSwapInterval(0);
-							}
-						}
-						cursorState = canClickOnIt;
-					}
-					basicSh.Bind();
-					for (int i = 0; i < 2; i++)
-					{
-						menu.checkBoxs[i].Draw(basicSh, transform);
-					}
-
+					optionsUpdate(menu, fontSh, basicSh, window, letters, eob, fontTex, TextBackGroundTex, transform, blockSize, cursorState, menuState);
 					break;
 				}
 				case stateLoad:
@@ -575,7 +590,7 @@ int main()
 
 			ErrorGL(glDeleteVertexArrays(1, &backGroundDD));
 
-
+			
 			break;
 		}
 		case stateInGame:
@@ -644,7 +659,7 @@ int main()
 			structureSh.GetUniformLocation("transform");
 			structureSh.GetUniformLocation("shadow");
 			structureSh.GetUniformLocation("lookAt");
-
+			menuState = stateNone;
 			
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
@@ -713,7 +728,19 @@ int main()
 			
 
 
+			Text menuTexts[6];
+			unsigned int menuBackgroundVBO;
+			unsigned int menuBackgroundDD = CreateDrawData(eob,Window::height,0,Window::width,0,menuBackgroundVBO,1,0,TEXSLOTDISTANCE, 0);
 
+			{
+				std::string Texts[5] = { "Exit" ,"Options", "Save" , "Load",  "Resume" };
+				for (int i = 0; i < 5; i++)
+				{
+					menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
+				}
+				menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
+
+			}
 
 			std::vector<DroppedItem> dropItems;
 
@@ -753,7 +780,19 @@ int main()
 					Window::height = newHeight;
 					Window::width = newWidth;
 					ChangeScreenSize(newWidth, newHeight);
-					
+					{
+						std::string Texts[5] = { "Exit" ,"Options", "Save" , "Load",  "Resume" };
+						for (int i = 0; i < 5; i++)
+						{
+							menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
+						}
+						menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
+
+					}
+					ErrorGL(glDeleteBuffers(1, &menuBackgroundVBO));
+					ErrorGL(glDeleteVertexArrays(1, &menuBackgroundDD));
+					menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
+
 					CreateMenu(false, letters, menu, sliderDD, sliderVBO, checkBoxTex, sliderTex, trailTex, eob);
 					ChangeCamera(0, Window::width, 0, Window::height, camera);
 					HUDSh.Bind();
@@ -977,6 +1016,137 @@ int main()
 					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 				}
 				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, fontSh, animSh, handSh, particlesSh, chests, transform, scale, rotation,camera, fontTex, fontDrawData, particlesDD, numberTexture);
+				
+				if (player.m_IsInventoryOpen && menuState != stateNone)
+				{
+					animSh.Bind();
+					ChangeTransform(0, 0, transform);
+					animSh.SetUniformMat4(animTransform, transform);
+					animSh.SetUniform1f (animSize + HUDCraftingY, 2);
+					animSh.SetUniform1i(animNumber, 0);
+					ErrorGL(glBindVertexArray(menuBackgroundDD));
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_SlotTextures));
+
+					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+
+
+				}
+				basicSh.Bind();
+				ChangeCamera(0, Window::width, 0, Window::height, camera);
+				basicSh.SetUniformMat4(basicCamera, camera);
+
+				fontSh.Bind();
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+				int cursorState = canNotDoIt;
+				
+				switch (menuState)
+				{
+				case stateNone:
+				{
+					if (player.m_IsInventoryOpen)
+					{
+						float vertices[4] =
+						{
+							menuTexts[5].m_TextVertices[0] + menuTexts[5].m_Transform[0]
+							, menuTexts[5].m_TextVertices[1] + menuTexts[5].m_Transform[1]
+							, menuTexts[5].m_TextVertices[2] + menuTexts[5].m_Transform[0]
+							, menuTexts[5].m_TextVertices[3] + menuTexts[5].m_Transform[1]
+						};
+
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							
+							menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
+							if (Input::LeftMousePress)
+							{
+								menuState = stateDefault;
+							}
+						}
+						else
+						{
+							menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+						}
+					}
+					break;
+				}
+				case stateDefault:
+				{
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					for (int i = 0; i < 5; i++)
+					{
+						float vertices[4] =
+						{
+							menuTexts[i].m_TextVertices[0] + menuTexts[i].m_Transform[0]
+							, menuTexts[i].m_TextVertices[1] + menuTexts[i].m_Transform[1]
+							, menuTexts[i].m_TextVertices[2] + menuTexts[i].m_Transform[0]
+							, menuTexts[i].m_TextVertices[3] + menuTexts[i].m_Transform[1]
+						};
+
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							menuTexts[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
+							if (Input::LeftMousePress)
+							{
+								switch (i)
+								{
+
+								case 0:
+									glfwSetWindowShouldClose(window, true);
+									break;
+								case 1:
+									menuState = stateOptions;
+									break;
+								case 2:
+									menuState = stateSave;
+									break;
+								case 3:
+									menuState = stateLoad;
+									break;
+								case 4:
+									menuState = stateNone;
+									break;
+								}
+							}
+						}
+						else
+						{
+							menuTexts[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+						}
+					}
+
+					break;
+				}
+				case stateOptions:
+				{
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					optionsUpdate(menu, fontSh, basicSh, window, letters, eob, fontTex, TextBackGroundTex, transform, blockSize, cursorState, menuState);
+					break;
+				}
+				case stateLoad:
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					break;
+				case stateSave:
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					break;
+
+				}
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
@@ -987,11 +1157,19 @@ int main()
 					oldDeltaTime = deltaTime;
 				}
 				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
-				animSh.Bind();
-				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
-				animSh.SetUniformMat4(animCamera, camera);
-				DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, alternativeBlockDD, shadowSh, structureSh, numberSh, animSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
-
+				if (menuState == stateNone)
+				{
+					animSh.Bind();
+					ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+					animSh.SetUniformMat4(animCamera, camera);
+					DrawCursor(cursorTextures, structuresTextures, structuresDD, cursorDD, alternativeBlockDD, shadowSh, structureSh, numberSh, animSh, transform, camera, scale, fontDrawData, numberTexture, player, CameraCoordinates);
+				}
+				else
+				{
+					
+					basicSh.Bind();
+					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);		
+				}
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);

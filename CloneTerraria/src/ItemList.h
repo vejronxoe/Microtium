@@ -78,6 +78,7 @@ enum MenuState
 	, stateLoad
 	, stateSave
 	, stateOptions
+	, stateNone
 };
 enum StablePoint
 {

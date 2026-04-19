@@ -370,7 +370,7 @@ void Text::Draw(Shader& fontSh
 		basicSh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, BackgroundTex));
 		ErrorGL(glBindVertexArray(m_BackgroundDrawData));
-		ErrorGL(glDrawElements(GL_TRIANGLES, m_OrderSize, GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		fontSh.Bind();
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 	}
