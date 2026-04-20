@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Opengl\ErrorSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Opengl\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Opengl\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BlocksAndWalls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw\Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw\cursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NumberRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Opengl\DrawData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DroppedItems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\VectorOperation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flora.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\background.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\particles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\structures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libraries\ImageLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libraries\json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfw\UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Opengl\ErrorSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Opengl\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libraries\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Opengl\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BlocksAndWalls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\cursor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NumberRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Opengl\DrawData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DroppedItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\VectorOperation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flora.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\background.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libraries\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageLoader\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glfw\UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shaders\fragBasic.txt" />
+    <Text Include="res\save0\mapBlocks.txt" />
+    <Text Include="res\shaders\verBasic.txt" />
+    <Text Include="res\settings.txt" />
+    <Text Include="res\shaders\fragtTest.txt" />
+    <Text Include="res\shaders\verHUD.txt" />
+    <Text Include="res\shaders\verNumber.txt" />
+    <Text Include="res\save0\mapWalls.txt" />
+    <Text Include="res\shaders\fragShadow.txt" />
+    <Text Include="res\shaders\verTree.txt" />
+    <Text Include="res\shaders\verAnimation.txt" />
+    <Text Include="res\shaders\verHand.txt" />
+    <Text Include="res\shaders\verAdvanced.txt" />
+    <Text Include="res\shaders\fragBackground.txt" />
+    <Text Include="res\shaders\fragParticles.txt" />
+    <Text Include="res\shaders\verParticles.txt" />
+    <Text Include="res\shaders\fragStructures.txt" />
+    <Text Include="res\shaders\fragHUD.txt" />
+    <Text Include="res\shaders\fragFont.txt" />
+    <Text Include="res\shaders\verFont.txt" />
+    <Text Include="res\save1\mapBlocks.txt" />
+    <Text Include="res\save1\mapWalls.txt" />
+    <Text Include="res\save2\mapBlocks.txt" />
+    <Text Include="res\save2\mapWalls.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\Asphalt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\basicCanonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bleedArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bodyAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bootsAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bouncingCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bowInHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bowInInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canAxeIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canClickon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canHammerIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canNotDo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canonHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canonInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canPickaxeIt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canPutItInBin.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\copper.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperAxe.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperHammer.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperPickaxe.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cooperSword.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cut4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\DamageBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\dirtBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\downRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fireCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestplank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forestSmallBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fullGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\handDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\headDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ice.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\inventorySlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\iron.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\leftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\leftRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\legAnimDefault.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\lightDamageBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingDownGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingTopGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Numbers.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\pistolHand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bleedBullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\pistolInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\platform.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\proSand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\rightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sapling.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\saplingInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\scrapCannonBall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topDownGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topLeftGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\topRightGrassBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\trash.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\useInventorySlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodLog.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\0To5HP.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\5To10HP.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\10To15HP.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\15To20HP.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\20To25HP.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodHelmet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodPants.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodChestPlate.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\woodShoes.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\handWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\headWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bodyAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\legAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bootsAnimWood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\zombieAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\zombieBody.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\slimeAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundForest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSky.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundSnow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\BackgroundUnderground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseArrowBag.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseFastShoes.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseShackle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\accessoriseWallClimb.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bench.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forge.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\anvil.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\anvilInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\benchInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\copperIngot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ironIngot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\forgeInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\nothingIngredientSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\missingIngredientSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\HelmetSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ChestPlateSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\PantsSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ArmorClass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\dot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ShoesSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Chest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CanChest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\OpenChest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CloseDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\openDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\ChestSlot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CanOpenDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\DoorInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CloseTrapDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\OpenTrapDoor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\CloseGate.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\font\atlas.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\GateInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\TrapDoorInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Slider.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Trail.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\blue.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\canSlide.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\UncheckBox.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\font\atlas.json" />
+  </ItemGroup>
+</Project>
