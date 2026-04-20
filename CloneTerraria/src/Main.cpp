@@ -358,8 +358,8 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	/*/////////////////////////////////////////////
-	gameState = stateInGame;
+	//*/////////////////////////////////////////////
+	gameState = stateEditor;
 
 	pathToSave += "0/";
 
@@ -368,8 +368,9 @@ int main()
 	//////////*////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window))
 	{
+
 		switch (gameState)
-		{
+		{	
 		case stateMainMenu:
 		{
 
@@ -485,6 +486,8 @@ int main()
 							loadGameState = stateInGame;
 							break;
 						case 1:
+							menuState = stateLoad;
+							loadGameState = stateEditor;
 							break;
 						case 2:
 							menuState = stateOptions;
@@ -544,7 +547,7 @@ int main()
 						case 2:
 						case 1:
 							pathToSave += std::to_string(aimingAt) + "/";
-							gameState = stateInGame;
+							gameState = loadGameState;
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -605,7 +608,11 @@ int main()
 			HUDSh.GetUniformLocation("shadow");
 			HUDSh.GetUniformLocation("craftingY");
 			HUDSh.SetUniform1f(HUDSize + HUDCraftingY, 0);
-
+			Shader backgroundSh("res/shaders/verBasic.txt", "res/shaders/fragBackground.txt");
+			backgroundSh.Bind();
+			backgroundSh.GetUniformLocation("camera");
+			backgroundSh.GetUniformLocation("transform");
+			backgroundSh.GetUniformLocation("blendFactor");
 			Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
 			shadowSh.Bind();
 			shadowSh.GetUniformLocation("camera");
@@ -641,11 +648,7 @@ int main()
 			advancedSh.GetUniformLocation("scale");
 			advancedSh.GetUniformLocation("rotation");
 			advancedSh.GetUniformLocation("shadow");
-			Shader backgroundSh("res/shaders/verBasic.txt", "res/shaders/fragBackground.txt");
-			backgroundSh.Bind();
-			backgroundSh.GetUniformLocation("camera");
-			backgroundSh.GetUniformLocation("transform");
-			backgroundSh.GetUniformLocation("blendFactor");
+		
 			Shader particlesSh("res/shaders/verParticles.txt", "res/shaders/fragParticles.txt");
 			particlesSh.Bind();
 			particlesSh.GetUniformLocation("camera");
@@ -1177,9 +1180,349 @@ int main()
 			}
 			break;
 		}
+		case stateEditor:
+		{
+			Shader backgroundSh("res/shaders/verBasic.txt", "res/shaders/fragBackground.txt");
+			backgroundSh.Bind();
+			backgroundSh.GetUniformLocation("camera");
+			backgroundSh.GetUniformLocation("transform");
+			backgroundSh.GetUniformLocation("blendFactor");
+			Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
+			shadowSh.Bind();
+			shadowSh.GetUniformLocation("camera");
+			shadowSh.GetUniformLocation("transform");
+			shadowSh.GetUniformLocation("shadow");
+			Shader treeSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
+			treeSh.Bind();
+			treeSh.GetUniformLocation("treeCamera");
+			treeSh.GetUniformLocation("treeTransform");
+			treeSh.GetUniformLocation("treeRotation");
+			Shader structureSh("res/shaders/verBasic.txt", "res/shaders/fragStructures.txt");
+			structureSh.Bind();
+			structureSh.GetUniformLocation("camera");
+			structureSh.GetUniformLocation("transform");
+			structureSh.GetUniformLocation("shadow");
+			structureSh.GetUniformLocation("lookAt");
+			Shader advancedSh("res/shaders/verAdvanced.txt", "res/shaders/fragShadow.txt");
+			advancedSh.Bind();
+			advancedSh.GetUniformLocation("camera");
+			advancedSh.GetUniformLocation("transform");
+			advancedSh.GetUniformLocation("scale");
+			advancedSh.GetUniformLocation("rotation");
+			advancedSh.GetUniformLocation("shadow");
+			Shader animSh("res/shaders/verAnimation.txt", "res/shaders/fragHUD.txt");
+			animSh.Bind();
+			animSh.GetUniformLocation("animCamera");
+			animSh.GetUniformLocation("animTransform");
+			animSh.GetUniformLocation("animScale");
+			animSh.GetUniformLocation("animNumber");
+			animSh.GetUniformLocation("animLeangth");
+			animSh.GetUniformLocation("shadow");
+			animSh.GetUniformLocation("craftingY");
+			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
+			animSh.SetUniform1i(animSize + HUDShadow, 0);
+
+			menuState = stateNone;
+
+
+			CreateScale(1, 1, scale);
+			CreateRotation(0, rotation);
+			ChangeTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
+			ChangeCamera(0, Window::width, 0, Window::height, camera);
+			advancedSh.Bind();
+			advancedSh.SetUniform1i(advancedSize + ShadowLocation, 0);
+			advancedSh.SetUniformMat4(advancedRotation, rotation);
+			treeSh.Bind();
+			treeSh.SetUniformMat4(treeRotation, rotation);
+			numberSh.Bind();
+			numberSh.SetUniformMat4(numberCamera, camera);
+			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
+			unsigned int enemiesTex1[enemySize];
+			unsigned int enemiesTex2[enemySize];
+			unsigned int enemiesDD1[enemySize];
+			unsigned int enemiesDD2[enemySize];
+			unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			unsigned int treeTextures[3];
+			unsigned int CutTextures[4];
+			unsigned int structuresTextures[8];
+			unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png") };
+			unsigned int trapDoorTextures[2] = { CreateTextureRGBA("res/textures/CloseTrapDoor.png"), CreateTextureRGBA("res/textures/OpenTrapDoor.png") };
+			unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
+			unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
+			CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
+			CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
+			CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
+			CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
+			structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
+			structuresTextures[s_Chest] = CreateTextureRGBA("res/textures/Chest.png");
+			structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
+			structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
+			structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
+			structuresTextures[s_Door] = DoorTextures[0];
+			structuresTextures[s_TrapDoor] = trapDoorTextures[0];
+			structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
+			treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
+			treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
+			treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
+			unsigned int treeDD[3];
+			unsigned int structuresDD[8];
+			unsigned int alternativeBlockDD = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f, 1, 0, TEXSLOTDISTANCE, 0);
+
+			structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+			structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
+			structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
+			structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
+			structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
+			structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
+			structuresDD[s_Gate] = CreateDrawData(eob, 3.5f, -0.5f, 0.5f, -0.5f);
+			treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
+			treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+
+
+
+			CreateAllBlockTextures(blockTextures);
+
+
+
+			Text menuTexts[6];
+			unsigned int menuBackgroundVBO;
+			unsigned int menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
+
+			{
+				std::string Texts[5] = { "Exit" ,"Options", "Save" , "Load",  "Resume" };
+				for (int i = 0; i < 5; i++)
+				{
+					menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
+				}
+				menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
+
+			}
+
+		
+			std::vector<std::vector<Block>> blocks;
+		
+			std::vector<std::vector<wall>> walls;
+		
+			std::vector<tree> trees;
+		
+			std::vector<seedling> seedlings;
+			std::vector<int> isSandOnX;
+		
+			std::vector<CraftStation> craftStations;
+			std::vector<Chest> chests;
+			std::vector<Door> doors;
+
+			LoadGame(pathToSave, walls, blocks, isSandOnX, blockTextures);
+			Background background(eob, backgroundSh);
+
+			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
+			{
+				glClear(GL_COLOR_BUFFER_BIT);
+				deltaTime = glfwGetTime() - pastTime;
+				pastTime = glfwGetTime();
+				int cursorState = canNotDoIt;
+
+				int newWidth, newHeight;
+				glfwGetWindowSize(window, &newWidth, &newHeight);
+				if (newHeight != Window::height || newWidth != Window::width)
+				{
+					Window::height = newHeight;
+					Window::width = newWidth;
+					ChangeScreenSize(newWidth, newHeight);
+					{
+						std::string Texts[5] = { "Exit" ,"Options", "Save" , "Load",  "Resume" };
+						for (int i = 0; i < 5; i++)
+						{
+							menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
+						}
+						menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
+
+					}
+					ErrorGL(glDeleteBuffers(1, &menuBackgroundVBO));
+					ErrorGL(glDeleteVertexArrays(1, &menuBackgroundDD));
+					menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
+
+					CreateMenu(false, letters, menu, sliderDD, sliderVBO, checkBoxTex, sliderTex, trailTex, eob);
+					ChangeCamera(0, Window::width, 0, Window::height, camera);	
+					numberSh.Bind();
+					numberSh.SetUniformMat4(numberCamera, camera);
+					fontSh.Bind();
+					fontSh.SetUniformMat4(fontCamera, camera);
+
+				}
+
+
+
+				float CameraCoordinates[2];
+
+				CameraCoordinates[0] = CameraHitboxX(100);
+				CameraCoordinates[1] = CameraHitboxY(100);
+				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+				animSh.Bind();
+				animSh.SetUniformMat4(animCamera, camera);
+				basicSh.Bind();
+				basicSh.SetUniformMat4(basicCamera, camera);
+				
+				advancedSh.Bind();
+				advancedSh.SetUniformMat4(advancedCamera, camera);
+			
+				backgroundSh.Bind();
+				backgroundSh.SetUniformMat4(basicCamera, camera);
+				background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
+				structureSh.Bind();
+				structureSh.SetUniformMat4(basicCamera, camera);
+
+
+
+
+
+
+
+				ChangeCamera(0, Window::width, 0, Window::height, camera);
+				basicSh.Bind();
+				basicSh.SetUniformMat4(basicCamera, camera);
+				fontSh.Bind();
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+				basicSh.Bind();
+				ChangeCamera(0, Window::width, 0, Window::height, camera);
+				basicSh.SetUniformMat4(basicCamera, camera);
+
+				fontSh.Bind();
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+
+				switch (menuState)
+				{
+				case stateNone:
+				{
+					float vertices[4] =
+					{
+						menuTexts[5].m_TextVertices[0] + menuTexts[5].m_Transform[0]
+						, menuTexts[5].m_TextVertices[1] + menuTexts[5].m_Transform[1]
+						, menuTexts[5].m_TextVertices[2] + menuTexts[5].m_Transform[0]
+						, menuTexts[5].m_TextVertices[3] + menuTexts[5].m_Transform[1]
+					};
+
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+
+						menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
+						if (Input::LeftMousePress)
+						{
+							menuState = stateDefault;
+						}
+					}
+					else
+					{
+						menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+					}
+
+					break;
+				}
+				case stateDefault:
+				{
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					for (int i = 0; i < 5; i++)
+					{
+						float vertices[4] =
+						{
+							menuTexts[i].m_TextVertices[0] + menuTexts[i].m_Transform[0]
+							, menuTexts[i].m_TextVertices[1] + menuTexts[i].m_Transform[1]
+							, menuTexts[i].m_TextVertices[2] + menuTexts[i].m_Transform[0]
+							, menuTexts[i].m_TextVertices[3] + menuTexts[i].m_Transform[1]
+						};
+
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							menuTexts[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
+							if (Input::LeftMousePress)
+							{
+								switch (i)
+								{
+
+								case 0:
+									glfwSetWindowShouldClose(window, true);
+									break;
+								case 1:
+									menuState = stateOptions;
+									break;
+								case 2:
+									menuState = stateSave;
+									break;
+								case 3:
+									menuState = stateLoad;
+									break;
+								case 4:
+									menuState = stateNone;
+									break;
+								}
+							}
+						}
+						else
+						{
+							menuTexts[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+						}
+					}
+
+					break;
+				}
+				case stateOptions:
+				{
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					optionsUpdate(menu, fontSh, basicSh, window, letters, eob, fontTex, TextBackGroundTex, transform, blockSize, cursorState, menuState);
+					break;
+				}
+				case stateLoad:
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					break;
+				case stateSave:
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					break;
+
+				}
+				numberSh.Bind();
+				ErrorGL(glBindVertexArray(fontDrawData));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
+				printFPSTimer += deltaTime;
+				if (printFPSTimer > 0.1f)
+				{
+					printFPSTimer = 0;
+					oldDeltaTime = deltaTime;
+				}
+				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
+				
+
+					basicSh.Bind();
+					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
+			
+
+				Input::EndOfLoop();
+				glfwSwapBuffers(window);
+				glfwPollEvents();
+			}
+			break;
+		}
 		}
 	}
 	glfwTerminate();
 	return 0;
 
+	
 }
