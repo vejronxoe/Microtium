@@ -376,7 +376,7 @@ void LoadMapBlocksAndWalls(const char* filePathWalls
 
 
 void drawBlocks(std::vector<std::vector<Block>>& blocks
-	, std::vector<DamagedBlock>& damagedBlocks
+	, std::vector<DamagedBlock> damagedBlocks
 	, float* cameraCoordinate
 	, Shader& basicSh
 	, unsigned int* damageTexture
@@ -409,7 +409,7 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	}
 
 }
-void drawWalls(std::vector<DamagedBlock>& damagedWalls
+void drawWalls(std::vector<DamagedBlock> damagedWalls
 	, unsigned int* damageTextures
 	, std::vector<std::vector<wall>>& walls
 	, Shader& wallsSh

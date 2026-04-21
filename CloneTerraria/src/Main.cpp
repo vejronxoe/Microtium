@@ -28,6 +28,8 @@
 #include"structures.h"
 #include"glfw/Font.h"
 #include"math/VectorOperation.h"
+#include"Editor.h"
+
 void LoadGame(std::string pathToSave
 , std::vector<std::vector<wall>>& walls
 , std::vector< std::vector<Block>>& blocks
@@ -358,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	//*/////////////////////////////////////////////
+	/*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -1223,7 +1225,8 @@ int main()
 			animSh.SetUniform1i(animSize + HUDShadow, 0);
 
 			menuState = stateNone;
-
+			Editor editor;
+			
 
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
@@ -1354,12 +1357,10 @@ int main()
 				}
 
 
-
-				float CameraCoordinates[2];
-
-				CameraCoordinates[0] = CameraHitboxX(100);
-				CameraCoordinates[1] = CameraHitboxY(100);
-				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+				editor.Update(deltaTime);
+				editor.m_Transform[0] = CameraHitboxX(editor.m_Transform[0]);
+				editor.m_Transform[1] = CameraHitboxY(editor.m_Transform[1]);
+				ChangeCamera(-Window::halfWidthOfGameTransform + editor.m_Transform[0], Window::halfWidthOfGameTransform + editor.m_Transform[0], -Window::halfHeightOfGameTransform + editor.m_Transform[1], Window::halfHeightOfGameTransform + editor.m_Transform[1], camera);
 				animSh.Bind();
 				animSh.SetUniformMat4(animCamera, camera);
 				basicSh.Bind();
@@ -1370,13 +1371,35 @@ int main()
 			
 				backgroundSh.Bind();
 				backgroundSh.SetUniformMat4(basicCamera, camera);
-				background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
+				background.DrawBackground(backgroundSh, basicSh, transform, editor.m_Transform);
 				structureSh.Bind();
 				structureSh.SetUniformMat4(basicCamera, camera);
 
 
 
+				shadowSh.Bind();
+				ErrorGL(glBindVertexArray(blocksDrawData));
+				drawWalls(std::vector<DamagedBlock>{}, damageTexture, walls, shadowSh, camera, transform, editor.m_Transform);
+				basicSh.Bind();
+				drawBlocks(blocks, std::vector<DamagedBlock>{}, editor.m_Transform, basicSh, damageTexture, transform, camera);
 
+				basicSh.Bind();
+				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
+				for (int i = 0; i < seedlings.size(); i++)
+				{
+					seedlings.at(i).drawSeedling(basicSh, transform);
+				}
+				treeSh.Bind();
+				treeSh.SetUniformMat4(treeCamera, camera);
+				for (int i = 0; i < trees.size(); i++)
+				{
+					trees.at(i).drawTree(treeSh, editor.m_Transform, transform, rotation);
+				}
+				ErrorGL(glBindVertexArray(blocksDrawData));
+			
+				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
+				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
+				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
 
 
 
