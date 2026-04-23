@@ -360,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	/*/////////////////////////////////////////////
+	//*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -1226,7 +1226,7 @@ int main()
 
 			menuState = stateNone;
 			Editor editor;
-			
+			EditorHUD editorHUD( eob, TextBackGroundTex);
 
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
@@ -1358,6 +1358,7 @@ int main()
 
 
 				editor.Update(deltaTime);
+				editorHUD.Update(deltaTime);
 				editor.m_Transform[0] = CameraHitboxX(editor.m_Transform[0]);
 				editor.m_Transform[1] = CameraHitboxY(editor.m_Transform[1]);
 				ChangeCamera(-Window::halfWidthOfGameTransform + editor.m_Transform[0], Window::halfWidthOfGameTransform + editor.m_Transform[0], -Window::halfHeightOfGameTransform + editor.m_Transform[1], Window::halfHeightOfGameTransform + editor.m_Transform[1], camera);
@@ -1411,7 +1412,7 @@ int main()
 				basicSh.Bind();
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.SetUniformMat4(basicCamera, camera);
-
+				editorHUD.Draw(basicSh,transform);
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 

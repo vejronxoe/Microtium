@@ -1,6 +1,7 @@
 #pragma once
 #define GRAVITY -40
 #define BlockSize 1.0f/(60.0f - (Window::gameZoom-50))
+#define TEXSLOTDISTANCE 1.0f/10.0f
 
 enum Items
 {
@@ -53,6 +54,7 @@ enum Items
 	, i_TrapDoor
 	, i_Gate
 	, i_DoorBlock
+	, i_ItemSize = i_DoorBlock
 };
 enum Structures
 {
@@ -64,6 +66,7 @@ enum Structures
 	, s_Gate
 	, s_Door
 	, s_TrapDoor
+	,s_StructureSize
 
 };
 enum GameState

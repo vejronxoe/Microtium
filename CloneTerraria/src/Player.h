@@ -15,7 +15,6 @@
 #include "glfw/Font.h"
 #define PLAYERHANDOFFSETX -0.5f
 #define PLAYERHANDOFFSETY 0.65f
-#define TEXSLOTDISTANCE 1.0f/10.0f
 
 enum RangeWeaponTypes
 {

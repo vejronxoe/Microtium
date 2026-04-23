@@ -149,6 +149,7 @@
     <Image Include="res\textures\canPickaxeIt.png" />
     <Image Include="res\textures\canPutItInBin.png" />
     <Image Include="res\textures\canSlide.png" />
+    <Image Include="res\textures\CheckBox.png" />
     <Image Include="res\textures\Chest.png" />
     <Image Include="res\textures\ChestPlateSlot.png" />
     <Image Include="res\textures\ChestSlot.png" />

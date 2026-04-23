@@ -35,6 +35,7 @@ enum TexturesOfBlocks
 	, t_Platform
 	, t_ForestPlank
 	, t_Sand
+	, t_BlocksSize
 };
 enum BlockBehavior
 {
