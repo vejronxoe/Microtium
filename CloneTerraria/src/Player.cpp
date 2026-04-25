@@ -1778,7 +1778,7 @@ void Player::EveryFrame(float deltaTime
 		{
 			if (Input::MouseWheel)
 			{
-				m_UsingIndexRecipe += Input::MouseWheel;
+				m_UsingIndexRecipe+= Input::MouseWheel;
 
 				if (m_UsingIndexRecipe <= 0)
 				{
@@ -1815,7 +1815,7 @@ void Player::EveryFrame(float deltaTime
 				m_UseSlot = 0;
 
 			}
-			m_HUDUseSlot += Input::MouseWheel;
+			m_HUDUseSlot -= Input::MouseWheel;
 			if(m_HUDUseSlot < 1)
 			{
 				m_HUDUseSlot = 10;
@@ -3572,14 +3572,8 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
 		for (int i = 0; i < 10; i++)
 		{
-			if (m_AmountInSlots[i+1])
-			{
+			DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], m_PlayerSlots[i + 1]);
 			
-				ChangeTransform(m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], transform);
-				animSh.SetUniformMat4(animTransform, transform);
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[m_PlayerSlots[i + 1]]));
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			}
 
 		}
 		fontSh.Bind();

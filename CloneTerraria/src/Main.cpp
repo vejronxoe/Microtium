@@ -241,11 +241,7 @@ int main()
 
 	window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", (Window::fullScreen ? glfwGetPrimaryMonitor() : NULL), NULL);
 
-	if (Window::VSync)
-	{
-		glfwSwapInterval(1);
 
-	}
 	if (!window)
 	{
 		std::cout << "CAN NOT CREATE WINDOW" << std::endl;
@@ -278,8 +274,12 @@ int main()
 		std::cin.get();
 		return -1;
 	}
+	if (Window::VSync)
+	{
+		glfwSwapInterval(1);
 
-	float;
+	}
+
 	std::vector<Letter> letters;
 	LoadFont(letters, Window::lineHeight, "res/font/atlas.json");
 	unsigned int fontTex = CreateTextureRGB("res/font/atlas.png");
@@ -360,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	//*/////////////////////////////////////////////
+	/*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";

@@ -188,7 +188,7 @@ Enemy::Enemy(std::vector<Enemy>& enemies
 		m_ID = 0;
 	}
 	
-	m_PlayerHitTimer = 0;
+	m_PlayerHitTimer = 100;
 
 	int hp[2] = 
 	{
