@@ -360,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	/*/////////////////////////////////////////////
+	//*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
