@@ -14,8 +14,16 @@ namespace Blocks
 }
 enum TexturesOfBlocks
 {
-	t_TopGrass = 0    
-	, t_LeftGrass       
+	
+	t_Dirt = 0
+	, t_Ice
+	, t_Asphalt
+	, t_Platform
+	, t_ForestPlank
+	, t_Sand
+	, t_BlocksSize
+	, t_TopGrass = t_BlocksSize
+	, t_LeftGrass
 	, t_DownGrass
 	, t_RightGrass
 	, t_TopDownGrass
@@ -29,13 +37,6 @@ enum TexturesOfBlocks
 	, t_MissingDownGrass
 	, t_MissingRightGrass
 	, t_FullGrass
-	, t_Dirt
-	, t_Ice
-	, t_Asphalt
-	, t_Platform
-	, t_ForestPlank
-	, t_Sand
-	, t_BlocksSize
 };
 enum BlockBehavior
 {

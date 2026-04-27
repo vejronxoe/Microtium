@@ -7,7 +7,7 @@
 #include "math/VectorOperation.h"
 #include "math/matrix.h"
 #include "ItemList.h"
-
+#include "glfw/cursor.h"
 
 void Editor::Update(float deltaTime)
 { 
@@ -71,8 +71,8 @@ void EditorHUD::Create(unsigned int eob
 	m_Scroll = 0;
 	m_GapLength = DistanceOnUI(0.02f);
 	m_SideLength = DistanceOnUI(0.15f);
-	m_DDs[slot] = CreateDrawData(eob, 0.5f * m_SideLength, -0.5f * m_SideLength, 0.5f * m_SideLength, -0.5f * m_SideLength, m_VBOs[slot], 1, 0, TEXSLOTDISTANCE, 0);
-	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.5f * m_SideLength, -0.5f * m_SideLength, 0.5f * m_SideLength, -0.5f * m_SideLength, m_VBOs[slot], 1, 0, TEXSLOTDISTANCE, 0);
+	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
+	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.5f * m_SideLength, -0.5f * m_SideLength, 0.5f * m_SideLength, -0.5f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[rightBackground] = CreateDrawData(eob, Window::height, 0, Window::width, Window::width - (2 * m_SideLength + 3 * m_GapLength), m_VBOs[rightBackground]);
 	m_DDs[leftBackground] = CreateDrawData(eob, Window::height, 0, (m_SideLength + 2 * m_GapLength), 0, m_VBOs[leftBackground]);
 	std::vector<float> Vertices;
@@ -217,18 +217,90 @@ void EditorHUD::Create(unsigned int eob
 
 
 }
-void EditorHUD::Update(float deltaTime)
+int EditorHUD::Update(float deltaTime
+	,Editor& editor)
 {
+	int row = -1;
+	int cursorBehavior = canNotDoIt;
+	if (Window::width - m_GapLength - m_SideLength<= Input::XRawMousePos && Window::width - m_GapLength >= Input::XRawMousePos)
+	{
+		row = 0;
+	}
+	
+	if (Window::width - 2 * (m_GapLength + m_SideLength) <= Input::XRawMousePos && Window::width - 2 * m_GapLength - m_SideLength >= Input::XRawMousePos)
+	{
+		row = 1;
+	}
+	
+	if (m_GapLength <= Input::XRawMousePos && m_GapLength + m_SideLength >= Input::XRawMousePos)
+	{
+		row = 2;
+	}
+
+
+	switch (row)
+	{
+	case 0:
+	case 1:
+	{
+		for (int i = 0; i < (t_BlocksSize + s_StructureSize)/2; i++)
+		{
+			if (-i*(m_GapLength+m_SideLength) + m_GapLength + m_Scroll* (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength -i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
+			{
+				if (Input::LeftMousePress)
+				{
+					editor.m_Selected = i * 2 + row;
+				}
+				cursorBehavior = canClickOnIt;
+				break;
+			}
+		}
+		break;
+	}
+	case 2:
+		if (m_GapLength < Input::YRawMousePos && m_GapLength+m_SideLength > Input::YRawMousePos)
+		{
+			if (Input::LeftMousePress)
+			{
+				std::cout << "ha";
+			}
+			cursorBehavior = canClickOnIt;
+		}
+		else if(2 *m_GapLength + m_SideLength < Input::YRawMousePos && 2 * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+		{
+			if (Input::LeftMousePress)
+			{
+				std::cout << "hi";
+			}
+			cursorBehavior = canClickOnIt;
+		}
+		break;
+	}
 	if (Input::MouseWheel)
 	{
 		m_WantedScroll -= Input::MouseWheel;
-		m_WantedScroll = Clamp(m_WantedScroll, 0, t_BlocksSize +  s_StructureSize);
+		m_WantedScroll = Clamp(m_WantedScroll, 0, (t_BlocksSize +  s_StructureSize)/2.0f -1);
 	}
-
+	if (m_WantedScroll != m_Scroll)
+	{
+		float diff = (m_WantedScroll - m_Scroll);
+		m_Scroll += (diff + 1 * diff / abs(diff)) * deltaTime;
+		float newDiff = (m_WantedScroll - m_Scroll);
+		if (newDiff != 0)
+		{
+			if (diff / abs(diff) != newDiff / abs(newDiff))
+			{
+				m_Scroll = m_WantedScroll;
+			}
+		}
+	}
+	return cursorBehavior;
 }
 void EditorHUD::Draw(Shader& sh
+	, Editor editor
 	, float* transform)
 {
+
 	sh.Bind();
 	ChangeTransform(0, 0, transform);
 	sh.SetUniformMat4(basicTransform, transform);
@@ -238,10 +310,16 @@ void EditorHUD::Draw(Shader& sh
 	ErrorGL(glBindVertexArray(m_DDs[leftBackground]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Textures[1]));
-
-	ErrorGL(glBindVertexArray(m_DDs[rightHUDSlots]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[0], GL_UNSIGNED_BYTE, 0));
 	ErrorGL(glBindVertexArray(m_DDs[leftHUDSlots]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[1], GL_UNSIGNED_BYTE, 0));
+	ChangeTransform(0,m_Scroll*(m_GapLength+ m_SideLength), transform);
+	sh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindVertexArray(m_DDs[rightHUDSlots]));
+	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[0], GL_UNSIGNED_BYTE, 0));
+	ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (editor.m_Selected/2 - roundf(editor.m_Selected/2.0f))*(m_GapLength+m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(editor.m_Selected / 2) * (m_GapLength + m_SideLength), transform);
+	sh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindVertexArray(m_DDs[useSlotDD]));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 
 }

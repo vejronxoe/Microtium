@@ -846,6 +846,14 @@ int main()
 						player.DamagePlayer(enemies.at(i).m_Transform, damage);
 					}
 				}
+				bool escapePressed = Input::EscapePress;
+				bool leftMousePressed = Input::LeftMousePress;
+				bool leftMousehold = Input::LeftMouseHold;
+				if (menuState != stateNone)
+				{
+					Input::OffAllButtons();
+
+				}
 				player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
 				SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
 
@@ -896,6 +904,12 @@ int main()
 					{
 						damagedTrees.erase(damagedTrees.begin() + j);
 					}
+				}
+				if (menuState != stateNone)
+				{
+					Input::EscapePress = escapePressed;
+					Input::LeftMousePress = leftMousePressed;
+					Input::LeftMouseHold = leftMousehold;
 				}
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
@@ -1289,7 +1303,7 @@ int main()
 
 
 
-			Text menuTexts[6];
+			Text menuTexts[5];
 			unsigned int menuBackgroundVBO;
 			unsigned int menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
 
@@ -1299,7 +1313,6 @@ int main()
 				{
 					menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
 				}
-				menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
 
 			}
 
@@ -1340,13 +1353,12 @@ int main()
 						{
 							menuTexts[i].CreateText(Texts[i], std::vector<Format>{ Format(10, 8, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 7.0f * (i + 1));
 						}
-						menuTexts[5].CreateText("Menu", std::vector<Format>{ Format(6, 4, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width, 0);
 
 					}
 					ErrorGL(glDeleteBuffers(1, &menuBackgroundVBO));
 					ErrorGL(glDeleteVertexArrays(1, &menuBackgroundDD));
 					menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
-
+					editorHUD.Create(eob,false);
 					CreateMenu(false, letters, menu, sliderDD, sliderVBO, checkBoxTex, sliderTex, trailTex, eob);
 					ChangeCamera(0, Window::width, 0, Window::height, camera);	
 					numberSh.Bind();
@@ -1355,10 +1367,23 @@ int main()
 					fontSh.SetUniformMat4(fontCamera, camera);
 
 				}
+				bool escapePressed = Input::EscapePress;
+				bool leftMousePressed = Input::LeftMousePress;
+				bool leftMousehold = Input::LeftMouseHold;
+				if(menuState != stateNone)
+				{ 
+					Input::OffAllButtons();
 
-
+				}
+				cursorState = editorHUD.Update(deltaTime, editor);
 				editor.Update(deltaTime);
-				editorHUD.Update(deltaTime);
+				if (menuState != stateNone)
+				{
+					cursorState = canNotDoIt;
+					Input::EscapePress   = escapePressed;
+					Input::LeftMousePress = leftMousePressed;
+					Input::LeftMouseHold = leftMousehold;
+				}
 				editor.m_Transform[0] = CameraHitboxX(editor.m_Transform[0]);
 				editor.m_Transform[1] = CameraHitboxY(editor.m_Transform[1]);
 				ChangeCamera(-Window::halfWidthOfGameTransform + editor.m_Transform[0], Window::halfWidthOfGameTransform + editor.m_Transform[0], -Window::halfHeightOfGameTransform + editor.m_Transform[1], Window::halfHeightOfGameTransform + editor.m_Transform[1], camera);
@@ -1412,7 +1437,7 @@ int main()
 				basicSh.Bind();
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.SetUniformMat4(basicCamera, camera);
-				editorHUD.Draw(basicSh,transform);
+				editorHUD.Draw(basicSh,editor,transform);
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 
@@ -1420,26 +1445,9 @@ int main()
 				{
 				case stateNone:
 				{
-					float vertices[4] =
+					if (Input::EscapePress)
 					{
-						menuTexts[5].m_TextVertices[0] + menuTexts[5].m_Transform[0]
-						, menuTexts[5].m_TextVertices[1] + menuTexts[5].m_Transform[1]
-						, menuTexts[5].m_TextVertices[2] + menuTexts[5].m_Transform[0]
-						, menuTexts[5].m_TextVertices[3] + menuTexts[5].m_Transform[1]
-					};
-
-					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
-					{
-
-						menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
-						if (Input::LeftMousePress)
-						{
-							menuState = stateDefault;
-						}
-					}
-					else
-					{
-						menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+						menuState = stateDefault;
 					}
 
 					break;

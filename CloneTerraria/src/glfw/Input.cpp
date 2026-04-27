@@ -31,7 +31,33 @@ namespace Input
 	bool CtrlHold = false;
 	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
 	bool EscapePress = false;
-
+	void OffAllButtons()
+	{
+	
+		LeftMouseHold = false;
+		LeftMousePress = false;
+		LeftMouseRelease = false;
+		RightMouseHold = false;
+		RightMousePress = false;
+		WHold = false;
+		WPress = false;
+		AHold = false;
+		APress = false;
+		SHold = false;
+		SPress = false;
+		DHold = false;
+		DPress = false;
+		THold = false;
+		TPress = false;
+		SpaceHold = false;
+		SpacePress = false;
+		CtrlHold = false;
+		for (int i = 0; i < 10;i++)
+		{
+			NumberPress[i] = false;
+		}
+		EscapePress = false;
+	}
 	void EndOfLoop()
 	{
 		MouseWheel = 0;
