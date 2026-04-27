@@ -53,6 +53,8 @@ void Editor::Update(float deltaTime)
 EditorHUD::EditorHUD(unsigned int eob
 	, unsigned int backGroundTex)
 {
+	m_Icons[0] = CreateTextureRGBA("res/textures/PaintBrush.png");
+	m_Icons[1] = CreateTextureRGBA("res/textures/SelectIcon.png");
 	m_Textures[0] = backGroundTex;
 	m_Textures[1] = CreateTextureRGBA("res/textures/inventorySlot.png");
 	Create(true,eob);
@@ -72,7 +74,7 @@ void EditorHUD::Create(unsigned int eob
 	m_GapLength = DistanceOnUI(0.02f);
 	m_SideLength = DistanceOnUI(0.15f);
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
-	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.5f * m_SideLength, -0.5f * m_SideLength, 0.5f * m_SideLength, -0.5f * m_SideLength, m_VBOs[defaultSlotUV]);
+	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[rightBackground] = CreateDrawData(eob, Window::height, 0, Window::width, Window::width - (2 * m_SideLength + 3 * m_GapLength), m_VBOs[rightBackground]);
 	m_DDs[leftBackground] = CreateDrawData(eob, Window::height, 0, (m_SideLength + 2 * m_GapLength), 0, m_VBOs[leftBackground]);
 	std::vector<float> Vertices;
@@ -262,7 +264,7 @@ int EditorHUD::Update(float deltaTime
 		{
 			if (Input::LeftMousePress)
 			{
-				std::cout << "ha";
+				editor.m_placingType = brushType;
 			}
 			cursorBehavior = canClickOnIt;
 		}
@@ -270,7 +272,7 @@ int EditorHUD::Update(float deltaTime
 		{
 			if (Input::LeftMousePress)
 			{
-				std::cout << "hi";
+				editor.m_placingType = selectType;
 			}
 			cursorBehavior = canClickOnIt;
 		}
@@ -298,6 +300,8 @@ int EditorHUD::Update(float deltaTime
 }
 void EditorHUD::Draw(Shader& sh
 	, Editor editor
+	, unsigned int* itemsTex
+	, unsigned int * blockTex
 	, float* transform)
 {
 
@@ -320,6 +324,31 @@ void EditorHUD::Draw(Shader& sh
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_DDs[useSlotDD]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	ChangeTransform(  m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength/2.0f + m_GapLength + editor.m_placingType * (m_GapLength + m_SideLength)), transform);
+	sh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
 
-
+	for (int i = 0; i < 2; i++)
+	{
+		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + i * (m_GapLength + m_SideLength)), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Icons[i]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (i / 2 - roundf(i / 2.0f)) * (m_GapLength + m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(i / 2) * (m_GapLength + m_SideLength), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[i]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+	for (int i = 0; i < s_StructureSize; i++)
+	{
+		int index = t_BlocksSize + i;
+		ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (index / 2 - roundf(index / 2.0f)) * (m_GapLength + m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(index / 2) * (m_GapLength + m_SideLength), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[GetItemIDByStructure(i)]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
 }

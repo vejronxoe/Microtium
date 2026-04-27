@@ -1,11 +1,17 @@
 #pragma once
 #include"Opengl/Shader.h"
 #include "BlocksAndWalls.h"
+enum PlacingType
+{
+	brushType =0
+	, selectType
+};
 struct Editor
 {
 	float m_Transform[2] = {40, 0};
 	float m_Velocity[2] = {0,0};
 	int m_Selected = 0;
+	char m_placingType = brushType;
 	void Update(float deltaTime);
 
 };
@@ -25,6 +31,7 @@ struct EditorHUD
 	unsigned int m_EOBs[2] = {};
 	unsigned int m_EOBSizes[2] = {};
 	unsigned int m_Textures[2] = {};
+	unsigned int m_Icons[2] = {};
 	float m_Scroll = 0;
 	int m_WantedScroll = 0;
 	float m_SideLength = 0;
@@ -36,5 +43,7 @@ struct EditorHUD
 	int Update(float deltaTime, Editor& editor);
 	void Draw(Shader& Sh
 		, Editor editor
+		, unsigned int* itemsTex
+		, unsigned int* blockTex
 		, float* transform);
 };

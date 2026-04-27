@@ -285,7 +285,9 @@ public:
 	int m_BurnDamageNextTime = 0;
 	FireParticle m_OnFire;
 };
-
+void CreateAllItemTextures(unsigned int* itemTex
+	, unsigned int* blockTex
+	, unsigned int* structureTex);
 enum SlotTextures
 {
 	defaultSlot = 0

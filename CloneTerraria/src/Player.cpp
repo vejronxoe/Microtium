@@ -69,7 +69,59 @@ void Player::DrawItem(Shader sh
 		}
 	}
 }
+void CreateAllItemTextures(unsigned int* itemTex
+	, unsigned int* blockTex
+	, unsigned int* structureTex)
+{
+	itemTex[i_CopperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
+	itemTex[i_CopperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
+	itemTex[i_CopperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
+	itemTex[i_CopperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
+	itemTex[i_ForestPlank] = blockTex[t_ForestPlank];
+	itemTex[i_Dirt] = blockTex[t_Dirt];
+	itemTex[i_Ice] = blockTex[t_Ice];
+	itemTex[i_Asphalt] = blockTex[t_Asphalt];
+	itemTex[i_Platform] = blockTex[t_Platform];
+	itemTex[i_WallDirt] = blockTex[t_Dirt];
+	itemTex[i_WallIce] = blockTex[t_Ice];
+	itemTex[i_Sand] = blockTex[t_Sand];
+	itemTex[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
+	itemTex[i_WoodBow] = CreateTextureRGBA("res/textures/bowInInv.png");
+	itemTex[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
+	itemTex[i_PierceArrow] = CreateTextureRGBA("res/textures/BleedArrow.png");
+	itemTex[i_BouncingArrow] = CreateTextureRGBA("res/textures/bouncingArrow.png");
+	itemTex[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
+	itemTex[i_Cannon] = CreateTextureRGBA("res/textures/canonInv.png");
+	itemTex[i_BasicCannonBall] = CreateTextureRGBA("res/textures/basicCanonBall.png");
+	itemTex[i_PierceCannonBall] = CreateTextureRGBA("res/textures/scrapCannonBall.png");
+	itemTex[i_BouncingCannonBall] = CreateTextureRGBA("res/textures/bouncingCannonBall.png");
+	itemTex[i_FireCannonBall] = CreateTextureRGBA("res/textures/fireCannonBall.png");
+	itemTex[i_Pistol] = CreateTextureRGBA("res/textures/pistolInv.png");
+	itemTex[i_BasicBullet] = CreateTextureRGBA("res/textures/basicBullet.png");
+	itemTex[i_PierceBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
+	itemTex[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
+	itemTex[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
+	itemTex[i_WoodHelmet] = CreateTextureRGBA("res/textures/woodHelmet.png");
+	itemTex[i_WoodChestPlate] = CreateTextureRGBA("res/textures/woodChestPlate.png");
+	itemTex[i_WoodPants] = CreateTextureRGBA("res/textures/woodPants.png");
+	itemTex[i_WoodShoes] = CreateTextureRGBA("res/textures/woodShoes.png");
+	itemTex[i_AccessoriseArrowBag] = CreateTextureRGBA("res/textures/accessoriseArrowBag.png");
+	itemTex[i_AccessoriseWallClimb] = CreateTextureRGBA("res/textures/accessoriseWallClimb.png");
+	itemTex[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
+	itemTex[i_Chest] = structureTex[s_Chest];
+	itemTex[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
+	itemTex[i_IronOre] = CreateTextureRGBA("res/textures/iron.png");
+	itemTex[i_CopperOre] = CreateTextureRGBA("res/textures/copper.png");
+	itemTex[i_IronIngot] = CreateTextureRGBA("res/textures/ironIngot.png");
+	itemTex[i_CopperIngot] = CreateTextureRGBA("res/textures/copperIngot.png");
+	itemTex[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
+	itemTex[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
+	itemTex[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
+	itemTex[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
+	itemTex[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
+	itemTex[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
 
+}
 void Player::createHUD(unsigned int eob
 	, std::vector<Chest>& chests
 	, std::vector<Letter>& ASCII)
@@ -699,54 +751,7 @@ Player::Player(unsigned int eob
 	m_HeadTex = CreateTextureRGBA("res/textures/headDefault.png");
 	m_HandTex = CreateTextureRGBA("res/textures/handDefault.png");
 
-	m_AllItemTextures[i_CopperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
-	m_AllItemTextures[i_CopperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
-	m_AllItemTextures[i_CopperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
-	m_AllItemTextures[i_CopperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
-	m_AllItemTextures[i_ForestPlank] = texturesIDs[t_ForestPlank];
-	m_AllItemTextures[i_Dirt] = texturesIDs[t_Dirt];
-	m_AllItemTextures[i_Ice] = texturesIDs[t_Ice];
-	m_AllItemTextures[i_Asphalt] = texturesIDs[t_Asphalt];
-	m_AllItemTextures[i_Platform] = texturesIDs[t_Platform];
-	m_AllItemTextures[i_WallDirt] = texturesIDs[t_Dirt];
-	m_AllItemTextures[i_WallIce] = texturesIDs[t_Ice];
-	m_AllItemTextures[i_Sand] = texturesIDs[t_Sand];
-	m_AllItemTextures[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
-	m_AllItemTextures[i_WoodBow] = CreateTextureRGBA("res/textures/bowInInv.png");
-	m_AllItemTextures[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
-	m_AllItemTextures[i_PierceArrow] = CreateTextureRGBA("res/textures/BleedArrow.png");
-	m_AllItemTextures[i_BouncingArrow] = CreateTextureRGBA("res/textures/bouncingArrow.png");
-	m_AllItemTextures[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
-	m_AllItemTextures[i_Cannon] = CreateTextureRGBA("res/textures/canonInv.png");
-	m_AllItemTextures[i_BasicCannonBall] = CreateTextureRGBA("res/textures/basicCanonBall.png");
-	m_AllItemTextures[i_PierceCannonBall] = CreateTextureRGBA("res/textures/scrapCannonBall.png");
-	m_AllItemTextures[i_BouncingCannonBall] = CreateTextureRGBA("res/textures/bouncingCannonBall.png");
-	m_AllItemTextures[i_FireCannonBall] = CreateTextureRGBA("res/textures/fireCannonBall.png");
-	m_AllItemTextures[i_Pistol] = CreateTextureRGBA("res/textures/pistolInv.png");
-	m_AllItemTextures[i_BasicBullet] = CreateTextureRGBA("res/textures/basicBullet.png");
-	m_AllItemTextures[i_PierceBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
-	m_AllItemTextures[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
-	m_AllItemTextures[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
-	m_AllItemTextures[i_WoodHelmet] = CreateTextureRGBA("res/textures/woodHelmet.png");
-	m_AllItemTextures[i_WoodChestPlate] = CreateTextureRGBA("res/textures/woodChestPlate.png");
-	m_AllItemTextures[i_WoodPants] = CreateTextureRGBA("res/textures/woodPants.png");
-	m_AllItemTextures[i_WoodShoes] = CreateTextureRGBA("res/textures/woodShoes.png");
-	m_AllItemTextures[i_AccessoriseArrowBag] = CreateTextureRGBA("res/textures/accessoriseArrowBag.png");
-	m_AllItemTextures[i_AccessoriseWallClimb] = CreateTextureRGBA("res/textures/accessoriseWallClimb.png");
-	m_AllItemTextures[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
-	m_AllItemTextures[i_Chest] = structuretexs[s_Chest];
-	m_AllItemTextures[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
-	m_AllItemTextures[i_IronOre] = CreateTextureRGBA("res/textures/iron.png");
-	m_AllItemTextures[i_CopperOre] = CreateTextureRGBA("res/textures/copper.png");
-	m_AllItemTextures[i_IronIngot] = CreateTextureRGBA("res/textures/ironIngot.png");
-	m_AllItemTextures[i_CopperIngot] = CreateTextureRGBA("res/textures/copperIngot.png");
-	m_AllItemTextures[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
-	m_AllItemTextures[i_Forge] = CreateTextureRGBA("res/textures/forgeInv.png");
-	m_AllItemTextures[i_Anvil] = CreateTextureRGBA("res/textures/anvilInv.png");
-	m_AllItemTextures[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
-	m_AllItemTextures[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
-	m_AllItemTextures[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
-
+	CreateAllItemTextures(m_AllItemTextures, texturesIDs, structuretexs);
 	
 	m_ArmorClassTex = CreateTextureRGBA("res/textures/ArmorClass.png");
 

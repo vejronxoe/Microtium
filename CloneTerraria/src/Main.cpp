@@ -1302,7 +1302,8 @@ int main()
 			CreateAllBlockTextures(blockTextures);
 
 
-
+			unsigned int ItemTex[i_ItemSize];
+			CreateAllItemTextures(ItemTex, blockTextures, structuresTextures);
 			Text menuTexts[5];
 			unsigned int menuBackgroundVBO;
 			unsigned int menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
@@ -1437,7 +1438,7 @@ int main()
 				basicSh.Bind();
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.SetUniformMat4(basicCamera, camera);
-				editorHUD.Draw(basicSh,editor,transform);
+				editorHUD.Draw(basicSh,editor,ItemTex,blockTextures,transform);
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 

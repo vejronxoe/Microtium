@@ -207,6 +207,7 @@
     <Image Include="res\textures\OpenChest.png" />
     <Image Include="res\textures\openDoor.png" />
     <Image Include="res\textures\OpenTrapDoor.png" />
+    <Image Include="res\textures\paintBrush.png" />
     <Image Include="res\textures\PantsSlot.png" />
     <Image Include="res\textures\pistolHand.png" />
     <Image Include="res\textures\pistolInv.png" />
@@ -217,6 +218,7 @@
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingInv.png" />
     <Image Include="res\textures\scrapCannonBall.png" />
+    <Image Include="res\textures\SelectIcon.png" />
     <Image Include="res\textures\ShoesSlot.png" />
     <Image Include="res\textures\Slider.png" />
     <Image Include="res\textures\slimeAnim.png" />
