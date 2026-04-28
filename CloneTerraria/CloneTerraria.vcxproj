@@ -214,6 +214,7 @@
     <Image Include="res\textures\platform.png" />
     <Image Include="res\textures\proSand.png" />
     <Image Include="res\textures\rightGrassBlock.png" />
+    <Image Include="res\textures\RubberIcon.png" />
     <Image Include="res\textures\sand.png" />
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingInv.png" />

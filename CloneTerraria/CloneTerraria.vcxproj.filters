@@ -612,6 +612,9 @@
     <Image Include="res\textures\SelectIcon.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\RubberIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />

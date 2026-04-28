@@ -12,6 +12,7 @@ struct Editor
 	float m_Velocity[2] = {0,0};
 	int m_Selected = 0;
 	char m_placingType = brushType;
+	bool m_Eraser = false;
 	void Update(float deltaTime);
 
 };
@@ -31,7 +32,7 @@ struct EditorHUD
 	unsigned int m_EOBs[2] = {};
 	unsigned int m_EOBSizes[2] = {};
 	unsigned int m_Textures[2] = {};
-	unsigned int m_Icons[2] = {};
+	unsigned int m_Icons[3] = {};
 	float m_Scroll = 0;
 	int m_WantedScroll = 0;
 	float m_SideLength = 0;

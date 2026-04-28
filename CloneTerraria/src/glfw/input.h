@@ -30,6 +30,7 @@ namespace Input
 	extern bool CtrlHold;
 	extern bool NumberPress[10];
 	extern bool EscapePress;
+	extern bool EPress;
 	void OffAllButtons();
 	void EndOfLoop();
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

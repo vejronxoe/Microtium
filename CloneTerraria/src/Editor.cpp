@@ -55,6 +55,7 @@ EditorHUD::EditorHUD(unsigned int eob
 {
 	m_Icons[0] = CreateTextureRGBA("res/textures/PaintBrush.png");
 	m_Icons[1] = CreateTextureRGBA("res/textures/SelectIcon.png");
+	m_Icons[2] = CreateTextureRGBA("res/textures/RubberIcon.png");
 	m_Textures[0] = backGroundTex;
 	m_Textures[1] = CreateTextureRGBA("res/textures/inventorySlot.png");
 	Create(true,eob);
@@ -71,8 +72,8 @@ void EditorHUD::Create(unsigned int eob
 	ErrorGL(glGenBuffers(2, m_EOBs));
 
 	m_Scroll = 0;
-	m_GapLength = DistanceOnUI(0.02f);
-	m_SideLength = DistanceOnUI(0.15f);
+	m_GapLength = DistanceOnUI(0.016f);
+	m_SideLength = DistanceOnUI(0.11f);
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[rightBackground] = CreateDrawData(eob, Window::height, 0, Window::width, Window::width - (2 * m_SideLength + 3 * m_GapLength), m_VBOs[rightBackground]);
@@ -161,7 +162,7 @@ void EditorHUD::Create(unsigned int eob
 	order.clear();
 	Vertices.clear();
 	
-	for (int i = 0; i < 2;i++)
+	for (int i = 0; i < 3;i++)
 	{
 
 		Vertices.emplace_back(m_GapLength);
@@ -260,23 +261,39 @@ int EditorHUD::Update(float deltaTime
 		break;
 	}
 	case 2:
-		if (m_GapLength < Input::YRawMousePos && m_GapLength+m_SideLength > Input::YRawMousePos)
+	{
+	
+		for (int i = 0; i < 3 ; i++)
 		{
-			if (Input::LeftMousePress)
+			if ( m_GapLength + i * (m_GapLength + m_SideLength) < Input::YRawMousePos && (i+1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
 			{
-				editor.m_placingType = brushType;
+				if (Input::LeftMousePress)
+				{
+					switch (i)
+					{
+					case 0:
+						editor.m_placingType = brushType;
+						break;
+					case 1:
+						editor.m_placingType = selectType;
+						break;
+					case 2:
+						editor.m_Eraser = !editor.m_Eraser;
+						break;
+					}
+				}
+				cursorBehavior = canClickOnIt;
+				break;
 			}
-			cursorBehavior = canClickOnIt;
 		}
-		else if(2 *m_GapLength + m_SideLength < Input::YRawMousePos && 2 * (m_GapLength + m_SideLength) > Input::YRawMousePos)
-		{
-			if (Input::LeftMousePress)
-			{
-				editor.m_placingType = selectType;
-			}
-			cursorBehavior = canClickOnIt;
-		}
+		
 		break;
+	}
+	}
+	if (Input::EPress)
+	{
+		editor.m_Eraser = !editor.m_Eraser;
+
 	}
 	if (Input::MouseWheel)
 	{
@@ -327,9 +344,15 @@ void EditorHUD::Draw(Shader& sh
 	ChangeTransform(  m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength/2.0f + m_GapLength + editor.m_placingType * (m_GapLength + m_SideLength)), transform);
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	if (editor.m_Eraser)
+	{
+		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + 2 * (m_GapLength + m_SideLength)), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
 	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + i * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
