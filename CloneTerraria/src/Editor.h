@@ -1,6 +1,7 @@
 #pragma once
 #include"Opengl/Shader.h"
 #include "BlocksAndWalls.h"
+
 enum PlacingType
 {
 	brushType =0
@@ -13,26 +14,30 @@ struct Editor
 	int m_Selected = 0;
 	char m_placingType = brushType;
 	bool m_Eraser = false;
-	void Update(float deltaTime);
+	unsigned int m_SelectBoxDD;
+	unsigned int m_SelectBoxTex;
+	int m_SelectBoxSides[4] = {};
+	std::vector<std::vector<Block>> m_BlocksInBox;
+	Editor(unsigned int eob);
+	void Update(float deltaTime, char cursorState);
 
 };
 enum drawDataHUD
 {
-	rightBackground = 0
-	, leftBackground
-	, rightHUDSlots
+	rightHUDSlots = 0
 	, leftHUDSlots
 	, useSlotDD
 	, defaultSlotUV
 };
 struct EditorHUD
 {
-	unsigned int m_DDs[6] = {};
-	unsigned int m_VBOs[6] = {};
+	unsigned int m_DDs[4] = {};
+	unsigned int m_VBOs[4] = {};
 	unsigned int m_EOBs[2] = {};
 	unsigned int m_EOBSizes[2] = {};
-	unsigned int m_Textures[2] = {};
+	unsigned int m_SlotTexs = {};
 	unsigned int m_Icons[3] = {};
+	unsigned int m_SelectZoneTex = 0;
 	float m_Scroll = 0;
 	int m_WantedScroll = 0;
 	float m_SideLength = 0;

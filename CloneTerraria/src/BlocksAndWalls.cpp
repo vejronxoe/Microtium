@@ -41,6 +41,26 @@ unsigned int getBehaviorByTexture(unsigned int texture)
 		break;
 	}
 }
+unsigned int GetItemIDByTexture(unsigned int texture)
+{
+	switch (texture)
+	{
+
+	case t_Ice:
+		return i_Ice;
+	case t_Asphalt:
+		return i_Asphalt;
+	case t_Platform:
+		return i_Platform;
+	case t_Sand:
+		return i_Sand;
+	case t_ForestPlank:
+		return i_ForestPlank;
+	default:
+		return i_Dirt;
+		break;
+	}
+}
 
 DamagedBlock::DamagedBlock(int x
 	, int y
@@ -478,12 +498,10 @@ void createWall(int x
 	}
 }
 
-void CreateBlock(int x
-	, int y
+void PushBlockInVec( std::vector<std::vector<Block>>& blocks
 	, unsigned short int IDOfItemBlock
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
+	, int x
+	, int y
 	, unsigned int* texturesIDs)
 {
 	int indexToPlace = 0;
@@ -492,16 +510,6 @@ void CreateBlock(int x
 		if (blocks.at(x).at(indexToPlace).m_Y < y)
 		{
 			break;
-		}
-	}
-
-	bool isThereWall;
-	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
-	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
-	{
-		if (isThereWall)
-		{
-			walls.at(x).at(indexOfTheWall).m_Render = false;
 		}
 	}
 	switch (IDOfItemBlock)
@@ -522,13 +530,36 @@ void CreateBlock(int x
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], y, b_BasicSolid, 20, i_ForestPlank);
 		break;
 	case i_Sand:
-		isThereSandOnX.emplace_back(x);
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_Sand, 20, i_Sand);
 		break;
 	case i_DoorBlock:
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, 0, y, b_Door, 0, i_Nothing);
 		break;
 	}
+}
+void CreateBlock(int x
+	, int y
+	, unsigned short int IDOfItemBlock
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& isThereSandOnX
+	, unsigned int* texturesIDs)
+{
+	
+	bool isThereWall;
+	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
+	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
+	{
+		if (isThereWall)
+		{
+			walls.at(x).at(indexOfTheWall).m_Render = false;
+		}
+	}
+	if (IDOfItemBlock == i_Sand)
+	{
+		isThereSandOnX.emplace_back(x);
+	}
+	PushBlockInVec(blocks, IDOfItemBlock, x, y, texturesIDs);
 
 }
 

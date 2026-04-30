@@ -8,8 +8,13 @@
 #include "math/matrix.h"
 #include "ItemList.h"
 #include "glfw/cursor.h"
+Editor::Editor(unsigned int eob)
+{
+	m_SelectBoxDD = CreateDrawData(eob,0.5f,-0.5f,0.5f,-0.5f,1,0,1.0f/4.0f,0);
+	m_SelectBoxTex = CreateTextureRGBA("res/textures/SelectZone.png");
+}
 
-void Editor::Update(float deltaTime)
+void Editor::Update(float deltaTime,char cursorState)
 { 
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1]};
 	if (Input::AHold)
@@ -47,17 +52,37 @@ void Editor::Update(float deltaTime)
 	}
 	m_Transform[1] += oldVelocity[1] * deltaTime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltaTime;
 	m_Transform[0] += oldVelocity[0] * deltaTime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltaTime;
+	if (!Input::LeftMouseHold)
+	{
+		m_BlocksInBox.clear();
+		m_SelectBoxSides[0] = 0;
+		m_SelectBoxSides[1] = 0;
+		m_SelectBoxSides[2] = 0;
+		m_SelectBoxSides[3] = 0;
 
+	}
+	if (cursorState == canNotDoIt)
+	{
+		if (Input::LeftMousePress)
+		{
+			
+		}
+		else if (Input::LeftMouseHold)
+		{
+
+		}
+	}
 
 }
+
 EditorHUD::EditorHUD(unsigned int eob
 	, unsigned int backGroundTex)
 {
 	m_Icons[0] = CreateTextureRGBA("res/textures/PaintBrush.png");
 	m_Icons[1] = CreateTextureRGBA("res/textures/SelectIcon.png");
 	m_Icons[2] = CreateTextureRGBA("res/textures/RubberIcon.png");
-	m_Textures[0] = backGroundTex;
-	m_Textures[1] = CreateTextureRGBA("res/textures/inventorySlot.png");
+	m_SlotTexs = CreateTextureRGBA("res/textures/inventorySlot.png");
+	m_SelectZoneTex = CreateTextureRGBA("res/textures/SelectZone.png");
 	Create(true,eob);
 }
 void EditorHUD::Create(unsigned int eob
@@ -65,9 +90,9 @@ void EditorHUD::Create(unsigned int eob
 {
 	if (!first)
 	{
-		ErrorGL(glDeleteBuffers(6, m_VBOs));
+		ErrorGL(glDeleteBuffers(4, m_VBOs));
 		ErrorGL(glDeleteBuffers(2 , m_EOBs));
-		ErrorGL(glDeleteVertexArrays(6, m_DDs));
+		ErrorGL(glDeleteVertexArrays(4, m_DDs));
 	}
 	ErrorGL(glGenBuffers(2, m_EOBs));
 
@@ -76,9 +101,7 @@ void EditorHUD::Create(unsigned int eob
 	m_SideLength = DistanceOnUI(0.11f);
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
-	m_DDs[rightBackground] = CreateDrawData(eob, Window::height, 0, Window::width, Window::width - (2 * m_SideLength + 3 * m_GapLength), m_VBOs[rightBackground]);
-	m_DDs[leftBackground] = CreateDrawData(eob, Window::height, 0, (m_SideLength + 2 * m_GapLength), 0, m_VBOs[leftBackground]);
-	std::vector<float> Vertices;
+		std::vector<float> Vertices;
 	std::vector<unsigned char> order;
 	Vertices.reserve((t_BlocksSize + s_StructureSize) * 16);
 	int placebleObjectsNumber = floorf((t_BlocksSize + s_StructureSize) / 2.0f);
@@ -295,6 +318,14 @@ int EditorHUD::Update(float deltaTime
 		editor.m_Eraser = !editor.m_Eraser;
 
 	}
+	if (Input::NumberPress[0])
+	{
+		editor.m_placingType = brushType;
+	}
+	else if (Input::NumberPress[1])
+	{
+		editor.m_placingType = selectType;
+	}
 	if (Input::MouseWheel)
 	{
 		m_WantedScroll -= Input::MouseWheel;
@@ -316,6 +347,7 @@ int EditorHUD::Update(float deltaTime
 	return cursorBehavior;
 }
 void EditorHUD::Draw(Shader& sh
+
 	, Editor editor
 	, unsigned int* itemsTex
 	, unsigned int * blockTex
@@ -325,12 +357,7 @@ void EditorHUD::Draw(Shader& sh
 	sh.Bind();
 	ChangeTransform(0, 0, transform);
 	sh.SetUniformMat4(basicTransform, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Textures[0]));
-	ErrorGL(glBindVertexArray(m_DDs[rightBackground]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	ErrorGL(glBindVertexArray(m_DDs[leftBackground]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Textures[1]));
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexs));
 	ErrorGL(glBindVertexArray(m_DDs[leftHUDSlots]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[1], GL_UNSIGNED_BYTE, 0));
 	ChangeTransform(0,m_Scroll*(m_GapLength+ m_SideLength), transform);

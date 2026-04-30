@@ -360,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	//*/////////////////////////////////////////////
+	/*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -1239,7 +1239,7 @@ int main()
 			animSh.SetUniform1i(animSize + HUDShadow, 0);
 
 			menuState = stateNone;
-			Editor editor;
+			Editor editor(eob);
 			EditorHUD editorHUD( eob, TextBackGroundTex);
 
 			CreateScale(1, 1, scale);
@@ -1377,7 +1377,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime, editor);
-				editor.Update(deltaTime);
+				editor.Update(deltaTime, cursorState);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;

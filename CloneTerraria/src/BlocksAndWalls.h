@@ -49,7 +49,7 @@ enum BlockBehavior
 	, b_Asphalt
 	, b_Door
 };
-
+unsigned int GetItemIDByTexture(unsigned int texture);
 void CreateAllBlockTextures(unsigned int* IDs);
 unsigned int getBehaviorByTexture(unsigned int texture);
 
@@ -162,3 +162,8 @@ int FindWall(std::vector<std::vector<wall>>& walls
 	, bool& found);
 bool WallInArea(std::vector<std::vector<wall>>& walls
 	, int* vertices);
+void PushBlockInVec(std::vector<std::vector<Block>>& blocks
+	, unsigned short int IDOfItemBlock
+	, int x
+	, int y
+	, unsigned int* texturesIDs);

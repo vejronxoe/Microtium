@@ -2737,8 +2737,7 @@ void Player::EveryFrame(float deltaTime
 	m_CoyoteTimer += deltaTime;
 	{
 		
-		if (m_ArmsBehaviour != ArmUsing)
-		{
+		
 			if (Input::DHold)
 			{
 				m_DirectionLook = 1;
@@ -2747,12 +2746,11 @@ void Player::EveryFrame(float deltaTime
 			{
 				m_DirectionLook = -1;
 			}
-		}
 		
-		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
-		{
-			m_Velocity[0] += m_Acceleration * deltaTime;
-		}
+			if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
+			{
+				m_Velocity[0] += m_Acceleration * deltaTime;
+			}
 		else if (m_Velocity[0] > 0)
 		{
 			float velocity = m_Velocity[0] - m_Friction * deltaTime;
@@ -2868,7 +2866,7 @@ void Player::EveryFrame(float deltaTime
 			m_CoyoteTimer = 0.0f;
 		}
 	}
-
+	
 	//item receive 
 	for (int i = 0; i < droppedItems.size(); i++)
 	{
