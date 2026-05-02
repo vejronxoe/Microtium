@@ -52,27 +52,106 @@ void Editor::Update(float deltaTime,char cursorState)
 	}
 	m_Transform[1] += oldVelocity[1] * deltaTime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltaTime;
 	m_Transform[0] += oldVelocity[0] * deltaTime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltaTime;
-	if (!Input::LeftMouseHold)
-	{
-		m_BlocksInBox.clear();
-		m_SelectBoxSides[0] = 0;
-		m_SelectBoxSides[1] = 0;
-		m_SelectBoxSides[2] = 0;
-		m_SelectBoxSides[3] = 0;
-
-	}
+	
+	m_Transform[0] = CameraHitboxX(m_Transform[0]);
+	m_Transform[1] = CameraHitboxY(m_Transform[1]);
+	
+	
+	
+	
 	if (cursorState == canNotDoIt)
 	{
-		if (Input::LeftMousePress)
+		int x = roundf(Input::XMousePos + m_Transform[0]);
+		int y = roundf(Input::YMousePos + m_Transform[1]);
+		switch (m_placingType)
 		{
-			
-		}
-		else if (Input::LeftMouseHold)
-		{
+		case selectType: 
+			if (Input::LeftMousePress)
+			{
+				m_FirstPointBox[0] = x;
+				m_FirstPointBox[1] = y;
+				m_SelectBoxSides[0] = x;
+				m_SelectBoxSides[1] = y;
+				m_SelectBoxSides[2] = x;
+				m_SelectBoxSides[3] = y;
+			}
+			else if (Input::LeftMouseHold)
+			{
+				if (m_FirstPointBox[0] < x)
+				{
+					m_SelectBoxSides[0] = m_FirstPointBox[0];
+					m_SelectBoxSides[2] = x;
 
+				}
+				else if (m_FirstPointBox[0] > x)
+				{
+
+					m_SelectBoxSides[2] = m_FirstPointBox[0];
+					m_SelectBoxSides[0] = x;
+				}
+				else
+				{
+					m_SelectBoxSides[0] = x;
+					m_SelectBoxSides[2] = x;
+				}
+				if (m_FirstPointBox[1] < y)
+				{
+					m_SelectBoxSides[1] = y;
+					m_SelectBoxSides[3] = m_FirstPointBox[1];
+				}
+				else if (m_FirstPointBox[1] > y)
+				{
+					m_SelectBoxSides[1] = m_FirstPointBox[1];
+					m_SelectBoxSides[3] = y;
+				}
+				else
+				{
+					m_SelectBoxSides[1] = y;
+					m_SelectBoxSides[3] = y;
+				}
+			}
+			break;
+		case brushType:
+			break;
 		}
 	}
 
+}
+void Editor::Draw(Shader& animSh
+	, float* transform
+	, float* scale)
+{
+	if (m_placingType == selectType)
+	{
+		animSh.Bind();
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SelectBoxTex));
+		ErrorGL(glBindVertexArray(m_SelectBoxDD));
+		ChangeScale(1, 1, scale);
+
+		animSh.SetUniformMat4(animScale, scale);
+		animSh.SetUniform1i(animLeangth, 4);
+		int drawTransform[2] = { m_SelectBoxSides[0],m_SelectBoxSides[3] };
+		int addx[4] = { 0,1,0,-1 };
+		int addy[4] = { 1,0,-1, 0 };
+		for (int i = 0; i < 4; i++)
+		{
+			
+			animSh.SetUniform1i(animNumber, i);
+			int sidelength[2] = { m_SelectBoxSides[2] - m_SelectBoxSides[0]+1,m_SelectBoxSides[1] - m_SelectBoxSides[3]+1 };
+			for (int j = 0; j < sidelength[abs(i % 2-1)]; j++)
+			{
+								
+				if (j != 0)
+				{
+					drawTransform[0] += addx[i];
+					drawTransform[1] += addy[i];
+				}
+				ChangeTransform(drawTransform[0], drawTransform[1], transform);
+				animSh.SetUniformMat4(animTransform, transform);
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			}
+		}
+	}
 }
 
 EditorHUD::EditorHUD(unsigned int eob
@@ -246,86 +325,88 @@ void EditorHUD::Create(unsigned int eob
 int EditorHUD::Update(float deltaTime
 	,Editor& editor)
 {
-	int row = -1;
 	int cursorBehavior = canNotDoIt;
-	if (Window::width - m_GapLength - m_SideLength<= Input::XRawMousePos && Window::width - m_GapLength >= Input::XRawMousePos)
-	{
-		row = 0;
-	}
 	
-	if (Window::width - 2 * (m_GapLength + m_SideLength) <= Input::XRawMousePos && Window::width - 2 * m_GapLength - m_SideLength >= Input::XRawMousePos)
-	{
-		row = 1;
-	}
-	
-	if (m_GapLength <= Input::XRawMousePos && m_GapLength + m_SideLength >= Input::XRawMousePos)
-	{
-		row = 2;
-	}
-
-
-	switch (row)
-	{
-	case 0:
-	case 1:
-	{
-		for (int i = 0; i < (t_BlocksSize + s_StructureSize)/2; i++)
+		int row = -1;
+		if (Window::width - m_GapLength - m_SideLength <= Input::XRawMousePos && Window::width - m_GapLength >= Input::XRawMousePos)
 		{
-			if (-i*(m_GapLength+m_SideLength) + m_GapLength + m_Scroll* (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength -i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
-			{
-				if (Input::LeftMousePress)
-				{
-					editor.m_Selected = i * 2 + row;
-				}
-				cursorBehavior = canClickOnIt;
-				break;
-			}
+			row = 0;
 		}
-		break;
-	}
-	case 2:
-	{
-	
-		for (int i = 0; i < 3 ; i++)
+
+		if (Window::width - 2 * (m_GapLength + m_SideLength) <= Input::XRawMousePos && Window::width - 2 * m_GapLength - m_SideLength >= Input::XRawMousePos)
 		{
-			if ( m_GapLength + i * (m_GapLength + m_SideLength) < Input::YRawMousePos && (i+1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+			row = 1;
+		}
+
+		if (m_GapLength <= Input::XRawMousePos && m_GapLength + m_SideLength >= Input::XRawMousePos)
+		{
+			row = 2;
+		}
+
+
+		switch (row)
+		{
+		case 0:
+		case 1:
+		{
+			for (int i = 0; i < (t_BlocksSize + s_StructureSize) / 2; i++)
 			{
-				if (Input::LeftMousePress)
+				if (-i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
 				{
-					switch (i)
+					if (Input::LeftMousePress)
 					{
-					case 0:
-						editor.m_placingType = brushType;
-						break;
-					case 1:
-						editor.m_placingType = selectType;
-						break;
-					case 2:
-						editor.m_Eraser = !editor.m_Eraser;
-						break;
+						editor.m_Selected = i * 2 + row;
 					}
+					cursorBehavior = canClickOnIt;
+					break;
 				}
-				cursorBehavior = canClickOnIt;
-				break;
 			}
+			break;
 		}
-		
-		break;
-	}
-	}
-	if (Input::EPress)
-	{
-		editor.m_Eraser = !editor.m_Eraser;
+		case 2:
+		{
 
-	}
-	if (Input::NumberPress[0])
-	{
-		editor.m_placingType = brushType;
-	}
-	else if (Input::NumberPress[1])
-	{
-		editor.m_placingType = selectType;
-	}
+			for (int i = 0; i < 3; i++)
+			{
+				if (m_GapLength + i * (m_GapLength + m_SideLength) < Input::YRawMousePos && (i + 1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+				{
+					if (Input::LeftMousePress)
+					{
+						switch (i)
+						{
+						case 0:
+							editor.m_placingType = brushType;
+							break;
+						case 1:
+							editor.m_placingType = selectType;
+							break;
+						case 2:
+							editor.m_Eraser = !editor.m_Eraser;
+							break;
+						}
+					}
+					cursorBehavior = canClickOnIt;
+					break;
+				}
+			}
+
+			break;
+		}
+		}
+		if (Input::EPress)
+		{
+			editor.m_Eraser = !editor.m_Eraser;
+
+		}
+		if (Input::NumberPress[0])
+		{
+			editor.m_placingType = brushType;
+		}
+		else if (Input::NumberPress[1])
+		{
+			editor.m_placingType = selectType;
+		}
+	
 	if (Input::MouseWheel)
 	{
 		m_WantedScroll -= Input::MouseWheel;
@@ -347,7 +428,6 @@ int EditorHUD::Update(float deltaTime
 	return cursorBehavior;
 }
 void EditorHUD::Draw(Shader& sh
-
 	, Editor editor
 	, unsigned int* itemsTex
 	, unsigned int * blockTex
@@ -364,10 +444,13 @@ void EditorHUD::Draw(Shader& sh
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_DDs[rightHUDSlots]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[0], GL_UNSIGNED_BYTE, 0));
-	ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (editor.m_Selected/2 - roundf(editor.m_Selected/2.0f))*(m_GapLength+m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(editor.m_Selected / 2) * (m_GapLength + m_SideLength), transform);
-	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_DDs[useSlotDD]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	if (editor.m_Selected != -1)
+	{
+		ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (editor.m_Selected / 2 - roundf(editor.m_Selected / 2.0f)) * (m_GapLength + m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(editor.m_Selected / 2) * (m_GapLength + m_SideLength), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
 	ChangeTransform(  m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength/2.0f + m_GapLength + editor.m_placingType * (m_GapLength + m_SideLength)), transform);
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));

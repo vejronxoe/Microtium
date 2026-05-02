@@ -14,13 +14,17 @@ struct Editor
 	int m_Selected = 0;
 	char m_placingType = brushType;
 	bool m_Eraser = false;
-	unsigned int m_SelectBoxDD;
-	unsigned int m_SelectBoxTex;
+	unsigned int m_SelectBoxDD = 0;
+	unsigned int m_SelectBoxTex = 0;
+	int m_FirstPointBox[2] = {};
 	int m_SelectBoxSides[4] = {};
 	std::vector<std::vector<Block>> m_BlocksInBox;
 	Editor(unsigned int eob);
-	void Update(float deltaTime, char cursorState);
-
+	void Update(float deltaTime
+		, char cursorState);
+	void Draw(Shader& basic
+		, float* transform
+		, float* scale);
 };
 enum drawDataHUD
 {

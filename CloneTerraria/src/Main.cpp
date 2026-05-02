@@ -360,7 +360,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	/*/////////////////////////////////////////////
+	//*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -1428,7 +1428,7 @@ int main()
 				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
 
-
+				editor.Draw(animSh, transform, scale);
 
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.Bind();
