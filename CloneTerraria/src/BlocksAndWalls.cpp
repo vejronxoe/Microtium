@@ -506,12 +506,29 @@ void createWall(int x
 	}
 }
 
-void PushBlockInVec( std::vector<std::vector<Block>>& blocks
-	, unsigned short int IDOfItemBlock
-	, int x
+
+void CreateBlock(int x
 	, int y
+	, unsigned short int IDOfItemBlock
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& isThereSandOnX
 	, unsigned int* texturesIDs)
 {
+	
+	bool isThereWall;
+	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
+	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
+	{
+		if (isThereWall)
+		{
+			walls.at(x).at(indexOfTheWall).m_Render = false;
+		}
+	}
+	if (IDOfItemBlock == i_Sand)
+	{
+		isThereSandOnX.emplace_back(x);
+	}
 	int indexToPlace = 0;
 	for (; indexToPlace < blocks.at(x).size(); indexToPlace++)
 	{
@@ -545,31 +562,6 @@ void PushBlockInVec( std::vector<std::vector<Block>>& blocks
 		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, 0, y, b_Door, 0, i_Nothing);
 		break;
 	}
-}
-void CreateBlock(int x
-	, int y
-	, unsigned short int IDOfItemBlock
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
-	, unsigned int* texturesIDs)
-{
-	
-	bool isThereWall;
-	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
-	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
-	{
-		if (isThereWall)
-		{
-			walls.at(x).at(indexOfTheWall).m_Render = false;
-		}
-	}
-	if (IDOfItemBlock == i_Sand)
-	{
-		isThereSandOnX.emplace_back(x);
-	}
-	PushBlockInVec(blocks, IDOfItemBlock, x, y, texturesIDs);
-
 }
 
 void DestroyBlock(std::vector<std::vector<Block>>& blocks

@@ -24,7 +24,9 @@ struct Editor
 	void Update(float deltaTime
 		, char cursorState
 		, unsigned int* BlocksTex
-		, std::vector<std::vector<Block>>& blocks);
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<std::vector<wall>>& Walls
+		, std::vector<int>& SandsXs);
 	void Draw(Shader& basic
 		, float* transform
 		, float* scale);
@@ -53,7 +55,8 @@ struct EditorHUD
 		, unsigned int backGroundTex);
 	void Create(unsigned int eob
 		, bool first);
-	int Update(float deltaTime, Editor& editor);
+	int Update(float deltaTime
+		, Editor& editor);
 	void Draw(Shader& Sh
 		, Editor editor
 		, unsigned int* itemsTex

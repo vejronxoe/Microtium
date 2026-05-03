@@ -14,54 +14,45 @@ Editor::Editor(unsigned int eob)
 	m_SelectBoxTex = CreateTextureRGBA("res/textures/SelectZone.png");
 }
 void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
-, int* vertices)
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<int>& SandsXs
+	, int* vertices)
 {
 	for (int i = vertices[0]; i <= vertices[2]; i++)
 	{
-		for (int j = 0; j < blocks.at(i).size();j++)
+		for (int j = vertices[3]; j < vertices[1]; j++)
 		{
-			if (blocks[i][j].m_Y < vertices[3])
-			{
-				break;
-			}
-			else if (blocks[i][j].m_Y <= vertices[1])
-			{
-				blocks[i].erase(blocks[i].begin() + j);
-				j--;
-			}
-
+			DestroyBlock(blocks, walls, SandsXs, i, j);
 		}
 	}
 }
 void Editor::Update(float deltaTime
 	,char cursorState
-	, unsigned int* BlocksTex
-	, std::vector<std::vector<Block>>& blocks)
+	, unsigned int* blocksTex
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<int>& SandsXs)
 { 
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1]};
 	if (Input::AHold)
 	{
 		m_Velocity[0] -= deltaTime * 100;
 	}
-
 	if (Input::SHold)
 	{
 		m_Velocity[1] -= deltaTime * 100;
 
 	}
-
 	if (Input::DHold)
 	{
 		m_Velocity[0] += deltaTime * 100;
 
 	}
-
 	if (Input::WHold)
 	{
 		m_Velocity[1] += deltaTime * 100;
 
 	}
-
 	if (!(Input::WHold || Input::SHold))
 	{
 		m_Velocity[1] = 0;
@@ -90,6 +81,7 @@ void Editor::Update(float deltaTime
 		switch (m_placingType)
 		{
 		case selectType:
+		{
 			if (Input::LeftMousePress)
 			{
 				m_Selected = -1;
@@ -145,18 +137,19 @@ void Editor::Update(float deltaTime
 			{
 				if (m_Eraser)
 				{
-					DeleteBlocksInArea(blocks, m_SelectBoxSides);
+					DeleteBlocksInArea(blocks,walls,SandsXs, m_SelectBoxSides);
 					m_Eraser = false;
 				}
-				else if(m_Selected < t_BlocksSize && m_Selected > -1)
+				else if (m_Selected < t_BlocksSize && m_Selected > -1)
 				{
-					DeleteBlocksInArea(blocks, m_SelectBoxSides);
+					DeleteBlocksInArea(blocks,walls,SandsXs, m_SelectBoxSides);
+					int blockType = GetItemIDByTexture(blocksTex[m_Selected], blocksTex);
 
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
 						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
-							PushBlockInVec(blocks, GetItemIDByTexture(BlocksTex[m_Selected],BlocksTex), i, j, BlocksTex);
+							CreateBlock(i, j, blockType,walls,blocks,SandsXs, blocksTex);
 
 						}
 					}
@@ -167,7 +160,7 @@ void Editor::Update(float deltaTime
 					m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
 					for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
 					{
-						m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1,i_Nothing);
+						m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
 					}
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
@@ -179,12 +172,12 @@ void Editor::Update(float deltaTime
 							}
 							else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
 							{
-								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, BlocksTex);
+								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, blocksTex);
 							}
 
 						}
 					}
-					DeleteBlocksInArea(blocks, m_SelectBoxSides);
+					DeleteBlocksInArea(blocks, walls,SandsXs, m_SelectBoxSides);
 
 				}
 				else if (Input::CtrlHold && Input::CPress)
@@ -204,7 +197,7 @@ void Editor::Update(float deltaTime
 							}
 							else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
 							{
-								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te,BlocksTex);
+								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, blocksTex);
 							}
 
 						}
@@ -212,15 +205,15 @@ void Editor::Update(float deltaTime
 				}
 				else if (Input::CtrlHold && Input::VPress)
 				{
-					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size(), m_FirstPointBox[1] - m_CopiedBlocks[0].size()};
-					DeleteBlocksInArea(blocks, Vertices);
-					for (int i = 0 ; i < m_CopiedBlocks.size();i++)
+					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
+					DeleteBlocksInArea(blocks,walls,SandsXs, Vertices);
+					for (int i = 0; i < m_CopiedBlocks.size();i++)
 					{
 						for (int j = 0; j < m_CopiedBlocks[i].size();j++)
 						{
 							if (m_CopiedBlocks[i][j] != i_Nothing)
 							{
-								PushBlockInVec(blocks, m_CopiedBlocks[i][j], m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, BlocksTex);
+								CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j],walls,blocks,SandsXs, blocksTex);
 
 							}
 						}
@@ -228,9 +221,24 @@ void Editor::Update(float deltaTime
 				}
 			}
 			break;
+		}
 		case brushType:
+		{
+			if (Input::LeftMouseHold)
+			{
+				if (m_Eraser)
+				{
+					DestroyBlock(blocks, walls, SandsXs, x, y);
+				}
+				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
+				{
+					DestroyBlock(blocks, walls, SandsXs, x, y);
+					CreateBlock(x, y, GetItemIDByTexture(blocksTex[m_Selected], blocksTex), walls, blocks, SandsXs, blocksTex);
+				}
+			}
 			m_BoxSelected = false;
 			break;
+		}
 		}
 	}
 
