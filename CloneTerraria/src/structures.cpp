@@ -25,13 +25,14 @@ Chest::Chest(int x
 	blocks.at(x + 1).at(index).m_BlockBehavior = b_Indestructible;
 }
 
-void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
+void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks
+, unsigned int* blocksTex)
 {
 	bool found = false;
 	int index = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
-	blocks.at(m_Transform[0]).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0]).at(index).m_te);
+	blocks.at(m_Transform[0]).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0]).at(index).m_te, blocksTex);
 	index = FindBlock(blocks, m_Transform[0] + 1, m_Transform[1] - 1, found);
-	blocks.at(m_Transform[0] + 1).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0] + 1).at(index).m_te);
+	blocks.at(m_Transform[0] + 1).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0] + 1).at(index).m_te, blocksTex);
 
 }
 Door::Door(int x

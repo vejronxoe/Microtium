@@ -31,6 +31,9 @@ namespace Input
 	extern bool NumberPress[10];
 	extern bool EscapePress;
 	extern bool EPress;
+	extern bool CPress;
+	extern bool XPress;
+	extern bool VPress;
 	void OffAllButtons();
 	void EndOfLoop();
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

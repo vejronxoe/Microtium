@@ -21,7 +21,8 @@ struct Chest
 	Chest(int x
 		,int y
 		, std::vector<std::vector<Block>>& blocks);
-	void DestroyChest(std::vector<std::vector<Block>>& blocks);
+	void DestroyChest(std::vector<std::vector<Block>>& blocks
+		, unsigned int* blocksTex);
 };
 struct Door
 {

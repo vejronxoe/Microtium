@@ -18,10 +18,13 @@ struct Editor
 	unsigned int m_SelectBoxTex = 0;
 	int m_FirstPointBox[2] = {};
 	int m_SelectBoxSides[4] = {};
-	std::vector<std::vector<Block>> m_BlocksInBox;
+	bool m_BoxSelected = false;
+	std::vector<std::vector<int>> m_CopiedBlocks;
 	Editor(unsigned int eob);
 	void Update(float deltaTime
-		, char cursorState);
+		, char cursorState
+		, unsigned int* BlocksTex
+		, std::vector<std::vector<Block>>& blocks);
 	void Draw(Shader& basic
 		, float* transform
 		, float* scale);

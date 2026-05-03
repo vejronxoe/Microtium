@@ -49,9 +49,8 @@ enum BlockBehavior
 	, b_Asphalt
 	, b_Door
 };
-unsigned int GetItemIDByTexture(unsigned int texture);
+
 void CreateAllBlockTextures(unsigned int* IDs);
-unsigned int getBehaviorByTexture(unsigned int texture);
 
 class Block
 {
@@ -167,3 +166,7 @@ void PushBlockInVec(std::vector<std::vector<Block>>& blocks
 	, int x
 	, int y
 	, unsigned int* texturesIDs);
+unsigned int GetItemIDByTexture(unsigned int texture
+	, unsigned int* blocksTex);
+unsigned int getBehaviorByTexture(unsigned int texture
+	, unsigned int* blocksTex);

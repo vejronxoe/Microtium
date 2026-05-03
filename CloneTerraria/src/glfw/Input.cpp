@@ -29,12 +29,18 @@ namespace Input
 	bool SpaceHold = false;
 	bool SpacePress = false;
 	bool CtrlHold = false;
+	bool CPress = false;
+	bool XPress = false;
+	bool VPress = false;
 	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
 	bool EscapePress = false;
 	bool EPress = false;
 	void OffAllButtons()
 	{
 	
+		XPress = false;
+		VPress = false;
+		CPress = false;
 		LeftMouseHold = false;
 		LeftMousePress = false;
 		LeftMouseRelease = false;
@@ -72,6 +78,10 @@ namespace Input
 		APress = false;
 		TPress = false;
 		EPress = false;
+		XPress = false;
+		VPress = false;
+		CPress = false;
+
 		LeftMouseRelease = false;
 		SpacePress = false;
 		for (int i = 0; i < 10; i++)
@@ -164,6 +174,18 @@ namespace Input
 			CtrlHold = false;
 		}
 
+		if (key == GLFW_KEY_V && action == GLFW_PRESS)
+		{
+			VPress = true;
+		}
+		if (key == GLFW_KEY_C && action == GLFW_PRESS)
+		{
+			CPress = true;
+		}
+		if (key == GLFW_KEY_X && action == GLFW_PRESS)
+		{
+			XPress = true;
+		}
 
 		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 		{

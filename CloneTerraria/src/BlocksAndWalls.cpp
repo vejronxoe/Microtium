@@ -19,47 +19,55 @@ namespace Blocks
 	int yMin;
 };
 
-unsigned int getBehaviorByTexture(unsigned int texture)
+unsigned int getBehaviorByTexture(unsigned int texture
+	, unsigned int* blocksTex)
 {
-	switch (texture)
+	
+	if (blocksTex[t_Ice] == texture)
 	{
-
-	case t_Ice:
 		return b_Slippery;
-		break;
-
-	case t_Asphalt:
+	}
+	else if (blocksTex[t_Asphalt] == texture)
+	{
 		return b_Asphalt;
-		break;
-
-	case t_Platform:
+	}
+	else if (blocksTex[t_Platform] == texture)
+	{
 		return b_Platform;
-		break;
-
-	default:
+	}
+	else
+	{
 		return b_BasicSolid;
-		break;
 	}
 }
-unsigned int GetItemIDByTexture(unsigned int texture)
+unsigned int GetItemIDByTexture(unsigned int texture
+, unsigned int* blocksTex)
 {
-	switch (texture)
-	{
-
-	case t_Ice:
+	
+		if (blocksTex[t_Ice] == texture)
+		{
 		return i_Ice;
-	case t_Asphalt:
+		}
+		else if (blocksTex[t_Asphalt] == texture)
+		{
 		return i_Asphalt;
-	case t_Platform:
+		}
+		else if (blocksTex[t_Platform] == texture)
+		{
 		return i_Platform;
-	case t_Sand:
+		}
+		else if (blocksTex[t_Sand] == texture)
+		{
 		return i_Sand;
-	case t_ForestPlank:
+		}
+		else if (blocksTex[t_ForestPlank] == texture)
+		{
 		return i_ForestPlank;
-	default:
-		return i_Dirt;
-		break;
-	}
+		}
+		else
+		{
+			return i_Dirt;
+		}
 }
 
 DamagedBlock::DamagedBlock(int x
@@ -507,11 +515,12 @@ void PushBlockInVec( std::vector<std::vector<Block>>& blocks
 	int indexToPlace = 0;
 	for (; indexToPlace < blocks.at(x).size(); indexToPlace++)
 	{
-		if (blocks.at(x).at(indexToPlace).m_Y < y)
+		if (blocks[x][indexToPlace].m_Y < y)
 		{
 			break;
 		}
 	}
+
 	switch (IDOfItemBlock)
 	{
 	case i_Dirt:

@@ -2383,7 +2383,7 @@ void Player::EveryFrame(float deltaTime
 							m_IndexOfOpenChest = -1;
 						}
 
-						chests.at(chestIndex).DestroyChest(blocks);
+						chests.at(chestIndex).DestroyChest(blocks,texturesIDs);
 						droppedItems.emplace_back(x, y, 0, i_Chest, 1, true);
 						chests.erase(chests.begin() + chestIndex);
 					}
@@ -2485,7 +2485,7 @@ void Player::EveryFrame(float deltaTime
 							{
 								if (blocks.at(x).at(i).m_Y == y - 1)
 								{
-									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te);
+									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te,texturesIDs);
 								}
 							}
 							while (woodIndex != -1)

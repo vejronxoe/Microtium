@@ -809,6 +809,8 @@ int main()
 					player.ResizeHUD(eob,chests,letters);
 
 				}
+				Input::XMousePos = Clamp(Input::XMousePos, -Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform);
+				Input::YMousePos = Clamp(Input::YMousePos, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform);
 
 				float CameraCoordinates[2];
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
@@ -1368,6 +1370,8 @@ int main()
 					fontSh.SetUniformMat4(fontCamera, camera);
 
 				}
+				Input::XMousePos = Clamp(Input::XMousePos, -Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform);
+				Input::YMousePos = Clamp(Input::YMousePos, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform);
 				bool escapePressed = Input::EscapePress;
 				bool leftMousePressed = Input::LeftMousePress;
 				bool leftMousehold = Input::LeftMouseHold;
@@ -1377,7 +1381,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime, editor);
-				editor.Update(deltaTime, cursorState);
+				editor.Update(deltaTime, cursorState, blockTextures, blocks);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;
