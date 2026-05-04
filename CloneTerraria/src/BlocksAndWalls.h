@@ -73,8 +73,8 @@ public:
 };
 class wall
 {
-	unsigned int m_Texture;
 public:
+	unsigned int m_Texture;
 	bool m_Render;
 	unsigned short int m_ItemDrop;
 	int m_Y;
@@ -165,4 +165,6 @@ bool WallInArea(std::vector<std::vector<wall>>& walls
 unsigned int GetItemIDByTexture(unsigned int texture
 	, unsigned int* blocksTex);
 unsigned int getBehaviorByTexture(unsigned int texture
+	, unsigned int* blocksTex);
+unsigned int GetWallItemIDByTexture(unsigned int texture
 	, unsigned int* blocksTex);

@@ -21,8 +21,8 @@ enum Items
 	, i_Dirt
 	, i_Ice
 	, i_Asphalt
-	, i_Platform
 	, i_ForestPlank
+	, i_Platform
 	, i_WallDirt
 	, i_WallIce
 	, i_Sand

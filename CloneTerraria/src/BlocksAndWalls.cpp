@@ -40,6 +40,19 @@ unsigned int getBehaviorByTexture(unsigned int texture
 		return b_BasicSolid;
 	}
 }
+unsigned int GetWallItemIDByTexture(unsigned int texture
+	, unsigned int* blocksTex)
+{
+
+	if (blocksTex[t_Ice] == texture)
+	{
+		return i_WallIce;
+	}
+	else
+	{
+		return i_WallDirt;
+	}
+}
 unsigned int GetItemIDByTexture(unsigned int texture
 , unsigned int* blocksTex)
 {
@@ -450,16 +463,15 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 	wallsSh.SetUniformMat4(basicCamera, camera);
 	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
 	{
-		for (int i = 0; i < walls.at(j).size(); i++)
+		for (int i = 0; i < walls[j].size(); i++)
 		{
-			int y = walls.at(j).at(i).m_Y;
-			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > y)
+			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > walls[j][i].m_Y)
 			{
 				break;
 			}
-			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
+			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls[j][i].m_Y)
 			{
-				walls.at(j).at(i).drawWalls(wallsSh, j, transform);
+				walls[j][i].drawWalls(wallsSh, j, transform);
 			}
 		}
 	}
@@ -636,13 +648,13 @@ bool blockInArea(std::vector<std::vector<Block>>& blocks
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < blocks.at(j).size(); i++)
+		for (int i = 0; i < blocks[j].size(); i++)
 		{
-			if (blocks.at(j).at(i).m_Y < vertices[3])
+			if (blocks[j][i].m_Y < vertices[3])
 			{
 				break;
 			}
-			if (blocks.at(j).at(i).m_Y <= vertices[1])
+			if (blocks[j][i].m_Y <= vertices[1])
 			{
 				return true;
 			}

@@ -1437,12 +1437,11 @@ int main()
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.Bind();
 				basicSh.SetUniformMat4(basicCamera, camera);
-				fontSh.Bind();
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
-				basicSh.Bind();
-				ChangeCamera(0, Window::width, 0, Window::height, camera);
-				basicSh.SetUniformMat4(basicCamera, camera);
-				editorHUD.Draw(basicSh,editor,ItemTex,blockTextures,transform);
+				shadowSh.Bind();
+				shadowSh.SetUniformMat4(basicCamera, camera);
+				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
+
+				editorHUD.Draw(shadowSh, editor, ItemTex, blockTextures, transform);
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 

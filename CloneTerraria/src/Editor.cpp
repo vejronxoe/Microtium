@@ -8,6 +8,9 @@
 #include "math/matrix.h"
 #include "ItemList.h"
 #include "glfw/cursor.h"
+#define NUMBEROFSLOTS (t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
+
+
 Editor::Editor(unsigned int eob)
 {
 	m_SelectBoxDD = CreateDrawData(eob,0.5f,-0.5f,0.5f,-0.5f,1,0,1.0f/4.0f,0);
@@ -23,6 +26,72 @@ void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
 		for (int j = vertices[3]; j < vertices[1]; j++)
 		{
 			DestroyBlock(blocks, walls, SandsXs, i, j);
+		}
+	}
+}
+void DeleteWallsInArea( std::vector<std::vector<wall>>& walls
+, int* vertices)
+{
+
+	for (int i = vertices[0]; i <= vertices[2]; i++)
+	{
+		for (int j = 0; j < walls.at(i).size(); j++)
+		{
+			if (walls[i][j].m_Y <vertices[3])
+			{
+				break;
+			}
+			else if (walls[i][j].m_Y <= vertices[1])
+			{
+				walls[i].erase(walls[i].begin() + j);
+				j--;
+			}
+		}
+	}
+}
+
+void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls)
+{
+	m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
+	for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
+	{
+		m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
+	}
+	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
+	{
+		for (int j = 0; j < blocks.at(i).size();j++)
+		{
+			if (blocks[i][j].m_Y < m_SelectBoxSides[3])
+			{
+				break;
+			}
+			else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
+			{
+				m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, blocksTex);
+			}
+
+		}
+	}
+	m_CopiedWalls.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
+	for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
+	{
+		m_CopiedWalls[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
+	}
+	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
+	{
+		for (int j = 0; j < walls.at(i).size();j++)
+		{
+			if (walls[i][j].m_Y < m_SelectBoxSides[3])
+			{
+				break;
+			}
+			else if (walls[i][j].m_Y <= m_SelectBoxSides[1])
+			{
+				m_CopiedWalls[i - m_SelectBoxSides[0]].at(abs(walls[i][j].m_Y - m_SelectBoxSides[1])) = GetWallItemIDByTexture(walls[i][j].m_Texture, blocksTex);
+			}
+
 		}
 	}
 }
@@ -138,6 +207,7 @@ void Editor::Update(float deltaTime
 				if (m_Eraser)
 				{
 					DeleteBlocksInArea(blocks,walls,SandsXs, m_SelectBoxSides);
+					DeleteWallsInArea(walls, m_SelectBoxSides);
 					m_Eraser = false;
 				}
 				else if (m_Selected < t_BlocksSize && m_Selected > -1)
@@ -155,58 +225,37 @@ void Editor::Update(float deltaTime
 					}
 					m_Selected = -1;
 				}
-				else if (Input::CtrlHold && Input::XPress)
+				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce-i_WallDirt+1))
 				{
-					m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
-					for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
-					{
-						m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
-					}
+					DeleteWallsInArea(walls, m_SelectBoxSides);
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
-						for (int j = 0; j < blocks.at(i).size();j++)
+						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
-							if (blocks[i][j].m_Y < m_SelectBoxSides[3])
-							{
-								break;
-							}
-							else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
-							{
-								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, blocksTex);
-							}
 
+							createWall(i,j,m_Selected - t_BlocksSize + i_WallDirt,walls,blocks,blocksTex);
 						}
 					}
+					m_Selected = -1;
+				}
+				else if (Input::CtrlHold && Input::XPress)
+				{
+					
+					CopyBlocksAndWalls(blocksTex, blocks, walls);
+
+					DeleteWallsInArea(walls, m_SelectBoxSides);
 					DeleteBlocksInArea(blocks, walls,SandsXs, m_SelectBoxSides);
 
 				}
 				else if (Input::CtrlHold && Input::CPress)
 				{
-					m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
-					for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
-					{
-						m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
-					}
-					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
-					{
-						for (int j = 0; j < blocks.at(i).size();j++)
-						{
-							if (blocks[i][j].m_Y < m_SelectBoxSides[3])
-							{
-								break;
-							}
-							else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
-							{
-								m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = GetItemIDByTexture(blocks[i][j].m_te, blocksTex);
-							}
-
-						}
-					}
+					CopyBlocksAndWalls(blocksTex, blocks, walls);
 				}
 				else if (Input::CtrlHold && Input::VPress)
 				{
 					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
 					DeleteBlocksInArea(blocks,walls,SandsXs, Vertices);
+					DeleteWallsInArea(walls, Vertices);
 					for (int i = 0; i < m_CopiedBlocks.size();i++)
 					{
 						for (int j = 0; j < m_CopiedBlocks[i].size();j++)
@@ -214,6 +263,17 @@ void Editor::Update(float deltaTime
 							if (m_CopiedBlocks[i][j] != i_Nothing)
 							{
 								CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j],walls,blocks,SandsXs, blocksTex);
+
+							}
+						}
+					}
+					for (int i = 0; i < m_CopiedWalls.size();i++)
+					{
+						for (int j = 0; j < m_CopiedWalls[i].size();j++)
+						{
+							if (m_CopiedWalls[i][j] != i_Nothing)
+							{
+								createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], walls, blocks,blocksTex);
 
 							}
 						}
@@ -228,12 +288,28 @@ void Editor::Update(float deltaTime
 			{
 				if (m_Eraser)
 				{
+					bool found = false;
+					int index = FindWall(walls, x, y, found);
+					if (found)
+					{
+						walls[x].erase(walls[x].begin() + index);
+					}
 					DestroyBlock(blocks, walls, SandsXs, x, y);
 				}
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
 				{
 					DestroyBlock(blocks, walls, SandsXs, x, y);
 					CreateBlock(x, y, GetItemIDByTexture(blocksTex[m_Selected], blocksTex), walls, blocks, SandsXs, blocksTex);
+				}
+				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt + 1))
+				{
+					bool found = false;
+					int index = FindWall(walls, x, y, found);
+					if (found)
+					{
+						walls[x].erase(walls[x].begin() + index);
+					}
+					createWall(x, y, m_Selected - t_BlocksSize + i_WallDirt, walls, blocks, blocksTex);
 				}
 			}
 			m_BoxSelected = false;
@@ -309,8 +385,8 @@ void EditorHUD::Create(unsigned int eob
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 		std::vector<float> Vertices;
 	std::vector<unsigned char> order;
-	Vertices.reserve((t_BlocksSize + s_StructureSize) * 16);
-	int placebleObjectsNumber = floorf((t_BlocksSize + s_StructureSize) / 2.0f);
+	Vertices.reserve(NUMBEROFSLOTS * 16);
+	int placebleObjectsNumber = floorf(NUMBEROFSLOTS / 2.0f);
 	int j;
 	for (j = 0; j <placebleObjectsNumber; j++)
 	{
@@ -338,24 +414,24 @@ void EditorHUD::Create(unsigned int eob
 
 		}
 	}
-	if (j*2 != (t_BlocksSize + s_StructureSize))
+	if (j*2 != NUMBEROFSLOTS)
 	{
-		Vertices.emplace_back(Window::width - 2 * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(Window::width -  (m_GapLength + m_SideLength));
 		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
 		Vertices.emplace_back(0);
 		Vertices.emplace_back(0);
 
-		Vertices.emplace_back(Window::width - (m_GapLength + (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(Window::width - m_GapLength);
 		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
 		Vertices.emplace_back(TEXSLOTDISTANCE);
 		Vertices.emplace_back(0);
 
-		Vertices.emplace_back(Window::width - (m_GapLength + (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(Window::width - m_GapLength);
 		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
 		Vertices.emplace_back(TEXSLOTDISTANCE);
 		Vertices.emplace_back(1);
 
-		Vertices.emplace_back(Window::width - 2 * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
 		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
 		Vertices.emplace_back(0);
 		Vertices.emplace_back(1);
@@ -476,7 +552,8 @@ int EditorHUD::Update(float deltaTime
 		case 0:
 		case 1:
 		{
-			for (int i = 0; i < (t_BlocksSize + s_StructureSize) / 2; i++)
+			int i;
+			for (i = 0; i < NUMBEROFSLOTS / 2; i++)
 			{
 				if (-i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
 				{
@@ -487,6 +564,15 @@ int EditorHUD::Update(float deltaTime
 					cursorBehavior = canClickOnIt;
 					break;
 				}
+			}
+			if (row == 0 && i * 2 != NUMBEROFSLOTS && -i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
+			{
+				if (Input::LeftMousePress)
+				{
+					editor.m_Selected = i * 2 + row;
+				}
+				cursorBehavior = canClickOnIt;
+				
 			}
 			break;
 		}
@@ -539,7 +625,7 @@ int EditorHUD::Update(float deltaTime
 	if (Input::MouseWheel)
 	{
 		m_WantedScroll -= Input::MouseWheel;
-		m_WantedScroll = Clamp(m_WantedScroll, 0, (t_BlocksSize +  s_StructureSize)/2.0f -1);
+		m_WantedScroll = Clamp(m_WantedScroll, 0, NUMBEROFSLOTS/2.0f );
 	}
 	if (m_WantedScroll != m_Scroll)
 	{
@@ -605,9 +691,20 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[i]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
-	for (int i = 0; i < s_StructureSize; i++)
+	sh.SetUniform1i(basicSize + ShadowLocation, 1);
+	for (int i = 0; i < (i_WallIce - i_WallDirt + 1);i++)
 	{
 		int index = t_BlocksSize + i;
+		ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (index / 2 - roundf(index / 2.0f)) * (m_GapLength + m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(index / 2) * (m_GapLength + m_SideLength), transform);
+		sh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallDirt +i]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	}
+	sh.SetUniform1i(basicSize + ShadowLocation, 0);
+	for (int i = 0; i < s_StructureSize; i++)
+	{
+		int index = t_BlocksSize + (i_WallIce - i_WallDirt+1) + i;
 		ChangeTransform(Window::width - (m_GapLength + m_SideLength / 2.0f) + (index / 2 - roundf(index / 2.0f)) * (m_GapLength + m_SideLength), m_Scroll * (m_GapLength + m_SideLength) + (m_GapLength + m_SideLength / 2.0f) + -(index / 2) * (m_GapLength + m_SideLength), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[GetItemIDByStructure(i)]));

@@ -20,6 +20,7 @@ struct Editor
 	int m_SelectBoxSides[4] = {};
 	bool m_BoxSelected = false;
 	std::vector<std::vector<int>> m_CopiedBlocks;
+	std::vector<std::vector<int>> m_CopiedWalls;
 	Editor(unsigned int eob);
 	void Update(float deltaTime
 		, char cursorState
@@ -30,6 +31,10 @@ struct Editor
 	void Draw(Shader& basic
 		, float* transform
 		, float* scale);
+	private:
+	void CopyBlocksAndWalls( unsigned int* blocksTex
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<std::vector<wall>>& Walls);
 };
 enum drawDataHUD
 {
