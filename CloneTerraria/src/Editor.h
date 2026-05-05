@@ -1,7 +1,8 @@
 #pragma once
 #include"Opengl/Shader.h"
 #include "BlocksAndWalls.h"
-
+#include"structures.h"
+#include"flora.h"
 enum PlacingType
 {
 	brushType =0
@@ -25,8 +26,13 @@ struct Editor
 	void Update(float deltaTime
 		, char cursorState
 		, unsigned int* BlocksTex
+		, unsigned int* structureTex
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<std::vector<wall>>& Walls
+		, std::vector<seedling>& saplings
+		, std::vector<CraftStation>& CraftingStations
+		, std::vector<Chest>& Chest
+		, std::vector<Door>& Doors
 		, std::vector<int>& SandsXs);
 	void Draw(Shader& basic
 		, float* transform

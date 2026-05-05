@@ -8,6 +8,7 @@
 #include "math/matrix.h"
 #include "ItemList.h"
 #include "glfw/cursor.h"
+
 #define NUMBEROFSLOTS (t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
 
 
@@ -16,6 +17,53 @@ Editor::Editor(unsigned int eob)
 	m_SelectBoxDD = CreateDrawData(eob,0.5f,-0.5f,0.5f,-0.5f,1,0,1.0f/4.0f,0);
 	m_SelectBoxTex = CreateTextureRGBA("res/textures/SelectZone.png");
 }
+void DeleteStructuresInArea(int* vertices
+, std::vector<Door>& doors
+, std::vector<Chest>& chests
+, std::vector<CraftStation>& craftingStations
+, std::vector<seedling>& saplings)
+{
+	int verticesObj[4];
+	for (int i = 0; i < doors.size(); i++)
+	{
+		if (DoTheyIntersect(vertices, doors[i].m_Vertices))
+		{
+			doors.erase(doors.begin() + i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < chests.size();i++)
+	{
+		getStructureVertices(chests[i].m_Transform[0], chests[i].m_Transform[1], s_Chest, verticesObj);
+		if (DoTheyIntersect(vertices, verticesObj))
+		{
+			chests.erase(chests.begin() + i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < craftingStations.size(); i++)
+	{
+		getStructureVertices(craftingStations[i].m_Transform[0], craftingStations[i].m_Transform[1], craftingStations[i].m_CraftStationtype, verticesObj);
+		if (DoTheyIntersect(vertices, verticesObj))
+		{
+			craftingStations.erase(craftingStations.begin()+i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < saplings.size(); i++)
+	{
+		getStructureVertices(saplings[i].m_Transform[0], saplings[i].m_Transform[1], s_Sapling, verticesObj);
+		if (DoTheyIntersect(vertices, verticesObj))
+		{
+
+			saplings.erase(saplings.begin() + i);
+			i--;
+		}
+	}
+}
 void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<int>& SandsXs
@@ -23,7 +71,7 @@ void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
 {
 	for (int i = vertices[0]; i <= vertices[2]; i++)
 	{
-		for (int j = vertices[3]; j < vertices[1]; j++)
+		for (int j = vertices[3]; j <= vertices[1]; j++)
 		{
 			DestroyBlock(blocks, walls, SandsXs, i, j);
 		}
@@ -98,8 +146,13 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 void Editor::Update(float deltaTime
 	,char cursorState
 	, unsigned int* blocksTex
+	, unsigned int* structureTex
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<wall>>& walls
+	, std::vector<seedling>& saplings
+	, std::vector<CraftStation>& CraftingStations
+	, std::vector<Chest>& Chests
+	, std::vector<Door>& Doors
 	, std::vector<int>& SandsXs)
 { 
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1]};
@@ -206,12 +259,14 @@ void Editor::Update(float deltaTime
 			{
 				if (m_Eraser)
 				{
+					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
 					DeleteBlocksInArea(blocks,walls,SandsXs, m_SelectBoxSides);
 					DeleteWallsInArea(walls, m_SelectBoxSides);
 					m_Eraser = false;
 				}
 				else if (m_Selected < t_BlocksSize && m_Selected > -1)
 				{
+					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
 					DeleteBlocksInArea(blocks,walls,SandsXs, m_SelectBoxSides);
 					int blockType = GetItemIDByTexture(blocksTex[m_Selected], blocksTex);
 
@@ -227,6 +282,7 @@ void Editor::Update(float deltaTime
 				}
 				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce-i_WallDirt+1))
 				{
+					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
 					DeleteWallsInArea(walls, m_SelectBoxSides);
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
@@ -242,7 +298,7 @@ void Editor::Update(float deltaTime
 				{
 					
 					CopyBlocksAndWalls(blocksTex, blocks, walls);
-
+					DeleteStructuresInArea(m_SelectBoxSides,Doors,Chests,CraftingStations,saplings);
 					DeleteWallsInArea(walls, m_SelectBoxSides);
 					DeleteBlocksInArea(blocks, walls,SandsXs, m_SelectBoxSides);
 
@@ -255,6 +311,7 @@ void Editor::Update(float deltaTime
 				{
 					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
 					DeleteBlocksInArea(blocks,walls,SandsXs, Vertices);
+					DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
 					DeleteWallsInArea(walls, Vertices);
 					for (int i = 0; i < m_CopiedBlocks.size();i++)
 					{
@@ -295,13 +352,25 @@ void Editor::Update(float deltaTime
 						walls[x].erase(walls[x].begin() + index);
 					}
 					DestroyBlock(blocks, walls, SandsXs, x, y);
+					int vec4[4] = {x,y,x,y};
+					DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
+
 				}
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
 				{
-					DestroyBlock(blocks, walls, SandsXs, x, y);
-					CreateBlock(x, y, GetItemIDByTexture(blocksTex[m_Selected], blocksTex), walls, blocks, SandsXs, blocksTex);
+			
+					std::vector<tree> t;
+					bool found = false;
+					FindBlock(blocks, x, y, found);
+					if (!isAnythingOnThisTransform(x,y,blocks,saplings,t,CraftingStations,Doors,Chests) || found)
+					{
+
+						DestroyBlock(blocks, walls, SandsXs, x, y);
+						CreateBlock(x, y, GetItemIDByTexture(blocksTex[m_Selected], blocksTex), walls, blocks, SandsXs, blocksTex);
+
+					}
 				}
-				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt + 1))
+				else if (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1))
 				{
 					bool found = false;
 					int index = FindWall(walls, x, y, found);
@@ -310,6 +379,79 @@ void Editor::Update(float deltaTime
 						walls[x].erase(walls[x].begin() + index);
 					}
 					createWall(x, y, m_Selected - t_BlocksSize + i_WallDirt, walls, blocks, blocksTex);
+				}
+				else if (m_Selected >= t_BlocksSize + (i_WallIce - i_WallDirt + 1) && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
+				{
+					int vertices[4];
+					getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
+					std::vector<tree> trees;
+					if (!isAnythinginArea(vertices, blocks, saplings, trees, CraftingStations, Doors, Chests))
+					{
+						int  vertices[4];
+						bool floors = true;
+						getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
+			
+						switch (m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1))
+						{
+						case s_TrapDoor:
+						{
+							floors = false;
+							FindBlock(blocks, x - 1, y, floors);
+							if (!floors)
+							{
+								break;
+							}
+							FindBlock(blocks, vertices[2] + 1, y, floors);
+							break;
+						}
+						case s_Door:
+						case s_Gate:
+							floors = false;
+							FindBlock(blocks, x, vertices[1] + 1, floors);
+							if (!floors)
+							{
+								break;
+							}
+						default:
+
+							for (int i = vertices[0]; i <= vertices[2]; i++)
+							{
+								floors = false;
+								for (int j = 0; j < blocks.at(i).size(); j++)
+								{
+									if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
+									{
+										floors = true;
+										break;
+									}
+									if (blocks.at(i).at(j).m_Y < vertices[3] - 1)
+									{
+										break;
+									}
+								}
+								if (!floors)
+								{
+									break;
+								}
+							}
+
+							break;
+						}
+						if (floors)
+						{
+							int directionalLook = 0;
+							if (-floorf(Input::XMousePos + m_Transform[0]) + Input::XMousePos + m_Transform[0] >= 0.5f)
+							{
+								directionalLook = 1;
+							}
+							else
+							{
+								directionalLook = -1;
+							}
+							CreateStructure(m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), x, y, directionalLook, structureTex, blocks, walls, saplings, CraftingStations, Chests, Doors, SandsXs);
+
+						}
+					}
 				}
 			}
 			m_BoxSelected = false;

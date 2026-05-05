@@ -124,3 +124,15 @@ bool isAnythinginArea(int* vertices
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests);
+void CreateStructure(int StructureID
+	, int x
+	, int y
+	, int directionLook
+	, unsigned int* structuresTex
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<wall>>& walls
+	, std::vector<seedling>& seedlings
+	, std::vector<CraftStation>& craftStations
+	, std::vector<Chest>& chests
+	, std::vector<Door>& doors
+	, std::vector<int>& isThereSandOnX);

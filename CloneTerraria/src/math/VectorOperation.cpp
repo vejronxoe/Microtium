@@ -20,7 +20,12 @@ void NormalizeVector(float* vector2D)
 	vector2D[0] = vector2D[0] / lenght;
 	vector2D[1] = vector2D[1] / lenght;
 }
+
 bool DoTheyIntersect(float* vec4fa, float* vec4fb)
+{
+	return	(vec4fa[0] <= vec4fb[2] && vec4fa[2] >= vec4fb[0] && vec4fa[3] <= vec4fb[1] && vec4fa[1] >= vec4fb[3]);
+}
+bool DoTheyIntersect(int* vec4fa, int* vec4fb)
 {
 	return	(vec4fa[0] <= vec4fb[2] && vec4fa[2] >= vec4fb[0] && vec4fa[3] <= vec4fb[1] && vec4fa[1] >= vec4fb[3]);
 }

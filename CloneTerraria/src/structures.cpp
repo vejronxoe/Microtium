@@ -493,6 +493,11 @@ bool IsInAreaCraftStation(std::vector<CraftStation>& structures
 	{
 		int structureVertices[4];
 		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
+
+		bool a = structureVertices[0] <= vertice[2];
+		bool b = structureVertices[2] >= vertice[0];
+		bool c = structureVertices[3] <= vertice[1];
+		bool d = structureVertices[1] >= vertice[3];
 		if (structureVertices[0] <= vertice[2] && structureVertices[2] >= vertice[0] && structureVertices[3] <= vertice[1] && structureVertices[1] >= vertice[3])
 		{
 			return true;
@@ -744,4 +749,66 @@ bool isAnythinginArea(int* vertices
 	}
 
 	return IsInAreaChest(chests, vertices);
+}
+void CreateStructure(int StructureID
+	,int x
+	,int y
+	,int directionLook
+	,unsigned int* structuresTex 
+	, std::vector<std::vector<Block>>& blocks
+	,std::vector<std::vector<wall>> &walls
+	,std::vector<seedling>& seedlings
+	,std::vector<CraftStation>& craftStations
+	,std::vector<Chest>& chests
+	,std::vector<Door>& doors
+	,std::vector<int>& isThereSandOnX)
+{
+	switch (StructureID)
+	{
+	case s_Sapling:
+		seedlings.emplace_back(s_Sapling, x, y, structuresTex, blocks);
+		break;
+	case s_CraftingTable:
+	{
+		CraftStation table;
+		table.m_CraftStationtype = s_CraftingTable;
+		table.m_Transform[0] = x;
+		table.m_Transform[1] = y;
+		table.m_LookAt = directionLook;
+		craftStations.emplace_back(table);
+		break;
+	}
+	case s_Forge:
+	{
+		CraftStation forge;
+		forge.m_CraftStationtype = s_Forge;
+		forge.m_Transform[0] = x;
+		forge.m_Transform[1] = y;
+		forge.m_LookAt = directionLook;
+		craftStations.emplace_back(forge);
+		break;
+	}
+	case s_Anvil:
+	{
+		CraftStation anvil;
+		anvil.m_CraftStationtype = s_Anvil;
+		anvil.m_Transform[0] = x;
+		anvil.m_Transform[1] = y;
+		anvil.m_LookAt = directionLook;
+		craftStations.emplace_back(anvil);
+		break;
+	}
+	case s_Chest:
+	{
+		chests.emplace_back(x, y, blocks);
+
+
+		break;
+	}
+	case s_Door:
+	case s_TrapDoor:
+	case s_Gate:
+		doors.emplace_back(x, y,StructureID, isThereSandOnX, walls, blocks);
+		break;
+	}
 }

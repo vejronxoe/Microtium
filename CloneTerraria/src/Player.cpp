@@ -2609,54 +2609,7 @@ void Player::EveryFrame(float deltaTime
 				}
 				else if (m_CursorOnPlaceableForStructure)
 				{
-					switch (m_PlayerSlots[0])
-					{
-					case i_Sapling:
-						seedlings.emplace_back(s_Sapling, x, y, structuresTextures, blocks);
-						break;
-					case i_CraftingTable:
-					{
-						CraftStation table;
-						table.m_CraftStationtype = s_CraftingTable;
-						table.m_Transform[0] = x;
-						table.m_Transform[1] = y;
-						table.m_LookAt = m_DirectionLook;
-						craftStations.emplace_back(table);
-						break;
-					}
-					case i_Forge:
-					{
-						CraftStation forge;
-						forge.m_CraftStationtype = s_Forge;
-						forge.m_Transform[0] = x;
-						forge.m_Transform[1] = y;
-						forge.m_LookAt = m_DirectionLook;
-						craftStations.emplace_back(forge);
-						break;
-					}
-					case i_Anvil:
-					{
-						CraftStation anvil;
-						anvil.m_CraftStationtype = s_Anvil;
-						anvil.m_Transform[0] = x;
-						anvil.m_Transform[1] = y;
-						anvil.m_LookAt = m_DirectionLook;
-						craftStations.emplace_back(anvil);
-						break;
-					}
-					case i_Chest:
-					{
-						chests.emplace_back(x, y,blocks);
-						
-
-						break;
-					}
-					case i_Door:
-					case i_TrapDoor:
-					case i_Gate:
-						doors.emplace_back(x, y, GetStructureID(m_PlayerSlots[0]), isThereSandOnX, walls, blocks);
-						break;
-					}
+					CreateStructure(GetStructureID(m_PlayerSlots[0]), x, y, m_DirectionLook, structuresTextures, blocks, walls, seedlings, craftStations, chests, doors, isThereSandOnX);
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
 					{

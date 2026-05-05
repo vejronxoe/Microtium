@@ -14,3 +14,5 @@ bool DoTheyIntersect(float* vec4fa
 float Clamp(float value
 	, float min
 	, float max);
+bool DoTheyIntersect(int* vec4fa
+	, int* vec4fb);

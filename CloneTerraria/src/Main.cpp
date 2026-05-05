@@ -1381,7 +1381,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime, editor);
-				editor.Update(deltaTime, cursorState, blockTextures, blocks,walls,isSandOnX);
+				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,walls,seedlings,craftStations,chests,doors,isSandOnX);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;
