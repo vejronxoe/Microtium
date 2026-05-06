@@ -446,6 +446,7 @@ void DrawChests(std::vector<Chest>& structures
 	sh.Bind();
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, structureTexs[s_Chest]));
 	ErrorGL(glBindVertexArray(structureDDs[s_Chest]));
+	sh.SetUniform1i(basicSize + structureLookAt, 1);
 	for (int i = 0; i < structures.size(); i++)
 	{
 		if (structures.at(i).m_Open)

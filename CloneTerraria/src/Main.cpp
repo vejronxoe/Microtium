@@ -1361,7 +1361,7 @@ int main()
 					ErrorGL(glDeleteBuffers(1, &menuBackgroundVBO));
 					ErrorGL(glDeleteVertexArrays(1, &menuBackgroundDD));
 					menuBackgroundDD = CreateDrawData(eob, Window::height, 0, Window::width, 0, menuBackgroundVBO, 1, 0, TEXSLOTDISTANCE, 0);
-					editorHUD.Create(eob,false);
+					editorHUD.Create(eob,chests,letters,false);
 					CreateMenu(false, letters, menu, sliderDD, sliderVBO, checkBoxTex, sliderTex, trailTex, eob);
 					ChangeCamera(0, Window::width, 0, Window::height, camera);	
 					numberSh.Bind();
@@ -1380,7 +1380,7 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				cursorState = editorHUD.Update(deltaTime, editor);
+				cursorState = editorHUD.Update(deltaTime,eob,letters,chests, editor);
 				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,walls,seedlings,craftStations,chests,doors,isSandOnX);
 				if (menuState != stateNone)
 				{
@@ -1441,7 +1441,7 @@ int main()
 				shadowSh.SetUniformMat4(basicCamera, camera);
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 
-				editorHUD.Draw(shadowSh, editor, ItemTex, blockTextures, transform);
+				editorHUD.Draw(shadowSh,fontSh, editor,chests,fontTex, ItemTex, blockTextures, transform);
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 

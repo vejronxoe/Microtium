@@ -41,12 +41,13 @@ enum PartsOfArmor
 	, armorPants
 	, armorShoes
 };
-void Player::DrawItem(Shader sh
+void DrawItem(Shader sh
 	, int sizeOfVertex
 	, float* transform
 	, float x
 	, float y
-	, unsigned int item)	
+	, unsigned int item
+	, unsigned int* allItemTextures)	
 {
 	if (item)
 	{
@@ -56,7 +57,7 @@ void Player::DrawItem(Shader sh
 			sh.SetUniform1i(sizeOfVertex + ShadowLocation, 1);
 			ChangeTransform(x, y, transform);
 			sh.SetUniformMat4(basicTransform, transform);
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[item]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, allItemTextures[item]));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 			sh.SetUniform1i(sizeOfVertex + ShadowLocation, 0);
 		}
@@ -64,7 +65,7 @@ void Player::DrawItem(Shader sh
 		{
 			ChangeTransform(x, y, transform);
 			sh.SetUniformMat4(basicTransform, transform);
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_AllItemTextures[item]));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, allItemTextures[item]));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 	}
@@ -3280,7 +3281,7 @@ void Player::DrawPlayer(float deltaTime
 			{
 				for (int j = 0; j < 10; j++)
 				{
-					DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_SlotGap * i, chests.at(m_IndexOfOpenChest).m_Items[j + (i - 6) * 10]);
+					DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_SlotGap * i, chests.at(m_IndexOfOpenChest).m_Items[j + (i - 6) * 10], m_AllItemTextures);
 				}
 			}
 			ChangeTransform(0, 0, transform);
@@ -3331,15 +3332,15 @@ void Player::DrawPlayer(float deltaTime
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1] - m_SlotGap * j, m_PlayerSlots[i + 1 + j * 10]);
+				DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1] - m_SlotGap * j, m_PlayerSlots[i + 1 + j * 10], m_AllItemTextures);
 			}
 		}
-		DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_SlotGap * 5, m_PlayerSlots[51]);
+		DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * 9, m_InvOffset[1] - m_SlotGap * 5, m_PlayerSlots[51], m_AllItemTextures);
 
 		for (int i = 0; i < 8; i++)
 		{
 			
-			DrawItem(animSh, animSize, transform, m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), m_PlayerSlots[i + 52]);
+			DrawItem(animSh, animSize, transform, m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), m_PlayerSlots[i + 52],m_AllItemTextures);
 			
 		}
 		fontSh.Bind();
@@ -3528,7 +3529,7 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDDefault]));
 		for (int i = 0; i < 10; i++)
 		{
-			DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], m_PlayerSlots[i + 1]);
+			DrawItem(animSh, animSize, transform, m_InvOffset[0] + m_SlotGap * i, m_InvOffset[1], m_PlayerSlots[i + 1],m_AllItemTextures);
 			
 
 		}

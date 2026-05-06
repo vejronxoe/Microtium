@@ -3,6 +3,7 @@
 #include "BlocksAndWalls.h"
 #include"structures.h"
 #include"flora.h"
+#include"glfw/Font.h"
 enum PlacingType
 {
 	brushType =0
@@ -46,30 +47,46 @@ enum drawDataHUD
 {
 	rightHUDSlots = 0
 	, leftHUDSlots
+	, rightItemSlots
+	, InvOfChest
 	, useSlotDD
 	, defaultSlotUV
+	, slotChestDefaultUV
 };
 struct EditorHUD
 {
-	unsigned int m_DDs[4] = {};
-	unsigned int m_VBOs[4] = {};
-	unsigned int m_EOBs[2] = {};
-	unsigned int m_EOBSizes[2] = {};
+	unsigned int m_DDs[7] = {};
+	unsigned int m_VBOs[7] = {};
+	unsigned int m_EOBs[4] = {};
+	unsigned int m_EOBSizes[4] = {};
 	unsigned int m_SlotTexs = {};
 	unsigned int m_Icons[3] = {};
 	unsigned int m_SelectZoneTex = 0;
+	bool m_OpenChest = false;
+	int m_ChestIndex = 0;
 	float m_Scroll = 0;
 	int m_WantedScroll = 0;
 	float m_SideLength = 0;
 	float m_GapLength = 0;
+	float m_SideLengthChest = 0;
+	float m_GapLengthChest = 0;
+	Text m_ChestAmount[50];
 	EditorHUD(unsigned int eob
 		, unsigned int backGroundTex);
 	void Create(unsigned int eob
+		, std::vector<Chest>& chests
+		, std::vector<Letter>& ancii
 		, bool first);
 	int Update(float deltaTime
+		, unsigned int eob
+		, std::vector<Letter>& ancii
+		, std::vector<Chest>& chests
 		, Editor& editor);
 	void Draw(Shader& Sh
+		, Shader& fontSh
 		, Editor editor
+		, std::vector<Chest>& chests
+		, unsigned int fontTexture
 		, unsigned int* itemsTex
 		, unsigned int* blockTex
 		, float* transform);

@@ -199,12 +199,7 @@ private:
 		, int amount
 		, float x
 		, float y);
-	void DrawItem(Shader sh
-		, int sizeOfVertex
-		, float* transform
-		, float x
-		, float y
-		, unsigned int item);
+
 	void createHUD(unsigned int eob
 		, std::vector<Chest>& chests
 		, std::vector<Letter>& ASCII);
@@ -302,3 +297,11 @@ enum SlotTextures
 	, trashSlot
 
 };
+
+void DrawItem(Shader sh
+	, int sizeOfVertex
+	, float* transform
+	, float x
+	, float y
+	, unsigned int item
+	, unsigned int* allItemTextures);
