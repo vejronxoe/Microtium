@@ -10,6 +10,7 @@
 #include"math/matrix.h"
 #include"ItemList.h"
 #include"glfw/Window.h"
+#include"math/VectorOperation.h"
 
 namespace Blocks
 {
@@ -19,69 +20,49 @@ namespace Blocks
 	int yMin;
 };
 
-unsigned int getBehaviorByTexture(unsigned int texture
-	, unsigned int* blocksTex)
+unsigned char getBehaviorByType(unsigned char blocksType)
 {
+	blocksType = Clamp(blocksType,0,t_BlocksSize-1);
+	unsigned char behaviours[t_BlocksSize] = { b_BasicSolid };
+	behaviours[t_Ice] = b_Slippery;
+	behaviours[t_Asphalt] = b_Asphalt;
+	behaviours[t_Platform] = b_Platform;
+	behaviours[t_DoorBlock] = b_Indestructible;
+	return behaviours[blocksType];
 	
-	if (blocksTex[t_Ice] == texture)
-	{
-		return b_Slippery;
-	}
-	else if (blocksTex[t_Asphalt] == texture)
-	{
-		return b_Asphalt;
-	}
-	else if (blocksTex[t_Platform] == texture)
-	{
-		return b_Platform;
-	}
-	else
-	{
-		return b_BasicSolid;
-	}
-}
-unsigned int GetWallItemIDByTexture(unsigned int texture
-	, unsigned int* blocksTex)
-{
 
-	if (blocksTex[t_Ice] == texture)
-	{
-		return i_WallIce;
-	}
-	else
-	{
-		return i_WallDirt;
-	}
 }
-unsigned int GetItemIDByTexture(unsigned int texture
-, unsigned int* blocksTex)
+unsigned char getTypeByItem(unsigned char item)
 {
-	
-		if (blocksTex[t_Ice] == texture)
-		{
-		return i_Ice;
-		}
-		else if (blocksTex[t_Asphalt] == texture)
-		{
-		return i_Asphalt;
-		}
-		else if (blocksTex[t_Platform] == texture)
-		{
-		return i_Platform;
-		}
-		else if (blocksTex[t_Sand] == texture)
-		{
-		return i_Sand;
-		}
-		else if (blocksTex[t_ForestPlank] == texture)
-		{
-		return i_ForestPlank;
-		}
-		else
-		{
-			return i_Dirt;
-		}
+	item = Clamp(item, 0, i_ItemSize-1);
+	int types[i_ItemSize] = {t_Dirt};
+	types[i_Ice] = t_Ice;
+	types[i_Asphalt] = t_Asphalt;
+	types[i_Platform] = t_Platform;
+	types[i_ForestPlank] = t_ForestPlank;
+	types[i_Sand] = t_Sand;
+	return types[item];
 }
+unsigned char GetWallItemBytype(unsigned char blocksType)
+{
+	blocksType = Clamp(blocksType, 0, t_BlocksSize - 1);
+	unsigned char wallIDs[t_BlocksSize] = {i_WallDirt};
+	wallIDs[t_Ice] = i_WallIce;
+	return wallIDs[blocksType];
+
+}
+unsigned char GetBlockItemByType(unsigned char blocksType)
+{
+	blocksType = Clamp(blocksType, 0, t_BlocksSize - 1);
+	unsigned char blocksIDs[t_BlocksSize] = { i_Dirt };
+	blocksIDs[t_Ice] = i_Ice;
+	blocksIDs[t_Asphalt] = i_Asphalt;
+	blocksIDs[t_Platform] = i_Platform;
+	blocksIDs[t_ForestPlank] = i_ForestPlank;
+	blocksIDs[t_Sand] = i_Sand;
+	return blocksIDs[blocksType];
+}
+
 
 DamagedBlock::DamagedBlock(int x
 	, int y
@@ -102,47 +83,22 @@ void DamagedBlock::DrawDamage(Shader& basicShader
 
 
 
-Block::Block(unsigned int tex
-	, int y
-	, unsigned char behavior
-	, unsigned char hardness
-	, unsigned short int itemDrop)
-	: m_te(tex), m_Y (y) , m_BlockBehavior(behavior),m_Hardness(hardness),m_ItemDrop(itemDrop)
-{}
-
-void Block::DrawBlock(Shader& basicShader
-	, int x
-	, float* transform)
+Block::Block(unsigned char blockType
+	, int y)
 {
-	if (m_BlockBehavior != b_Door)
-	{
-		ChangeTransform(x, m_Y, transform);
-		basicShader.SetUniformMat4(basicTransform, transform);
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_te));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	}
+	blockType = Clamp(blockType, 0, t_BlocksSize -1);
+	m_Y = y;
+	m_BlockType = blockType;
+	m_BlockBehavior = getBehaviorByType(blockType);
+	unsigned char hardness[t_BlocksSize] = { 15 };
+	hardness[t_Asphalt] = 35;
+	hardness[t_Platform] = 20;
+	hardness[t_ForestPlank] = 20;
+	m_Hardness = hardness[blockType];
 }
 
-wall::wall(unsigned int texture
-	, bool render
-	, unsigned short int itemDrop
-	, int y
-	, unsigned char hardness)
-	:m_Texture(texture), m_Render(render), m_ItemDrop(itemDrop), m_Y(y), m_Hardness(hardness)
-{
-}
-void wall::drawWalls(Shader& wallSh
-	, int x
-	, float* transform)
-{
-	if (m_Render)
-	{
-		ChangeTransform(x, m_Y, transform);
-		wallSh.SetUniformMat4(basicTransform, transform);
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Texture));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	}
-}
+
+
 
 
 void CreateAllBlockTextures(unsigned int* IDs)
@@ -170,250 +126,6 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_ForestPlank] = CreateTextureRGBA("res/textures/forestPlank.png");
 	IDs[t_Sand] = CreateTextureRGBA("res/textures/sand.png");
 }
-
-
-unsigned int GrassBlockTextureSelector(unsigned int *TexturesIDs
-	, std::vector<std::string>& lines
-	, int i 
-	, int j)
-{
-	if (lines.at(i - 1).at(j) == ' ')
-	{
-		if (lines.at(i + 1).at(j) == ' ')
-		{
-			if (lines.at(i).at(j - 1) == ' ')
-			{
-				if (lines.at(i).at(j + 1) == ' ')
-				{
-					return TexturesIDs[t_FullGrass];
-				}
-				else
-				{
-					return TexturesIDs[t_MissingRightGrass];
-				}
-			}
-			else if (lines.at(i).at(j + 1) == ' ')
-			{
-				return TexturesIDs[t_MissingLeftGrass];
-			}
-			else
-			{
-				return TexturesIDs[t_TopDownGrass];
-			}
-		}
-		else if (lines.at(i).at(j - 1) == ' ')
-		{
-			if (lines.at(i).at(j + 1) == ' ')
-			{
-				return TexturesIDs[t_MissingDownGrass];
-			}
-			else
-			{
-				return TexturesIDs[t_TopLeftGrass];
-			}
-		}
-		else if (lines.at(i).at(j + 1) == ' ')
-		{
-			return TexturesIDs[t_TopRightGrass];
-		}
-		else
-		{
-			return TexturesIDs[t_TopGrass];
-		}
-	}
-	else if (lines.at(i + 1).at(j) == ' ')
-	{
-		if (lines.at(i).at(j - 1) == ' ')
-		{
-			if (lines.at(i).at(j + 1) == ' ')
-			{
-				return TexturesIDs[t_MissingTopGrass];
-			}
-			else
-			{
-				return TexturesIDs[t_DownLeftGrass];
-			}
-		}
-		else if (lines.at(i).at(j + 1) == ' ')
-		{
-			return TexturesIDs[t_DownRightGrass];
-		}
-		else
-		{
-			return TexturesIDs[t_DownGrass];
-		}
-	}
-	else if (lines.at(i).at(j - 1) == ' ')
-	{
-		if (lines.at(i).at(j + 1) == ' ')
-		{
-			return TexturesIDs[t_LeftRightGrass];
-		}
-		else
-		{
-			return TexturesIDs[t_LeftGrass];
-		}
-	}
-	else if (lines.at(i).at(j + 1) == ' ')
-	{
-		return TexturesIDs[t_RightGrass];
-	}
-	else
-	{
-		return TexturesIDs[t_Dirt];
-	}
-}
-
-
-
-
-void LoadMapBlocksAndWalls(const char* filePathWalls
-	, const char* filePathBlocks
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
-	, int minX
-	, int maxX
-	, int minY
-	, int maxY
-	, unsigned int* texturesIDs)
-{
-	Blocks::xMax = maxX;
-	Blocks::xMin = minX;
-	Blocks::yMax = maxY;
-	Blocks::yMin = minY;
-	for (int i = minX; i <= maxX; i++)
-	{
-		std::vector<Block> emptyVectorBlocks;
-		blocks.push_back(emptyVectorBlocks);
-	
-		std::vector<wall> emptyVectorWalls;
-		walls.push_back(emptyVectorWalls);
-	}
-	{
-		std::ifstream map(filePathBlocks);
-		std::vector<std::string> lines;
-		if (!map)
-		{
-			std::cout << "can not open map file" << filePathBlocks << std::endl;
-		}
-		else
-		{
-
-
-			lines.emplace_back(" ");
-			lines.emplace_back(" ");
-			int i = 1;
-			while (std::getline(map, lines[i]) && i <= (maxY - minY + 1))
-			{
-				lines.at(i) = " " + lines.at(i) + " ";
-				lines.emplace_back(" ");
-				i++;
-			}
-			for (int i = 0; i < lines.size(); i++)
-			{
-				while (lines.at(i).length() < maxX)
-				{
-
-					lines.at(i) += " ";
-				}
-				for (int j = maxX; j < lines.at(i).length(); j++)
-				{
-					lines.at(i)[j] = ' ';
-				}
-			}
-			map.close();
-			int y = maxY;
-			for (int i = 0; y >= minY && i < lines.size(); i++)
-			{
-				for (int x = minX; x <= maxX && x < lines.at(i).length(); x++)
-				{
-					unsigned short int blockID = 0;
-					switch (lines.at(i).at(x))
-					{
-					case'd':
-						blocks.at(x).emplace_back(GrassBlockTextureSelector(texturesIDs, lines, i, x), y, b_BasicSolid, 25, i_Dirt);
-						break;
-					case'p':
-						blockID = i_Platform;
-						break;
-					case'a':
-						blockID = i_Asphalt;
-						break;
-					case'i':
-						blockID = i_Ice;
-						break;
-					case's':
-						blockID = i_Sand;
-						break;
-
-					}
-					if (blockID)
-					{
-						CreateBlock(x, y, blockID, walls, blocks,  isThereSandOnX, texturesIDs);
-					}
-				}
-				y--;
-			}
-		}
-	}
-	{
-		std::ifstream map(filePathWalls);
-		std::vector<std::string> lines;
-		if (!map)
-		{
-			std::cout << "can not open map file" << filePathWalls << std::endl;
-		}
-		else
-		{
-
-
-			lines.emplace_back(" ");
-			lines.emplace_back(" ");
-			int i = 1;
-			while (std::getline(map, lines[i]) && i <= (Blocks::yMax - Blocks::yMin + 1))
-			{
-				lines.at(i) = " " + lines.at(i) + " ";
-				lines.emplace_back(" ");
-				i++;
-			}
-			for (int i = 0; i < lines.size(); i++)
-			{
-				while (lines.at(i).length() < Blocks::xMax)
-				{
-
-					lines.at(i) += " ";
-				}
-				for (int j = Blocks::xMax; j < lines.at(i).length(); j++)
-				{
-					lines.at(i)[j] = ' ';
-				}
-			}
-			map.close();
-			int y = Blocks::yMax;
-			for (int i = 0; y >= Blocks::yMin && i < lines.size(); i++)
-			{
-				for (int x = Blocks::xMin; x <= Blocks::xMax && x < lines.at(i).length(); x++)
-				{
-
-					unsigned short int wallID = 0;
-					switch (lines.at(i).at(x))
-					{
-					case'd':
-						wallID = i_WallDirt;
-						break;
-					case'i':
-						wallID = i_WallIce;
-						break;
-					}
-					createWall(x, y, wallID, walls, blocks, texturesIDs);
-				}
-				y--;
-			}
-		}
-	}
-}
-
 
 
 void drawBlocks(std::vector<std::vector<Block>>& blocks
@@ -521,7 +233,7 @@ void createWall(int x
 
 void CreateBlock(int x
 	, int y
-	, unsigned short int IDOfItemBlock
+	, unsigned short int blockType
 	, std::vector<std::vector<wall>>& walls
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& isThereSandOnX
@@ -530,50 +242,39 @@ void CreateBlock(int x
 	
 	bool isThereWall;
 	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
-	if (i_Platform != IDOfItemBlock && i_DoorBlock != IDOfItemBlock)
+	if (t_Platform != blockType && t_DoorBlock != blockType)
 	{
 		if (isThereWall)
 		{
 			walls.at(x).at(indexOfTheWall).m_Render = false;
 		}
 	}
-	if (IDOfItemBlock == i_Sand)
+	if (blockType == t_Sand)
 	{
-		isThereSandOnX.emplace_back(x);
+		bool notThere = true;
+		for (int i = 0; i < isThereSandOnX.size();i++)
+		{
+			if (x == isThereSandOnX[i])
+			{
+				notThere = false;
+				break;
+			}
+		}
+		if (notThere)
+		{
+			isThereSandOnX.emplace_back(x);
+		}
 	}
-	int indexToPlace = 0;
-	for (; indexToPlace < blocks.at(x).size(); indexToPlace++)
+	int indexToPlace;
+	for (indexToPlace = 0; indexToPlace < blocks.at(x).size(); indexToPlace++)
 	{
 		if (blocks[x][indexToPlace].m_Y < y)
 		{
 			break;
 		}
 	}
-
-	switch (IDOfItemBlock)
-	{
-	case i_Dirt:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], y, b_BasicSolid, 15, i_Dirt);
-		break;
-	case i_Platform:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Platform], y, b_Platform, 20, i_Platform);
-		break;
-	case i_Asphalt:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Asphalt], y, b_Asphalt, 35, i_Asphalt);
-		break;
-	case i_Ice:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Ice], y, b_Slippery, 15, i_Ice);
-		break;
-	case i_ForestPlank:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_ForestPlank], y, b_BasicSolid, 20, i_ForestPlank);
-		break;
-	case i_Sand:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, texturesIDs[t_Sand], y, b_Sand, 20, i_Sand);
-		break;
-	case i_DoorBlock:
-		blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, 0, y, b_Door, 0, i_Nothing);
-		break;
-	}
+	blocks[x].emplace(blocks[x].begin() + indexToPlace, blockType,y);
+	
 }
 
 void DestroyBlock(std::vector<std::vector<Block>>& blocks

@@ -44,6 +44,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
     <ClCompile Include="src\projectile.cpp" />
+    <ClCompile Include="src\SaveAndLoad.h.cpp" />
     <ClCompile Include="src\structures.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +74,7 @@
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
     <ClInclude Include="src\projectile.h" />
+    <ClInclude Include="src\SaveAndLoad.h" />
     <ClInclude Include="src\structures.h" />
   </ItemGroup>
   <ItemGroup>

@@ -21,8 +21,7 @@ enum TexturesOfBlocks
 	, t_Platform
 	, t_ForestPlank
 	, t_Sand
-	, t_BlocksSize
-	, t_TopGrass = t_BlocksSize
+	, t_TopGrass
 	, t_LeftGrass
 	, t_DownGrass
 	, t_RightGrass
@@ -37,6 +36,9 @@ enum TexturesOfBlocks
 	, t_MissingDownGrass
 	, t_MissingRightGrass
 	, t_FullGrass
+	, t_DoorBlock
+	, t_BlocksSize
+
 };
 enum BlockBehavior
 {
@@ -51,21 +53,21 @@ enum BlockBehavior
 };
 
 void CreateAllBlockTextures(unsigned int* IDs);
+unsigned char getBehaviorByType(unsigned char blocksType);
+unsigned char getTypeByItem(unsigned char item);
+unsigned char GetWallItemBytype(unsigned char blocksType);
+unsigned char GetBlockItemByType(unsigned char blocksType);
 
 class Block
 {
 public:
-	unsigned int m_te;
-	int m_Y;
-	unsigned char m_BlockBehavior;
-	unsigned char m_Hardness;
-	unsigned short m_ItemDrop;
+	unsigned char m_BlockType = t_Dirt;
+	int m_Y = 0;
+	unsigned char m_BlockBehavior = b_BasicSolid;
+	unsigned char m_Hardness = 15;
 
-	Block(unsigned int tex
-		, int y
-		, unsigned char Behavior
-		, unsigned char hardness
-		, unsigned short int itemDrop);
+	Block(unsigned char blockType 
+		, int y);
 
 	void DrawBlock( Shader& basicShader
 		, int x
@@ -74,16 +76,13 @@ public:
 class wall
 {
 public:
-	unsigned int m_Texture;
+	unsigned char m_WallType;
 	bool m_Render;
-	unsigned short int m_ItemDrop;
 	int m_Y;
 	unsigned char m_Hardness;
-	wall(unsigned int texture
+	wall(unsigned char wallType
 		, bool render
-		, unsigned short int itemDrop
-		, int y
-		, unsigned char hardness);
+		, int y);
 
 	void drawWalls(Shader& wallSh
 		, int x
@@ -103,17 +102,6 @@ struct DamagedBlock
 
 
 
-
-void LoadMapBlocksAndWalls(const char* filePathWalls
-	, const char* filePathBlocks
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
-	, int minX
-	, int maxX
-	, int minY
-	, int maxY
-	, unsigned int* texturesIDs);
 
 void drawWalls(std::vector<DamagedBlock> damagedWalls
 	, unsigned int* damageTextures
@@ -161,10 +149,3 @@ int FindWall(std::vector<std::vector<wall>>& walls
 	, bool& found);
 bool WallInArea(std::vector<std::vector<wall>>& walls
 	, int* vertices);
-
-unsigned int GetItemIDByTexture(unsigned int texture
-	, unsigned int* blocksTex);
-unsigned int getBehaviorByTexture(unsigned int texture
-	, unsigned int* blocksTex);
-unsigned int GetWallItemIDByTexture(unsigned int texture
-	, unsigned int* blocksTex);
