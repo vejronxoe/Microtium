@@ -1263,7 +1263,7 @@ int main()
 			unsigned int enemiesTex2[enemySize];
 			unsigned int enemiesDD1[enemySize];
 			unsigned int enemiesDD2[enemySize];
-			unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			unsigned int blockTextures[t_BlocksSize];
 			unsigned int treeTextures[3];
 			unsigned int CutTextures[4];
 			unsigned int structuresTextures[8];
