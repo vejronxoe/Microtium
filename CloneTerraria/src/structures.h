@@ -21,8 +21,7 @@ struct Chest
 	Chest(int x
 		,int y
 		, std::vector<std::vector<Block>>& blocks);
-	void DestroyChest(std::vector<std::vector<Block>>& blocks
-		, unsigned int* blocksTex);
+	void DestroyChest(std::vector<std::vector<Block>>& blocks);
 };
 struct Door
 {
@@ -34,10 +33,10 @@ struct Door
 		,int y
 		, short type
 		, std::vector<int>& sandX
-		, std::vector< std::vector<wall>>& walls
+		, std::vector< std::vector<Wall>>& Walls
 		, std::vector<std::vector<Block>>& blocks);
 	void DoorInteract(std::vector<std::vector<Block>>& blocks
-		, std::vector< std::vector<wall>>& walls
+		, std::vector< std::vector<Wall>>& Walls
 		, std::vector<seedling>& seedlings
 		, std::vector<tree>& trees
 		, std::vector<CraftStation>& craftingStations
@@ -46,7 +45,7 @@ struct Door
 		, std::vector<int>& sandX
 		, float* playerTransform);
 	void DestroyDoor(std::vector<std::vector<Block>>& blocks
-		, std::vector< std::vector<wall>>& walls
+		, std::vector< std::vector<Wall>>& Walls
 		, std::vector<int>& sandX);
 	bool CheckFloorAndCeil(std::vector<Door>& doors
 		, std::vector<std::vector<Block>>& blocks
@@ -130,7 +129,7 @@ void CreateStructure(int StructureID
 	, int directionLook
 	, unsigned int* structuresTex
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<seedling>& seedlings
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests

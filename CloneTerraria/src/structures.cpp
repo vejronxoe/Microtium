@@ -18,28 +18,27 @@ Chest::Chest(int x
 	m_Transform[0] = x;
 	m_Transform[1] = y;
 	m_Open = 0;
-	bool found = false;
-	int index = FindBlock(blocks, x, y - 1, found);
-	blocks.at(x).at(index).m_BlockBehavior = b_Indestructible;
-	index = FindBlock(blocks, x + 1, y - 1, found);
-	blocks.at(x + 1).at(index).m_BlockBehavior = b_Indestructible;
+	int index;
+	bool found = FindBlock(blocks, x, y - 1, index);
+	blocks.at(x).at(index).m_Behavior = b_Indestructible;
+	found = FindBlock(blocks, x + 1, y - 1, index);
+	blocks.at(x + 1).at(index).m_Behavior = b_Indestructible;
 }
 
-void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks
-, unsigned int* blocksTex)
+void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 {
-	bool found = false;
-	int index = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
-	blocks.at(m_Transform[0]).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0]).at(index).m_te, blocksTex);
-	index = FindBlock(blocks, m_Transform[0] + 1, m_Transform[1] - 1, found);
-	blocks.at(m_Transform[0] + 1).at(index).m_BlockBehavior = getBehaviorByTexture(blocks.at(m_Transform[0] + 1).at(index).m_te, blocksTex);
+	int index;
+	FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, index);
+	blocks.at(m_Transform[0]).at(index).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0]).at(index).m_Type);
+	FindBlock(blocks, m_Transform[0] + 1, m_Transform[1] - 1, index);
+	blocks.at(m_Transform[0] + 1).at(index).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0] + 1).at(index).m_Type);
 
 }
 Door::Door(int x
 	, int y
 	, short type
 	, std::vector<int>& sandX
-	, std::vector < std::vector<wall>>& walls
+	, std::vector < std::vector<Wall>>& Walls
 	, std::vector<std::vector<Block>>& blocks)
 	:m_Transform{x, y}
 	, m_Type(type)
@@ -53,13 +52,13 @@ Door::Door(int x
 	case s_Door:
 		for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 		{
-			CreateBlock(m_Transform[0], i, i_DoorBlock, walls, blocks, sandX, NULL);
+			CreateBlock(m_Transform[0], i, t_DoorBlock, Walls, blocks, sandX);
 		}
 		break;
 	case s_TrapDoor:
 		for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 		{
-			CreateBlock(i, m_Transform[1], i_DoorBlock, walls, blocks, sandX, NULL);
+			CreateBlock(i, m_Transform[1], t_DoorBlock, Walls, blocks, sandX);
 		}
 		break;
 	default:
@@ -99,7 +98,7 @@ bool IsInAreaDoors(std::vector<Door>& structures
 
 }
 void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
-	, std::vector< std::vector<wall>>& walls
+	, std::vector< std::vector<Wall>>& Walls
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
@@ -118,13 +117,13 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 		case s_Door:
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				CreateBlock(m_Transform[0], i, i_DoorBlock, walls, blocks, sandX, NULL);
+				CreateBlock(m_Transform[0], i, t_DoorBlock, Walls, blocks, sandX);
 			}
 			break;
 		case s_TrapDoor:
 			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 			{
-				CreateBlock(i, m_Transform[1], i_DoorBlock, walls, blocks, sandX, NULL);
+				CreateBlock(i, m_Transform[1], t_DoorBlock, Walls, blocks, sandX);
 			}
 			break;
 		default:
@@ -156,7 +155,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 
 					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 					{
-						DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+						DestroyBlock(blocks, Walls, sandX, m_Transform[0], i);
 					}
 					if (preferSide == -1)
 					{
@@ -179,7 +178,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 						{
-							DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+							DestroyBlock(blocks, Walls, sandX, m_Transform[0], i);
 						}
 						if (preferSide == -1)
 						{
@@ -212,7 +211,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				{
 					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 					{
-						DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+						DestroyBlock(blocks, Walls, sandX, i, m_Transform[1]);
 					}
 
 					m_Vertices[0] = vertices[0];
@@ -233,7 +232,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 						{
-							DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+							DestroyBlock(blocks, Walls, sandX, i, m_Transform[1]);
 						}
 						m_Vertices[0] = vertices[0];
 						m_Vertices[1] = vertices[1];
@@ -250,7 +249,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 		{
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+				DestroyBlock(blocks, Walls, sandX, m_Transform[0], i);
 			}
 			m_OpenSide = 1;
 			break;
@@ -269,27 +268,24 @@ bool Door::CheckFloorAndCeil(std::vector<Door>& doors
 	{
 	case s_TrapDoor:
 	{
-		bool found = false;
-		FindBlock(blocks, m_Transform[0] - 1, m_Transform[1], found);
-		if (found)
+		int fill;
+		if (FindBlock(blocks, m_Transform[0] - 1, m_Transform[1], fill))
 		{
-			FindBlock(blocks, m_Vertices[2] + 1, m_Transform[1], found);
-			
-			return !found;
+			return !FindBlock(blocks, m_Vertices[2] + 1, m_Transform[1], fill);
 			
 		}
 		break;
 	}
 	default:
 	{
-		bool found = false;
-		FindBlock(blocks, m_Transform[0], m_Vertices[1] + 1, found);
-		if (found)
+		
+		int fill;
+		if (FindBlock(blocks, m_Transform[0], m_Vertices[1] + 1,fill))
 		{
-			found = false;
-			FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, found);
 			
-				return !found;
+			
+			
+				return !FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, fill);
 
 		
 		}
@@ -378,7 +374,7 @@ void DrawDoors(std::vector<Door>& doors
 	}
 }
 void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
-	, std::vector< std::vector<wall>>& walls
+	, std::vector< std::vector<Wall>>& Walls
 	, std::vector<int>& sandX)
 {
 	if (!m_OpenSide)
@@ -390,13 +386,13 @@ void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
 		case s_Door:
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				DestroyBlock(blocks, walls, sandX, m_Transform[0], i);
+				DestroyBlock(blocks, Walls, sandX, m_Transform[0], i);
 			}
 			break;
 		case s_TrapDoor:
 			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 			{
-				DestroyBlock(blocks, walls, sandX, i, m_Transform[1]);
+				DestroyBlock(blocks, Walls, sandX, i, m_Transform[1]);
 			}
 			break;
 		default:
@@ -640,8 +636,8 @@ void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 		getStructureVertices(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], craftingStation.at(i).m_CraftStationtype, vertices);
 		for (int j = vertices[0]; j <= vertices[2]; j++)
 		{
-			FindBlock(blocks, j, craftingStation.at(i).m_Transform[1] - 1, floorFound);
-			if (!floorFound)
+			int fill;
+			if (!FindBlock(blocks, j, craftingStation.at(i).m_Transform[1] - 1, fill))
 			{
 				droppedItems.emplace_back(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], 0, GetItemIDByStructure(craftingStation.at(i).m_CraftStationtype),1,true);
 				craftingStation.erase(i + craftingStation.begin());
@@ -665,8 +661,8 @@ bool isAnythingOnThisTransform(int x
 
 	bool inBlock = false;
 	
-
-	FindBlock(blocks, x, y, inBlock);
+	int fill;
+	inBlock = FindBlock(blocks, x, y, fill);
 	if (inBlock)
 	{
 		return true;
@@ -721,7 +717,8 @@ bool isAnythinginArea(int* vertices
 		return true;
 
 	}
-	inBlock = blockInArea(blocks, vertices);
+
+	inBlock = FindBlock(blocks, vertices);
 	if (inBlock)
 	{
 		return true;
@@ -757,7 +754,7 @@ void CreateStructure(int StructureID
 	,int directionLook
 	,unsigned int* structuresTex 
 	, std::vector<std::vector<Block>>& blocks
-	,std::vector<std::vector<wall>> &walls
+	,std::vector<std::vector<Wall>> &Walls
 	,std::vector<seedling>& seedlings
 	,std::vector<CraftStation>& craftStations
 	,std::vector<Chest>& chests
@@ -809,7 +806,7 @@ void CreateStructure(int StructureID
 	case s_Door:
 	case s_TrapDoor:
 	case s_Gate:
-		doors.emplace_back(x, y,StructureID, isThereSandOnX, walls, blocks);
+		doors.emplace_back(x, y,StructureID, isThereSandOnX, Walls, blocks);
 		break;
 	}
 }

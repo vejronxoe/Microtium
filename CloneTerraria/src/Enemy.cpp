@@ -519,7 +519,7 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 					
 					while (vertices[1] < checked + spawnVertices[1])
 					{
-						if (!blockInArea(blocks, vertices))
+						if (!FindBlock(blocks, vertices))
 						{
 							spawntransform[0] = vertices[0] + enemyVertices[2];
 							spawntransform[1] = vertices[1] + enemyVertices[3];

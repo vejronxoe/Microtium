@@ -152,7 +152,7 @@ bool Projectile::HitEnemies(float deltaTime
 bool Projectile::EveryFrame(float deltaTime
 	, std::vector<Enemy>& enemies
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<CraftStation>& craftStations
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
@@ -200,7 +200,7 @@ bool Projectile::EveryFrame(float deltaTime
 			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,doors,chests);
 			if (!inBlock)
 			{
-				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), i_Sand, walls, blocks, isSandOnX, blockTextures);
+				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), t_Sand, Walls, blocks, isSandOnX);
 			}
 			else
 			{
@@ -555,7 +555,7 @@ void Projectile::Draw(Shader& sh
 void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, unsigned int projectileSand
 	, unsigned int blockDD)
 {
@@ -574,7 +574,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 				{
 					int sizeBefore = isSandOnX.size();
 					projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-					DestroyBlock(blocks, walls, isSandOnX, x, nextY + 1);
+					DestroyBlock(blocks, Walls, isSandOnX, x, nextY + 1);
 					j--;
 					if (sizeBefore == isSandOnX.size())
 					{
@@ -585,7 +585,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 				}
 			}
 			
-			if (blocks.at(x).at(j).m_BlockBehavior == b_Sand)
+			if (blocks.at(x).at(j).m_Behavior == b_Sand)
 			{
 				checkNext = true;
 				nextY = blocks.at(x).at(j).m_Y - 1;
@@ -598,7 +598,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 			{
 				int sizeBefore = isSandOnX.size();
 				projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-				DestroyBlock(blocks, walls, isSandOnX, x, nextY + 1);
+				DestroyBlock(blocks, Walls, isSandOnX, x, nextY + 1);
 				if (sizeBefore == isSandOnX.size())
 				{
 					i--;

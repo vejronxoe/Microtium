@@ -61,30 +61,32 @@ unsigned char GetBlockItemByType(unsigned char blocksType);
 class Block
 {
 public:
-	unsigned char m_BlockType = t_Dirt;
+	unsigned char m_Type = t_Dirt;
 	int m_Y = 0;
-	unsigned char m_BlockBehavior = b_BasicSolid;
+	unsigned char m_Behavior = b_BasicSolid;
 	unsigned char m_Hardness = 15;
 
 	Block(unsigned char blockType 
 		, int y);
 
-	void DrawBlock( Shader& basicShader
+	void Draw( Shader& basicSh
+		, unsigned int* blockTex
 		, int x
 		, float* transform);
 };
-class wall
+class Wall
 {
 public:
-	unsigned char m_WallType;
+	unsigned char m_Type;
 	bool m_Render;
 	int m_Y;
 	unsigned char m_Hardness;
-	wall(unsigned char wallType
+	Wall(unsigned char WallType
 		, bool render
 		, int y);
 
-	void drawWalls(Shader& wallSh
+	void Draw(Shader& shadowSh
+		, unsigned int* blockTex
 		, int x
 		, float* transform);
 };
@@ -105,8 +107,9 @@ struct DamagedBlock
 
 void drawWalls(std::vector<DamagedBlock> damagedWalls
 	, unsigned int* damageTextures
-	, std::vector<std::vector<wall>>& walls
-	, Shader& wallsSh
+	, std::vector<std::vector<Wall>>& walls
+	, Shader& WallsSh
+	, unsigned int* blockTex
 	, float* camera
 	, float* transform
 	, float* cameraCoordinate);
@@ -114,38 +117,37 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, std::vector<DamagedBlock> damagedBlocks
 	, float* cameraCoordinate
 	, Shader& basicSh
+	, unsigned int* blockTex
 	, unsigned int* damageTexture
 	, float* transform
 	, float* camera);
 
+
 void createWall(int x
 	, int y
-	, unsigned short int IDOfItemWall
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, unsigned int* texturesIDs);
-void CreateBlock(int x
-	, int y
-	, unsigned short int IDOfItemBlock
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
-	, unsigned int* texturesIDs);
+	, unsigned short int wallType
+	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<Block>>& blocks);
+	void CreateBlock(int x
+		, int y
+		, unsigned short int blockType
+		, std::vector<std::vector<Wall>>& Walls
+		, std::vector<std::vector<Block>>& blocks
+		, std::vector<int>& isThereSandOnX);
 void DestroyBlock(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y);
-
-int FindBlock(std::vector<std::vector<Block>>& blocks
+bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int x
 	, int y
-	, bool& found);
-bool blockInArea(std::vector<std::vector<Block>>& blocks
+	, int& index);
+bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int* vertices);
-int FindWall(std::vector<std::vector<wall>>& walls
+bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int x
 	, int y
-	, bool& found);
-bool WallInArea(std::vector<std::vector<wall>>& walls
+	, int& index);
+bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int* vertices);

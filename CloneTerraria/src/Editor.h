@@ -29,7 +29,7 @@ struct Editor
 		, unsigned int* BlocksTex
 		, unsigned int* structureTex
 		, std::vector<std::vector<Block>>& blocks
-		, std::vector<std::vector<wall>>& Walls
+		, std::vector<std::vector<Wall>>& Walls
 		, std::vector<seedling>& saplings
 		, std::vector<CraftStation>& CraftingStations
 		, std::vector<Chest>& Chest
@@ -41,7 +41,7 @@ struct Editor
 	private:
 	void CopyBlocksAndWalls( unsigned int* blocksTex
 		, std::vector<std::vector<Block>>& blocks
-		, std::vector<std::vector<wall>>& Walls);
+		, std::vector<std::vector<Wall>>& Walls);
 };
 enum drawDataHUD
 {

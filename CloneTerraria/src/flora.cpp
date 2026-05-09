@@ -223,8 +223,7 @@ seedling::seedling(char type
 ,m_Type(type)
 ,m_Texture(structuresTextures[type])
 {
-	bool fill;
-	m_IndexOfGroundBlock = FindBlock(blocks,x,y - 1, fill);
+	FindBlock(blocks,x,y - 1, m_IndexOfGroundBlock);
 }
 void createBranchs(std::vector <std::vector<Block>>& blocks
 	, std::vector<tree>& trees
@@ -270,7 +269,7 @@ void createBranchs(std::vector <std::vector<Block>>& blocks
 		branchVertices[1] = m_Transform[1] + order.at(0) + 1;
 		branchVertices[3] = m_Transform[1] + order.at(0) - 1;
 		inBlock = false;
-		inBlock = blockInArea(blocks, branchVertices);
+		inBlock = FindBlock(blocks, branchVertices);
 		if (!inBlock)
 		{
 			checkTreesWithCrowns(trees, branchVertices, inBlock);
@@ -317,13 +316,13 @@ bool seedling::everyFrame(float deltaTime
 		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Y == m_Transform[1] - 1);
 		if (noGround)
 		{
-			m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, noGround);
+			noGround = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, m_IndexOfGroundBlock);
 			noGround = !noGround;
 		}
 	}
 	else
 	{
-		m_IndexOfGroundBlock = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, noGround);
+		noGround = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, m_IndexOfGroundBlock);
 		noGround = !noGround;
 	}
 	m_Timer += deltaTime;
@@ -340,7 +339,7 @@ bool seedling::everyFrame(float deltaTime
 
 		if (!inBlock)
 		{
-			inBlock = blockInArea(blocks, vertices);
+			inBlock = FindBlock(blocks, vertices);
 		}
 		if (!inBlock)
 		{
@@ -352,7 +351,7 @@ bool seedling::everyFrame(float deltaTime
 		}
 		if (!inBlock)
 		{
-			inBlock = blockInArea(blocks, crownVertices);
+			inBlock = FindBlock(blocks, crownVertices);
 		}
 		if (inBlock)
 		{
@@ -360,7 +359,7 @@ bool seedling::everyFrame(float deltaTime
 		}
 		else
 		{
-			blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_BlockBehavior = b_Indestructible;
+			blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Behavior = b_Indestructible;
 
 			for (int i = m_Transform[1]; i < m_Transform[1] + leangth; i++)
 			{

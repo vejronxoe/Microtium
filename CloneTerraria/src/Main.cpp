@@ -30,16 +30,19 @@
 #include"math/VectorOperation.h"
 #include"Editor.h"
 
+
 void LoadGame(std::string pathToSave
-, std::vector<std::vector<wall>>& walls
-, std::vector< std::vector<Block>>& blocks
-, std::vector<int>& isSandOnX
-, unsigned int* blockTextures)
+	,std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& isSandOnX
+	,unsigned int* blockTextures)
 {
-	walls.clear();
-	blocks.clear();
-	isSandOnX.clear();
-	LoadMapBlocksAndWalls((pathToSave  + "mapWalls.txt").c_str(), (pathToSave + "mapBlocks.txt").c_str(), walls, blocks, isSandOnX, 0, 1080, -500, 360, blockTextures);
+	Blocks::xMax	= 1080;
+		Blocks::xMin= 0 ;
+		Blocks::yMax= 360;
+		Blocks::yMin= -500;
+	blocks.assign(Blocks::xMax, std::vector<Block> {});
+	walls.assign(Blocks::xMax, std::vector<Wall> {});
 
 }
 struct Menu
@@ -752,7 +755,7 @@ int main()
 
 			std::vector<std::vector<Block>> blocks;
 			std::vector<DamagedBlock> damagedBlocks;
-			std::vector<std::vector<wall>> walls;
+			std::vector<std::vector<Wall>> Walls;
 			std::vector<DamagedBlock> damagedWalls;
 			std::vector<tree> trees;
 			std::vector<damagedWood> damagedTrees;
@@ -766,7 +769,7 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
-			LoadGame(pathToSave, walls, blocks, isSandOnX, blockTextures);
+			LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
 
 
@@ -831,7 +834,7 @@ int main()
 					if (doors.at(i).CheckFloorAndCeil(doors, blocks, dropItems))
 					{
 						dropItems.emplace_back(doors[i].m_Transform[0], doors[i].m_Transform[1], 0, GetItemIDByStructure(doors[i].m_Type), 1, true);
-						doors.at(i).DestroyDoor(blocks, walls, isSandOnX);
+						doors.at(i).DestroyDoor(blocks, Walls, isSandOnX);
 						doors.erase(i + doors.begin());
 					}
 				}
@@ -856,12 +859,12 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				player.EveryFrame(deltaTime, blocks, walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
-				SandEveryFrame(isSandOnX, projectiles, blocks, walls, blockTextures[t_Sand], blocksDrawData);
+				player.EveryFrame(deltaTime, blocks, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+				SandEveryFrame(isSandOnX, projectiles, blocks, Walls, blockTextures[t_Sand], blocksDrawData);
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
-					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX, blockTextures))
+					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX, blockTextures))
 					{
 						projectiles.erase(projectiles.begin() + i);
 					}
@@ -884,9 +887,9 @@ int main()
 				}
 				for (int i = 0; i < damagedBlocks.size(); i++)
 				{
-					bool ExistenceOfBlock = false;
-					FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1], ExistenceOfBlock);
-					if (!ExistenceOfBlock)
+					int index;
+					
+					if (!FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1],index))
 					{
 						damagedBlocks.erase(damagedBlocks.begin() + i);
 					}
@@ -934,9 +937,9 @@ int main()
 
 				shadowSh.Bind();
 				ErrorGL(glBindVertexArray(blocksDrawData));
-				drawWalls(damagedWalls, damageTexture, walls, shadowSh, camera, transform, CameraCoordinates);
+				drawWalls(damagedWalls, damageTexture, Walls, shadowSh,blockTextures, camera, transform, CameraCoordinates);
 				basicSh.Bind();
-				drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, damageTexture, transform, camera);
+				drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, blockTextures,damageTexture, transform, camera);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1322,7 +1325,7 @@ int main()
 		
 			std::vector<std::vector<Block>> blocks;
 		
-			std::vector<std::vector<wall>> walls;
+			std::vector<std::vector<Wall>> Walls;
 		
 			std::vector<tree> trees;
 		
@@ -1333,7 +1336,7 @@ int main()
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
 
-			LoadGame(pathToSave, walls, blocks, isSandOnX, blockTextures);
+		    LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
 
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
@@ -1381,7 +1384,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime,eob,letters,chests, editor);
-				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,walls,seedlings,craftStations,chests,doors,isSandOnX);
+				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,Walls,seedlings,craftStations,chests,doors,isSandOnX);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;
@@ -1410,9 +1413,9 @@ int main()
 
 				shadowSh.Bind();
 				ErrorGL(glBindVertexArray(blocksDrawData));
-				drawWalls(std::vector<DamagedBlock>{}, damageTexture, walls, shadowSh, camera, transform, editor.m_Transform);
+				drawWalls(std::vector<DamagedBlock>{}, damageTexture, Walls, shadowSh, blockTextures, camera, transform, editor.m_Transform);
 				basicSh.Bind();
-				drawBlocks(blocks, std::vector<DamagedBlock>{}, editor.m_Transform, basicSh, damageTexture, transform, camera);
+				drawBlocks(blocks, std::vector<DamagedBlock>{}, editor.m_Transform, basicSh,blockTextures, damageTexture, transform, camera);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));

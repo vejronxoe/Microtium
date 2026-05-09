@@ -53,8 +53,7 @@ enum Items
 	, i_Door
 	, i_TrapDoor
 	, i_Gate
-	, i_DoorBlock
-	, i_ItemSize = i_DoorBlock
+	, i_ItemSize
 };
 enum Structures
 {

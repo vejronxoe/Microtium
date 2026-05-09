@@ -123,7 +123,7 @@ public:
 		, int Damage);
 	void EveryFrame(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
-		, std::vector<std::vector<wall>>& walls
+		, std::vector<std::vector<Wall>>& Walls
 		, std::vector<Enemy>& enemies
 		, std::vector<int>& isThereSandOnX
 		, std::vector<CraftStation>& craftStations

@@ -41,14 +41,15 @@ unsigned char getTypeByItem(unsigned char item)
 	types[i_Platform] = t_Platform;
 	types[i_ForestPlank] = t_ForestPlank;
 	types[i_Sand] = t_Sand;
+	types[i_WallIce] = t_Ice;
 	return types[item];
 }
 unsigned char GetWallItemBytype(unsigned char blocksType)
 {
 	blocksType = Clamp(blocksType, 0, t_BlocksSize - 1);
-	unsigned char wallIDs[t_BlocksSize] = {i_WallDirt};
-	wallIDs[t_Ice] = i_WallIce;
-	return wallIDs[blocksType];
+	unsigned char WallIDs[t_BlocksSize] = {i_WallDirt};
+	WallIDs[t_Ice] = i_WallIce;
+	return WallIDs[blocksType];
 
 }
 unsigned char GetBlockItemByType(unsigned char blocksType)
@@ -88,19 +89,45 @@ Block::Block(unsigned char blockType
 {
 	blockType = Clamp(blockType, 0, t_BlocksSize -1);
 	m_Y = y;
-	m_BlockType = blockType;
-	m_BlockBehavior = getBehaviorByType(blockType);
+	m_Type = blockType;
+	m_Behavior = getBehaviorByType(blockType);
 	unsigned char hardness[t_BlocksSize] = { 15 };
 	hardness[t_Asphalt] = 35;
 	hardness[t_Platform] = 20;
 	hardness[t_ForestPlank] = 20;
 	m_Hardness = hardness[blockType];
 }
-
-
-
-
-
+Wall::Wall(unsigned char wallType
+	, bool render
+	, int y)
+{
+	m_Type = wallType;
+	m_Render = render;
+	m_Y = y;
+	unsigned char hardness[t_BlocksSize] = { 15 };
+	hardness[t_Dirt] = 20;
+	m_Hardness = hardness[wallType];
+}
+void Block::Draw(Shader& basicSh
+	, unsigned int* blockTex
+	, int x
+	, float* transform)
+{
+	ChangeTransform(x, m_Y, transform);
+	basicSh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[m_Type]));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+}
+void Wall::Draw(Shader& shadowSh
+	, unsigned int* blockTex
+	, int x
+	, float* transform)
+{
+	ChangeTransform(x, m_Y, transform);
+	shadowSh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[m_Type]));
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+}
 void CreateAllBlockTextures(unsigned int* IDs)
 {
 	IDs[t_TopGrass] = CreateTextureRGBA("res/textures/topGrassBlock.png");
@@ -125,13 +152,13 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
 	IDs[t_ForestPlank] = CreateTextureRGBA("res/textures/forestPlank.png");
 	IDs[t_Sand] = CreateTextureRGBA("res/textures/sand.png");
+	IDs[t_DoorBlock] = CreateTextureRGBA("res/textures/red.png");
 }
-
-
 void drawBlocks(std::vector<std::vector<Block>>& blocks
 	, std::vector<DamagedBlock> damagedBlocks
 	, float* cameraCoordinate
 	, Shader& basicSh
+	,unsigned int *blockTex
 	, unsigned int* damageTexture
 	, float* transform
 	, float* camera)
@@ -143,14 +170,14 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 	{
 		for (int i = 0; i < blocks.at(j).size(); i++)
 		{
-			int y = blocks.at(j).at(i).m_Y;
+			int y = blocks[j][i].m_Y;
 			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > y)
 			{
 				break;
 			}
 			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
 			{
-				blocks.at(j).at(i).DrawBlock(basicSh, j, transform);
+				blocks[j][i].Draw(basicSh, blockTex, j, transform);
 
 			}
 		}
@@ -164,15 +191,16 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 }
 void drawWalls(std::vector<DamagedBlock> damagedWalls
 	, unsigned int* damageTextures
-	, std::vector<std::vector<wall>>& walls
-	, Shader& wallsSh
+	, std::vector<std::vector<Wall>>& walls
+	, Shader& WallsSh
+	, unsigned int* blockTex
 	, float* camera
 	, float* transform
 	, float* cameraCoordinate)
 {
-	wallsSh.Bind();
-	wallsSh.SetUniform1i(basicSize + ShadowLocation, 1);
-	wallsSh.SetUniformMat4(basicCamera, camera);
+	WallsSh.Bind();
+	WallsSh.SetUniform1i(basicSize + ShadowLocation, 1);
+	WallsSh.SetUniformMat4(basicCamera, camera);
 	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
 	{
 		for (int i = 0; i < walls[j].size(); i++)
@@ -183,70 +211,71 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 			}
 			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls[j][i].m_Y)
 			{
-				walls[j][i].drawWalls(wallsSh, j, transform);
+				walls[j][i].Draw(WallsSh,blockTex, j, transform);
 			}
 		}
 	}
 
 	for (int i = 0; i < damagedWalls.size(); i++)
 	{
-		damagedWalls.at(i).DrawDamage(wallsSh, transform, damageTextures);
+		damagedWalls[i].DrawDamage(WallsSh, transform, damageTextures);
 	}
 
 }
 
 void createWall(int x
 	, int y
-	, unsigned short int IDOfItemWall
-	, std::vector<std::vector<wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, unsigned int* texturesIDs)
+	, unsigned short int wallType
+	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<Block>>& blocks)
 {
-	int indexToPlace = 0;
-	for (; indexToPlace < walls.at(x).size(); indexToPlace++)
+	int indexToPlace;
+	for (indexToPlace = 0; indexToPlace < walls.at(x).size(); indexToPlace++)
 	{
 		if (walls.at(x).at(indexToPlace).m_Y < y)
 		{
 			break;
 		}
 	}
-	bool isThereBlock;
-	int blockIndex = FindBlock(blocks, x, y, isThereBlock);
+	int blockIndex;
+	bool isThereBlock = FindBlock(blocks, x, y, blockIndex);
 	if (isThereBlock)
 	{
-		if (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Platform)
+		if (blocks.at(x).at(blockIndex).m_Behavior == b_Platform)
 		{
 			isThereBlock = false;
 		}
 	}
-	switch (IDOfItemWall)
-	{
-	case i_WallDirt:
-		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Dirt], !isThereBlock, i_WallDirt, y, 20);
-		break;
-	case i_WallIce:
-		walls.at(x).emplace(walls.at(x).begin() + indexToPlace, texturesIDs[t_Ice], !isThereBlock, i_WallIce, y, 15);
-		break;
-	}
+	walls[x].emplace(walls.at(x).begin() + indexToPlace, wallType, !isThereBlock, y);
 }
 
+void DestroyWall(std::vector<std::vector<Wall>>& Walls
+	, int x
+	, int y)
+{
+	int index;
+	if (FindWall(Walls, x, y, index))
+	{
+		Walls[x].erase(Walls[x].begin()+index);
+	}
+
+}
 
 void CreateBlock(int x
 	, int y
 	, unsigned short int blockType
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isThereSandOnX
-	, unsigned int* texturesIDs)
+	, std::vector<int>& isThereSandOnX)
 {
 	
-	bool isThereWall;
-	int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
+	int	indexOfTheWall; 
+	bool isThereWall = FindWall(Walls, x, y, indexOfTheWall);
 	if (t_Platform != blockType && t_DoorBlock != blockType)
 	{
 		if (isThereWall)
 		{
-			walls.at(x).at(indexOfTheWall).m_Render = false;
+			Walls.at(x).at(indexOfTheWall).m_Render = false;
 		}
 	}
 	if (blockType == t_Sand)
@@ -276,34 +305,31 @@ void CreateBlock(int x
 	blocks[x].emplace(blocks[x].begin() + indexToPlace, blockType,y);
 	
 }
-
 void DestroyBlock(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y)
 {
-	bool isThererBlock = false;
-	int index = FindBlock(blocks, x, y, isThererBlock);
+	int index; 
 
-	if (isThererBlock)
+	if (FindBlock(blocks, x, y, index))
 	{
-		if (blocks.at(x).at(index).m_BlockBehavior != b_Platform && blocks.at(x).at(index).m_BlockBehavior != b_Door)
+		if (blocks.at(x).at(index).m_Behavior != b_Platform && blocks.at(x).at(index).m_Behavior != b_Door)
 		{
-			bool isThereWall;
-			int	indexOfTheWall = FindWall(walls, x, y, isThereWall);
-			if (isThereWall)
+			int	indexOfTheWall;
+			if (FindWall(Walls, x, y, indexOfTheWall))
 			{
-				walls.at(x).at(indexOfTheWall).m_Render = true;
+				Walls.at(x).at(indexOfTheWall).m_Render = true;
 			}
 		}
-		if (blocks.at(x).at(index).m_BlockBehavior == b_Sand)
+		if (blocks.at(x).at(index).m_Behavior == b_Sand)
 		{
 		
 			bool isThereSand = false;
 			for (int i = 0; i < blocks.at(x).size(); i++)
 			{
-				if (blocks.at(x).at(i).m_BlockBehavior == b_Sand && blocks.at(x).at(i).m_Y != y)
+				if (blocks.at(x).at(i).m_Behavior == b_Sand && blocks.at(x).at(i).m_Y != y)
 				{
 					isThereSand = true;
 				}
@@ -324,27 +350,27 @@ void DestroyBlock(std::vector<std::vector<Block>>& blocks
 	}
 }
 
-int FindBlock(std::vector<std::vector<Block>>& blocks
+bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int x
 	, int y
-	, bool& found)
+	, int& index)
 {
-	found = false;
+	index = -1;
 	for (int i = 0; i < blocks.at(x).size(); i++)
 	{
 		if (blocks.at(x).at(i).m_Y == y)
 		{
-			found = true;
-			return i;
+			index = i;
+			return true;
 		}
 		if (blocks.at(x).at(i).m_Y < y)
 		{
 			break;
 		}
 	}
-	return -1;
+	return false;
 }
-bool blockInArea(std::vector<std::vector<Block>>& blocks
+bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int* vertices)
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
@@ -364,38 +390,38 @@ bool blockInArea(std::vector<std::vector<Block>>& blocks
 	}
 	return false;
 }
-int FindWall(std::vector<std::vector<wall>>& walls
+bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int x
 	, int y
-	, bool& found)
+	, int& index)
 {
-	found = false;
-	for (int i = 0; i < walls.at(x).size(); i++)
+	index = -1;
+	for (int i = 0; i < Walls.at(x).size(); i++)
 	{
-		if (walls.at(x).at(i).m_Y == y)
+		if (Walls.at(x).at(i).m_Y == y)
 		{
-			found = true;
-			return i;
+			index = i;
+			return true;
 		}
-		if (walls.at(x).at(i).m_Y < y)
+		if (Walls.at(x).at(i).m_Y < y)
 		{
 			break;
 		}
 	}
-	return -1;
+	return false;
 }
-bool WallInArea(std::vector<std::vector<wall>>& walls
+bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int* vertices)
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < walls.at(j).size(); i++)
+		for (int i = 0; i < Walls.at(j).size(); i++)
 		{
-			if (walls.at(j).at(i).m_Y < vertices[3])
+			if (Walls.at(j).at(i).m_Y < vertices[3])
 			{
 				break;
 			}
-			if (walls.at(j).at(i).m_Y <= vertices[1])
+			if (Walls.at(j).at(i).m_Y <= vertices[1])
 			{
 				return true;
 			}

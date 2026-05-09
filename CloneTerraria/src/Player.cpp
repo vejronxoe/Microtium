@@ -1268,7 +1268,7 @@ void Player::ResizeHUD(unsigned int eob
 
 void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<wall>>& walls
+	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<Enemy>& enemies
 	, std::vector<int>& isThereSandOnX
 	, std::vector<CraftStation>& craftStations
@@ -1922,7 +1922,7 @@ void Player::EveryFrame(float deltaTime
 		int doorsIndex = -1;
 		int seedlingIndex = -1;
 		int chestIndex = -1;
-		int wallIndex = -1;
+		int WallIndex = -1;
 		m_AimingAtChest = -1;
 		m_AimingAtDoors = -1;
 		int woodIndex = 0;
@@ -2023,7 +2023,7 @@ void Player::EveryFrame(float deltaTime
 						}
 						else if (Input::RightMousePress )
 						{
-							doors.at(m_AimingAtDoors).DoorInteract(blocks, walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
+							doors.at(m_AimingAtDoors).DoorInteract(blocks, Walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
 						}
 						
 					}
@@ -2067,46 +2067,45 @@ void Player::EveryFrame(float deltaTime
 				}
 				if (!(x >= playerVertices[0] && x <= playerVertices[2] && y <= playerVertices[1] && y >= playerVertices[3]) && !inCreature)
 				{
-					bool inWall;
-					wallIndex = FindWall(walls, x, y, inWall);
+					bool inWall = FindWall(Walls, x, y, WallIndex);
 					m_CursorOnPlaceableSpot = inWall;
 					inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,doors, chests);
-
+					int fill;
 					if (!m_CursorOnPlaceableSpot)
 					{
 						m_CursorOnPlaceableSpot = inBlock;
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindBlock(blocks, x + 1, y, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindBlock(blocks, x + 1, y, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindBlock(blocks, x - 1, y, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindBlock(blocks, x - 1, y, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindBlock(blocks, x, y + 1, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindBlock(blocks, x, y + 1, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindBlock(blocks, x, y - 1, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindBlock(blocks, x, y - 1, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindWall(walls, x + 1, y, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindWall(Walls, x + 1, y, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindWall(walls, x, y - 1, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindWall(Walls, x, y - 1, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindWall(walls, x - 1, y, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindWall(Walls, x - 1, y, fill);
 					}
 					if (!m_CursorOnPlaceableSpot)
 					{
-						FindWall(walls, x, y + 1, m_CursorOnPlaceableSpot);
+						m_CursorOnPlaceableSpot = FindWall(Walls, x, y + 1, fill);
 					}
 					if (inBlock && !(m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce) || inWall && m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 					{
@@ -2117,9 +2116,9 @@ void Player::EveryFrame(float deltaTime
 			else if (m_PickaxeStreanght)
 			{
 
-				blockIndex = FindBlock(blocks, x, y, m_CursorOnMinableBlock);
+				m_CursorOnMinableBlock = FindBlock(blocks, x, y, blockIndex);
 
-				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_BlockBehavior == b_Indestructible || blocks.at(x).at(blockIndex).m_BlockBehavior == b_Door || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
+				if (m_CursorOnMinableBlock && (blocks.at(x).at(blockIndex).m_Behavior == b_Indestructible || blocks.at(x).at(blockIndex).m_Behavior == b_Door || blocks.at(x).at(blockIndex).m_Hardness > m_PickaxeStreanght))
 				{
 					m_CursorOnMinableBlock = false;
 					blockIndex = -1;
@@ -2153,8 +2152,8 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_HammerStreanght)
 			{
-				wallIndex = FindWall(walls, x, y, m_CursorOnMinableWall);
-				if (m_CursorOnMinableBlock && walls.at(x).at(wallIndex).m_Hardness > m_HammerStreanght)
+				m_CursorOnMinableWall = FindWall(Walls, x, y, WallIndex );
+				if (m_CursorOnMinableBlock && Walls.at(x).at(WallIndex).m_Hardness > m_HammerStreanght)
 				{
 					m_CursorOnMinableBlock = false;
 				}
@@ -2173,23 +2172,23 @@ void Player::EveryFrame(float deltaTime
 				bool floors = true;
 				getStructureVertices(x, y, GetStructureID(m_PlayerSlots[0]), vertices);
 				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations,doors, chests);
+				int fill;
 				switch (m_PlayerSlots[0])
 				{
 				case i_TrapDoor:
 				{
-					floors = false;
-					FindBlock(blocks, x-1, y, floors);
+					floors = FindBlock(blocks, x-1, y, fill);
 					if (!floors)
 					{
 						break;
 					}
-					FindBlock(blocks, vertices[2] + 1, y, floors);
+					floors = FindBlock(blocks, vertices[2] + 1, y, fill);
 					break;
 				}
 				case i_Door:
 				case i_Gate:
 					floors = false;
-					FindBlock(blocks,x,vertices[1] + 1,floors);
+					floors = FindBlock(blocks,x,vertices[1] + 1,fill);
 					if (!floors)
 					{
 						break;
@@ -2354,15 +2353,15 @@ void Player::EveryFrame(float deltaTime
 							damageblocks.at(damageIndex).m_HP -= floorf((float)m_PickaxeStreanght / (float)blocks.at(x).at(blockIndex).m_Hardness);
 							if (0 >= damageblocks.at(damageIndex).m_HP)
 							{
-								droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
+								droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0,GetBlockItemByType( blocks.at(x).at(blockIndex).m_Type), 1, true);
 								damageblocks.erase(damageblocks.begin() + damageIndex);
-								DestroyBlock(blocks, walls, isThereSandOnX, x, y);
+								DestroyBlock(blocks, Walls, isThereSandOnX, x, y);
 							}
 						}
 						else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 						{
-							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, blocks.at(x).at(blockIndex).m_ItemDrop, 1, true);
-							DestroyBlock(blocks, walls, isThereSandOnX, x, y);
+							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, GetBlockItemByType(blocks.at(x).at(blockIndex).m_Type), 1, true);
+							DestroyBlock(blocks, Walls, isThereSandOnX, x, y);
 						}
 						else
 						{
@@ -2384,7 +2383,7 @@ void Player::EveryFrame(float deltaTime
 							m_IndexOfOpenChest = -1;
 						}
 
-						chests.at(chestIndex).DestroyChest(blocks,texturesIDs);
+						chests.at(chestIndex).DestroyChest(blocks);
 						droppedItems.emplace_back(x, y, 0, i_Chest, 1, true);
 						chests.erase(chests.begin() + chestIndex);
 					}
@@ -2396,7 +2395,7 @@ void Player::EveryFrame(float deltaTime
 					else if (doorsIndex != -1)
 					{
 						droppedItems.emplace_back(x, y, 0, GetItemIDByStructure(doors.at(doorsIndex).m_Type), 1, true);
-						doors.at(doorsIndex).DestroyDoor(blocks, walls, isThereSandOnX);
+						doors.at(doorsIndex).DestroyDoor(blocks, Walls, isThereSandOnX);
 						doors.erase(doorsIndex + doors.begin());
 
 					}
@@ -2406,11 +2405,11 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 					{
-						createWall(x, y, m_PlayerSlots[0], walls, blocks, texturesIDs);
+						createWall(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks);
 					}
 					else
 					{
-						CreateBlock(x, y, m_PlayerSlots[0], walls, blocks, isThereSandOnX, texturesIDs);
+						CreateBlock(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks, isThereSandOnX);
 					}
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
@@ -2439,29 +2438,27 @@ void Player::EveryFrame(float deltaTime
 					}
 					if (damaged)
 					{
-						damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness);
+						damagedWalls.at(damageIndex).m_HP -= floorf((float)m_HammerStreanght / (float)Walls.at(x).at(WallIndex).m_Hardness);
 						if (0 >= damagedWalls.at(damageIndex).m_HP)
 						{
-							if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
-							{
-								droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
-							}
+							
+							droppedItems.emplace_back(x, Walls.at(x).at(WallIndex).m_Y, 0, getTypeByItem(Walls.at(x).at(WallIndex).m_Type), 1, true);
+							
 							damagedWalls.erase(damagedWalls.begin() + damageIndex);
-							walls.at(x).erase(walls.at(x).begin() + wallIndex);
+							Walls.at(x).erase(Walls.at(x).begin() + WallIndex);
 						}
 					}
-					else if (0 >= ((float)walls.at(x).at(wallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
+					else if (0 >= ((float)Walls.at(x).at(WallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
 					{
-						if (walls.at(x).at(wallIndex).m_ItemDrop != i_Nothing)
-						{
-							droppedItems.emplace_back(x, walls.at(x).at(wallIndex).m_Y, 0, walls.at(x).at(wallIndex).m_ItemDrop, 1, true);
-						}
-						walls.at(x).erase(walls.at(x).begin() + wallIndex);
+						droppedItems.emplace_back(x, Walls.at(x).at(WallIndex).m_Y, 0, getTypeByItem(Walls.at(x).at(WallIndex).m_Type), 1, true);
+						
+						
+						Walls.at(x).erase(Walls.at(x).begin() + WallIndex);
 					}
 					else
 					{
 
-						damagedWalls.emplace_back(x, walls.at(x).at(wallIndex).m_Y, ceilf(3.0f - ((float)m_HammerStreanght / (float)walls.at(x).at(wallIndex).m_Hardness)));
+						damagedWalls.emplace_back(x, Walls.at(x).at(WallIndex).m_Y, ceilf(3.0f - ((float)m_HammerStreanght / (float)Walls.at(x).at(WallIndex).m_Hardness)));
 					}
 
 				}
@@ -2486,7 +2483,7 @@ void Player::EveryFrame(float deltaTime
 							{
 								if (blocks.at(x).at(i).m_Y == y - 1)
 								{
-									blocks.at(x).at(i).m_BlockBehavior = getBehaviorByTexture(blocks.at(x).at(i).m_te,texturesIDs);
+									blocks.at(x).at(i).m_Behavior = getBehaviorByType(blocks.at(x).at(i).m_Type);
 								}
 							}
 							while (woodIndex != -1)
@@ -2610,7 +2607,7 @@ void Player::EveryFrame(float deltaTime
 				}
 				else if (m_CursorOnPlaceableForStructure)
 				{
-					CreateStructure(GetStructureID(m_PlayerSlots[0]), x, y, m_DirectionLook, structuresTextures, blocks, walls, seedlings, craftStations, chests, doors, isThereSandOnX);
+					CreateStructure(GetStructureID(m_PlayerSlots[0]), x, y, m_DirectionLook, structuresTextures, blocks, Walls, seedlings, craftStations, chests, doors, isThereSandOnX);
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
 					{
@@ -3093,7 +3090,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					break;
 				}
-				else if (playerVertices[1] > blocks.at(i).at(j).m_Y && blocks.at(i).at(j).m_BlockBehavior != b_Platform)
+				else if (playerVertices[1] > blocks.at(i).at(j).m_Y && blocks.at(i).at(j).m_Behavior != b_Platform)
 				{
 					IsPlayerInBlock = true;
 					break;
