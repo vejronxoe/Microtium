@@ -63,6 +63,7 @@ struct Projectile
 		, std::vector<Door>& doors
 		, std::vector<Chest>& chests
 		, std::vector<int>& isSandOnX
+		, std::vector<int>& chunksToRebuild
 		, unsigned int* blockTextures);
 	void Draw(Shader& sh
 		, float* transform
@@ -74,5 +75,6 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<Wall>>& Walls
+	, std::vector<int>& chunksToRebuild
 	, unsigned int projectileTextures
 	, unsigned int blockDD);

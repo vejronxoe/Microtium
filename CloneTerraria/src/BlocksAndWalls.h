@@ -102,7 +102,13 @@ struct DamagedBlock
 		, unsigned int* texture);
 };
 
-
+struct ChunkDD
+{
+	unsigned int m_VA[t_BlocksSize - 1] = {};
+	unsigned int m_VBO[t_BlocksSize - 1] = {};
+	unsigned int m_EOB[t_BlocksSize - 1] = {};
+	unsigned int m_EOBNumber[t_BlocksSize - 1] = {};
+};
 
 
 void drawWalls(std::vector<DamagedBlock> damagedWalls
@@ -128,17 +134,19 @@ void createWall(int x
 	, unsigned short int wallType
 	, std::vector<std::vector<Wall>>& walls
 	, std::vector<std::vector<Block>>& blocks);
-	void CreateBlock(int x
-		, int y
-		, unsigned short int blockType
-		, std::vector<std::vector<Wall>>& Walls
-		, std::vector<std::vector<Block>>& blocks
-		, std::vector<int>& isThereSandOnX);
-void DestroyBlock(std::vector<std::vector<Block>>& blocks
+void CreateBlock(int x
+	, int y
+	, unsigned short int blockType
 	, std::vector<std::vector<Wall>>& Walls
-	, std::vector<int>& isThereSandOnX
-	, int x
-	, int y);
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& chunksToRebuild
+	, std::vector<int>& isThereSandOnX);
+	void DestroyBlock(std::vector<std::vector<Block>>& blocks
+		, std::vector<std::vector<Wall>>& Walls
+		, std::vector<int>& chunksToRebuild
+		, std::vector<int>& isThereSandOnX
+		, int x
+		, int y);
 bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int x
 	, int y
@@ -151,3 +159,15 @@ bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int& index);
 bool FindWall(std::vector<std::vector<Wall>>& Walls
 	, int* vertices);
+int FindChunk(int x, int y);
+void CreateChunks(std::vector<int>& chunksToRebuild
+	, std::vector < ChunkDD>& chunks
+	, std::vector<std::vector<Block>>& blocks);
+
+void CreateChunks(std::vector<ChunkDD>& chunks
+	, std::vector<std::vector<Block>>& blocks);
+void DrawChunks(Shader& basicSh
+	, unsigned int* textures
+	, float* trasform
+	, float* cameraTransform
+	, std::vector<ChunkDD>& chunks);

@@ -37,10 +37,7 @@ void LoadGame(std::string pathToSave
 	, std::vector<int>& isSandOnX
 	,unsigned int* blockTextures)
 {
-	Blocks::xMax	= 1080;
-		Blocks::xMin= 0 ;
-		Blocks::yMax= 360;
-		Blocks::yMin= -500;
+	
 	blocks.assign(Blocks::xMax, std::vector<Block> {});
 	walls.assign(Blocks::xMax, std::vector<Wall> {});
 
@@ -221,6 +218,10 @@ void optionsUpdate(Menu& menu
 }
 int main()
 {
+	Blocks::xMax = 1080;
+	Blocks::xMin = 0;
+	Blocks::yMax = 359;
+	Blocks::yMin = -500;
 	unsigned int gameState = stateMainMenu;
 	srand(time(0));
 	if (!glfwInit())
@@ -691,7 +692,7 @@ int main()
 			unsigned int enemiesTex2[enemySize];
 			unsigned int enemiesDD1[enemySize];
 			unsigned int enemiesDD2[enemySize];
-			unsigned int blockTextures[21];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			unsigned int blockTextures[t_BlocksSize];
 			unsigned int treeTextures[3];
 			unsigned int CutTextures[4];
 			unsigned int structuresTextures[8];
@@ -761,6 +762,12 @@ int main()
 			std::vector<damagedWood> damagedTrees;
 			std::vector<seedling> seedlings;
 			std::vector<int> isSandOnX;
+			std::vector<int> chunksToRebuildBlock;
+			std::vector < ChunkDD> blockChunks;
+			{
+				ChunkDD chunk;
+				blockChunks.assign(2322, chunk);
+			}
 			std::vector<Enemy> enemies;
 			std::vector<BoomParticle> boomParticles;
 			std::vector<Projectile> projectiles;
@@ -769,10 +776,17 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
+			////////////////////////////////////////////////////////////////////////
+			
 			LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
+			for (int i = 0; i < Blocks::xMax;i++)
+			{
+				CreateBlock(i, 0, t_Dirt, Walls, blocks,chunksToRebuildBlock, isSandOnX);
+			}
+			//////////////////////////////////
 			Background background(eob, backgroundSh);
 
-
+			CreateChunks(blockChunks, blocks);
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
@@ -859,12 +873,12 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				player.EveryFrame(deltaTime, blocks, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
-				SandEveryFrame(isSandOnX, projectiles, blocks, Walls, blockTextures[t_Sand], blocksDrawData);
+				player.EveryFrame(deltaTime, blocks, Walls, enemies, isSandOnX,chunksToRebuildBlock, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+				SandEveryFrame(isSandOnX, projectiles, blocks, Walls,chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
-					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX, blockTextures))
+					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX,chunksToRebuildBlock, blockTextures))
 					{
 						projectiles.erase(projectiles.begin() + i);
 					}
@@ -939,7 +953,7 @@ int main()
 				ErrorGL(glBindVertexArray(blocksDrawData));
 				drawWalls(damagedWalls, damageTexture, Walls, shadowSh,blockTextures, camera, transform, CameraCoordinates);
 				basicSh.Bind();
-				drawBlocks(blocks, damagedBlocks, CameraCoordinates, basicSh, blockTextures,damageTexture, transform, camera);
+				DrawChunks(basicSh, blockTextures, transform, CameraCoordinates, blockChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1194,6 +1208,7 @@ int main()
 					basicSh.Bind();
 					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);		
 				}
+				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
@@ -1331,13 +1346,19 @@ int main()
 		
 			std::vector<seedling> seedlings;
 			std::vector<int> isSandOnX;
-		
+			std::vector<int> chunksToRebuildBlock;
+			std::vector < ChunkDD> blockChunks;
+			{
+				ChunkDD chunk;
+				blockChunks.assign(2322, chunk);
+			}
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
 
 		    LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
+			CreateChunks(blockChunks, blocks);
 
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
 			{
@@ -1384,7 +1405,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime,eob,letters,chests, editor);
-				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,Walls,seedlings,craftStations,chests,doors,isSandOnX);
+				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,Walls,seedlings,craftStations,chests,doors,isSandOnX,chunksToRebuildBlock);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;
@@ -1415,7 +1436,8 @@ int main()
 				ErrorGL(glBindVertexArray(blocksDrawData));
 				drawWalls(std::vector<DamagedBlock>{}, damageTexture, Walls, shadowSh, blockTextures, camera, transform, editor.m_Transform);
 				basicSh.Bind();
-				drawBlocks(blocks, std::vector<DamagedBlock>{}, editor.m_Transform, basicSh,blockTextures, damageTexture, transform, camera);
+			
+				DrawChunks(basicSh, blockTextures, transform, editor.m_Transform, blockChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1548,9 +1570,11 @@ int main()
 				drawFloat(0, 0, 1.0f / oldDeltaTime, numberTexture, fontDrawData, dotTex, dotDD, scale, transform, numberSh);
 				
 
-					basicSh.Bind();
-					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
+				basicSh.Bind();
+				DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
 			
+
+				CreateChunks(chunksToRebuildBlock, blockChunks, blocks);
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);

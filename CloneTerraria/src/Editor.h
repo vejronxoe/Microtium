@@ -34,7 +34,8 @@ struct Editor
 		, std::vector<CraftStation>& CraftingStations
 		, std::vector<Chest>& Chest
 		, std::vector<Door>& Doors
-		, std::vector<int>& SandsXs);
+		, std::vector<int>& SandsXs
+		, std::vector<int>& chunksToBuild);
 	void Draw(Shader& basic
 		, float* transform
 		, float* scale);

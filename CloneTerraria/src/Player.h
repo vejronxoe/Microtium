@@ -126,6 +126,7 @@ public:
 		, std::vector<std::vector<Wall>>& Walls
 		, std::vector<Enemy>& enemies
 		, std::vector<int>& isThereSandOnX
+		, std::vector<int>& chunksToRebuild
 		, std::vector<CraftStation>& craftStations
 		, std::vector<damagedWood>& damagedWood
 		, std::vector<DamagedBlock>& damageblocks

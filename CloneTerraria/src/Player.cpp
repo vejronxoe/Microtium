@@ -1271,6 +1271,7 @@ void Player::EveryFrame(float deltaTime
 	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<Enemy>& enemies
 	, std::vector<int>& isThereSandOnX
+	, std::vector<int>& chunksToRebuild
 	, std::vector<CraftStation>& craftStations
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
@@ -2355,13 +2356,13 @@ void Player::EveryFrame(float deltaTime
 							{
 								droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0,GetBlockItemByType( blocks.at(x).at(blockIndex).m_Type), 1, true);
 								damageblocks.erase(damageblocks.begin() + damageIndex);
-								DestroyBlock(blocks, Walls, isThereSandOnX, x, y);
+								DestroyBlock(blocks, Walls,chunksToRebuild, isThereSandOnX, x, y);
 							}
 						}
 						else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 						{
 							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, GetBlockItemByType(blocks.at(x).at(blockIndex).m_Type), 1, true);
-							DestroyBlock(blocks, Walls, isThereSandOnX, x, y);
+							DestroyBlock(blocks, Walls,chunksToRebuild, isThereSandOnX, x, y);
 						}
 						else
 						{
@@ -2409,7 +2410,7 @@ void Player::EveryFrame(float deltaTime
 					}
 					else
 					{
-						CreateBlock(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks, isThereSandOnX);
+						CreateBlock(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks,chunksToRebuild, isThereSandOnX);
 					}
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
