@@ -78,11 +78,9 @@ class Wall
 {
 public:
 	unsigned char m_Type;
-	bool m_Render;
 	int m_Y;
 	unsigned char m_Hardness;
 	Wall(unsigned char WallType
-		, bool render
 		, int y);
 
 	void Draw(Shader& shadowSh
@@ -132,21 +130,23 @@ void drawBlocks(std::vector<std::vector<Block>>& blocks
 void createWall(int x
 	, int y
 	, unsigned short int wallType
-	, std::vector<std::vector<Wall>>& walls
-	, std::vector<std::vector<Block>>& blocks);
+	, std::vector<int>& chunksToRebuildWalls
+	, std::vector<std::vector<Wall>>& walls);
+void DestroyWall(std::vector<std::vector<Wall>>& Walls
+	, std::vector<int>& chunksToRebuildWalls
+	, int x
+	, int y);
 void CreateBlock(int x
 	, int y
 	, unsigned short int blockType
-	, std::vector<std::vector<Wall>>& Walls
-	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& chunksToRebuild
+	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& isThereSandOnX);
-	void DestroyBlock(std::vector<std::vector<Block>>& blocks
-		, std::vector<std::vector<Wall>>& Walls
-		, std::vector<int>& chunksToRebuild
-		, std::vector<int>& isThereSandOnX
-		, int x
-		, int y);
+void DestroyBlock(std::vector<int>& chunksToRebuild
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& isThereSandOnX
+	, int x
+	, int y);
 bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int x
 	, int y
@@ -163,11 +163,16 @@ int FindChunk(int x, int y);
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks);
-
+void CreateChunks(std::vector<int>& chunksToRebuild
+	, std::vector < ChunkDD>& chunks
+	, std::vector<std::vector<Wall>>& walls);
 void CreateChunks(std::vector<ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks);
+void CreateChunks(std::vector<ChunkDD>& chunks
+	, std::vector<std::vector<Wall>>& walls);
 void DrawChunks(Shader& basicSh
 	, unsigned int* textures
 	, float* trasform
 	, float* cameraTransform
-	, std::vector<ChunkDD>& chunks);
+	, std::vector<ChunkDD>& chunks
+	, std::vector<ChunkDD>& chunksWall);

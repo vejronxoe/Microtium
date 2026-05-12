@@ -768,6 +768,12 @@ int main()
 				ChunkDD chunk;
 				blockChunks.assign(2322, chunk);
 			}
+			std::vector<int> chunksToRebuildWall;
+			std::vector < ChunkDD> wallChunks;
+			{
+				ChunkDD chunk;
+				wallChunks.assign(2322, chunk);
+			}
 			std::vector<Enemy> enemies;
 			std::vector<BoomParticle> boomParticles;
 			std::vector<Projectile> projectiles;
@@ -787,6 +793,7 @@ int main()
 			Background background(eob, backgroundSh);
 
 			CreateChunks(blockChunks, blocks);
+			CreateChunks(wallChunks,Walls);
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
@@ -953,7 +960,7 @@ int main()
 				ErrorGL(glBindVertexArray(blocksDrawData));
 				drawWalls(damagedWalls, damageTexture, Walls, shadowSh,blockTextures, camera, transform, CameraCoordinates);
 				basicSh.Bind();
-				DrawChunks(basicSh, blockTextures, transform, CameraCoordinates, blockChunks);
+				DrawChunks(basicSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1208,6 +1215,8 @@ int main()
 					basicSh.Bind();
 					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);		
 				}
+				CreateChunks(chunksToRebuildWall,wallChunks, Walls);
+
 				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
 
 				Input::EndOfLoop();
@@ -1352,6 +1361,12 @@ int main()
 				ChunkDD chunk;
 				blockChunks.assign(2322, chunk);
 			}
+			std::vector<int> chunksToRebuildWall;
+			std::vector < ChunkDD> wallChunks;
+			{
+				ChunkDD chunk;
+				wallChunks.assign(2322, chunk);
+			}
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
@@ -1359,6 +1374,7 @@ int main()
 		    LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
+			CreateChunks(blockChunks, Walls);
 
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
 			{
@@ -1437,7 +1453,7 @@ int main()
 				drawWalls(std::vector<DamagedBlock>{}, damageTexture, Walls, shadowSh, blockTextures, camera, transform, editor.m_Transform);
 				basicSh.Bind();
 			
-				DrawChunks(basicSh, blockTextures, transform, editor.m_Transform, blockChunks);
+				DrawChunks(basicSh, blockTextures, transform, editor.m_Transform, blockChunks,wallChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1575,6 +1591,7 @@ int main()
 			
 
 				CreateChunks(chunksToRebuildBlock, blockChunks, blocks);
+				CreateChunks(chunksToRebuildWall, wallChunks, Walls);
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);

@@ -98,11 +98,9 @@ Block::Block(unsigned char blockType
 	m_Hardness = hardness[blockType];
 }
 Wall::Wall(unsigned char wallType
-	, bool render
 	, int y)
 {
 	m_Type = wallType;
-	m_Render = render;
 	m_Y = y;
 	unsigned char hardness[t_BlocksSize] = { 15 };
 	hardness[t_Dirt] = 20;
@@ -226,8 +224,8 @@ void drawWalls(std::vector<DamagedBlock> damagedWalls
 void createWall(int x
 	, int y
 	, unsigned short int wallType
-	, std::vector<std::vector<Wall>>& walls
-	, std::vector<std::vector<Block>>& blocks)
+	, std::vector<int>& chunksToRebuildWalls
+	, std::vector<std::vector<Wall>>& walls)
 {
 	int indexToPlace;
 	for (indexToPlace = 0; indexToPlace < walls.at(x).size(); indexToPlace++)
@@ -237,19 +235,12 @@ void createWall(int x
 			break;
 		}
 	}
-	int blockIndex;
-	bool isThereBlock = FindBlock(blocks, x, y, blockIndex);
-	if (isThereBlock)
-	{
-		if (blocks.at(x).at(blockIndex).m_Behavior == b_Platform)
-		{
-			isThereBlock = false;
-		}
-	}
-	walls[x].emplace(walls.at(x).begin() + indexToPlace, wallType, !isThereBlock, y);
+
+	walls[x].emplace(walls.at(x).begin() + indexToPlace, wallType, y);
 }
 
 void DestroyWall(std::vector<std::vector<Wall>>& Walls
+	, std::vector<int>& chunksToRebuildWalls
 	, int x
 	, int y)
 {
@@ -264,21 +255,13 @@ void DestroyWall(std::vector<std::vector<Wall>>& Walls
 void CreateBlock(int x
 	, int y
 	, unsigned short int blockType
-	, std::vector<std::vector<Wall>>& Walls
-	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& chunksToRebuild
+	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& isThereSandOnX)
 {
 	
 	int	indexOfTheWall; 
-	bool isThereWall = FindWall(Walls, x, y, indexOfTheWall);
-	if (t_Platform != blockType && t_DoorBlock != blockType)
-	{
-		if (isThereWall)
-		{
-			Walls.at(x).at(indexOfTheWall).m_Render = false;
-		}
-	}
+	
 	if (blockType == t_Sand)
 	{
 		bool notThere = true;
@@ -318,9 +301,8 @@ void CreateBlock(int x
 		chunksToRebuild.emplace_back(chunkIndex);
 	}
 }
-void DestroyBlock(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
-	, std::vector<int>& chunksToRebuild
+void DestroyBlock(std::vector<int>& chunksToRebuild
+	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y)
@@ -329,14 +311,6 @@ void DestroyBlock(std::vector<std::vector<Block>>& blocks
 
 	if (FindBlock(blocks, x, y, index))
 	{
-		if (blocks.at(x).at(index).m_Behavior != b_Platform && blocks.at(x).at(index).m_Behavior != b_Door)
-		{
-			int	indexOfTheWall;
-			if (FindWall(Walls, x, y, indexOfTheWall))
-			{
-				Walls.at(x).at(indexOfTheWall).m_Render = true;
-			}
-		}
 		if (blocks.at(x).at(index).m_Behavior == b_Sand)
 		{
 		
@@ -472,6 +446,16 @@ void CreateChunks(std::vector<ChunkDD>& chunks
 	}
 	CreateChunks(chunksToRebuild, chunks, blocks);
 }
+void CreateChunks(std::vector<ChunkDD>& chunks
+	, std::vector<std::vector<Wall>>& walls)
+{
+	std::vector<int> chunksToRebuild;
+	for (int i = 0; i < 2322; i++)
+	{
+		chunksToRebuild.emplace_back(i);
+	}
+	CreateChunks(chunksToRebuild, chunks, walls);
+}
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks)
@@ -574,17 +558,123 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 	}
 	chunksToRebuild.clear();
 }
-void DrawChunks(Shader& basicSh
+
+void CreateChunks(std::vector<int>& chunksToRebuild
+	, std::vector < ChunkDD>& chunks
+	, std::vector<std::vector<Wall>>& walls)
+{
+	for (int l = 0;l < chunksToRebuild.size();l++)
+	{
+		int i = chunksToRebuild[l];
+		std::vector<float> vertices[t_BlocksSize - 1];
+		std::vector<unsigned short> order[t_BlocksSize - 1];
+		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
+		for (int k = transform[0];k < transform[0] + 20;k++)
+		{
+			for (int j = 0; j < walls[k].size();j++)
+			{
+
+				if (transform[1] > walls[k][j].m_Y)
+				{
+					break;
+				}
+				else if (transform[1] + 20 > walls[k][j].m_Y)
+				{
+					unsigned char blockType = walls[k][j].m_Type;
+					if (blockType < t_BlocksSize - 1 && blockType >= 0)
+					{
+						float blockVertices[4] = { k - 0.5f
+							, walls[k][j].m_Y + 0.5f
+							, k + 0.5f
+							, walls[k][j].m_Y - 0.5f };
+						vertices[blockType].emplace_back(blockVertices[0]);
+						vertices[blockType].emplace_back(blockVertices[3]);
+						vertices[blockType].emplace_back(0);
+						vertices[blockType].emplace_back(0);
+						vertices[blockType].emplace_back(blockVertices[2]);
+						vertices[blockType].emplace_back(blockVertices[3]);
+						vertices[blockType].emplace_back(1);
+						vertices[blockType].emplace_back(0);
+						vertices[blockType].emplace_back(blockVertices[2]);
+						vertices[blockType].emplace_back(blockVertices[1]);
+						vertices[blockType].emplace_back(1);
+						vertices[blockType].emplace_back(1);
+						vertices[blockType].emplace_back(blockVertices[0]);
+						vertices[blockType].emplace_back(blockVertices[1]);
+						vertices[blockType].emplace_back(0);
+						vertices[blockType].emplace_back(1);
+					}
+				}
+
+			}
+		}
+		for (int j = 0; j < t_BlocksSize - 1;j++)
+		{
+			if (vertices[j].size() != 0)
+			{
+				order[j].resize((vertices[j].size() / 16) * 6);
+
+				for (int k = 0; k < vertices[j].size() / 16; k++)
+				{
+					order[j].emplace_back(0 + k * 4);
+					order[j].emplace_back(1 + k * 4);
+					order[j].emplace_back(2 + k * 4);
+					order[j].emplace_back(0 + k * 4);
+					order[j].emplace_back(3 + k * 4);
+					order[j].emplace_back(2 + k * 4);
+				}
+			}
+		}
+		for (int j = 0; j < t_BlocksSize - 1;j++)
+		{
+			if (chunks[i].m_VBO[j])
+			{
+				ErrorGL(glDeleteBuffers(1, &chunks[i].m_VBO[j]));
+				ErrorGL(glDeleteBuffers(1, &chunks[i].m_EOB[j]));
+				ErrorGL(glDeleteVertexArrays(1, &chunks[i].m_VA[j]));
+			}
+			chunks[i].m_VA[j] = 0;
+			chunks[i].m_VBO[j] = 0;
+			chunks[i].m_EOB[j] = 0;
+			chunks[i].m_EOBNumber[j] = 0;
+			if (vertices[j].size())
+			{
+				ErrorGL(glGenVertexArrays(1, &chunks[i].m_VA[j]));
+				ErrorGL(glBindVertexArray(chunks[i].m_VA[j]));
+				ErrorGL(glGenBuffers(1, &chunks[i].m_EOB[j]));
+				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].m_EOB[j]));
+				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order[j].size() * sizeof(unsigned short), order[j].data(), GL_STATIC_DRAW));
+				ErrorGL(glGenBuffers(1, &chunks[i].m_VBO[j]));
+				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks[i].m_VBO[j]));
+				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices[j].size() * sizeof(float), vertices[j].data(), GL_STATIC_DRAW));
+
+				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+				ErrorGL(glEnableVertexAttribArray(0));
+				ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+				ErrorGL(glEnableVertexAttribArray(1));
+
+
+				ErrorGL(glBindVertexArray(0));
+				chunks[i].m_EOBNumber[j] = order[j].size();
+			}
+		}
+	}
+	chunksToRebuild.clear();
+
+}
+void DrawChunks(Shader& shadowSh
 	, unsigned int* textures
-	,float* trasform
-	,float* cameraTransform
-	, std::vector<ChunkDD>& chunks)
+	, float* trasform
+	, float* cameraTransform
+	, std::vector<ChunkDD>& chunksBlock
+	, std::vector<ChunkDD>& chunksWall)
 {
 	if (Window::height)
 	{
-		basicSh.Bind();
+		shadowSh.Bind();
 		ChangeTransform(0, 0, trasform);
-		basicSh.SetUniformMat4(basicTransform, trasform);
+		shadowSh.SetUniformMat4(basicTransform, trasform);
+		shadowSh.SetUniform1i(basicSize + ShadowLocation, 1);
 		float cameraVertices[4] = { floorf(cameraTransform[0] - Window::halfWidthOfGameTransform)
 			, ceilf(cameraTransform[1] + Window::halfHeightOfGameTransform)
 			, ceilf(cameraTransform[0] + Window::halfWidthOfGameTransform)
@@ -594,23 +684,43 @@ void DrawChunks(Shader& basicSh
 			, FindChunk(cameraVertices[2], cameraVertices[1])
 			, FindChunk(cameraVertices[0], cameraVertices[1]) };
 		float deltaChunks[2] = { edgeChunks[1] - edgeChunks[0] ,(edgeChunks[3] - edgeChunks[0]) / 54 };
+
 		for (int i = 0; i <= deltaChunks[1];i++)
 		{
 			for (int j = 0; j <= deltaChunks[0]; j++)
 			{
 				int chunkIndex = edgeChunks[0] + j + i * 54;
-				
+
 				for (int k = 0; k < t_BlocksSize - 1;k++)
 				{
-					if (chunks[chunkIndex].m_VA[k])
+					if (chunksWall[chunkIndex].m_VA[k])
 					{
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[k]));
-						ErrorGL(glBindVertexArray(chunks[chunkIndex].m_VA[k]));
-						ErrorGL(glDrawElements(GL_TRIANGLES, chunks[chunkIndex].m_EOBNumber[k], GL_UNSIGNED_SHORT, 0));
+						ErrorGL(glBindVertexArray(chunksWall[chunkIndex].m_VA[k]));
+						ErrorGL(glDrawElements(GL_TRIANGLES, chunksWall[chunkIndex].m_EOBNumber[k], GL_UNSIGNED_SHORT, 0));
+					}
+				}
+			}
+		}
+		shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
+
+		for (int i = 0; i <= deltaChunks[1];i++)
+		{
+			for (int j = 0; j <= deltaChunks[0]; j++)
+			{
+				int chunkIndex = edgeChunks[0] + j + i * 54;
+
+				for (int k = 0; k < t_BlocksSize - 1;k++)
+				{
+					if (chunksBlock[chunkIndex].m_VA[k])
+					{
+						ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[k]));
+						ErrorGL(glBindVertexArray(chunksBlock[chunkIndex].m_VA[k]));
+						ErrorGL(glDrawElements(GL_TRIANGLES, chunksBlock[chunkIndex].m_EOBNumber[k], GL_UNSIGNED_SHORT, 0));
 					}
 				}
 			}
 		}
 	}
-	
+
 }
