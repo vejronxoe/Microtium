@@ -1267,11 +1267,12 @@ void Player::ResizeHUD(unsigned int eob
 }
 
 void Player::EveryFrame(float deltaTime
+	, std::vector<int>& chunksToRebuildBlocks
 	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& chunksToRebuildWalls
 	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<Enemy>& enemies
 	, std::vector<int>& isThereSandOnX
-	, std::vector<int>& chunksToRebuild
 	, std::vector<CraftStation>& craftStations
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
@@ -2356,13 +2357,13 @@ void Player::EveryFrame(float deltaTime
 							{
 								droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0,GetBlockItemByType( blocks.at(x).at(blockIndex).m_Type), 1, true);
 								damageblocks.erase(damageblocks.begin() + damageIndex);
-								DestroyBlock(blocks, Walls,chunksToRebuild, isThereSandOnX, x, y);
+								DestroyBlock(chunksToRebuildBlocks,blocks, isThereSandOnX, x, y);
 							}
 						}
 						else if (0 >= ((float)blocks.at(x).at(blockIndex).m_Hardness) - ((float)m_PickaxeStreanght / 3.0f))
 						{
 							droppedItems.emplace_back(x, blocks.at(x).at(blockIndex).m_Y, 0, GetBlockItemByType(blocks.at(x).at(blockIndex).m_Type), 1, true);
-							DestroyBlock(blocks, Walls,chunksToRebuild, isThereSandOnX, x, y);
+							DestroyBlock(chunksToRebuildBlocks, blocks, isThereSandOnX, x, y);
 						}
 						else
 						{
@@ -2406,11 +2407,11 @@ void Player::EveryFrame(float deltaTime
 				{
 					if (m_PlayerSlots[0] >= i_WallDirt && m_PlayerSlots[0] <= i_WallIce)
 					{
-						createWall(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks);
+						createWall(x, y, getTypeByItem(m_PlayerSlots[0]), chunksToRebuildWalls, Walls);
 					}
 					else
 					{
-						CreateBlock(x, y, getTypeByItem(m_PlayerSlots[0]), Walls, blocks,chunksToRebuild, isThereSandOnX);
+						CreateBlock(x, y, getTypeByItem(m_PlayerSlots[0]), chunksToRebuildBlocks, blocks, isThereSandOnX);
 					}
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
@@ -2446,7 +2447,7 @@ void Player::EveryFrame(float deltaTime
 							droppedItems.emplace_back(x, Walls.at(x).at(WallIndex).m_Y, 0, getTypeByItem(Walls.at(x).at(WallIndex).m_Type), 1, true);
 							
 							damagedWalls.erase(damagedWalls.begin() + damageIndex);
-							Walls.at(x).erase(Walls.at(x).begin() + WallIndex);
+							DestroyWall(Walls, chunksToRebuildWalls, x, y);
 						}
 					}
 					else if (0 >= ((float)Walls.at(x).at(WallIndex).m_Hardness) - ((float)m_HammerStreanght / 3.0f))
@@ -2454,7 +2455,7 @@ void Player::EveryFrame(float deltaTime
 						droppedItems.emplace_back(x, Walls.at(x).at(WallIndex).m_Y, 0, getTypeByItem(Walls.at(x).at(WallIndex).m_Type), 1, true);
 						
 						
-						Walls.at(x).erase(Walls.at(x).begin() + WallIndex);
+						DestroyWall(Walls, chunksToRebuildWalls, x, y);
 					}
 					else
 					{

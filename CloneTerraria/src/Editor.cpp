@@ -66,9 +66,8 @@ void DeleteStructuresInArea(int* vertices
 		}
 	}
 }
-void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
-	,std::vector<int>& ChunksToBulid
+void DeleteBlocksInArea(std::vector<int>& ChunksToBulid
+	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& SandsXs
 	, int* vertices)
 {
@@ -76,27 +75,20 @@ void DeleteBlocksInArea(std::vector<std::vector<Block>>& blocks
 	{
 		for (int j = vertices[3]; j <= vertices[1]; j++)
 		{
-			DestroyBlock(blocks, Walls, ChunksToBulid, SandsXs, i, j);
+			DestroyBlock(ChunksToBulid,blocks, SandsXs, i, j);
 		}
 	}
 }
-void DeleteWallsInArea( std::vector<std::vector<Wall>>& Walls
+void DeleteWallsInArea(std::vector<int>& ChunksToBulid
+, std::vector<std::vector<Wall>>& Walls
 , int* vertices)
 {
 
 	for (int i = vertices[0]; i <= vertices[2]; i++)
 	{
-		for (int j = 0; j < Walls.at(i).size(); j++)
+		for (int j = vertices[3]; j < vertices[1]; j++)
 		{
-			if (Walls[i][j].m_Y <vertices[3])
-			{
-				break;
-			}
-			else if (Walls[i][j].m_Y <= vertices[1])
-			{
-				Walls[i].erase(Walls[i].begin() + j);
-				j--;
-			}
+			DestroyWall(Walls, ChunksToBulid, i, j);
 		}
 	}
 }
@@ -150,14 +142,15 @@ void Editor::Update(float deltaTime
 	,char cursorState
 	, unsigned int* blocksTex
 	, unsigned int* structureTex
+	, std::vector<int>& chunksToRebuildBlocks
 	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& chunksToRebuildWalls
 	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<seedling>& saplings
 	, std::vector<CraftStation>& CraftingStations
 	, std::vector<Chest>& Chests
 	, std::vector<Door>& Doors
-	, std::vector<int>& SandsXs
-	, std::vector<int>&chunksToBuild)
+	, std::vector<int>& SandsXs)
 { 
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1]};
 	if (Input::AHold)
@@ -264,21 +257,21 @@ void Editor::Update(float deltaTime
 				if (m_Eraser)
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(blocks,Walls,chunksToBuild,SandsXs, m_SelectBoxSides);
-					DeleteWallsInArea(Walls, m_SelectBoxSides);
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks,SandsXs, m_SelectBoxSides);
+					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
 					m_Eraser = false;
 				}
 				else if (m_Selected < t_BlocksSize && m_Selected > -1)
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(blocks,Walls,chunksToBuild,SandsXs, m_SelectBoxSides);
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks,SandsXs, m_SelectBoxSides);
 					
 
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
 						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
-							CreateBlock(i, j, m_Selected,Walls,blocks,chunksToBuild,SandsXs);
+							CreateBlock(i, j, m_Selected, chunksToRebuildBlocks, blocks,SandsXs);
 
 						}
 					}
@@ -287,13 +280,13 @@ void Editor::Update(float deltaTime
 				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce-i_WallDirt+1))
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(Walls, m_SelectBoxSides);
+					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
 						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
 
-							createWall(i,j,getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt),Walls,blocks);
+							createWall(i,j,getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt),chunksToRebuildWalls,Walls);
 						}
 					}
 					m_Selected = -1;
@@ -303,8 +296,8 @@ void Editor::Update(float deltaTime
 					
 					CopyBlocksAndWalls(blocksTex, blocks, Walls);
 					DeleteStructuresInArea(m_SelectBoxSides,Doors,Chests,CraftingStations,saplings);
-					DeleteWallsInArea(Walls, m_SelectBoxSides);
-					DeleteBlocksInArea(blocks, Walls,chunksToBuild,SandsXs, m_SelectBoxSides);
+					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
+					DeleteBlocksInArea(chunksToRebuildBlocks,blocks,SandsXs, m_SelectBoxSides);
 
 				}
 				else if (Input::CtrlHold && Input::CPress)
@@ -314,16 +307,16 @@ void Editor::Update(float deltaTime
 				else if (Input::CtrlHold && Input::VPress)
 				{
 					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
-					DeleteBlocksInArea(blocks,Walls,chunksToBuild,SandsXs, Vertices);
+					DeleteBlocksInArea(chunksToRebuildBlocks,blocks,SandsXs, Vertices);
 					DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(Walls, Vertices);
+					DeleteWallsInArea(chunksToRebuildWalls,Walls, Vertices);
 					for (int i = 0; i < m_CopiedBlocks.size();i++)
 					{
 						for (int j = 0; j < m_CopiedBlocks[i].size();j++)
 						{
 							if (m_CopiedBlocks[i][j] != i_Nothing)
 							{
-								CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j],Walls,blocks,chunksToBuild,SandsXs);
+								CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j],chunksToRebuildBlocks,blocks,SandsXs);
 
 							}
 						}
@@ -334,7 +327,7 @@ void Editor::Update(float deltaTime
 						{
 							if (m_CopiedWalls[i][j] != i_Nothing)
 							{
-								createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], Walls, blocks);
+								createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls,Walls);
 
 							}
 						}
@@ -349,13 +342,8 @@ void Editor::Update(float deltaTime
 			{
 				if (m_Eraser)
 				{
-					int index;
-					bool found = FindWall(Walls, x, y, index);
-					if (found)
-					{
-						Walls[x].erase(Walls[x].begin() + index);
-					}
-					DestroyBlock(blocks, Walls,chunksToBuild, SandsXs, x, y);
+					DestroyWall(Walls, chunksToRebuildWalls, x, y);
+					DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
 					int vec4[4] = {x,y,x,y};
 					DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
 
@@ -369,20 +357,15 @@ void Editor::Update(float deltaTime
 					if (!isAnythingOnThisTransform(x,y,blocks,saplings,t,CraftingStations,Doors,Chests) || found)
 					{
 
-						DestroyBlock(blocks, Walls,chunksToBuild, SandsXs, x, y);
-						CreateBlock(x, y, m_Selected, Walls, blocks,chunksToBuild, SandsXs);
+						DestroyBlock(chunksToRebuildBlocks ,blocks, SandsXs, x, y);
+						CreateBlock(x, y, m_Selected,chunksToRebuildBlocks, blocks, SandsXs);
 
 					}
 				}
 				else if (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1))
 				{
-					int index; 
-					bool found = FindWall(Walls, x, y, index);
-					if (found)
-					{
-						Walls[x].erase(Walls[x].begin() + index);
-					}
-					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), Walls, blocks);
+					DestroyWall(Walls, chunksToRebuildWalls, x, y);
+					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt),chunksToRebuildWalls, Walls);
 				}
 				else if (m_Selected >= t_BlocksSize + (i_WallIce - i_WallDirt + 1) && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
 				{

@@ -787,7 +787,7 @@ int main()
 			LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
 			for (int i = 0; i < Blocks::xMax;i++)
 			{
-				CreateBlock(i, 0, t_Dirt, Walls, blocks,chunksToRebuildBlock, isSandOnX);
+				CreateBlock(i, 0, t_Dirt, chunksToRebuildBlock, blocks, isSandOnX);
 			}
 			//////////////////////////////////
 			Background background(eob, backgroundSh);
@@ -880,7 +880,7 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				player.EveryFrame(deltaTime, blocks, Walls, enemies, isSandOnX,chunksToRebuildBlock, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+				player.EveryFrame(deltaTime,chunksToRebuildBlock, blocks,chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
 				SandEveryFrame(isSandOnX, projectiles, blocks, Walls,chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
 
 				for (int i = 0; i < projectiles.size(); i++)
@@ -957,10 +957,7 @@ int main()
 				structureSh.SetUniformMat4(basicCamera, camera);
 
 				shadowSh.Bind();
-				ErrorGL(glBindVertexArray(blocksDrawData));
-				drawWalls(damagedWalls, damageTexture, Walls, shadowSh,blockTextures, camera, transform, CameraCoordinates);
-				basicSh.Bind();
-				DrawChunks(basicSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
+				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
@@ -1421,7 +1418,7 @@ int main()
 
 				}
 				cursorState = editorHUD.Update(deltaTime,eob,letters,chests, editor);
-				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures, blocks,Walls,seedlings,craftStations,chests,doors,isSandOnX,chunksToRebuildBlock);
+				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures,chunksToRebuildBlock, blocks,chunksToRebuildWall,Walls,seedlings,craftStations,chests,doors,isSandOnX);
 				if (menuState != stateNone)
 				{
 					cursorState = canNotDoIt;
@@ -1439,7 +1436,9 @@ int main()
 				
 				advancedSh.Bind();
 				advancedSh.SetUniformMat4(advancedCamera, camera);
-			
+				shadowSh.Bind();
+				shadowSh.SetUniformMat4(basicCamera, camera);
+
 				backgroundSh.Bind();
 				backgroundSh.SetUniformMat4(basicCamera, camera);
 				background.DrawBackground(backgroundSh, basicSh, transform, editor.m_Transform);
@@ -1449,11 +1448,8 @@ int main()
 
 
 				shadowSh.Bind();
-				ErrorGL(glBindVertexArray(blocksDrawData));
-				drawWalls(std::vector<DamagedBlock>{}, damageTexture, Walls, shadowSh, blockTextures, camera, transform, editor.m_Transform);
-				basicSh.Bind();
 			
-				DrawChunks(basicSh, blockTextures, transform, editor.m_Transform, blockChunks,wallChunks);
+				DrawChunks(shadowSh, blockTextures, transform, editor.m_Transform, blockChunks,wallChunks);
 
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));

@@ -53,13 +53,13 @@ Door::Door(int x
 	case s_Door:
 		for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 		{
-			CreateBlock(m_Transform[0], i, t_DoorBlock, Walls, blocks,fill, sandX);
+			CreateBlock(m_Transform[0], i, t_DoorBlock, fill, blocks, sandX);
 		}
 		break;
 	case s_TrapDoor:
 		for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 		{
-			CreateBlock(i, m_Transform[1], t_DoorBlock, Walls, blocks,fill, sandX);
+			CreateBlock(i, m_Transform[1], t_DoorBlock,fill , blocks, sandX);
 		}
 		break;
 	default:
@@ -119,13 +119,13 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 		case s_Door:
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				CreateBlock(m_Transform[0], i, t_DoorBlock, Walls, blocks,chunksFill, sandX);
+				CreateBlock(m_Transform[0], i, t_DoorBlock,chunksFill, blocks, sandX);
 			}
 			break;
 		case s_TrapDoor:
 			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 			{
-				CreateBlock(i, m_Transform[1], t_DoorBlock, Walls, blocks,chunksFill, sandX);
+				CreateBlock(i, m_Transform[1], t_DoorBlock, chunksFill, blocks, sandX);
 			}
 			break;
 		default:
@@ -158,7 +158,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 
 					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 					{
-						DestroyBlock(blocks, Walls,chunksFill, sandX, m_Transform[0], i);
+						DestroyBlock(chunksFill,blocks, sandX, m_Transform[0], i);
 					}
 					if (preferSide == -1)
 					{
@@ -181,7 +181,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 						{
-							DestroyBlock(blocks, Walls, sandX,chunksFill, m_Transform[0], i);
+							DestroyBlock(chunksFill,blocks, sandX, m_Transform[0], i);
 						}
 						if (preferSide == -1)
 						{
@@ -214,7 +214,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				{
 					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 					{
-						DestroyBlock(blocks, Walls,chunksFill, sandX, i, m_Transform[1]);
+						DestroyBlock(chunksFill, blocks, sandX, i, m_Transform[1]);
 					}
 
 					m_Vertices[0] = vertices[0];
@@ -235,7 +235,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					{
 						for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 						{
-							DestroyBlock(blocks, Walls,chunksFill, sandX, i, m_Transform[1]);
+							DestroyBlock(chunksFill,blocks, sandX, i, m_Transform[1]);
 						}
 						m_Vertices[0] = vertices[0];
 						m_Vertices[1] = vertices[1];
@@ -252,7 +252,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 		{
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				DestroyBlock(blocks, Walls,chunksFill, sandX, m_Transform[0], i);
+				DestroyBlock(chunksFill,blocks, sandX, m_Transform[0], i);
 			}
 			m_OpenSide = 1;
 			break;
@@ -390,13 +390,13 @@ void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
 		case s_Door:
 			for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 			{
-				DestroyBlock(blocks, Walls,fill, sandX, m_Transform[0], i);
+				DestroyBlock(fill,blocks, sandX, m_Transform[0], i);
 			}
 			break;
 		case s_TrapDoor:
 			for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 			{
-				DestroyBlock(blocks, Walls,fill, sandX, i, m_Transform[1]);
+				DestroyBlock(fill,blocks, sandX, i, m_Transform[1]);
 			}
 			break;
 		default:

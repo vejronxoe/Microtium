@@ -201,7 +201,7 @@ bool Projectile::EveryFrame(float deltaTime
 			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,doors,chests);
 			if (!inBlock)
 			{
-				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), t_Sand, Walls, blocks,chunksToRebuild, isSandOnX);
+				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), t_Sand,chunksToRebuild, blocks, isSandOnX);
 			}
 			else
 			{
@@ -576,7 +576,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 				{
 					int sizeBefore = isSandOnX.size();
 					projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-					DestroyBlock(blocks, Walls,chunksToRebuild, isSandOnX, x, nextY + 1);
+					DestroyBlock(chunksToRebuild, blocks, isSandOnX, x, nextY + 1);
 					j--;
 					if (sizeBefore == isSandOnX.size())
 					{
@@ -600,7 +600,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 			{
 				int sizeBefore = isSandOnX.size();
 				projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-				DestroyBlock(blocks, Walls,chunksToRebuild, isSandOnX, x, nextY + 1);
+				DestroyBlock(chunksToRebuild, blocks, isSandOnX, x, nextY + 1);
 				if (sizeBefore == isSandOnX.size())
 				{
 					i--;

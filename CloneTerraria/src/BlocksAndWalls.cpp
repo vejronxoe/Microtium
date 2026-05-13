@@ -152,74 +152,6 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Sand] = CreateTextureRGBA("res/textures/sand.png");
 	IDs[t_DoorBlock] = CreateTextureRGBA("res/textures/red.png");
 }
-void drawBlocks(std::vector<std::vector<Block>>& blocks
-	, std::vector<DamagedBlock> damagedBlocks
-	, float* cameraCoordinate
-	, Shader& basicSh
-	,unsigned int *blockTex
-	, unsigned int* damageTexture
-	, float* transform
-	, float* camera)
-{
-	basicSh.Bind();
-	basicSh.SetUniformMat4(basicCamera, camera);
-
-	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
-	{
-		for (int i = 0; i < blocks.at(j).size(); i++)
-		{
-			int y = blocks[j][i].m_Y;
-			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > y)
-			{
-				break;
-			}
-			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= y)
-			{
-				blocks[j][i].Draw(basicSh, blockTex, j, transform);
-
-			}
-		}
-	}
-
-	for (int i = 0; i < damagedBlocks.size(); i++)
-	{
-		damagedBlocks.at(i).DrawDamage(basicSh, transform, damageTexture);
-	}
-
-}
-void drawWalls(std::vector<DamagedBlock> damagedWalls
-	, unsigned int* damageTextures
-	, std::vector<std::vector<Wall>>& walls
-	, Shader& WallsSh
-	, unsigned int* blockTex
-	, float* camera
-	, float* transform
-	, float* cameraCoordinate)
-{
-	WallsSh.Bind();
-	WallsSh.SetUniform1i(basicSize + ShadowLocation, 1);
-	WallsSh.SetUniformMat4(basicCamera, camera);
-	for (int j = floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform); j <= ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform); j++)
-	{
-		for (int i = 0; i < walls[j].size(); i++)
-		{
-			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform) > walls[j][i].m_Y)
-			{
-				break;
-			}
-			else if (ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform) >= walls[j][i].m_Y)
-			{
-				walls[j][i].Draw(WallsSh,blockTex, j, transform);
-			}
-		}
-	}
-
-	for (int i = 0; i < damagedWalls.size(); i++)
-	{
-		damagedWalls[i].DrawDamage(WallsSh, transform, damageTextures);
-	}
-
-}
 
 void createWall(int x
 	, int y
@@ -235,7 +167,20 @@ void createWall(int x
 			break;
 		}
 	}
-
+	bool alreadyThere = false;
+	int chunkIndex = FindChunk(x, y);
+	for (int i = 0; i < chunksToRebuildWalls.size(); i++)
+	{
+		if (chunksToRebuildWalls[i] == chunkIndex)
+		{
+			alreadyThere = true;
+			break;
+		}
+	}
+	if (!alreadyThere)
+	{
+		chunksToRebuildWalls.emplace_back(chunkIndex);
+	}
 	walls[x].emplace(walls.at(x).begin() + indexToPlace, wallType, y);
 }
 
@@ -244,6 +189,20 @@ void DestroyWall(std::vector<std::vector<Wall>>& Walls
 	, int x
 	, int y)
 {
+	bool alreadyThere = false;
+	int chunkIndex = FindChunk(x, y);
+	for (int i = 0; i < chunksToRebuildWalls.size(); i++)
+	{
+		if (chunksToRebuildWalls[i] == chunkIndex)
+		{
+			alreadyThere = true;
+			break;
+		}
+	}
+	if (!alreadyThere)
+	{
+		chunksToRebuildWalls.emplace_back(chunkIndex);
+	}
 	int index;
 	if (FindWall(Walls, x, y, index))
 	{
@@ -294,6 +253,7 @@ void CreateBlock(int x
 		if (chunksToRebuild[i] == chunkIndex)
 		{
 			alreadyThere = true;
+			break;
 		}
 	}
 	if (!alreadyThere) 
@@ -343,6 +303,7 @@ void DestroyBlock(std::vector<int>& chunksToRebuild
 		if (chunksToRebuild[i] == chunkIndex)
 		{
 			alreadyThere = true;
+			break;
 		}
 	}
 	if (!alreadyThere)

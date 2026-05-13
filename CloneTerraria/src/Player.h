@@ -122,13 +122,14 @@ public:
 	void DamagePlayer(float* transfromAttacker
 		, int Damage);
 	void EveryFrame(float deltaTime
+		, std::vector<int>& chunksToRebuildBlocks
 		, std::vector<std::vector<Block>>& blocks
+		, std::vector<int>& chunksToRebuildWalls
 		, std::vector<std::vector<Wall>>& Walls
 		, std::vector<Enemy>& enemies
 		, std::vector<int>& isThereSandOnX
-		, std::vector<int>& chunksToRebuild
 		, std::vector<CraftStation>& craftStations
-		, std::vector<damagedWood>& damagedWood
+		, std::vector<damagedWood>& damagedWoods
 		, std::vector<DamagedBlock>& damageblocks
 		, std::vector<DamagedBlock>& damagedWalls
 		, std::vector<Letter>& Ascii
@@ -141,7 +142,7 @@ public:
 		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems
 		, std::vector<Projectile>& projectiles
-		, std::vector<Door>& door
+		, std::vector<Door>& doors
 		, std::vector<Chest>& chests);
 
 	void DrawPlayer(float deltaTime

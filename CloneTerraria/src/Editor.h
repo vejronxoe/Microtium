@@ -26,17 +26,18 @@ struct Editor
 	Editor(unsigned int eob);
 	void Update(float deltaTime
 		, char cursorState
-		, unsigned int* BlocksTex
+		, unsigned int* blocksTex
 		, unsigned int* structureTex
+		, std::vector<int>& ChunksToBulidBlocks
 		, std::vector<std::vector<Block>>& blocks
+		, std::vector<int>& ChunksToBulidWalls
 		, std::vector<std::vector<Wall>>& Walls
 		, std::vector<seedling>& saplings
 		, std::vector<CraftStation>& CraftingStations
-		, std::vector<Chest>& Chest
+		, std::vector<Chest>& Chests
 		, std::vector<Door>& Doors
-		, std::vector<int>& SandsXs
-		, std::vector<int>& chunksToBuild);
-	void Draw(Shader& basic
+		, std::vector<int>& SandsXs);
+	void Draw(Shader& animSh
 		, float* transform
 		, float* scale);
 	private:

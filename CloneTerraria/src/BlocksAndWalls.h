@@ -109,22 +109,6 @@ struct ChunkDD
 };
 
 
-void drawWalls(std::vector<DamagedBlock> damagedWalls
-	, unsigned int* damageTextures
-	, std::vector<std::vector<Wall>>& walls
-	, Shader& WallsSh
-	, unsigned int* blockTex
-	, float* camera
-	, float* transform
-	, float* cameraCoordinate);
-void drawBlocks(std::vector<std::vector<Block>>& blocks
-	, std::vector<DamagedBlock> damagedBlocks
-	, float* cameraCoordinate
-	, Shader& basicSh
-	, unsigned int* blockTex
-	, unsigned int* damageTexture
-	, float* transform
-	, float* camera);
 
 
 void createWall(int x
