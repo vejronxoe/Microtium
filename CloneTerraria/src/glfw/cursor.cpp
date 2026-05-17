@@ -55,7 +55,7 @@ void DrawCursor(unsigned int* CursorTextures
 	int x = std::roundf(cameraCoordinates[0] + Input::XMousePos);
 	int y = std::roundf(cameraCoordinates[1] + Input::YMousePos);
 	
-	if (player.m_CursorOnPlaceableForStructure && player.m_PlayerSlots[0])
+	if (player.m_CursorOnPlaceableForStructure && player.m_PlayerSlots[0] && !player.m_AimingAtSlot)
 	{
 		structuresSh.Bind();
 		ChangeTransform(x, y, transform);
@@ -71,7 +71,7 @@ void DrawCursor(unsigned int* CursorTextures
 		structuresSh.SetUniform1i(structureSize + ShadowLocation, 0);
 
 	}
-	if (player.m_CursorOnPlaceableSpot && player.m_PlayerSlots[0])
+	if (player.m_CursorOnPlaceableSpot && player.m_PlayerSlots[0] && !player.m_AimingAtSlot)
 	{
 		animSh.Bind();
 		ChangeTransform(x, y, transform);
@@ -95,11 +95,13 @@ void DrawCursor(unsigned int* CursorTextures
 
 	bool canClickOn = player.m_AimingAtSlot;
 
+	
+	
 	if (player.m_UseSlot != 0 && player.m_PlayerSlots[0] != i_Nothing)
 	{
 		if (player.m_PlayerSlots[0] >= i_WallDirt && player.m_PlayerSlots[0] <= i_WallIce)
 		{
-			basicSh.SetUniform1i( basicSize + ShadowLocation, 1);
+			basicSh.SetUniform1i(basicSize + ShadowLocation, 1);
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_AllItemTextures[player.m_PlayerSlots[0]]));
 			ErrorGL(glBindVertexArray(cursorDrawData));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));

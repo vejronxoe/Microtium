@@ -1700,9 +1700,12 @@ void Player::EveryFrame(float deltaTime
 					//inventory
 					if (slotCoordinates[1] < 6)
 					{
-						if (slotCoordinates[1] == 5)
+						if (slotCoordinates[1] == 5 )
 						{
-							m_AimingAtSlot = 51;
+							if (slotCoordinates[0] == 9)
+							{
+								m_AimingAtSlot = 51;
+							}
 						}
 						else
 						{
@@ -1714,7 +1717,7 @@ void Player::EveryFrame(float deltaTime
 					else if (m_IndexOfOpenChest != -1)
 					{
 						m_AimingAtSlot = slotCoordinates[0] + (slotCoordinates[1] - 6) * 10;
-						if (chests.at(m_IndexOfOpenChest).m_Items[m_AimingAtSlot])
+						if (chests.at(m_IndexOfOpenChest).m_Items[m_AimingAtSlot] || m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0)
 						{
 							slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
 							chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
@@ -3291,7 +3294,7 @@ void Player::DrawPlayer(float deltaTime
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 			for (int i = 0; i < 50; i++) 
 			{
-				if (chests.at(m_IndexOfOpenChest).m_amount[i])
+				if (chests.at(m_IndexOfOpenChest).m_amount[i] > 1)
 				{
 					m_ChestAmountText[i].Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
 
@@ -3602,5 +3605,6 @@ void Player::DrawPlayer(float deltaTime
 		DrawMaxHP -= 25;
 
 	}
-
+	animSh.Bind();
+	animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 }

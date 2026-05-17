@@ -86,7 +86,7 @@ void DeleteWallsInArea(std::vector<int>& ChunksToBulid
 
 	for (int i = vertices[0]; i <= vertices[2]; i++)
 	{
-		for (int j = vertices[3]; j < vertices[1]; j++)
+		for (int j = vertices[3]; j <= vertices[1]; j++)
 		{
 			DestroyWall(Walls, ChunksToBulid, i, j);
 		}
@@ -100,7 +100,7 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 	m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
 	for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
 	{
-		m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
+		m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, -1);
 	}
 	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 	{
@@ -120,7 +120,7 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 	m_CopiedWalls.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
 	for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
 	{
-		m_CopiedWalls[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, i_Nothing);
+		m_CopiedWalls[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, -1);
 	}
 	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 	{
@@ -203,8 +203,6 @@ void Editor::Update(float deltaTime
 		{
 			if (Input::LeftMousePress)
 			{
-				m_Selected = -1;
-				m_Eraser = false;
 				m_BoxSelected = false;
 				m_FirstPointBox[0] = x;
 				m_FirstPointBox[1] = y;
@@ -306,34 +304,40 @@ void Editor::Update(float deltaTime
 				}
 				else if (Input::CtrlHold && Input::VPress)
 				{
-					int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
-					DeleteBlocksInArea(chunksToRebuildBlocks,blocks,SandsXs, Vertices);
-					DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(chunksToRebuildWalls,Walls, Vertices);
-					for (int i = 0; i < m_CopiedBlocks.size();i++)
+					if (m_CopiedBlocks.size())
 					{
-						for (int j = 0; j < m_CopiedBlocks[i].size();j++)
-						{
-							if (m_CopiedBlocks[i][j] != i_Nothing)
-							{
-								CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j],chunksToRebuildBlocks,blocks,SandsXs);
+						int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
+						DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, Vertices);
+						DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
 
+						for (int i = 0; i < m_CopiedBlocks.size();i++)
+						{
+							for (int j = 0; j < m_CopiedBlocks[i].size();j++)
+							{
+								if (m_CopiedBlocks[i][j] != -1)
+								{
+									CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j], chunksToRebuildBlocks, blocks, SandsXs);
+
+								}
 							}
 						}
-					}
-					for (int i = 0; i < m_CopiedWalls.size();i++)
-					{
-						for (int j = 0; j < m_CopiedWalls[i].size();j++)
+					
+						DeleteWallsInArea(chunksToRebuildWalls, Walls, Vertices);
+						for (int i = 0; i < m_CopiedWalls.size();i++)
 						{
-							if (m_CopiedWalls[i][j] != i_Nothing)
+							for (int j = 0; j < m_CopiedWalls[i].size();j++)
 							{
-								createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls,Walls);
+								if (m_CopiedWalls[i][j] != -1)
+								{
+									createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls, Walls);
 
+								}
 							}
 						}
 					}
 				}
 			}
+			
 			break;
 		}
 		case brushType:
@@ -440,7 +444,6 @@ void Editor::Update(float deltaTime
 					}
 				}
 			}
-			m_BoxSelected = false;
 			break;
 		}
 		}
@@ -884,6 +887,8 @@ int EditorHUD::Update(float deltaTime
 						editor.m_placingType = brushType;
 						break;
 					case 1:
+						editor.m_Selected = -1;
+						editor.m_Eraser = false;
 						editor.m_placingType = selectType;
 						break;
 					case 2:
@@ -992,6 +997,8 @@ int EditorHUD::Update(float deltaTime
 		}
 		else if (Input::NumberPress[1])
 		{
+			editor.m_Selected = -1;
+			editor.m_Eraser = false;
 			editor.m_placingType = selectType;
 		}
 	}

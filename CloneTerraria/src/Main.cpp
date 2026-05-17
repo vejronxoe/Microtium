@@ -364,7 +364,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	//*/////////////////////////////////////////////
+	/*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -955,8 +955,8 @@ int main()
 				background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
 				structureSh.Bind();
 				structureSh.SetUniformMat4(basicCamera, camera);
-
 				shadowSh.Bind();
+				shadowSh.SetUniformMat4(basicCamera, camera);
 				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
 
 				basicSh.Bind();
