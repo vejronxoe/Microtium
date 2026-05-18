@@ -44,7 +44,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
     <ClCompile Include="src\projectile.cpp" />
-    <ClCompile Include="src\SaveAndLoad.h.cpp" />
+    <ClCompile Include="src\SaveAndLoad.cpp" />
     <ClCompile Include="src\structures.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +322,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)XoeEngine\src;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

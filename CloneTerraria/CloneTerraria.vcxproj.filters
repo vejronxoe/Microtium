@@ -93,7 +93,7 @@
     <ClCompile Include="src\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SaveAndLoad.h.cpp">
+    <ClCompile Include="src\SaveAndLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

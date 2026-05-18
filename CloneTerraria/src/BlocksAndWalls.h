@@ -15,27 +15,27 @@ namespace Blocks
 enum TexturesOfBlocks
 {
 	
-	t_Dirt = 0
+	 t_Dirt =0 
+	, t_LeftGrass
+	, t_DownGrass
+	, t_DownLeftGrass
+	, t_RightGrass
+	, t_LeftRightGrass
+	, t_DownRightGrass
+	, t_MissingTopGrass
+	, t_TopGrass
+	, t_TopLeftGrass
+	, t_TopDownGrass
+	, t_MissingRightGrass
+	, t_TopRightGrass
+	, t_MissingDownGrass
+	, t_MissingLeftGrass
+	, t_FullGrass
 	, t_Ice
 	, t_Asphalt
 	, t_Platform
 	, t_ForestPlank
 	, t_Sand
-	, t_TopGrass
-	, t_LeftGrass
-	, t_DownGrass
-	, t_RightGrass
-	, t_TopDownGrass
-	, t_LeftRightGrass
-	, t_TopLeftGrass
-	, t_DownLeftGrass
-	, t_DownRightGrass
-	, t_TopRightGrass
-	, t_MissingTopGrass
-	, t_MissingLeftGrass
-	, t_MissingDownGrass
-	, t_MissingRightGrass
-	, t_FullGrass
 	, t_DoorBlock
 	, t_BlocksSize
 

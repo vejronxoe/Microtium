@@ -29,19 +29,10 @@
 #include"glfw/Font.h"
 #include"math/VectorOperation.h"
 #include"Editor.h"
+#include"SaveAndLoad.h"
 
 
-void LoadGame(std::string pathToSave
-	,std::vector<std::vector<Wall>>& walls
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<int>& isSandOnX
-	,unsigned int* blockTextures)
-{
-	
-	blocks.assign(Blocks::xMax, std::vector<Block> {});
-	walls.assign(Blocks::xMax, std::vector<Wall> {});
 
-}
 struct Menu
 {
 	Slider sliders[2];
@@ -220,7 +211,7 @@ int main()
 {
 	Blocks::xMax = 1080;
 	Blocks::xMin = 0;
-	Blocks::yMax = 359;
+	Blocks::yMax = 360;
 	Blocks::yMin = -500;
 	unsigned int gameState = stateMainMenu;
 	srand(time(0));
@@ -341,7 +332,7 @@ int main()
 	unsigned int sliderVBO = -1;
 	unsigned int sliderDD = -1;
 	CreateMenu(true,letters,menu,sliderDD,sliderVBO,checkBoxTex,sliderTex,trailTex,eob);
-
+     
 
 	float camera[16];
 	float scale[16];
@@ -782,14 +773,11 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
-			////////////////////////////////////////////////////////////////////////
-			
-			LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
-			for (int i = 0; i < Blocks::xMax;i++)
-			{
-				CreateBlock(i, 0, t_Dirt, chunksToRebuildBlock, blocks, isSandOnX);
-			}
-			//////////////////////////////////
+			LoadBlocks(pathToSave, blocks);
+
+			///
+			Walls.assign(Blocks::xMax, std::vector<Wall> {});
+			///
 			Background background(eob, backgroundSh);
 
 			CreateChunks(blockChunks, blocks);
@@ -1367,11 +1355,16 @@ int main()
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
-
-		    LoadGame(pathToSave, Walls, blocks, isSandOnX, blockTextures);
+			if (!LoadBlocks(pathToSave, blocks))
+			{
+				std::cout << "error loading (blocks)" << std::endl;
+			}
+			///
+			Walls.assign(Blocks::xMax, std::vector<Wall> {});
+			///
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
-			CreateChunks(blockChunks, Walls);
+			CreateChunks(wallChunks, Walls);
 
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
 			{
@@ -1555,20 +1548,130 @@ int main()
 					break;
 				}
 				case stateLoad:
+				{
+					int aimingAt = -1;
+					for (int i = 0; i < 3; i++)
+					{
+						float vertices[4] =
+						{
+							menu.loadText[i].m_TextVertices[0] + menu.loadText[i].m_Transform[0]
+							, menu.loadText[i].m_TextVertices[1] + menu.loadText[i].m_Transform[1]
+							, menu.loadText[i].m_TextVertices[2] + menu.loadText[i].m_Transform[0]
+							, menu.loadText[i].m_TextVertices[3] + menu.loadText[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							cursorState = canClickOnIt;
+							break;
+						}
+					}
+					float vertices[4] =
+					{
+						menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
+						, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						cursorState = canClickOnIt;
+						aimingAt = 3;
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+						case 2:
+						case 1:
+							//////////////////////////////////////////////////////////////////////////////
+							break;
+						case 3:
+							menuState = stateDefault;
+							break;
+						}
+					}
 					if (Input::EscapePress)
 					{
 						menuState = stateNone;
 						break;
 					}
-					break;
-				case stateSave:
-					if (Input::EscapePress)
+					fontSh.Bind();
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+
+					for (int i = 0; i < 3; i++)
 					{
-						menuState = stateNone;
-						break;
+						menu.saveText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
 					}
+					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
 
+				}
+				case stateSave:
+				{
+					int aimingAt = -1;
+					for (int i = 0; i < 3; i++)
+					{
+						float vertices[4] =
+						{
+							menu.saveText[i].m_TextVertices[0] + menu.saveText[i].m_Transform[0]
+							, menu.saveText[i].m_TextVertices[1] + menu.saveText[i].m_Transform[1]
+							, menu.saveText[i].m_TextVertices[2] + menu.saveText[i].m_Transform[0]
+							, menu.saveText[i].m_TextVertices[3] + menu.saveText[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							cursorState = canClickOnIt;
+							break;
+						}
+					}
+					float vertices[4] =
+					{
+						menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
+						, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						cursorState = canClickOnIt;
+						aimingAt = 3;
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+						case 1:
+						case 2:
+							pathToSave = "res/save" +std::to_string(aimingAt) +"/";
+							if (!SaveBlocks(pathToSave, blocks))
+							{
+								std::cout << "error can not make save (blocks)" << std::endl;
+							}
+							break;
+						case 3:
+							menuState = stateDefault;
+							break;
+						}
+					}
+					if (Input::EscapePress)
+					{
+						menuState = stateNone;
+						break;
+					}
+					fontSh.Bind();
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+
+					for (int i = 0; i < 3; i++)
+					{
+						menu.saveText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
+					}
+					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
+					break;
+				}
 				}
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));

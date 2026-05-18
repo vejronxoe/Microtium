@@ -404,6 +404,7 @@ void CreateChunks(std::vector<ChunkDD>& chunks
 	for (int i = 0; i < 2322; i++)
 	{
 		chunksToRebuild.emplace_back(i);
+		
 	}
 	CreateChunks(chunksToRebuild, chunks, blocks);
 }
@@ -424,6 +425,10 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 {
 	for (int l = 0;l < chunksToRebuild.size();l++)
 	{
+		if (FindChunk(0,-125) < l)
+		{
+			int a = 0;
+		}
 		int i = chunksToRebuild[l];
 		bool map[t_BlocksSize - 1][20][20] = {};
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
