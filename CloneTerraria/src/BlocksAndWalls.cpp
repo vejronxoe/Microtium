@@ -128,29 +128,29 @@ void Wall::Draw(Shader& shadowSh
 }
 void CreateAllBlockTextures(unsigned int* IDs)
 {
-	IDs[t_TopGrass] = CreateTextureRGBA("res/textures/topGrassBlock.png");
-	IDs[t_LeftGrass] = CreateTextureRGBA("res/textures/leftGrassBlock.png");
-	IDs[t_DownGrass] = CreateTextureRGBA("res/textures/downGrassBlock.png");
-	IDs[t_RightGrass] = CreateTextureRGBA("res/textures/rightGrassBlock.png");
-	IDs[t_TopDownGrass] = CreateTextureRGBA("res/textures/topDownGrassBlock.png");
-	IDs[t_LeftRightGrass] = CreateTextureRGBA("res/textures/leftRightGrassBlock.png");
-	IDs[t_TopLeftGrass] = CreateTextureRGBA("res/textures/topLeftGrassBlock.png");
-	IDs[t_DownLeftGrass] = CreateTextureRGBA("res/textures/downLeftGrassBlock.png");
-	IDs[t_DownRightGrass] = CreateTextureRGBA("res/textures/downRightGrassBlock.png");
-	IDs[t_TopRightGrass] = CreateTextureRGBA("res/textures/topRightGrassBlock.png");
-	IDs[t_MissingTopGrass] = CreateTextureRGBA("res/textures/missingTopGrassBlock.png");
-	IDs[t_MissingLeftGrass] = CreateTextureRGBA("res/textures/missingLeftGrassBlock.png");
-	IDs[t_MissingDownGrass] = CreateTextureRGBA("res/textures/missingDownGrassBlock.png");
-	IDs[t_MissingRightGrass] = CreateTextureRGBA("res/textures/missingRightGrassBlock.png");
-	IDs[t_FullGrass] = CreateTextureRGBA("res/textures/fullGrassBlock.png");
-	IDs[t_Dirt] = CreateTextureRGBA("res/textures/dirtBlock.png");
-	IDs[t_Ice] = CreateTextureRGBA("res/textures/ice.png");
-	IDs[t_Asphalt] = CreateTextureRGBA("res/textures/Asphalt.png");
-	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
-	IDs[t_Platform] = CreateTextureRGBA("res/textures/platform.png");
-	IDs[t_ForestPlank] = CreateTextureRGBA("res/textures/forestPlank.png");
-	IDs[t_Sand] = CreateTextureRGBA("res/textures/sand.png");
-	IDs[t_DoorBlock] = CreateTextureRGBA("res/textures/red.png");
+	IDs[t_TopGrass] = CreateTextureRepeatRGBA("res/textures/topGrassBlock.png");
+	IDs[t_LeftGrass] = CreateTextureRepeatRGBA("res/textures/leftGrassBlock.png");
+	IDs[t_DownGrass] = CreateTextureRepeatRGBA("res/textures/downGrassBlock.png");
+	IDs[t_RightGrass] = CreateTextureRepeatRGBA("res/textures/rightGrassBlock.png");
+	IDs[t_TopDownGrass] = CreateTextureRepeatRGBA("res/textures/topDownGrassBlock.png");
+	IDs[t_LeftRightGrass] = CreateTextureRepeatRGBA("res/textures/leftRightGrassBlock.png");
+	IDs[t_TopLeftGrass] = CreateTextureRepeatRGBA("res/textures/topLeftGrassBlock.png");
+	IDs[t_DownLeftGrass] = CreateTextureRepeatRGBA("res/textures/downLeftGrassBlock.png");
+	IDs[t_DownRightGrass] = CreateTextureRepeatRGBA("res/textures/downRightGrassBlock.png");
+	IDs[t_TopRightGrass] = CreateTextureRepeatRGBA("res/textures/topRightGrassBlock.png");
+	IDs[t_MissingTopGrass] = CreateTextureRepeatRGBA("res/textures/missingTopGrassBlock.png");
+	IDs[t_MissingLeftGrass] = CreateTextureRepeatRGBA("res/textures/missingLeftGrassBlock.png");
+	IDs[t_MissingDownGrass] = CreateTextureRepeatRGBA("res/textures/missingDownGrassBlock.png");
+	IDs[t_MissingRightGrass] = CreateTextureRepeatRGBA("res/textures/missingRightGrassBlock.png");
+	IDs[t_FullGrass] = CreateTextureRepeatRGBA("res/textures/fullGrassBlock.png");
+	IDs[t_Dirt] = CreateTextureRepeatRGBA("res/textures/dirtBlock.png");
+	IDs[t_Ice] = CreateTextureRepeatRGBA("res/textures/ice.png");
+	IDs[t_Asphalt] = CreateTextureRepeatRGBA("res/textures/Asphalt.png");
+	IDs[t_Platform] = CreateTextureRepeatRGBA("res/textures/platform.png");
+	IDs[t_Platform] = CreateTextureRepeatRGBA("res/textures/platform.png");
+	IDs[t_ForestPlank] = CreateTextureRepeatRGBA("res/textures/forestPlank.png");
+	IDs[t_Sand] = CreateTextureRepeatRGBA("res/textures/sand.png");
+	IDs[t_DoorBlock] = CreateTextureRepeatRGBA("res/textures/red.png");
 }
 
 void createWall(int x
@@ -417,6 +417,7 @@ void CreateChunks(std::vector<ChunkDD>& chunks
 	}
 	CreateChunks(chunksToRebuild, chunks, walls);
 }
+
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks)
@@ -424,8 +425,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 	for (int l = 0;l < chunksToRebuild.size();l++)
 	{
 		int i = chunksToRebuild[l];
-		std::vector<float> vertices[t_BlocksSize - 1];
-		std::vector<unsigned short> order[t_BlocksSize - 1];
+		bool map[t_BlocksSize - 1][20][20] = {};
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
@@ -441,26 +441,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 					unsigned char blockType = blocks[k][j].m_Type;
 					if (blockType < t_BlocksSize - 1 && blockType >= 0)
 					{
-						float blockVertices[4] = { k - 0.5f
-							, blocks[k][j].m_Y + 0.5f
-							, k + 0.5f
-							, blocks[k][j].m_Y - 0.5f };
-						vertices[blockType].emplace_back(blockVertices[0]);
-						vertices[blockType].emplace_back(blockVertices[3]);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(blockVertices[2]);
-						vertices[blockType].emplace_back(blockVertices[3]);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(blockVertices[2]);
-						vertices[blockType].emplace_back(blockVertices[1]);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(blockVertices[0]);
-						vertices[blockType].emplace_back(blockVertices[1]);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(1);
+						map[blockType][k - transform[0]][blocks[k][j].m_Y - transform[1]] = true;
 					}
 				}
 
@@ -468,23 +449,87 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 		}
 		for (int j = 0; j < t_BlocksSize - 1;j++)
 		{
-			if (vertices[j].size() != 0)
+			std::vector<float> vertices;
+			std::vector<unsigned short> order;
+			float blockVertices[4];
+			int uvVertices[4];
+			for (int k = 0; k < 20;k++)
 			{
-				order[j].resize((vertices[j].size() / 16) * 6);
-
-				for (int k = 0; k < vertices[j].size() / 16; k++)
+				for (int o = 0;o < 20; o++)
 				{
-					order[j].emplace_back(0 + k * 4);
-					order[j].emplace_back(1 + k * 4);
-					order[j].emplace_back(2 + k * 4);
-					order[j].emplace_back(0 + k * 4);
-					order[j].emplace_back(3 + k * 4);
-					order[j].emplace_back(2 + k * 4);
+					if (map[j][k][o])
+					{
+						blockVertices[0] = transform[0] - 0.5f + k;
+						blockVertices[1] = transform[1] + 0.5f + o;
+						blockVertices[2] = transform[0] + 0.5f + k;
+						blockVertices[3] = transform[1] - 0.5f + o;
+						uvVertices[0] = 0;
+						uvVertices[1] = 1;
+						uvVertices[2] = 1;
+						uvVertices[3] = 0;
+						o++;
+						while (map[j][k][o] && o < 20)
+						{
+							uvVertices[1]++;
+							blockVertices[1]++;
+							o++;
+						}
+						int goToLeft = 1;
+						bool canGo = true;
+						for (int p = o - uvVertices[1]; p < o; p++)
+						{
+							canGo = canGo && map[j][k + goToLeft][p];
+						}
+						while (canGo)
+						{
+							for (int p = o - uvVertices[1]; p < o; p++)
+							{
+								map[j][k + goToLeft][p] = false;
+							}
+							uvVertices[2]++;
+							blockVertices[2]++;
+							goToLeft++;
+							for (int p = o - uvVertices[1]; p < o; p++)
+							{
+								canGo = canGo && map[j][k + goToLeft][p];
+							}
+
+						}
+
+						vertices.emplace_back(blockVertices[0]);
+						vertices.emplace_back(blockVertices[3]);
+						vertices.emplace_back(uvVertices[0]);
+						vertices.emplace_back(uvVertices[3]);
+						vertices.emplace_back(blockVertices[2]);
+						vertices.emplace_back(blockVertices[3]);
+						vertices.emplace_back(uvVertices[2]);
+						vertices.emplace_back(uvVertices[3]);
+						vertices.emplace_back(blockVertices[2]);
+						vertices.emplace_back(blockVertices[1]);
+						vertices.emplace_back(uvVertices[2]);
+						vertices.emplace_back(uvVertices[1]);
+						vertices.emplace_back(blockVertices[0]);
+						vertices.emplace_back(blockVertices[1]);
+						vertices.emplace_back(uvVertices[0]);
+						vertices.emplace_back(uvVertices[1]);
+					}
 				}
 			}
-		}
-		for (int j = 0; j < t_BlocksSize - 1;j++)
-		{
+
+			if (vertices.size() != 0)
+			{
+				order.resize((vertices.size() / 16) * 6);
+
+				for (int k = 0; k < vertices.size() / 16; k++)
+				{
+					order.emplace_back(0 + k * 4);
+					order.emplace_back(1 + k * 4);
+					order.emplace_back(2 + k * 4);
+					order.emplace_back(0 + k * 4);
+					order.emplace_back(3 + k * 4);
+					order.emplace_back(2 + k * 4);
+				}
+			}
 			if (chunks[i].m_VBO[j])
 			{
 				ErrorGL(glDeleteBuffers(1, &chunks[i].m_VBO[j]));
@@ -495,16 +540,16 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 			chunks[i].m_VBO[j] = 0;
 			chunks[i].m_EOB[j] = 0;
 			chunks[i].m_EOBNumber[j] = 0;
-			if (vertices[j].size())
+			if (vertices.size())
 			{
 				ErrorGL(glGenVertexArrays(1, &chunks[i].m_VA[j]));
 				ErrorGL(glBindVertexArray(chunks[i].m_VA[j]));
 				ErrorGL(glGenBuffers(1, &chunks[i].m_EOB[j]));
 				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].m_EOB[j]));
-				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order[j].size() * sizeof(unsigned short), order[j].data(), GL_STATIC_DRAW));
+				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size() * sizeof(unsigned short), order.data(), GL_STATIC_DRAW));
 				ErrorGL(glGenBuffers(1, &chunks[i].m_VBO[j]));
 				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks[i].m_VBO[j]));
-				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices[j].size() * sizeof(float), vertices[j].data(), GL_STATIC_DRAW));
+				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
 
 				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
 				ErrorGL(glEnableVertexAttribArray(0));
@@ -513,13 +558,13 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 
 
 				ErrorGL(glBindVertexArray(0));
-				chunks[i].m_EOBNumber[j] = order[j].size();
+				chunks[i].m_EOBNumber[j] = order.size();
 			}
 		}
 	}
 	chunksToRebuild.clear();
-}
 
+}
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
 	, std::vector<std::vector<Wall>>& walls)
@@ -527,8 +572,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 	for (int l = 0;l < chunksToRebuild.size();l++)
 	{
 		int i = chunksToRebuild[l];
-		std::vector<float> vertices[t_BlocksSize - 1];
-		std::vector<unsigned short> order[t_BlocksSize - 1];
+		bool map[t_BlocksSize - 1][20][20] = {};
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
@@ -544,26 +588,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 					unsigned char blockType = walls[k][j].m_Type;
 					if (blockType < t_BlocksSize - 1 && blockType >= 0)
 					{
-						float blockVertices[4] = { k - 0.5f
-							, walls[k][j].m_Y + 0.5f
-							, k + 0.5f
-							, walls[k][j].m_Y - 0.5f };
-						vertices[blockType].emplace_back(blockVertices[0]);
-						vertices[blockType].emplace_back(blockVertices[3]);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(blockVertices[2]);
-						vertices[blockType].emplace_back(blockVertices[3]);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(blockVertices[2]);
-						vertices[blockType].emplace_back(blockVertices[1]);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(1);
-						vertices[blockType].emplace_back(blockVertices[0]);
-						vertices[blockType].emplace_back(blockVertices[1]);
-						vertices[blockType].emplace_back(0);
-						vertices[blockType].emplace_back(1);
+						map[blockType][k - transform[0]][walls[k][j].m_Y - transform[1]] = true;
 					}
 				}
 
@@ -571,23 +596,87 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 		}
 		for (int j = 0; j < t_BlocksSize - 1;j++)
 		{
-			if (vertices[j].size() != 0)
+			std::vector<float> vertices;
+			std::vector<unsigned short> order;
+			float blockVertices[4];
+			int uvVertices[4];
+			for (int k = 0; k < 20;k++)
 			{
-				order[j].resize((vertices[j].size() / 16) * 6);
-
-				for (int k = 0; k < vertices[j].size() / 16; k++)
+				for (int o = 0;o < 20; o++)
 				{
-					order[j].emplace_back(0 + k * 4);
-					order[j].emplace_back(1 + k * 4);
-					order[j].emplace_back(2 + k * 4);
-					order[j].emplace_back(0 + k * 4);
-					order[j].emplace_back(3 + k * 4);
-					order[j].emplace_back(2 + k * 4);
+					if (map[j][k][o])
+					{
+						blockVertices[0] = transform[0] - 0.5f + k;
+						blockVertices[1] = transform[1] + 0.5f + o;
+						blockVertices[2] = transform[0] + 0.5f + k;
+						blockVertices[3] = transform[1] - 0.5f + o;
+						uvVertices[0] = 0;
+						uvVertices[1] = 1;
+						uvVertices[2] = 1;
+						uvVertices[3] = 0;
+						o++;
+						while (map[j][k][o] && o < 20)
+						{
+							uvVertices[1]++;
+							blockVertices[1]++;
+							o++;
+						}
+						int goToLeft = 1;
+						bool canGo = true;
+						for (int p = o - uvVertices[1]; p < o; p++)
+						{
+							canGo = canGo && map[j][k + goToLeft][p];
+						}
+						while (canGo)
+						{
+							for (int p = o - uvVertices[1]; p < o; p++)
+							{
+								map[j][k + goToLeft][p] = false;
+							}
+							uvVertices[2]++;
+							blockVertices[2]++;
+							goToLeft++;
+							for (int p = o - uvVertices[1]; p < o; p++)
+							{
+								canGo = canGo && map[j][k + goToLeft][p];
+							}
+
+						}
+
+						vertices.emplace_back(blockVertices[0]);
+						vertices.emplace_back(blockVertices[3]);
+						vertices.emplace_back(uvVertices[0]);
+						vertices.emplace_back(uvVertices[3]);
+						vertices.emplace_back(blockVertices[2]);
+						vertices.emplace_back(blockVertices[3]);
+						vertices.emplace_back(uvVertices[2]);
+						vertices.emplace_back(uvVertices[3]);
+						vertices.emplace_back(blockVertices[2]);
+						vertices.emplace_back(blockVertices[1]);
+						vertices.emplace_back(uvVertices[2]);
+						vertices.emplace_back(uvVertices[1]);
+						vertices.emplace_back(blockVertices[0]);
+						vertices.emplace_back(blockVertices[1]);
+						vertices.emplace_back(uvVertices[0]);
+						vertices.emplace_back(uvVertices[1]);
+					}
 				}
 			}
-		}
-		for (int j = 0; j < t_BlocksSize - 1;j++)
-		{
+				
+			if (vertices.size() != 0)
+			{
+				order.resize((vertices.size() / 16) * 6);
+
+				for (int k = 0; k < vertices.size() / 16; k++)
+				{
+					order.emplace_back(0 + k * 4);
+					order.emplace_back(1 + k * 4);
+					order.emplace_back(2 + k * 4);
+					order.emplace_back(0 + k * 4);
+					order.emplace_back(3 + k * 4);
+					order.emplace_back(2 + k * 4);
+				}
+			}
 			if (chunks[i].m_VBO[j])
 			{
 				ErrorGL(glDeleteBuffers(1, &chunks[i].m_VBO[j]));
@@ -598,16 +687,16 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 			chunks[i].m_VBO[j] = 0;
 			chunks[i].m_EOB[j] = 0;
 			chunks[i].m_EOBNumber[j] = 0;
-			if (vertices[j].size())
+			if (vertices.size())
 			{
 				ErrorGL(glGenVertexArrays(1, &chunks[i].m_VA[j]));
 				ErrorGL(glBindVertexArray(chunks[i].m_VA[j]));
 				ErrorGL(glGenBuffers(1, &chunks[i].m_EOB[j]));
 				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].m_EOB[j]));
-				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order[j].size() * sizeof(unsigned short), order[j].data(), GL_STATIC_DRAW));
+				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size() * sizeof(unsigned short), order.data(), GL_STATIC_DRAW));
 				ErrorGL(glGenBuffers(1, &chunks[i].m_VBO[j]));
 				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks[i].m_VBO[j]));
-				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices[j].size() * sizeof(float), vertices[j].data(), GL_STATIC_DRAW));
+				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
 
 				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
 				ErrorGL(glEnableVertexAttribArray(0));
@@ -616,7 +705,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 
 
 				ErrorGL(glBindVertexArray(0));
-				chunks[i].m_EOBNumber[j] = order[j].size();
+				chunks[i].m_EOBNumber[j] = order.size();
 			}
 		}
 	}
