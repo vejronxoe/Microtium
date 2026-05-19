@@ -30,6 +30,7 @@
     <ClCompile Include="src\glfw\Font.cpp" />
     <ClCompile Include="src\glfw\Input.cpp" />
     <ClCompile Include="src\glfw\UI.cpp" />
+    <ClCompile Include="src\libraries\Crc32.cpp" />
     <ClCompile Include="src\libraries\ImageLoader.cpp" />
     <ClCompile Include="src\libraries\json.cpp" />
     <ClCompile Include="src\math\VectorOperation.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="src\glfw\input.h" />
     <ClInclude Include="src\glfw\UI.h" />
     <ClInclude Include="src\ItemList.h" />
+    <ClInclude Include="src\libraries\Crc32.h" />
     <ClInclude Include="src\libraries\json.hpp" />
     <ClInclude Include="src\libraries\stb_image.h" />
     <ClInclude Include="src\math\VectorOperation.h" />

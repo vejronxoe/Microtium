@@ -32,7 +32,6 @@
 #include"SaveAndLoad.h"
 
 
-
 struct Menu
 {
 	Slider sliders[2];

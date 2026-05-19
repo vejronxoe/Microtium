@@ -4,14 +4,175 @@
 #include<fstream>
 #include<filesystem>
 #include<sstream>
+#include"libraries/Crc32.h"
 
+bool LoadingSafely(std::string pathAndName)
+{
+	bool repair[2] = { false ,false };
+
+	for (int i = 0; i < 2; i++)
+	{
+		uint32_t checkSum;
+		uint32_t Sum;
+		std::ifstream fileRead(pathAndName + std::to_string(i) + ".dat", std::ios::binary);
+		if (!fileRead.good())
+		{
+			repair[i] = true;
+			continue;
+		}
+
+		fileRead.seekg(0, std::ifstream::end);
+		int size = fileRead.tellg();
+		fileRead.seekg(0, std::ifstream::beg);
+		std::vector<uint8_t> data;
+		data.resize(size);
+		fileRead.read(reinterpret_cast<char*>(data.data()), size);
+		checkSum = crc32_fast(data.data(), size);
+		if (fileRead.gcount() != size)
+		{
+			return false;
+		}
+		fileRead.close();
+		std::ifstream checkFile(pathAndName + std::to_string(i) + ".crc", std::ios::binary);
+		if (!checkFile.good())
+		{
+			repair[i] = true;
+			continue;
+
+		}
+
+		checkFile.read(reinterpret_cast<char*>(&Sum), sizeof(Sum));
+
+		if (!repair[i])
+		{
+			repair[i] = Sum != checkSum;
+		}
+		if (!checkFile.good())
+		{
+			repair[i] = true;
+			continue;
+		}
+		checkFile.close();
+	}
+	int repairing = -1;
+	if (repair[0] && repair[1])
+	{
+		std::cout << "error something happened to save files. they will be reset to default" << std::endl;
+
+
+		// add default 
+	}
+	if (repair[0])
+	{
+		if (!std::filesystem::copy_file(pathAndName + "1.dat", pathAndName + "0.dat", std::filesystem::copy_options::overwrite_existing))
+		{
+			return false;
+		}
+
+
+
+	}
+	else if (repair[1])
+	{
+		if (!std::filesystem::copy_file(pathAndName + "0.dat", pathAndName + "1.dat", std::filesystem::copy_options::overwrite_existing))
+		{
+			return false;
+		}
+	
+
+	}
+	return true;
+}
+bool SavingSafely(std::string pathAndName)
+{
+	{
+		uint32_t checkSum;
+		std::ifstream fileRead(pathAndName + "0.dat", std::ios::binary);
+		if (!fileRead.good())
+		{
+			return false;
+		}
+
+		fileRead.seekg(0, std::ifstream::end);
+		int size = fileRead.tellg();
+		fileRead.seekg(0, std::ifstream::beg);
+		std::vector<uint8_t> data;
+		data.resize(size);
+		fileRead.read(reinterpret_cast<char*>(data.data()), size);
+		checkSum = crc32_fast(data.data(), size);
+		if (fileRead.gcount() != size)
+		{
+			return false;
+		}
+		fileRead.close();
+		std::ofstream checkFile(pathAndName + "0.crc", std::ios::binary | std::ios::trunc);
+		if (!checkFile.good())
+		{
+			return false;
+		}
+
+		checkFile.write(reinterpret_cast<char*>(&checkSum), sizeof(checkSum));
+
+
+		if (!checkFile.good())
+		{
+			return false;
+		}
+		checkFile.close();
+	}
+	if (!std::filesystem::copy_file(pathAndName + "0.dat", pathAndName + "1.dat", std::filesystem::copy_options::overwrite_existing))
+	{
+		return false;
+	}
+	{
+		uint32_t checkSum;
+		std::ifstream fileRead(pathAndName + "1.dat", std::ios::binary);
+		if (!fileRead.good())
+		{
+			return false;
+		}
+
+		fileRead.seekg(0, std::ifstream::end);
+		int size = fileRead.tellg();
+		fileRead.seekg(0, std::ifstream::beg);
+		std::vector<uint8_t> data;
+		data.resize(size);
+		fileRead.read(reinterpret_cast<char*>(data.data()), size);
+		checkSum = crc32_fast(data.data(), size);
+		if (fileRead.gcount() != size)
+		{
+			return false;
+		}
+		fileRead.close();
+		std::ofstream checkFile(pathAndName + "1.crc", std::ios::binary | std::ios::trunc);
+		if (!checkFile.good())
+		{
+			return false;
+		}
+
+		checkFile.write(reinterpret_cast<char*>(&checkSum), sizeof(checkSum));
+
+
+		if (!checkFile.good())
+		{
+			return false;
+		}
+		checkFile.close();
+	}
+	return true;
+	
+}
 
 bool LoadBlocks(std::string path
 	, std::vector<std::vector<Block>>& blocks)
 {
-	path += "Blocks0.dat";
+	if (!LoadingSafely(path +"Blocks"))
+	{
+		return false;
+	}
+	
 	blocks.assign(Blocks::xMax, std::vector<Block> {});
-	std::ifstream file(path, std::ios::binary);
+	std::ifstream file(path+ "Blocks0.dat", std::ios::binary);
 	if (!file.good())
 	{
 		return false;
@@ -33,10 +194,7 @@ bool LoadBlocks(std::string path
 			}
 		}
 	}
-	if (!file.good())
-	{
-		return false;
-	}
+	
 	file.close();
 	for (int i = 0; i < Blocks::xMax;i++)
 	{
@@ -78,7 +236,10 @@ bool LoadBlocks(std::string path
 bool SaveBlocks(std::string path
 	, std::vector<std::vector<Block>>& blocks)
 {
-	
+	if (!SavingSafely(path + "Blocks"))
+	{
+		return false;
+	}
 		std::ofstream file(path+"Blocks0.dat", std::ios::binary | std::ios::trunc);
 		if (!file.good())
 		{
@@ -116,9 +277,9 @@ bool SaveBlocks(std::string path
 		{
 			return false;
 		}
+		
+		
 		file.close();
-		
-		bool copied = std::filesystem::copy_file(path + "Blocks0.dat", path + "Blocks1.dat", std::filesystem::copy_options::overwrite_existing);
-		
-	return copied;
+	
+	return true;
 }

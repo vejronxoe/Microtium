@@ -96,6 +96,9 @@
     <ClCompile Include="src\SaveAndLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\libraries\Crc32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Opengl\ErrorSystem.h">
@@ -180,6 +183,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SaveAndLoad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libraries\Crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
