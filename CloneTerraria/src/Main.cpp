@@ -772,11 +772,15 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
-			LoadBlocks(pathToSave, blocks);
+			if(Load(pathToSave, blocks))
+			{
+				std::cout << "error can not load blocks" << std::endl;
+			}
+			if (!Load(pathToSave, Walls))
+			{
+				std::cout << "error can not load walls" << std::endl;
 
-			///
-			Walls.assign(Blocks::xMax, std::vector<Wall> {});
-			///
+			}
 			Background background(eob, backgroundSh);
 
 			CreateChunks(blockChunks, blocks);
@@ -1354,13 +1358,15 @@ int main()
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
-			if (!LoadBlocks(pathToSave, blocks))
+			if (!Load(pathToSave, blocks))
 			{
 				std::cout << "error loading (blocks)" << std::endl;
 			}
-			///
-			Walls.assign(Blocks::xMax, std::vector<Wall> {});
-			///
+			if (!Load(pathToSave, Walls))
+			{
+				std::cout << "error can not load walls" << std::endl;
+
+			}
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks, Walls);
@@ -1646,10 +1652,15 @@ int main()
 						case 1:
 						case 2:
 							pathToSave = "res/save" +std::to_string(aimingAt) +"/";
-							if (!SaveBlocks(pathToSave, blocks))
+							if (!Save(pathToSave, blocks))
 							{
 								std::cout << "error can not make save (blocks)" << std::endl;
 							}
+							if (!Save(pathToSave, Walls))
+							{
+								std::cout << "error can not make save (walls)" << std::endl;
+							}
+							
 							break;
 						case 3:
 							menuState = stateDefault;

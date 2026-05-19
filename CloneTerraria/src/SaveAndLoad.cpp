@@ -163,7 +163,7 @@ bool SavingSafely(std::string pathAndName)
 	
 }
 
-bool LoadBlocks(std::string path
+bool Load(std::string path
 	, std::vector<std::vector<Block>>& blocks)
 {
 	if (!LoadingSafely(path +"Blocks"))
@@ -233,53 +233,138 @@ bool LoadBlocks(std::string path
 	}
 	return true;
 }
-bool SaveBlocks(std::string path
+bool Save(std::string path
 	, std::vector<std::vector<Block>>& blocks)
 {
+
+	std::ofstream file(path + "Blocks0.dat", std::ios::binary | std::ios::trunc);
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0; i < Blocks::xMax;i++)
+	{
+		int cursor = Blocks::yMax - Blocks::yMin;
+		for (int j = 0; j < blocks.at(i).size();j++)
+		{
+			if (blocks.at(i).at(j).m_Y <= Blocks::yMax && blocks.at(i).at(j).m_Y >= Blocks::yMin)
+			{
+				int y = blocks.at(i).at(j).m_Y - Blocks::yMin;
+				while (cursor > y)
+				{
+					int16_t type = -1;
+					file.write(reinterpret_cast<char*>(&type), sizeof(type));
+					cursor--;
+				}
+				int16_t type = blocks.at(i).at(j).m_Type;
+				file.write(reinterpret_cast<char*>(&type), sizeof(type));
+				cursor--;
+
+			}
+		}
+		while (cursor >= 0)
+		{
+			int16_t type = -1;
+			file.write(reinterpret_cast<char*>(&type), sizeof(type));
+			cursor--;
+		}
+
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+
+
+	file.close();
 	if (!SavingSafely(path + "Blocks"))
 	{
 		return false;
 	}
-		std::ofstream file(path+"Blocks0.dat", std::ios::binary | std::ios::trunc);
-		if (!file.good())
+	return true;
+}
+bool Load(std::string path
+	, std::vector<std::vector<Wall>>& walls)
+{
+	if (!LoadingSafely(path + "walls"))
+	{
+		return false;
+	}
+
+	walls.assign(Blocks::xMax, std::vector<Wall> {});
+	std::ifstream file(path + "walls0.dat", std::ios::binary);
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0; i < Blocks::xMax;i++)
+	{
+		for (int j = Blocks::yMax; j >= Blocks::yMin; j--)
 		{
-			return false;
-		}
-		for (int i = 0; i < Blocks::xMax;i++)
-		{
-			int cursor = Blocks::yMax - Blocks::yMin;
-			for (int j = 0; j < blocks.at(i).size();j++)
+			int16_t type = -1;
+			file.read(reinterpret_cast<char*>(&type), sizeof(type));
+			switch (type)
 			{
-				if (blocks.at(i).at(j).m_Y <= Blocks::yMax && blocks.at(i).at(j).m_Y >= Blocks::yMin)
+
+			case -1:
+				break;
+			default:
+				walls.at(i).emplace_back(type, j);
+				break;
+			}
+		}
+	}
+
+	file.close();
+	return true;
+}
+bool Save(std::string path
+	, std::vector<std::vector<Wall>>& walls)
+{
+	
+	std::ofstream file(path + "Walls0.dat", std::ios::binary | std::ios::trunc);
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0; i < Blocks::xMax;i++)
+	{
+		int cursor = Blocks::yMax - Blocks::yMin;
+		for (int j = 0; j < walls.at(i).size();j++)
+		{
+			if (walls.at(i).at(j).m_Y <= Blocks::yMax && walls.at(i).at(j).m_Y >= Blocks::yMin)
+			{
+				int y = walls.at(i).at(j).m_Y - Blocks::yMin;
+				while (cursor > y)
 				{
-					int y = blocks.at(i).at(j).m_Y - Blocks::yMin;
-					while (cursor > y)
-					{
-						int16_t type = -1;
-						file.write(reinterpret_cast<char*>(&type), sizeof(type));
-						cursor--;
-					}
-					int16_t type = blocks.at(i).at(j).m_Type;
+					int16_t type = -1;
 					file.write(reinterpret_cast<char*>(&type), sizeof(type));
 					cursor--;
-
 				}
-			}
-			while (cursor >= 0)
-			{
-				int16_t type = -1;
+				int16_t type = walls.at(i).at(j).m_Type;
 				file.write(reinterpret_cast<char*>(&type), sizeof(type));
 				cursor--;
-			}
 
+			}
 		}
-		if (!file.good())
+		while (cursor >= 0)
 		{
-			return false;
+			int16_t type = -1;
+			file.write(reinterpret_cast<char*>(&type), sizeof(type));
+			cursor--;
 		}
-		
-		
-		file.close();
-	
+
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+
+
+	file.close();
+	if (!SavingSafely(path + "Walls"))
+	{
+		return false;
+	}
 	return true;
 }

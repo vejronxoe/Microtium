@@ -1,9 +1,13 @@
 #pragma once
 #include"BlocksAndWalls.h"
-
-
-bool LoadBlocks(std::string path
+bool Load(std::string path
 	, std::vector<std::vector<Block>>& blocks);
 
-bool SaveBlocks(std::string path
+bool Save(std::string path
 	, std::vector<std::vector<Block>>& blocks);
+
+bool Load(std::string path
+	, std::vector<std::vector<Wall>>& walls);
+
+bool Save(std::string path
+	, std::vector<std::vector<Wall>>& walls);
