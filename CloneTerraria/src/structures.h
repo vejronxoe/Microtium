@@ -32,8 +32,6 @@ struct Door
 	Door(int x
 		,int y
 		, short type
-		, std::vector<int>& sandX
-		, std::vector< std::vector<Wall>>& Walls
 		, std::vector<std::vector<Block>>& blocks);
 	void DoorInteract(std::vector<std::vector<Block>>& blocks
 		, std::vector< std::vector<Wall>>& Walls
@@ -129,9 +127,7 @@ void CreateStructure(int StructureID
 	, int directionLook
 	, unsigned int* structuresTex
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
 	, std::vector<seedling>& seedlings
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests
-	, std::vector<Door>& doors
-	, std::vector<int>& isThereSandOnX);
+	, std::vector<Door>& doors);

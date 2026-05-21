@@ -37,8 +37,6 @@ void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 Door::Door(int x
 	, int y
 	, short type
-	, std::vector<int>& sandX
-	, std::vector < std::vector<Wall>>& Walls
 	, std::vector<std::vector<Block>>& blocks)
 	:m_Transform{x, y}
 	, m_Type(type)
@@ -47,19 +45,20 @@ Door::Door(int x
 {
 	std::vector<int> fill;
 	getStructureVertices(x, y, type, m_Vertices);
+	std::vector<int> fillSand;
 	switch (type)
 	{
 	case s_Gate:
 	case s_Door:
 		for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 		{
-			CreateBlock(m_Transform[0], i, t_DoorBlock, fill, blocks, sandX);
+			CreateBlock(m_Transform[0], i, t_DoorBlock, fill, blocks, fillSand);
 		}
 		break;
 	case s_TrapDoor:
 		for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 		{
-			CreateBlock(i, m_Transform[1], t_DoorBlock,fill , blocks, sandX);
+			CreateBlock(i, m_Transform[1], t_DoorBlock,fill , blocks, fillSand);
 		}
 		break;
 	default:
@@ -758,12 +757,10 @@ void CreateStructure(int StructureID
 	,int directionLook
 	,unsigned int* structuresTex 
 	, std::vector<std::vector<Block>>& blocks
-	,std::vector<std::vector<Wall>> &Walls
 	,std::vector<seedling>& seedlings
 	,std::vector<CraftStation>& craftStations
 	,std::vector<Chest>& chests
-	,std::vector<Door>& doors
-	,std::vector<int>& isThereSandOnX)
+	,std::vector<Door>& doors)
 {
 	switch (StructureID)
 	{
@@ -810,7 +807,7 @@ void CreateStructure(int StructureID
 	case s_Door:
 	case s_TrapDoor:
 	case s_Gate:
-		doors.emplace_back(x, y,StructureID, isThereSandOnX, Walls, blocks);
+		doors.emplace_back(x, y,StructureID, blocks);
 		break;
 	}
 }

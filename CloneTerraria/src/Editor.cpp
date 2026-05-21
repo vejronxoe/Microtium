@@ -438,7 +438,7 @@ void Editor::Update(float deltaTime
 							{
 								directionalLook = -1;
 							}
-							CreateStructure(m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), x, y, directionalLook, structureTex, blocks, Walls, saplings, CraftingStations, Chests, Doors, SandsXs);
+							CreateStructure(m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), x, y, directionalLook, structureTex, blocks, saplings, CraftingStations, Chests, Doors);
 
 						}
 					}

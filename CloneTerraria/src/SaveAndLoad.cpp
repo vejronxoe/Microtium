@@ -5,6 +5,8 @@
 #include<filesystem>
 #include<sstream>
 #include"libraries/Crc32.h"
+#include"ItemList.h"
+
 
 bool LoadingSafely(std::string pathAndName)
 {
@@ -18,6 +20,7 @@ bool LoadingSafely(std::string pathAndName)
 		if (!fileRead.good())
 		{
 			repair[i] = true;
+			fileRead.close();
 			continue;
 		}
 
@@ -30,6 +33,7 @@ bool LoadingSafely(std::string pathAndName)
 		checkSum = crc32_fast(data.data(), size);
 		if (fileRead.gcount() != size)
 		{
+			fileRead.close();
 			return false;
 		}
 		fileRead.close();
@@ -37,6 +41,7 @@ bool LoadingSafely(std::string pathAndName)
 		if (!checkFile.good())
 		{
 			repair[i] = true;
+			checkFile.close();
 			continue;
 
 		}
@@ -50,6 +55,7 @@ bool LoadingSafely(std::string pathAndName)
 		if (!checkFile.good())
 		{
 			repair[i] = true;
+			checkFile.close();
 			continue;
 		}
 		checkFile.close();
@@ -247,7 +253,7 @@ bool Save(std::string path
 		int cursor = Blocks::yMax - Blocks::yMin;
 		for (int j = 0; j < blocks.at(i).size();j++)
 		{
-			if (blocks.at(i).at(j).m_Y <= Blocks::yMax && blocks.at(i).at(j).m_Y >= Blocks::yMin)
+			if (blocks.at(i).at(j).m_Y <= Blocks::yMax && blocks.at(i).at(j).m_Y >= Blocks::yMin && blocks.at(i).at(j).m_Type != t_DoorBlock)
 			{
 				int y = blocks.at(i).at(j).m_Y - Blocks::yMin;
 				while (cursor > y)
@@ -286,13 +292,13 @@ bool Save(std::string path
 bool Load(std::string path
 	, std::vector<std::vector<Wall>>& walls)
 {
-	if (!LoadingSafely(path + "walls"))
+	if (!LoadingSafely(path + "Walls"))
 	{
 		return false;
 	}
 
 	walls.assign(Blocks::xMax, std::vector<Wall> {});
-	std::ifstream file(path + "walls0.dat", std::ios::binary);
+	std::ifstream file(path + "Walls0.dat", std::ios::binary);
 	if (!file.good())
 	{
 		return false;
@@ -314,7 +320,10 @@ bool Load(std::string path
 			}
 		}
 	}
-
+	if (!file.good())
+	{
+		return false;
+	}
 	file.close();
 	return true;
 }
@@ -360,11 +369,225 @@ bool Save(std::string path
 		return false;
 	}
 
-
 	file.close();
 	if (!SavingSafely(path + "Walls"))
 	{
 		return false;
+	}
+	return true;
+}
+
+bool Save(std::string path
+	, std::vector<CraftStation>& craftStations
+	, std::vector<Chest>& chests
+	, std::vector<Door>& doors
+	, std::vector<tree>& trees
+	, std::vector<seedling>& sapling)
+{
+
+	std::ofstream file(path + "Struct0.dat", std::ios::binary | std::ios::trunc);
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0;i <craftStations.size();i++)
+	{
+		uint8_t type = craftStations.at(i).m_CraftStationtype;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		int16_t x = craftStations.at(i).m_Transform[0];
+		file.write(reinterpret_cast<char*>(&x), sizeof(x));
+		int16_t y = craftStations.at(i).m_Transform[1];
+		file.write(reinterpret_cast<char*>(&y), sizeof(y));
+		int8_t lookAt = craftStations.at(i).m_LookAt;
+		file.write(reinterpret_cast<char*>(&lookAt), sizeof(lookAt));
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0; i < sapling.size();i++)
+	{
+		uint8_t type = s_Sapling;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		int16_t x = sapling.at(i).m_Transform[0];
+		file.write(reinterpret_cast<char*>(&x), sizeof(x));
+		int16_t y = sapling.at(i).m_Transform[1];
+		file.write(reinterpret_cast<char*>(&y), sizeof(y));
+
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0;i < doors.size(); i++)
+	{
+		uint8_t type = doors.at(i).m_Type;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		int16_t x = doors.at(i).m_Transform[0];
+		file.write(reinterpret_cast<char*>(&x), sizeof(x));
+		int16_t y = doors.at(i).m_Transform[1];
+		file.write(reinterpret_cast<char*>(&y), sizeof(y));
+		
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	
+	for (int i = 0;i < chests.size(); i++)
+	{
+		uint8_t type = s_Chest;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		int16_t x = chests.at(i).m_Transform[0];
+		file.write(reinterpret_cast<char*>(&x), sizeof(x));
+		int16_t y = chests.at(i).m_Transform[1];
+		file.write(reinterpret_cast<char*>(&y), sizeof(y));
+		for (int j = 0; j < 50; j++)
+		{
+			uint16_t item = chests.at(i).m_Items[j];
+			file.write(reinterpret_cast<char*>(&item), sizeof(item));
+
+			uint16_t amount = chests.at(i).m_amount[j];
+			file.write(reinterpret_cast<char*>(&amount), sizeof(amount));
+		}
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0 ; i < trees.size(); i++)
+	{
+		uint8_t type = s_StructureSize + trees.at(i).m_PartOfTree;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		int16_t x = trees.at(i).m_Transform[0];
+		file.write(reinterpret_cast<char*>(&x), sizeof(x));
+		int16_t y = trees.at(i).m_Transform[1];
+		file.write(reinterpret_cast<char*>(&y), sizeof(y));
+		int16_t rotation = trees.at(i).m_Rotation;
+		file.write(reinterpret_cast<char*>(&rotation), sizeof(rotation));
+		int16_t itemDrop = trees.at(i).m_ItemDrop;
+		file.write(reinterpret_cast<char*>(&itemDrop), sizeof(itemDrop));
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	file.close();
+	if (!SavingSafely(path + "Struct"))
+	{
+		return false;
+	}
+	return true;
+}
+bool Load(std::string path
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<CraftStation>& craftStations
+	, std::vector<Chest>& chests
+	, std::vector<Door>& doors
+	, std::vector<tree>& trees
+	, std::vector<seedling>& sapling
+	, unsigned int* structTex
+	, unsigned int* treeTex
+	, unsigned int* treeDD)
+{
+	if (!LoadingSafely(path +"Struct"))
+	{
+		return false;
+	}
+	std::uintmax_t totalSize = std::filesystem::file_size(path + "Struct0.dat");
+	std::ifstream file(path + "Struct0.dat", std::ios::binary);
+	if (!file.good())
+	{
+		return false;
+	}
+	while (totalSize > 0)
+	{
+		uint8_t type;
+		file.read(reinterpret_cast<char*>(&type), sizeof(type));
+		totalSize -= sizeof(type);
+		switch (type)
+		{
+		case s_Anvil:
+		case s_CraftingTable:
+		case s_Forge:
+		{
+			int16_t x;
+			file.read(reinterpret_cast<char*>(&x), sizeof(x));
+			totalSize -= sizeof(x);
+			int16_t y;
+			file.read(reinterpret_cast<char*>(&y), sizeof(y));
+			totalSize -= sizeof(y);
+			int8_t lookAt;
+			file.read(reinterpret_cast<char*>(&lookAt), sizeof(lookAt));
+			totalSize -= sizeof(lookAt);
+			CreateStructure(type,x,y,lookAt,structTex,blocks,sapling,craftStations,chests,doors);
+			break;
+		}
+		case s_Gate:
+		case s_Door:
+		case s_TrapDoor:
+		case s_Sapling:
+		{
+			int16_t x;
+			file.read(reinterpret_cast<char*>(&x), sizeof(x));
+			totalSize -= sizeof(x);
+			int16_t y;
+			file.read(reinterpret_cast<char*>(&y), sizeof(y));
+			totalSize -= sizeof(y);
+			CreateStructure(type, x, y, 0, structTex, blocks, sapling, craftStations, chests, doors);
+
+			break;
+		}
+		case s_Chest:
+		{
+			int16_t x;
+			file.read(reinterpret_cast<char*>(&x), sizeof(x));
+			totalSize -= sizeof(x);
+			int16_t y;
+			file.read(reinterpret_cast<char*>(&y), sizeof(y));
+			totalSize -= sizeof(y);
+			chests.emplace_back(x, y, blocks);
+			for (int j = 0; j < 50; j++)
+			{
+				uint16_t item;
+				file.read(reinterpret_cast<char*>(&item), sizeof(item));
+				totalSize -= sizeof(item);
+				uint16_t amount;
+				file.read(reinterpret_cast<char*>(&amount), sizeof(amount));
+				totalSize -= sizeof(amount);
+				chests.at(chests.size() - 1).m_Items[j] = item;
+				chests.at(chests.size() - 1).m_amount[j] = amount;
+			}
+			break;
+		}
+		case s_StructureSize + part_Crown:
+		case s_StructureSize + part_SmallCrown:
+		case s_StructureSize + part_Log:
+		{
+			int16_t x;
+			file.read(reinterpret_cast<char*>(&x), sizeof(x));
+			totalSize -= sizeof(x);
+			int16_t y;
+			file.read(reinterpret_cast<char*>(&y), sizeof(y));
+			totalSize -= sizeof(y);
+			int16_t rotation;
+			file.read(reinterpret_cast<char*>(&rotation), sizeof(rotation));
+			totalSize -= sizeof(rotation);
+			int16_t itemDrop;
+			file.read(reinterpret_cast<char*>(&itemDrop), sizeof(itemDrop));
+			totalSize -= sizeof(itemDrop);
+			trees.emplace_back(treeTex[type - s_StructureSize],treeDD[type - s_StructureSize],itemDrop,35, type - s_StructureSize,x,y,rotation);
+			break;
+		}
+		default:
+			std::cout << "error unknow struct fail to load" << std::endl;
+			return false;
+			break;
+		}
+		if (!file.good())
+		{
+			return false;
+		}
 	}
 	return true;
 }

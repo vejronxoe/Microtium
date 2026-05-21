@@ -2612,7 +2612,7 @@ void Player::EveryFrame(float deltaTime
 				}
 				else if (m_CursorOnPlaceableForStructure)
 				{
-					CreateStructure(GetStructureID(m_PlayerSlots[0]), x, y, m_DirectionLook, structuresTextures, blocks, Walls, seedlings, craftStations, chests, doors, isThereSandOnX);
+					CreateStructure(GetStructureID(m_PlayerSlots[0]), x, y, m_DirectionLook, structuresTextures, blocks, seedlings, craftStations, chests, doors);
 					m_AmountInSlots[0]--;
 					if (m_UseSlot == 0)
 					{

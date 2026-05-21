@@ -781,6 +781,11 @@ int main()
 				std::cout << "error can not load walls" << std::endl;
 
 			}
+			if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+			{
+				std::cout << "error can not load structs" << std::endl;
+
+			}
 			Background background(eob, backgroundSh);
 
 			CreateChunks(blockChunks, blocks);
@@ -1367,6 +1372,11 @@ int main()
 				std::cout << "error can not load walls" << std::endl;
 
 			}
+			if (!Load(pathToSave,blocks,craftStations,chests,doors,trees,seedlings,structuresTextures,treeTextures,treeDD))
+			{
+				std::cout << "error can not load structs" << std::endl;
+
+			}
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks, Walls);
@@ -1660,7 +1670,10 @@ int main()
 							{
 								std::cout << "error can not make save (walls)" << std::endl;
 							}
-							
+							if (!Save(pathToSave,craftStations,chests,doors,trees,seedlings))
+							{
+								std::cout << "error can not make save (struct)" << std::endl;
+							}
 							break;
 						case 3:
 							menuState = stateDefault;
