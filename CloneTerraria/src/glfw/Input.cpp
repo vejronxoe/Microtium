@@ -32,6 +32,8 @@ namespace Input
 	bool CPress = false;
 	bool XPress = false;
 	bool VPress = false;
+	bool F5Press = false;
+	bool F8Press = false;
 	bool NumberPress[10] = {false, false, false, false, false, false, false, false, false, false};
 	bool EscapePress = false;
 	bool EPress = false;
@@ -81,7 +83,8 @@ namespace Input
 		XPress = false;
 		VPress = false;
 		CPress = false;
-
+		F5Press = false;
+		F8Press = false;
 		LeftMouseRelease = false;
 		SpacePress = false;
 		for (int i = 0; i < 10; i++)
@@ -93,7 +96,14 @@ namespace Input
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 
-
+		if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
+		{
+			F5Press = true;
+		}
+		if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
+		{
+			F8Press = true;
+		}
 		if (key == GLFW_KEY_W && action == GLFW_PRESS)
 		{
 			WHold = true;

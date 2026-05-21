@@ -106,13 +106,13 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 	{
 		for (int j = 0; j < blocks.at(i).size();j++)
 		{
-			if (blocks[i][j].m_Y < m_SelectBoxSides[3])
+			if (blocks.at(i)[j].m_Y < m_SelectBoxSides[3])
 			{
 				break;
 			}
-			else if (blocks[i][j].m_Y <= m_SelectBoxSides[1])
+			else if (blocks.at(i)[j].m_Y <= m_SelectBoxSides[1])
 			{
-				m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks[i][j].m_Y - m_SelectBoxSides[1])) = blocks[i][j].m_Type;
+				m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks.at(i)[j].m_Y - m_SelectBoxSides[1])) = blocks.at(i)[j].m_Type;
 			}
 
 		}

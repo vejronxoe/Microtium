@@ -28,6 +28,8 @@ namespace Input
 	extern bool SpaceHold;
 	extern bool SpacePress;
 	extern bool CtrlHold;
+	extern bool F8Press;
+	extern bool F5Press;
 	extern bool NumberPress[10];
 	extern bool EscapePress;
 	extern bool EPress;

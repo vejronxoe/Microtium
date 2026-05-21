@@ -30,7 +30,7 @@
 #include"math/VectorOperation.h"
 #include"Editor.h"
 #include"SaveAndLoad.h"
-
+#include"glfw/input.h"
 
 struct Menu
 {
@@ -354,7 +354,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	//*/////////////////////////////////////////////
+	/*/////////////////////////////////////////////
 	gameState = stateEditor;
 
 	pathToSave += "0/";
@@ -772,7 +772,7 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
-			if(Load(pathToSave, blocks))
+			if(!Load(pathToSave, blocks))
 			{
 				std::cout << "error can not load blocks" << std::endl;
 			}
@@ -876,19 +876,23 @@ int main()
 					Input::OffAllButtons();
 
 				}
+				
+		
 				player.EveryFrame(deltaTime,chunksToRebuildBlock, blocks,chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
 				SandEveryFrame(isSandOnX, projectiles, blocks, Walls,chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
+			
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
 					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX,chunksToRebuildBlock, blockTextures))
 					{
 						projectiles.erase(projectiles.begin() + i);
+						
 					}
 
 				}
 
-
+				
 
 				if (damagedBlocks.size() > 20)
 				{
@@ -927,6 +931,7 @@ int main()
 						damagedTrees.erase(damagedTrees.begin() + j);
 					}
 				}
+
 				if (menuState != stateNone)
 				{
 					Input::EscapePress = escapePressed;
@@ -975,6 +980,7 @@ int main()
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
 				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
+
 				shadowSh.Bind();
 				shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 				ErrorGL(glBindVertexArray(itemDD));
@@ -990,6 +996,7 @@ int main()
 						shadowSh.SetUniform1i(basicSize + ShadowLocation, 0);
 					}
 				}
+
 				particlesSh.Bind();
 				ErrorGL(glBindVertexArray(particlesDD));
 				for (int i = 0; i < boomParticles.size(); i++)
@@ -1000,6 +1007,7 @@ int main()
 						i--;
 					}
 				}
+
 				ChangeRotation(0, rotation);
 				particlesSh.SetUniformMat4(particlesRotation, rotation);
 				ChangeScale(1, 1, scale);
@@ -1010,6 +1018,7 @@ int main()
 				{
 					enemies.at(i).DrawEnemy(animSh, transform, scale);
 				}
+
 				particlesSh.Bind();
 				ErrorGL(glBindVertexArray(particlesDD));
 				for (int i = 0; i < enemies.size(); i++)
@@ -1047,7 +1056,7 @@ int main()
 					}
 
 				}
-				
+
 				advancedSh.Bind();
 				for (int i = 0; i < projectiles.size(); i++)
 				{
@@ -1070,6 +1079,7 @@ int main()
 
 
 				}
+
 				basicSh.Bind();
 				ChangeCamera(0, Window::width, 0, Window::height, camera);
 				basicSh.SetUniformMat4(basicCamera, camera);
@@ -1170,25 +1180,192 @@ int main()
 					break;
 				}
 				case stateLoad:
+				{
+					int aimingAt = -1;
+					for (int i = 0; i < 3; i++)
+					{
+						float vertices[4] =
+						{
+							menu.loadText[i].m_TextVertices[0] + menu.loadText[i].m_Transform[0]
+							, menu.loadText[i].m_TextVertices[1] + menu.loadText[i].m_Transform[1]
+							, menu.loadText[i].m_TextVertices[2] + menu.loadText[i].m_Transform[0]
+							, menu.loadText[i].m_TextVertices[3] + menu.loadText[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							cursorState = canClickOnIt;
+							break;
+						}
+					}
+					float vertices[4] =
+					{
+						menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
+						, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						cursorState = canClickOnIt;
+						aimingAt = 3;
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+						case 1:
+						case 2:
+							pathToSave = "res/save" + std::to_string(aimingAt) + "/";
+							if (!Load(pathToSave, blocks))
+							{
+								std::cout << "error can not load (blocks)" << std::endl;
+							}
+							if (!Load(pathToSave, Walls))
+							{
+								std::cout << "error can not load (walls)" << std::endl;
+							}
+							if (!Load(pathToSave,blocks, craftStations, chests, doors, trees, seedlings,structuresTextures,treeTextures,treeDD))
+							{
+								std::cout << "error can not load (struct)" << std::endl;
+							}
+							CreateChunks(blockChunks, blocks);
+							CreateChunks(wallChunks, Walls);
+							break;
+						case 3:
+							menuState = stateDefault;
+							break;
+						}
+					}
 					if (Input::EscapePress)
 					{
 						menuState = stateNone;
 						break;
 					}
+					fontSh.Bind();
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+
+					for (int i = 0; i < 3; i++)
+					{
+						menu.loadText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
+					}
+					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
+				
+				}
 				case stateSave:
+				{
+					int aimingAt = -1;
+					for (int i = 0; i < 3; i++)
+					{
+						float vertices[4] =
+						{
+							menu.saveText[i].m_TextVertices[0] + menu.saveText[i].m_Transform[0]
+							, menu.saveText[i].m_TextVertices[1] + menu.saveText[i].m_Transform[1]
+							, menu.saveText[i].m_TextVertices[2] + menu.saveText[i].m_Transform[0]
+							, menu.saveText[i].m_TextVertices[3] + menu.saveText[i].m_Transform[1]
+						};
+						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+						{
+							aimingAt = i;
+							cursorState = canClickOnIt;
+							break;
+						}
+					}
+					float vertices[4] =
+					{
+						menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[1] + menu.backText.m_Transform[1]
+						, menu.backText.m_TextVertices[2] + menu.backText.m_Transform[0]
+						, menu.backText.m_TextVertices[3] + menu.backText.m_Transform[1]
+					};
+					if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+					{
+						cursorState = canClickOnIt;
+						aimingAt = 3;
+					}
+					if (Input::LeftMousePress)
+					{
+						switch (aimingAt)
+						{
+						case 0:
+						case 1:
+						case 2:
+							pathToSave = "res/save" + std::to_string(aimingAt) + "/";
+							if (!Save(pathToSave, blocks))
+							{
+								std::cout << "error can not make save (blocks)" << std::endl;
+							}
+							if (!Save(pathToSave, Walls))
+							{
+								std::cout << "error can not make save (walls)" << std::endl;
+							}
+							if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+							{
+								std::cout << "error can not make save (struct)" << std::endl;
+							}
+							break;
+						case 3:
+							menuState = stateDefault;
+							break;
+						}
+					}
 					if (Input::EscapePress)
 					{
 						menuState = stateNone;
 						break;
 					}
+					fontSh.Bind();
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+
+					for (int i = 0; i < 3; i++)
+					{
+						menu.saveText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
+					}
+					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
+					break;
+				}
+				}
+				if (Input::F5Press)
+				{
+					if (!Save(pathToSave, blocks))
+					{
+						std::cout << "error can not make save (blocks)" << std::endl;
+					}
+					if (!Save(pathToSave, Walls))
+					{
+						std::cout << "error can not make save (walls)" << std::endl;
+					}
+					if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+					{
+						std::cout << "error can not make save (struct)" << std::endl;
+					}
+				}
+				else if (Input::F8Press)
+				{
+					if (!Load(pathToSave, blocks))
+					{
+						std::cout << "error can not load (blocks)" << std::endl;
+					}
+					if (!Load(pathToSave, Walls))
+					{
+						std::cout << "error can not load (walls)" << std::endl;
+					}
+					if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+					{
+						std::cout << "error can not load (struct)" << std::endl;
+					}
+					CreateChunks(blockChunks, blocks);
+					CreateChunks(wallChunks, Walls);
 
 				}
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
 				printFPSTimer += deltaTime;
+
 				if (printFPSTimer > 0.1f)
 				{
 					printFPSTimer = 0;
@@ -1210,11 +1387,14 @@ int main()
 				}
 				CreateChunks(chunksToRebuildWall,wallChunks, Walls);
 
+
 				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
+			
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
 				glfwPollEvents();
+
 			}
 			break;
 		}
@@ -1598,9 +1778,23 @@ int main()
 						switch (aimingAt)
 						{
 						case 0:
-						case 2:
 						case 1:
-							//////////////////////////////////////////////////////////////////////////////
+						case 2:
+							pathToSave = "res/save" + std::to_string(aimingAt) + "/";
+							if (!Load(pathToSave, blocks))
+							{
+								std::cout << "error can not load (blocks)" << std::endl;
+							}
+							if (!Load(pathToSave, Walls))
+							{
+								std::cout << "error can not load (walls)" << std::endl;
+							}
+							if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+							{
+								std::cout << "error can not load (struct)" << std::endl;
+							}
+							CreateChunks(blockChunks, blocks);
+							CreateChunks(wallChunks, Walls);
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -1617,7 +1811,7 @@ int main()
 
 					for (int i = 0; i < 3; i++)
 					{
-						menu.saveText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
+						menu.loadText[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == i);
 					}
 					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
@@ -1695,6 +1889,39 @@ int main()
 					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
 				}
+				}
+				if (Input::F5Press)
+				{
+					if (!Save(pathToSave, blocks))
+					{
+						std::cout << "error can not make save (blocks)" << std::endl;
+					}
+					if (!Save(pathToSave, Walls))
+					{
+						std::cout << "error can not make save (walls)" << std::endl;
+					}
+					if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+					{
+						std::cout << "error can not make save (struct)" << std::endl;
+					}
+				}
+				else if (Input::F8Press)
+				{
+					if (!Load(pathToSave, blocks))
+					{
+						std::cout << "error can not load (blocks)" << std::endl;
+					}
+					if (!Load(pathToSave, Walls))
+					{
+						std::cout << "error can not load (walls)" << std::endl;
+					}
+					if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+					{
+						std::cout << "error can not load (struct)" << std::endl;
+					}
+					CreateChunks(blockChunks, blocks);
+					CreateChunks(wallChunks, Walls);
+
 				}
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));

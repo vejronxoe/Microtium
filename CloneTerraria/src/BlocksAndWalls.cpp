@@ -23,11 +23,17 @@ namespace Blocks
 unsigned char getBehaviorByType(unsigned char blocksType)
 {
 	blocksType = Clamp(blocksType,0,t_BlocksSize-1);
-	unsigned char behaviours[t_BlocksSize] = { b_BasicSolid };
+	unsigned char behaviours[t_BlocksSize];
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		behaviours[i] = b_BasicSolid;
+	}
 	behaviours[t_Ice] = b_Slippery;
 	behaviours[t_Asphalt] = b_Asphalt;
 	behaviours[t_Platform] = b_Platform;
 	behaviours[t_DoorBlock] = b_Indestructible;
+	behaviours[t_Sand] = b_Sand;
+
 	return behaviours[blocksType];
 	
 
@@ -36,6 +42,10 @@ unsigned char getTypeByItem(unsigned char item)
 {
 	item = Clamp(item, 0, i_ItemSize-1);
 	int types[i_ItemSize] = {t_Dirt};
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		types[i] = t_Dirt;
+	}
 	types[i_Ice] = t_Ice;
 	types[i_Asphalt] = t_Asphalt;
 	types[i_Platform] = t_Platform;
@@ -48,6 +58,10 @@ unsigned char GetWallItemBytype(unsigned char blocksType)
 {
 	blocksType = Clamp(blocksType, 0, t_BlocksSize - 1);
 	unsigned char WallIDs[t_BlocksSize] = {i_WallDirt};
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		WallIDs[i] = i_WallDirt;
+	}
 	WallIDs[t_Ice] = i_WallIce;
 	return WallIDs[blocksType];
 
@@ -56,6 +70,10 @@ unsigned char GetBlockItemByType(unsigned char blocksType)
 {
 	blocksType = Clamp(blocksType, 0, t_BlocksSize - 1);
 	unsigned char blocksIDs[t_BlocksSize] = { i_Dirt };
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		blocksIDs[i] = i_Dirt;
+	}
 	blocksIDs[t_Ice] = i_Ice;
 	blocksIDs[t_Asphalt] = i_Asphalt;
 	blocksIDs[t_Platform] = i_Platform;
@@ -102,7 +120,11 @@ Wall::Wall(unsigned char wallType
 {
 	m_Type = wallType;
 	m_Y = y;
-	unsigned char hardness[t_BlocksSize] = { 15 };
+	unsigned char hardness[t_BlocksSize];
+	for (int i = 0; i < t_BlocksSize; i++)
+	{
+		hardness[i] = 15;
+	}
 	hardness[t_Dirt] = 20;
 	m_Hardness = hardness[wallType];
 }
@@ -181,7 +203,7 @@ void createWall(int x
 	{
 		chunksToRebuildWalls.emplace_back(chunkIndex);
 	}
-	walls[x].emplace(walls.at(x).begin() + indexToPlace, wallType, y);
+	walls.at(x).emplace(walls.at(x).begin() + indexToPlace, wallType, y);
 }
 
 void DestroyWall(std::vector<std::vector<Wall>>& Walls
@@ -206,7 +228,7 @@ void DestroyWall(std::vector<std::vector<Wall>>& Walls
 	int index;
 	if (FindWall(Walls, x, y, index))
 	{
-		Walls[x].erase(Walls[x].begin()+index);
+		Walls.at(x).erase(Walls.at(x).begin()+index);
 	}
 
 }
@@ -240,12 +262,12 @@ void CreateBlock(int x
 	int indexToPlace;
 	for (indexToPlace = 0; indexToPlace < blocks.at(x).size(); indexToPlace++)
 	{
-		if (blocks[x][indexToPlace].m_Y < y)
+		if (blocks.at(x).at(indexToPlace).m_Y < y)
 		{
 			break;
 		}
 	}
-	blocks[x].emplace(blocks[x].begin() + indexToPlace, blockType,y);
+	blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, blockType,y);
 	bool alreadyThere = false;
 	int chunkIndex = FindChunk(x, y);
 	for (int i = 0; i < chunksToRebuild.size(); i++)
@@ -337,13 +359,13 @@ bool FindBlock(std::vector<std::vector<Block>>& blocks
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < blocks[j].size(); i++)
+		for (int i = 0; i < blocks.at(j).size(); i++)
 		{
-			if (blocks[j][i].m_Y < vertices[3])
+			if (blocks.at(j).at(i).m_Y < vertices[3])
 			{
 				break;
 			}
-			if (blocks[j][i].m_Y <= vertices[1])
+			if (blocks.at(j).at(i).m_Y <= vertices[1])
 			{
 				return true;
 			}
@@ -425,33 +447,32 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 {
 	for (int l = 0;l < chunksToRebuild.size();l++)
 	{
-		if (FindChunk(0,-125) < l)
-		{
-			int a = 0;
-		}
 		int i = chunksToRebuild[l];
+	
 		bool map[t_BlocksSize - 1][20][20] = {};
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
-			for (int j = 0; j < blocks[k].size();j++)
+			for (int j = 0; j < blocks.at(k).size();j++)
 			{
 
-				if (transform[1] > blocks[k][j].m_Y)
+				if (transform[1] > blocks.at(k).at(j).m_Y)
 				{
 					break;
 				}
-				else if (transform[1] + 20 > blocks[k][j].m_Y)
+				else if (transform[1] + 20 > blocks.at(k).at(j).m_Y)
 				{
-					unsigned char blockType = blocks[k][j].m_Type;
+					unsigned char blockType = blocks.at(k).at(j).m_Type;
 					if (blockType < t_BlocksSize - 1 && blockType >= 0)
 					{
-						map[blockType][k - transform[0]][blocks[k][j].m_Y - transform[1]] = true;
+						map[blockType][k - transform[0]][blocks.at(k).at(j).m_Y - transform[1]] = true;
 					}
 				}
 
 			}
 		}
+	
+
 		for (int j = 0; j < t_BlocksSize - 1;j++)
 		{
 			std::vector<float> vertices;
@@ -485,7 +506,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 						{
 							canGo = canGo && map[j][k + goToLeft][p];
 						}
-						while (canGo)
+						while (canGo && goToLeft + k < 20)
 						{
 							for (int p = o - uvVertices[1]; p < o; p++)
 							{
@@ -520,7 +541,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 					}
 				}
 			}
-
+		
 			if (vertices.size() != 0)
 			{
 				order.resize((vertices.size() / 16) * 6);
@@ -535,25 +556,25 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 					order.emplace_back(2 + k * 4);
 				}
 			}
-			if (chunks[i].m_VBO[j])
+			if (chunks.at(i).m_VBO[j])
 			{
-				ErrorGL(glDeleteBuffers(1, &chunks[i].m_VBO[j]));
-				ErrorGL(glDeleteBuffers(1, &chunks[i].m_EOB[j]));
-				ErrorGL(glDeleteVertexArrays(1, &chunks[i].m_VA[j]));
+				ErrorGL(glDeleteBuffers(1, &chunks.at(i).m_VBO[j]));
+				ErrorGL(glDeleteBuffers(1, &chunks.at(i).m_EOB[j]));
+				ErrorGL(glDeleteVertexArrays(1, &chunks.at(i).m_VA[j]));
 			}
-			chunks[i].m_VA[j] = 0;
-			chunks[i].m_VBO[j] = 0;
-			chunks[i].m_EOB[j] = 0;
-			chunks[i].m_EOBNumber[j] = 0;
+			chunks.at(i).m_VA[j] = 0;
+			chunks.at(i).m_VBO[j] = 0;
+			chunks.at(i).m_EOB[j] = 0;
+			chunks.at(i).m_EOBNumber[j] = 0;
 			if (vertices.size())
 			{
-				ErrorGL(glGenVertexArrays(1, &chunks[i].m_VA[j]));
-				ErrorGL(glBindVertexArray(chunks[i].m_VA[j]));
-				ErrorGL(glGenBuffers(1, &chunks[i].m_EOB[j]));
-				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].m_EOB[j]));
+				ErrorGL(glGenVertexArrays(1, &chunks.at(i).m_VA[j]));
+				ErrorGL(glBindVertexArray(chunks.at(i).m_VA[j]));
+				ErrorGL(glGenBuffers(1, &chunks.at(i).m_EOB[j]));
+				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks.at(i).m_EOB[j]));
 				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size() * sizeof(unsigned short), order.data(), GL_STATIC_DRAW));
-				ErrorGL(glGenBuffers(1, &chunks[i].m_VBO[j]));
-				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks[i].m_VBO[j]));
+				ErrorGL(glGenBuffers(1, &chunks.at(i).m_VBO[j]));
+				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks.at(i).m_VBO[j]));
 				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
 
 				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
@@ -563,7 +584,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 
 
 				ErrorGL(glBindVertexArray(0));
-				chunks[i].m_EOBNumber[j] = order.size();
+				chunks.at(i).m_EOBNumber[j] = order.size();
 			}
 		}
 	}
@@ -581,19 +602,19 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
-			for (int j = 0; j < walls[k].size();j++)
+			for (int j = 0; j < walls.at(k).size();j++)
 			{
 
-				if (transform[1] > walls[k][j].m_Y)
+				if (transform[1] > walls.at(k).at(j).m_Y)
 				{
 					break;
 				}
-				else if (transform[1] + 20 > walls[k][j].m_Y)
+				else if (transform[1] + 20 > walls.at(k).at(j).m_Y)
 				{
-					unsigned char blockType = walls[k][j].m_Type;
+					unsigned char blockType = walls.at(k).at(j).m_Type;
 					if (blockType < t_BlocksSize - 1 && blockType >= 0)
 					{
-						map[blockType][k - transform[0]][walls[k][j].m_Y - transform[1]] = true;
+						map[blockType][k - transform[0]][walls.at(k).at(j).m_Y - transform[1]] = true;
 					}
 				}
 
@@ -632,7 +653,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 						{
 							canGo = canGo && map[j][k + goToLeft][p];
 						}
-						while (canGo)
+						while (canGo && goToLeft + k < 20)
 						{
 							for (int p = o - uvVertices[1]; p < o; p++)
 							{
@@ -682,25 +703,25 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 					order.emplace_back(2 + k * 4);
 				}
 			}
-			if (chunks[i].m_VBO[j])
+			if (chunks.at(i).m_VBO[j])
 			{
-				ErrorGL(glDeleteBuffers(1, &chunks[i].m_VBO[j]));
-				ErrorGL(glDeleteBuffers(1, &chunks[i].m_EOB[j]));
-				ErrorGL(glDeleteVertexArrays(1, &chunks[i].m_VA[j]));
+				ErrorGL(glDeleteBuffers(1, &chunks.at(i).m_VBO[j]));
+				ErrorGL(glDeleteBuffers(1, &chunks.at(i).m_EOB[j]));
+				ErrorGL(glDeleteVertexArrays(1, &chunks.at(i).m_VA[j]));
 			}
-			chunks[i].m_VA[j] = 0;
-			chunks[i].m_VBO[j] = 0;
-			chunks[i].m_EOB[j] = 0;
-			chunks[i].m_EOBNumber[j] = 0;
+			chunks.at(i).m_VA[j] = 0;
+			chunks.at(i).m_VBO[j] = 0;
+			chunks.at(i).m_EOB[j] = 0;
+			chunks.at(i).m_EOBNumber[j] = 0;
 			if (vertices.size())
 			{
-				ErrorGL(glGenVertexArrays(1, &chunks[i].m_VA[j]));
-				ErrorGL(glBindVertexArray(chunks[i].m_VA[j]));
-				ErrorGL(glGenBuffers(1, &chunks[i].m_EOB[j]));
-				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].m_EOB[j]));
+				ErrorGL(glGenVertexArrays(1, &chunks.at(i).m_VA[j]));
+				ErrorGL(glBindVertexArray(chunks.at(i).m_VA[j]));
+				ErrorGL(glGenBuffers(1, &chunks.at(i).m_EOB[j]));
+				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks.at(i).m_EOB[j]));
 				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size() * sizeof(unsigned short), order.data(), GL_STATIC_DRAW));
-				ErrorGL(glGenBuffers(1, &chunks[i].m_VBO[j]));
-				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks[i].m_VBO[j]));
+				ErrorGL(glGenBuffers(1, &chunks.at(i).m_VBO[j]));
+				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, chunks.at(i).m_VBO[j]));
 				ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
 
 				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
@@ -710,7 +731,7 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 
 
 				ErrorGL(glBindVertexArray(0));
-				chunks[i].m_EOBNumber[j] = order.size();
+				chunks.at(i).m_EOBNumber[j] = order.size();
 			}
 		}
 	}

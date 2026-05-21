@@ -384,7 +384,6 @@ bool Save(std::string path
 	, std::vector<tree>& trees
 	, std::vector<seedling>& sapling)
 {
-
 	std::ofstream file(path + "Struct0.dat", std::ios::binary | std::ios::trunc);
 	if (!file.good())
 	{
@@ -490,6 +489,11 @@ bool Load(std::string path
 	, unsigned int* treeTex
 	, unsigned int* treeDD)
 {
+	chests.clear();
+	doors.clear();
+	trees.clear();
+	craftStations.clear();
+	sapling.clear();
 	if (!LoadingSafely(path +"Struct"))
 	{
 		return false;
