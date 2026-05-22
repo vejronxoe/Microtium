@@ -595,3 +595,162 @@ bool Load(std::string path
 	}
 	return true;
 }
+bool Save(std::string path
+	, Player& player)
+{
+	std::ofstream file(path + "Player0.dat", std::ios::binary | std::ios::trunc);
+	if (!file.good())
+	{
+		return false;
+	}
+	float x = player.m_Transform[0];
+	file.write(reinterpret_cast<char*>(&x), sizeof(x));
+	float y = player.m_Transform[1];
+	file.write(reinterpret_cast<char*>(&y), sizeof(y));
+	float VX = player.m_Velocity[0];
+	file.write(reinterpret_cast<char*>(&VX), sizeof(VX));
+	float VY = player.m_Velocity[1];
+	file.write(reinterpret_cast<char*>(&VY), sizeof(VY));
+	int16_t HP = player.m_CurrentHealth;
+	file.write(reinterpret_cast<char*>(&HP), sizeof(HP));
+	int16_t maxHP = player.m_maxHealth;
+	file.write(reinterpret_cast<char*>(&maxHP), sizeof(maxHP));
+	int8_t useSlot = player.m_UseSlot;
+	file.write(reinterpret_cast<char*>(&useSlot), sizeof(useSlot));
+	int8_t useHUDSlot = player.m_HUDUseSlot;
+	file.write(reinterpret_cast<char*>(&useHUDSlot), sizeof(useHUDSlot));
+	float lastY = player.m_LastStandingY;
+	file.write(reinterpret_cast<char*>(&lastY), sizeof(lastY));
+	for (int i = 0; i < 60;i++)
+	{
+		int16_t item = player.m_PlayerSlots[i];
+		file.write(reinterpret_cast<char*>(&item), sizeof(item));
+	}
+	for (int i =0;i < 52;i++)
+	{
+		int16_t amount = player.m_AmountInSlots[i];
+		file.write(reinterpret_cast<char*>(&amount), sizeof(amount));
+	}
+	if (!file.good())
+	{
+		return false;
+	}
+	file.close();
+	if (!SavingSafely(path + "Player"))
+	{
+		return false;
+	}
+	return true;
+}
+bool Load(std::string path
+	, Player& player
+	, std::vector<damagedWood>& damagedWoods
+	, std::vector<DamagedBlock>& damageblocks
+	, std::vector<DamagedBlock>& damagedWalls
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies
+	, std::vector<DroppedItem>& droppedItems
+	, std::vector<Letter>& Ascii
+	, unsigned int eob)
+{
+	damagedWoods.clear();
+	damageblocks.clear();
+	damagedWalls.clear();
+	projectiles.clear();
+	enemies.clear();
+	droppedItems.clear();
+	player.clear();
+	if (!LoadingSafely(path+"Player"))
+	{
+		return false;
+	}
+	std::ifstream file(path + "Player0.dat", std::ios::binary);
+	if (!file.good())
+	{
+		return false;
+	}
+	
+	float x;
+	file.read(reinterpret_cast<char*>(&x), sizeof(x));
+	player.m_Transform[0] = x;
+
+	float y;
+	file.read(reinterpret_cast<char*>(&y), sizeof(y));
+	player.m_Transform[1] = y;
+
+	float VX;
+	file.read(reinterpret_cast<char*>(&VX), sizeof(VX));
+	player.m_Velocity[0] = VX;
+
+	float VY;
+	file.read(reinterpret_cast<char*>(&VY), sizeof(VY));
+	player.m_Velocity[1] = VY;
+
+	int16_t HP;
+	file.read(reinterpret_cast<char*>(&HP), sizeof(HP));
+	player.m_CurrentHealth = HP;
+	
+	int16_t maxHP;
+	file.read(reinterpret_cast<char*>(&maxHP), sizeof(maxHP));
+	player.m_maxHealth = maxHP;
+	
+	int8_t useSlot;
+	file.read(reinterpret_cast<char*>(&useSlot), sizeof(useSlot));
+	player.m_UseSlot = useSlot;
+	
+	int8_t useHUDSlot;
+	file.read(reinterpret_cast<char*>(&useHUDSlot), sizeof(useHUDSlot));
+	player.m_HUDUseSlot = useHUDSlot;
+	
+	float lastY;
+	file.read(reinterpret_cast<char*>(&lastY), sizeof(lastY));
+	player.m_LastStandingY = lastY;
+	
+	for (int i = 0; i < 52;i++)
+	{
+		int16_t item;
+		file.read(reinterpret_cast<char*>(&item), sizeof(item));
+		player.m_PlayerSlots[i] = item;
+	}
+	int hold = player.m_PlayerSlots[0];
+	player.m_PlayerSlots[0] = i_Nothing;
+	for (int i = 0; i < 4;i++)
+	{
+		int16_t item;
+		file.read(reinterpret_cast<char*>(&item), sizeof(item));
+		player.m_PlayerSlots[0] = item;
+		player.SwapArmor(0,i);
+	}
+
+	for (int i = 0; i < 4 ;i++)
+	{
+		int16_t item;
+		file.read(reinterpret_cast<char*>(&item), sizeof(item));
+		player.m_PlayerSlots[0] = item;
+		player.SwapAccessorise(0,56+i);
+	}
+	player.m_PlayerSlots[0] = hold;
+
+	for (int i = 0;i < 52;i++)
+	{
+		int16_t amount;
+		file.read(reinterpret_cast<char*>(&amount), sizeof(amount));
+		player.m_AmountInSlots[i] = amount;
+	}
+	
+	player.SwapItemStats();
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			player.ChangeAmountText(player.m_AmountText[i * 10 + j], Ascii, eob, 0, player.m_AmountInSlots[i * 10 + j + 1], player.m_InvOffset[0] + player.m_SlotGap * j, player.m_InvOffset[1] - player.m_HalfOfSlotLeanght - player.m_SlotGap * i);
+		}
+	}
+	player.ChangeAmountText(player.m_AmountText[50], Ascii, eob, 0, player.m_AmountInSlots[51], player.m_InvOffset[0] + player.m_SlotGap * 9, player.m_InvOffset[1] - player.m_HalfOfSlotLeanght - player.m_SlotGap * 5);
+
+	if (!file.good())
+	{
+		return false;
+	}
+	file.close();
+}

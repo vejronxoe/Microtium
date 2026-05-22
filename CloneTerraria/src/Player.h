@@ -48,7 +48,13 @@ enum HUDParts
 	, HUDDefault
 	
 };
-
+enum PartsOfArmor
+{
+	armorHelmet = 0
+	, armorChestPlate
+	, armorPants
+	, armorShoes
+};
 struct Ingredient
 {
 	Ingredient(short int item, short int amount);
@@ -70,7 +76,6 @@ struct Recipe
 };
 
 
-
 class Player
 {
 private:
@@ -86,8 +91,8 @@ private:
 	bool m_CeilHit = false;
 	bool m_LeftWallHit = false;
 	bool m_RightWallHit = false;
-	float m_CoyoteTimer = false;
-	float m_JumpTimer = false;
+	float m_CoyoteTimer = 0;
+	float m_JumpTimer = 0;
 	bool m_CanJump = false;
 public:
 	int m_AimingAtChest = -1;
@@ -104,7 +109,7 @@ public:
 	float m_MaxMovementSpeed = 0;
 	float m_Transform[2] = {10,30};
 	float m_Velocity[2] = {0,0};
-
+	void clear();
 	Player(unsigned int eob
 		, std::vector<Chest>& chests
 		, std::vector<Letter>& Ascii
@@ -162,11 +167,18 @@ public:
 		, unsigned int fontDD
 		, unsigned int particlesDD
 		, unsigned int numberTexture);
-
+	void ChangeAmountText(Text& text
+		, std::vector<Letter>& ascii
+		, unsigned int eob
+		, int oldAmount
+		, int amount
+		, float x
+		, float y);
 	bool HavePlayerSpace(unsigned short int item);
 
 	void SwapItemStats();
-private:
+	void SwapArmor(unsigned char SlotIndex, char armorPart);
+public:
 	float m_ArmTimer = 0;
 	char m_ArmPhase = 0;
 	char m_ArmsBehaviour = 0;
@@ -194,18 +206,11 @@ private:
 	float m_AddNextFrameDrop = 0;
 	float m_ItemsToTake = 0;
 	float m_NumberOfRecipesDone;
-	void ChangeAmountText(Text& text
-		, std::vector<Letter>& ascii
-		, unsigned int eob
-		, int oldAmount
-		, int amount
-		, float x
-		, float y);
+	
 
 	void createHUD(unsigned int eob
 		, std::vector<Chest>& chests
 		, std::vector<Letter>& ASCII);
-	void SwapArmor(unsigned char SlotIndex, char armorPart);
 	bool IsItStackble(unsigned short int item);
 	char FindItemInInv(unsigned char item);
 	char FindOneOfItemsInInv(unsigned char* items, int sizeOfArray);
@@ -217,7 +222,7 @@ public:
 	unsigned int m_SlotTextures = 0;
 	float m_LastStandingY = 0;
 	float m_HPOffset[2] = {};
-	unsigned int m_HPTexture[5] = {0};
+	unsigned int m_HPTexture[5] = {};
 	float m_TimerSinceLastHit = 0;
 	float m_AddNextFrameHP = 0;
 	int m_HPRegen = 2;
@@ -239,7 +244,7 @@ public:
 	bool m_IsInventoryOpen = false;
 
 
-	unsigned int m_AllItemTextures[48] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	unsigned int m_AllItemTextures[i_ItemSize] = {};
 	unsigned int m_ItemsInHandDD[3] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned int m_ItemsInHandTexture[3] = {};//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	unsigned short int m_PlayerSlots[60] = {};
@@ -271,7 +276,7 @@ public:
 
 	void SwapAccessorise(unsigned char invSlotIndex
 		, unsigned char accessoriseSlotIndex);
-	bool m_Effects[3] =  {false};
+	bool m_Effects[3] =  {};
 	float m_OnFireTimer = 0;
 	float m_DamageTimer = 0;
 	bool m_CanDoubleJump = false;

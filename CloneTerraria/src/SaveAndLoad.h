@@ -2,6 +2,7 @@
 #include"BlocksAndWalls.h"
 #include"structures.h"
 #include"flora.h"
+#include "Player.h"
 bool Load(std::string path
 	, std::vector<std::vector<Block>>& blocks);
 
@@ -29,3 +30,16 @@ bool Load(std::string path
 	, unsigned int* structTex
 	, unsigned int* treeTex
 	, unsigned int* treeDD);
+bool Save(std::string path
+	, Player& player);
+
+bool Load(std::string path
+	, Player& player
+	, std::vector<damagedWood>& damagedWoods
+	, std::vector<DamagedBlock>& damageblocks
+	, std::vector<DamagedBlock>& damagedWalls
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies
+	, std::vector<DroppedItem>& droppedItems
+	, std::vector<Letter>& Ascii
+	, unsigned int eob);

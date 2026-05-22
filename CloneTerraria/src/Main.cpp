@@ -786,6 +786,11 @@ int main()
 				std::cout << "error can not load structs" << std::endl;
 
 			}
+			if (!Load(pathToSave,player,damagedTrees,damagedBlocks,damagedWalls,projectiles,enemies,dropItems, letters, eob))
+			{
+				std::cout << "error can not load player" << std::endl;
+
+			}
 			Background background(eob, backgroundSh);
 
 			CreateChunks(blockChunks, blocks);
@@ -1230,6 +1235,11 @@ int main()
 							{
 								std::cout << "error can not load (struct)" << std::endl;
 							}
+							if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
+							{
+								std::cout << "error can not load player" << std::endl;
+
+							}
 							CreateChunks(blockChunks, blocks);
 							CreateChunks(wallChunks, Walls);
 							break;
@@ -1305,6 +1315,10 @@ int main()
 							{
 								std::cout << "error can not make save (struct)" << std::endl;
 							}
+							if (!Save(pathToSave,player))
+							{
+								std::cout << "error can not make save (player)" << std::endl;
+							}
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -1356,6 +1370,11 @@ int main()
 					if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
 					{
 						std::cout << "error can not load (struct)" << std::endl;
+					}
+					if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems,letters,eob))
+					{
+						std::cout << "error can not load player" << std::endl;
+
 					}
 					CreateChunks(blockChunks, blocks);
 					CreateChunks(wallChunks, Walls);

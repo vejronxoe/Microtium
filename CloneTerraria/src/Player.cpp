@@ -34,13 +34,7 @@ enum InHandDDTex
 	, InHandCanon
 	, InHandPistol
 };
-enum PartsOfArmor
-{
-	armorHelmet = 0
-	, armorChestPlate
-	, armorPants
-	, armorShoes
-};
+
 void DrawItem(Shader sh
 	, int sizeOfVertex
 	, float* transform
@@ -499,7 +493,7 @@ void Player::slotsSwap(float deltaTime
 	{
 		m_AimingAtSlot = begin;
 	}
-	else if (Input::RightMouseHold && m_AimingAtSlot != begin && items[m_AimingAtSlot] && (m_PlayerSlots[0] == items[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0))
+	else if ((Input::RightMouseHold && m_AimingAtSlot != begin && items[m_AimingAtSlot] && (m_PlayerSlots[0] == items[m_AimingAtSlot] || m_PlayerSlots[0] == i_Nothing || m_UseSlot == 0)) && IsItStackble(items[m_AimingAtSlot]))
 	{
 		if (m_TimerSpliting == 1 && (m_AmountInSlots[0] != 9999 || m_UseSlot == 0))
 		{
@@ -717,13 +711,13 @@ Player::Player(unsigned int eob
 	m_AmountInSlots[14] = 20;
 	m_AmountInSlots[15] = 20;
 	m_AmountInSlots[16] = 1;
-	m_AmountInSlots[17] = 1;
+	m_AmountInSlots[17] = 55;
 	m_AmountInSlots[18] = 1;
 	m_AmountInSlots[19] = 1;
 	m_AmountInSlots[20] = 1;
 	m_AmountInSlots[21] = 1;
 	m_AmountInSlots[22] = 1;
-	m_AmountInSlots[23] = 1;
+	m_AmountInSlots[23] = 55;
 	m_AmountInSlots[24] = 1;
 	m_AmountInSlots[25] = 1;
 	m_AmountInSlots[26] = 1;
@@ -1125,7 +1119,6 @@ void Player::SwapAccessorise(unsigned char invSlotIndex
 	}
 
 }
-
 bool Player::IsItStackble(unsigned short int item)
 {
 	switch (item)
@@ -1265,7 +1258,88 @@ void Player::ResizeHUD(unsigned int eob
 	ErrorGL(glDeleteVertexArrays(4, m_HUDDD));
 	createHUD(eob, chests, Ascii);
 }
+void Player::clear()
+{
+	m_FloorHit = false;
+	m_CeilHit = false;
+	m_LeftWallHit = false;
+	m_RightWallHit = false;
+	m_CoyoteTimer = 0;
+	m_JumpTimer = 0;
+	m_CanJump = false;
+	m_AimingAtChest = -1;
+	m_IndexOfOpenChest = -1;
+	m_AimingAtDoors = -1;
+	m_DirectionLook = -1;
+	m_FloorBehaviour = b_BasicSolid;
+	m_JumpPower = 12;
+	m_Acceleration = 0;
+	m_Friction = 0;
+	m_MaxMovementSpeed = 0;
+	m_Transform[0] = Blocks::xMax / 2.0f;
+	m_Transform[1] = 10 ;
+	m_Velocity[0] = 0;
+	m_Velocity[1] = 0;
+	m_ArmTimer = 0;
+	m_ArmPhase = 0;
+	m_ArmsBehaviour = 0;
+	m_WalkingTimer = 0;
+	m_WalkingPhase = 0;
+	m_ArmRotation = 0;
+	m_TimerSpliting = 0;
+	m_AddNextFrameDrop = 0;
+	m_ItemsToTake = 0;
+	m_NumberOfRecipesDone;
+	m_LastStandingY = 10;
+	m_TimerSinceLastHit = 0;
+	m_AddNextFrameHP = 0;
+	m_HPRegen = 2;
+	m_CurrentHealth = 50;
+	m_maxHealth = 100;
+	m_HUDUseSlot = 1;
+	m_AimingAtSlot = 0;
+	m_UseSlot = 0;
+	m_IsInventoryOpen = false;
 
+	for (int i = 0;i < 60;i++)
+	{
+		m_PlayerSlots[i] = 0;
+	}
+	for (int i = 0;i < 52;i++)
+	{
+		m_AmountInSlots[i] = 0;
+	}
+	m_UseItemTimer = 0;
+	m_CursorOnMinableBlock = false;
+	m_CursorOnMinableWall = false;
+	m_CursorOnMinableWood = false;
+	m_CursorOnPlaceableForStructure = false;
+	m_CursorOnPlaceableSpot = false;
+	m_LocationAmmunition = -1;
+	m_CooldownToUse = 6;
+	m_HitEnemies.clear();
+	m_WeaponType = weaponNot;
+	m_PickaxeStreanght = 0;
+	m_AxeStreanght = 0;
+	m_HammerStreanght = 0;
+	m_Range = 0;
+	m_Damage = 0;
+	m_ArmorClass = 0;
+	m_Placeable = false;
+	m_LargePlaceable = false;
+	m_Consume = false;
+	m_Effects[0] = false;
+	m_Effects[1] = false;
+	m_Effects[2] = false;
+	m_OnFireTimer = 0;
+	m_DamageTimer = 0;
+	m_CanDoubleJump = false;
+	m_SpeedMultiplier = 1;
+	m_Accessorise = false;
+	m_IsBurning = false;
+	m_BurningTimer = 0;
+	m_BurnDamageNextTime = 0;
+}
 void Player::EveryFrame(float deltaTime
 	, std::vector<int>& chunksToRebuildBlocks
 	, std::vector<std::vector<Block>>& blocks
