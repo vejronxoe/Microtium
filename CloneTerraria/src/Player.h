@@ -198,7 +198,8 @@ public:
 	unsigned int m_LegAnimTex = 0;
 	unsigned int m_BodyAnimTex = 0;
 	unsigned int m_HeadTex = 0;
-
+	Text m_ACText;
+	uint8_t m_DrawAC = 1;
 
 	
 	float m_SlotGap = 0;

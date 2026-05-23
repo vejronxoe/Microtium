@@ -671,6 +671,7 @@ Player::Player(unsigned int eob
 	m_Recipes[4].m_Ingredients.emplace_back(i_ForestPlank, 3);
 
 
+	m_ACText.CreateText(std::to_string(1), std::vector<Format>{Format(5, 2, 0, 0, 0, 1)}, Ascii, eob, middleMiddle, m_HPOffset[0], m_HPOffset[1] - 11 * m_SlotGap);
 
 
 	float playerVertice[4] = { -1,1.5f,1,-1.5f };
@@ -678,67 +679,6 @@ Player::Player(unsigned int eob
 	m_AimingAtDoors = -1;
 
 
-	m_PlayerSlots[0] = i_Cannon;
-	m_AmountInSlots[0] = 1;
-	m_PlayerSlots[1] = i_Cannon;
-	m_AmountInSlots[1] = 1;
-	m_PlayerSlots[2] = i_WoodBow;
-	m_AmountInSlots[2] = 1;
-	m_PlayerSlots[3] = i_Pistol;
-	m_AmountInSlots[3] = 1;
-
-
-	m_PlayerSlots[12] = i_Door;
-	m_PlayerSlots[13] = i_PierceBullet;
-	m_PlayerSlots[14] = i_BouncingBullet;
-	m_PlayerSlots[15] = i_FireBullet;
-	m_PlayerSlots[16] = i_Chest;
-	m_PlayerSlots[17] = i_WoodChestPlate;
-	m_PlayerSlots[18] = i_WoodPants;
-	m_PlayerSlots[19] = i_WoodShoes;
-	m_PlayerSlots[20] = i_AccessoriseArrowBag;
-	m_PlayerSlots[21] = i_AccessoriseWallClimb;
-	m_PlayerSlots[22] = i_AccessoriseFastShoes;
-	m_PlayerSlots[23] = i_AccessoriseShackle;
-	m_PlayerSlots[24] = i_Anvil;
-	m_PlayerSlots[25] = i_TrapDoor;
-	m_PlayerSlots[26] = i_Gate;
-	m_PlayerSlots[27] = i_CopperIngot;
-	m_PlayerSlots[28] = i_ForestPlank;
-
-	m_AmountInSlots[12] = 20;
-	m_AmountInSlots[13] = 20;
-	m_AmountInSlots[14] = 20;
-	m_AmountInSlots[15] = 20;
-	m_AmountInSlots[16] = 1;
-	m_AmountInSlots[17] = 55;
-	m_AmountInSlots[18] = 1;
-	m_AmountInSlots[19] = 1;
-	m_AmountInSlots[20] = 1;
-	m_AmountInSlots[21] = 1;
-	m_AmountInSlots[22] = 1;
-	m_AmountInSlots[23] = 55;
-	m_AmountInSlots[24] = 1;
-	m_AmountInSlots[25] = 1;
-	m_AmountInSlots[26] = 1;
-	m_AmountInSlots[27] = 8;
-	m_AmountInSlots[28] = 3000;
-
-
-	m_PlayerSlots[41] = i_CopperSword;
-	m_PlayerSlots[42] = i_CopperPickaxe;
-	m_PlayerSlots[43] = i_CopperAxe;
-	m_PlayerSlots[44] = i_CopperHammer;
-	m_PlayerSlots[45] = i_Dirt;
-	m_PlayerSlots[46] = i_Sand;
-	m_PlayerSlots[47] = i_Sapling;
-	m_AmountInSlots[41] = 1;
-	m_AmountInSlots[42] = 1;
-	m_AmountInSlots[43] = 1;
-	m_AmountInSlots[44] = 1;
-	m_AmountInSlots[45] = 9999;
-	m_AmountInSlots[46] = 20;
-	m_AmountInSlots[47] = 20;
 
 	m_BootsAnimTex = CreateTextureRGBA("res/textures/bootsAnimDefault.png");
 	m_LegAnimTex = CreateTextureRGBA("res/textures/legAnimDefault.png");
@@ -1589,6 +1529,8 @@ void Player::EveryFrame(float deltaTime
 			if (slotVertices[0] <= Input::XRawMousePos && slotVertices[2] >= Input::XRawMousePos)
 			{
 				slotCoordinates[0] = 11;
+				slotCoordinates[1] = - 1;
+
 				for (int i = 3; i < 11; i++)
 				{
 					if (slotVertices[1] + i * m_SlotGap <= Input::YRawMousePos && slotVertices[3] + i * m_SlotGap >= Input::YRawMousePos)
@@ -3149,9 +3091,13 @@ void Player::EveryFrame(float deltaTime
 			{
 				for (int j = 0; j < 10; j++)
 				{
-					ChangeAmountText(m_ChestAmountText[i * 10 + j], Ascii, eob, oldAmountInChest[i * 10 + j], chests.at(m_IndexOfOpenChest).m_amount[i * 10 + j], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * (i+6));
+					ChangeAmountText(m_ChestAmountText[i * 10 + j], Ascii, eob, oldAmountInChest[i * 10 + j], chests.at(m_IndexOfOpenChest).m_amount[i * 10 + j], m_InvOffset[0] + m_SlotGap * j, m_InvOffset[1] - m_HalfOfSlotLeanght - m_SlotGap * (i + 6));
 				}
 			}
+		}
+		if (m_DrawAC != m_ArmorClass)
+		{
+			m_ACText.CreateText(std::to_string(m_ArmorClass),std::vector<Format>{Format(5,2,0,0,0,1)},Ascii,eob,middleMiddle,m_HPOffset[0],m_HPOffset[1] - 11 * m_SlotGap );
 		}
 	}
 		
@@ -3383,19 +3329,28 @@ void Player::DrawPlayer(float deltaTime
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDInventory], GL_UNSIGNED_BYTE, 0));
 		ErrorGL(glBindVertexArray(m_HUDDD[HUDArmors]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, m_HUDEOBSize[HUDArmors], GL_UNSIGNED_BYTE, 0));
+		animSh.SetUniform1i(animNumber, defaultSlot);
+		ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
+
+		for (int i = 0; i < 4 ;i++) 
+		{
+			if (m_PlayerSlots[52+i])
+			{
+				ChangeTransform(m_HPOffset[0], m_HPOffset[1] - (3+i)*m_SlotGap, transform);
+				animSh.SetUniformMat4(basicTransform, transform);
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+			}
+		}
 		if (!m_UseSlot)
 		{
 			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 
-			ChangeCamera(0, Window::width, 0, Window::height, camera);
-			animSh.SetUniformMat4(animCamera, camera);
+		
 			ChangeScale(1.2f, 1.2f, scale);
 			ChangeTransform(m_InvOffset[0] + m_SlotGap * (m_HUDUseSlot - 1), m_InvOffset[1], transform);
 			animSh.SetUniformMat4(basicTransform, transform);
 			animSh.SetUniformMat4(animScale, scale);
 			animSh.SetUniform1i(animNumber, useSlot);
-			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
 		animSh.SetUniform1i(animNumber, 0);
@@ -3419,8 +3374,16 @@ void Player::DrawPlayer(float deltaTime
 			DrawItem(animSh, animSize, transform, m_HPOffset[0], m_HPOffset[1] - m_SlotGap * (i + 3), m_PlayerSlots[i + 52],m_AllItemTextures);
 			
 		}
+		ChangeTransform(m_HPOffset[0], m_HPOffset[1] - 11 * m_SlotGap, transform);
+		animSh.SetUniformMat4(basicTransform, transform);
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_ArmorClassTex));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		fontSh.Bind();
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
+		m_ACText.Draw(fontSh, basicSh, transform, fontTex, fontTex, false);
+
+
+
 		for (int i = 0; i < 51;i++)
 		{
 			if (m_AmountInSlots[i+1] > 1)
@@ -3572,10 +3535,10 @@ void Player::DrawPlayer(float deltaTime
 			ErrorGL(glBindVertexArray(m_HUDDD[HUDSlot]));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTextures));
 		}
-		
+
 		animSh.Bind();
 		animSh.SetUniform1i(animNumber, 0);
-
+		
 	}	
 	else
 	{

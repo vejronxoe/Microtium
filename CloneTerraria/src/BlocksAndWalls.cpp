@@ -109,10 +109,15 @@ Block::Block(unsigned char blockType
 	m_Y = y;
 	m_Type = blockType;
 	m_Behavior = getBehaviorByType(blockType);
-	unsigned char hardness[t_BlocksSize] = { 15 };
-	hardness[t_Asphalt] = 35;
-	hardness[t_Platform] = 20;
-	hardness[t_ForestPlank] = 20;
+	unsigned char hardness[t_BlocksSize] ;
+	for (int i = 0 ; i< t_BlocksSize;i++)
+	{
+		hardness[i] = 20;
+	}
+	hardness[t_Asphalt] = 40;
+	hardness[t_Platform] = 30;
+	hardness[t_ForestPlank] = 30;
+
 	m_Hardness = hardness[blockType];
 }
 Wall::Wall(unsigned char wallType

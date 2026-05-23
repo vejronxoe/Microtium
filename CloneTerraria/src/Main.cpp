@@ -364,7 +364,6 @@ int main()
 	//////////*////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window))
 	{
-
 		switch (gameState)
 		{	
 		case stateMainMenu:
@@ -795,6 +794,8 @@ int main()
 
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
+			Input::OffAllButtons();
+
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
 				glClear(GL_COLOR_BUFFER_BIT);
@@ -964,8 +965,12 @@ int main()
 				shadowSh.Bind();
 				shadowSh.SetUniformMat4(basicCamera, camera);
 				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
-
 				basicSh.Bind();
+				ErrorGL(glBindVertexArray(blocksDrawData));
+				for (int i = 0; i < damagedBlocks.size(); i++)
+				{
+					damagedBlocks.at(i).DrawDamage(basicSh, transform, damageTexture);
+				}
 				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
 				for (int i = 0; i < seedlings.size(); i++)
 				{
@@ -982,6 +987,7 @@ int main()
 				{
 					damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 				}
+				
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
 				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
