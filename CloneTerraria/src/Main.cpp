@@ -876,6 +876,7 @@ int main()
 				}
 				bool escapePressed = Input::EscapePress;
 				bool leftMousePressed = Input::LeftMousePress;
+				bool leftMouseReleased = Input::LeftMouseRelease;
 				bool leftMousehold = Input::LeftMouseHold;
 				if (menuState != stateNone)
 				{
@@ -943,6 +944,7 @@ int main()
 					Input::EscapePress = escapePressed;
 					Input::LeftMousePress = leftMousePressed;
 					Input::LeftMouseHold = leftMousehold;
+					Input::LeftMouseRelease = leftMouseReleased;
 				}
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
@@ -1625,6 +1627,8 @@ int main()
 				bool escapePressed = Input::EscapePress;
 				bool leftMousePressed = Input::LeftMousePress;
 				bool leftMousehold = Input::LeftMouseHold;
+				bool leftMouseReleased = Input::LeftMouseRelease;
+
 				if(menuState != stateNone)
 				{ 
 					Input::OffAllButtons();
@@ -1637,6 +1641,7 @@ int main()
 					cursorState = canNotDoIt;
 					Input::EscapePress   = escapePressed;
 					Input::LeftMousePress = leftMousePressed;
+					Input::LeftMouseRelease = leftMouseReleased;
 					Input::LeftMouseHold = leftMousehold;
 				}
 				editor.m_Transform[0] = CameraHitboxX(editor.m_Transform[0]);
