@@ -10,8 +10,6 @@ enum Items
 	, i_CopperAxe
 	, i_CopperHammer
 	, i_CopperSword
-	, i_IronOre
-	, i_CopperOre
 	, i_IronIngot
 	, i_CopperIngot
 	, i_CraftingTable
@@ -24,6 +22,14 @@ enum Items
 	, i_ForestPlank
 	, i_Platform
 	, i_WallDirt
+	, i_WallForestPlank
+	, i_WallCloude
+	, i_WallTerracotta
+	, i_WallStone
+	, i_WallStoneBrick
+	, i_WallHardStone
+	, i_WallHardStoneBrick
+	, i_WallSandBrick
 	, i_WallIce
 	, i_Sand
 	, i_Sapling
@@ -53,6 +59,20 @@ enum Items
 	, i_Door
 	, i_TrapDoor
 	, i_Gate
+	, i_IronOre/////////////////////////
+	, i_CopperOre
+	, i_AdamantiteOre
+	, i_GoldOre
+	, i_Stone
+	, i_CloudeBlock
+	, i_TitanOre
+	, i_StoneBrick
+	, i_HardStone
+	, i_HardStoneBrick
+	, i_SandBrick
+	, i_Terracotta
+	, i_SnowPlatform
+	, i_SandPlatform
 	, i_ItemSize
 };
 enum Structures

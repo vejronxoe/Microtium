@@ -627,6 +627,45 @@
     <Image Include="res\textures\RubberIcon.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\stone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\SelectZone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\TitanOre.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\GoldOre.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Cloude.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\AdamantiteOre.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\HardStone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\HardStoneBrick.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sandBrick.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\SandPlatform.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\SnowPlatform.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\terracotta.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\StoneBrick.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />

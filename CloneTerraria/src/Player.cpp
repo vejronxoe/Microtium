@@ -68,18 +68,14 @@ void CreateAllItemTextures(unsigned int* itemTex
 	, unsigned int* blockTex
 	, unsigned int* structureTex)
 {
+	for (int i =0 ; i < i_ItemSize;i++)
+	{
+		itemTex[i] = blockTex[getTypeByItem(i)];
+	}
 	itemTex[i_CopperPickaxe] = CreateTextureRGBA("res/textures/cooperPickaxe.png");
 	itemTex[i_CopperAxe] = CreateTextureRGBA("res/textures/cooperAxe.png");
 	itemTex[i_CopperHammer] = CreateTextureRGBA("res/textures/cooperHammer.png");
 	itemTex[i_CopperSword] = CreateTextureRGBA("res/textures/cooperSword.png");
-	itemTex[i_ForestPlank] = blockTex[t_ForestPlank];
-	itemTex[i_Dirt] = blockTex[t_Dirt];
-	itemTex[i_Ice] = blockTex[t_Ice];
-	itemTex[i_Asphalt] = blockTex[t_Asphalt];
-	itemTex[i_Platform] = blockTex[t_Platform];
-	itemTex[i_WallDirt] = blockTex[t_Dirt];
-	itemTex[i_WallIce] = blockTex[t_Ice];
-	itemTex[i_Sand] = blockTex[t_Sand];
 	itemTex[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 	itemTex[i_WoodBow] = CreateTextureRGBA("res/textures/bowInInv.png");
 	itemTex[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
@@ -105,8 +101,7 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
 	itemTex[i_Chest] = structureTex[s_Chest];
 	itemTex[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
-	itemTex[i_IronOre] = CreateTextureRGBA("res/textures/iron.png");
-	itemTex[i_CopperOre] = CreateTextureRGBA("res/textures/copper.png");
+
 	itemTex[i_IronIngot] = CreateTextureRGBA("res/textures/ironIngot.png");
 	itemTex[i_CopperIngot] = CreateTextureRGBA("res/textures/copperIngot.png");
 	itemTex[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
@@ -116,7 +111,28 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
 	itemTex[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
 
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Player::createHUD(unsigned int eob
 	, std::vector<Chest>& chests
 	, std::vector<Letter>& ASCII)

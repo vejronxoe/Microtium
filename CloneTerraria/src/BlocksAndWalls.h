@@ -36,6 +36,20 @@ enum TexturesOfBlocks
 	, t_Platform
 	, t_ForestPlank
 	, t_Sand
+	, t_CopperOre
+	, t_IronOre
+	, t_AdamantiteOre
+	, t_GoldOre
+	, t_TitanOre
+	, t_Stone
+	, t_StoneBrick
+	, t_HardStone
+	, t_HardStoneBrick
+	, t_SandBrick
+	, t_Terracotta
+	, t_Cloude
+	, t_SnowPlatform
+	, t_SandPlatform
 	, t_DoorBlock
 	, t_BlocksSize
 

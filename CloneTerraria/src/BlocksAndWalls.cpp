@@ -33,7 +33,8 @@ unsigned char getBehaviorByType(unsigned char blocksType)
 	behaviours[t_Platform] = b_Platform;
 	behaviours[t_DoorBlock] = b_Indestructible;
 	behaviours[t_Sand] = b_Sand;
-
+	behaviours[t_SnowPlatform] = b_Platform;
+	behaviours[t_SandPlatform] = b_Platform;
 	return behaviours[blocksType];
 	
 
@@ -41,8 +42,8 @@ unsigned char getBehaviorByType(unsigned char blocksType)
 unsigned char getTypeByItem(unsigned char item)
 {
 	item = Clamp(item, 0, i_ItemSize-1);
-	int types[i_ItemSize] = {t_Dirt};
-	for (int i = 0; i < t_BlocksSize; i++)
+	int types[i_ItemSize] = {};
+	for (int i = 0; i < i_ItemSize; i++)
 	{
 		types[i] = t_Dirt;
 	}
@@ -52,6 +53,29 @@ unsigned char getTypeByItem(unsigned char item)
 	types[i_ForestPlank] = t_ForestPlank;
 	types[i_Sand] = t_Sand;
 	types[i_WallIce] = t_Ice;
+	types[i_CopperOre] = t_CopperOre;
+	types[i_IronOre] = t_IronOre;
+	types[i_AdamantiteOre] = t_AdamantiteOre;
+	types[i_GoldOre] = t_GoldOre;
+	types[i_Stone] = t_Stone;
+	types[i_CloudeBlock] = t_Cloude;
+	types[i_TitanOre] = t_TitanOre;
+	types[i_StoneBrick] = t_StoneBrick;
+	types[i_HardStone] = t_HardStone;
+	types[i_HardStoneBrick] = t_HardStoneBrick;
+	types[i_SandBrick] = t_SandBrick;
+	types[i_Terracotta] = t_Terracotta;
+	types[i_SnowPlatform] = t_SnowPlatform;
+	types[t_SandPlatform] = t_SandPlatform;
+	types[i_WallForestPlank] = t_ForestPlank;
+	types[i_WallCloude] = t_Cloude;
+	types[i_WallTerracotta] = t_Terracotta;
+	types[i_WallStone] = t_Stone;
+	types[i_WallStoneBrick] = t_StoneBrick;
+	types[i_WallHardStone] = t_HardStone;
+	types[i_WallHardStoneBrick] = t_HardStoneBrick;
+	types[i_WallSandBrick] = t_SandBrick;
+
 	return types[item];
 }
 unsigned char GetWallItemBytype(unsigned char blocksType)
@@ -63,6 +87,15 @@ unsigned char GetWallItemBytype(unsigned char blocksType)
 		WallIDs[i] = i_WallDirt;
 	}
 	WallIDs[t_Ice] = i_WallIce;
+	WallIDs[t_ForestPlank] = i_WallForestPlank;
+	WallIDs[t_Cloude] = i_WallCloude;
+	WallIDs[t_Terracotta] = i_WallTerracotta;
+	WallIDs[t_Stone] = i_WallStone;
+	WallIDs[t_StoneBrick] = i_WallStoneBrick;
+	WallIDs[t_HardStone] = i_WallHardStone;
+	WallIDs[t_HardStoneBrick] = i_WallHardStoneBrick;
+	WallIDs[t_SandBrick] = i_WallSandBrick;
+
 	return WallIDs[blocksType];
 
 }
@@ -79,6 +112,20 @@ unsigned char GetBlockItemByType(unsigned char blocksType)
 	blocksIDs[t_Platform] = i_Platform;
 	blocksIDs[t_ForestPlank] = i_ForestPlank;
 	blocksIDs[t_Sand] = i_Sand;
+	blocksIDs[t_CopperOre] = i_CopperOre;
+	blocksIDs[t_IronOre] = i_IronOre;
+	blocksIDs[t_AdamantiteOre] = i_AdamantiteOre;
+	blocksIDs[t_GoldOre] = i_GoldOre;
+	blocksIDs[t_Stone] = i_Stone;
+	blocksIDs[t_Cloude] = i_CloudeBlock;
+	blocksIDs[t_TitanOre] = i_TitanOre;
+	blocksIDs[t_StoneBrick] = i_StoneBrick;
+	blocksIDs[t_HardStone] = i_HardStone;
+	blocksIDs[t_HardStoneBrick] = i_HardStoneBrick;
+	blocksIDs[t_SandBrick] = i_SandBrick;
+	blocksIDs[t_Terracotta] = i_Terracotta;
+	blocksIDs[t_SnowPlatform] = i_SnowPlatform;
+	blocksIDs[t_SandPlatform] = i_SandPlatform;
 	return blocksIDs[blocksType];
 }
 
@@ -117,6 +164,20 @@ Block::Block(unsigned char blockType
 	hardness[t_Asphalt] = 40;
 	hardness[t_Platform] = 30;
 	hardness[t_ForestPlank] = 30;
+	hardness[t_CopperOre] = 20;
+	hardness[t_IronOre] = 35;
+	hardness[t_AdamantiteOre] = 100;
+	hardness[t_GoldOre] = 20;
+	hardness[t_Stone] = 35;
+	hardness[t_Cloude] = 10;
+	hardness[t_TitanOre] = 50;
+	hardness[t_StoneBrick] = 35;
+	hardness[t_HardStone] = 100;
+	hardness[t_HardStoneBrick] = 100;
+	hardness[t_SandBrick] = 35;
+	hardness[t_Terracotta] = 40;
+	hardness[t_SnowPlatform] = 30;
+	hardness[t_SandPlatform] = 30;
 
 	m_Hardness = hardness[blockType];
 }
@@ -128,9 +189,17 @@ Wall::Wall(unsigned char wallType
 	unsigned char hardness[t_BlocksSize];
 	for (int i = 0; i < t_BlocksSize; i++)
 	{
-		hardness[i] = 15;
+		hardness[i] = 20;
 	}
-	hardness[t_Dirt] = 20;
+	hardness[t_ForestPlank] = 30;
+	hardness[t_Stone] = 35;
+	hardness[t_Cloude] = 10;
+	hardness[t_StoneBrick] = 35;
+	hardness[t_HardStone] = 100;
+	hardness[t_HardStoneBrick] = 100;
+	hardness[t_SandBrick] = 35;
+	hardness[t_Terracotta] = 40;
+
 	m_Hardness = hardness[wallType];
 }
 void Block::Draw(Shader& basicSh
@@ -178,6 +247,21 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_ForestPlank] = CreateTextureRepeatRGBA("res/textures/forestPlank.png");
 	IDs[t_Sand] = CreateTextureRepeatRGBA("res/textures/sand.png");
 	IDs[t_DoorBlock] = CreateTextureRepeatRGBA("res/textures/red.png");
+	IDs[t_CopperOre] = CreateTextureRepeatRGBA("res/textures/copper.png");
+	IDs[t_IronOre] = CreateTextureRepeatRGBA("res/textures/iron.png");
+	IDs[t_AdamantiteOre] = CreateTextureRepeatRGBA("res/textures/AdamantiteOre.png");
+	IDs[t_GoldOre] = CreateTextureRepeatRGBA("res/textures/GoldOre.png");
+	IDs[t_TitanOre] = CreateTextureRepeatRGBA("res/textures/TitanOre.png");
+	IDs[t_Stone] = CreateTextureRepeatRGBA("res/textures/Stone.png");
+	IDs[t_Cloude] = CreateTextureRepeatRGBA("res/textures/Cloude.png");
+	IDs[t_StoneBrick] = CreateTextureRepeatRGBA("res/textures/StoneBrick.png");
+	IDs[t_HardStone] = CreateTextureRepeatRGBA("res/textures/HardStone.png");
+	IDs[t_HardStoneBrick] = CreateTextureRepeatRGBA("res/textures/HardStoneBrick.png");
+	IDs[t_SandBrick] = CreateTextureRepeatRGBA("res/textures/SandBrick.png");
+	IDs[t_Terracotta] = CreateTextureRepeatRGBA("res/textures/Terracotta.png");
+	IDs[t_SnowPlatform] = CreateTextureRepeatRGBA("res/textures/SnowPlatform.png");
+	IDs[t_SandPlatform] = CreateTextureRepeatRGBA("res/textures/sandPlatform.png");
+
 }
 
 void createWall(int x
