@@ -196,6 +196,7 @@
     <Image Include="res\textures\HardStoneBrick.png" />
     <Image Include="res\textures\headDefault.png" />
     <Image Include="res\textures\headWood.png" />
+    <Image Include="res\textures\HeartBlock.png" />
     <Image Include="res\textures\HelmetSlot.png" />
     <Image Include="res\textures\ice.png" />
     <Image Include="res\textures\inventorySlot.png" />
@@ -235,6 +236,7 @@
     <Image Include="res\textures\ShoesSlot.png" />
     <Image Include="res\textures\Slider.png" />
     <Image Include="res\textures\slimeAnim.png" />
+    <Image Include="res\textures\Snow.png" />
     <Image Include="res\textures\SnowPlatform.png" />
     <Image Include="res\textures\stone.png" />
     <Image Include="res\textures\StoneBrick.png" />

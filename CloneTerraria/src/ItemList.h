@@ -21,7 +21,7 @@ enum Items
 	, i_Asphalt
 	, i_ForestPlank
 	, i_Platform
-	, i_WallDirt
+	, i_WallDirt/////////
 	, i_WallForestPlank
 	, i_WallCloude
 	, i_WallTerracotta
@@ -30,7 +30,8 @@ enum Items
 	, i_WallHardStone
 	, i_WallHardStoneBrick
 	, i_WallSandBrick
-	, i_WallIce
+	, i_WallSnow
+	, i_WallIce////////
 	, i_Sand
 	, i_Sapling
 	, i_WoodBow
@@ -73,6 +74,8 @@ enum Items
 	, i_Terracotta
 	, i_SnowPlatform
 	, i_SandPlatform
+	, i_Snow
+	, i_HeartGem
 	, i_ItemSize
 };
 enum Structures

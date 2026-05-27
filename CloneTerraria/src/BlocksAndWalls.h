@@ -50,6 +50,8 @@ enum TexturesOfBlocks
 	, t_Cloude
 	, t_SnowPlatform
 	, t_SandPlatform
+	, t_Snow
+	, t_HeartBlock
 	, t_DoorBlock
 	, t_BlocksSize
 
