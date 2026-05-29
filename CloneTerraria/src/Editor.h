@@ -8,13 +8,14 @@ enum PlacingType
 {
 	brushType =0
 	, selectType
+	, bucketType
 };
 struct Editor
 {
 	float m_Transform[2] = {40, 0};
 	float m_Velocity[2] = {0,0};
 	int m_Selected = 0;
-	char m_placingType = brushType;
+	char m_placingType = -1;
 	bool m_Eraser = false;
 	unsigned int m_SelectBoxDD = 0;
 	unsigned int m_SelectBoxTex = 0;
@@ -53,16 +54,18 @@ enum drawDataHUD
 	, InvOfChest
 	, useSlotDD
 	, defaultSlotUV
+	, IconSlotDD
+	, IconUseSlotDD
 	, slotChestDefaultUV
 };
 struct EditorHUD
 {
-	unsigned int m_DDs[7] = {};
-	unsigned int m_VBOs[7] = {};
+	unsigned int m_DDs[9] = {};
+	unsigned int m_VBOs[9] = {};
 	unsigned int m_EOBs[4] = {};
 	unsigned int m_EOBSizes[4] = {};
 	unsigned int m_SlotTexs = {};
-	unsigned int m_Icons[3] = {};
+	unsigned int m_Icons[4] = {};
 	unsigned int m_SelectZoneTex = 0;
 	bool m_OpenChest = false;
 	int m_ChestIndex = 0;

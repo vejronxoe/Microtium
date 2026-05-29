@@ -115,24 +115,6 @@ void CreateAllItemTextures(unsigned int* itemTex
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void Player::createHUD(unsigned int eob
 	, std::vector<Chest>& chests
 	, std::vector<Letter>& ASCII)
@@ -803,7 +785,7 @@ void Player::DamagePlayer(float* transfromAttacker
 		m_IsBurning = false;
 		m_BurningTimer = 0;
 		m_Transform[0] = Blocks::xMax / 2.0f;
-		m_Transform[1] = 15;
+		m_Transform[1] = 31;
 		m_LastStandingY = 15;
 		m_CurrentHealth = m_maxHealth/2;
 	}

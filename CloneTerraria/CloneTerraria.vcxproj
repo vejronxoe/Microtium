@@ -143,6 +143,7 @@
     <Image Include="res\textures\bouncingCannonBall.png" />
     <Image Include="res\textures\bowInHand.png" />
     <Image Include="res\textures\bowInInv.png" />
+    <Image Include="res\textures\Bucket.png" />
     <Image Include="res\textures\canAxeIt.png" />
     <Image Include="res\textures\CanChest.png" />
     <Image Include="res\textures\canClickon.png" />

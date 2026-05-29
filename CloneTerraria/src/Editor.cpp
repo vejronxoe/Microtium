@@ -191,7 +191,7 @@ void Editor::Update(float deltaTime
 	
 	
 	
-	if (cursorState == canNotDoIt|| cursorState == canOpenChest)
+	if (cursorState == canNotDoIt || cursorState == canOpenChest)
 	{
 		int x = roundf(Input::XMousePos + m_Transform[0]);
 		int y = roundf(Input::YMousePos + m_Transform[1]);
@@ -255,47 +255,47 @@ void Editor::Update(float deltaTime
 				if (m_Eraser)
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(chunksToRebuildBlocks, blocks,SandsXs, m_SelectBoxSides);
-					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
+					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
 					m_Eraser = false;
 				}
 				else if (m_Selected < t_BlocksSize && m_Selected > -1)
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(chunksToRebuildBlocks, blocks,SandsXs, m_SelectBoxSides);
-					
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
+
 
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
 						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
-							CreateBlock(i, j, m_Selected, chunksToRebuildBlocks, blocks,SandsXs);
+							CreateBlock(i, j, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 
 						}
 					}
 					m_Selected = -1;
 				}
-				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce-i_WallDirt+1))
+				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt + 1))
 				{
 					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
+					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
 					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 					{
 						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
 						{
 
-							createWall(i,j,getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt),chunksToRebuildWalls,Walls);
+							createWall(i, j, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 						}
 					}
 					m_Selected = -1;
 				}
 				else if (Input::CtrlHold && Input::XPress)
 				{
-					
+
 					CopyBlocksAndWalls(blocksTex, blocks, Walls);
-					DeleteStructuresInArea(m_SelectBoxSides,Doors,Chests,CraftingStations,saplings);
-					DeleteWallsInArea(chunksToRebuildWalls,Walls, m_SelectBoxSides);
-					DeleteBlocksInArea(chunksToRebuildBlocks,blocks,SandsXs, m_SelectBoxSides);
+					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
+					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
 
 				}
 				else if (Input::CtrlHold && Input::CPress)
@@ -321,7 +321,7 @@ void Editor::Update(float deltaTime
 								}
 							}
 						}
-					
+
 						DeleteWallsInArea(chunksToRebuildWalls, Walls, Vertices);
 						for (int i = 0; i < m_CopiedWalls.size();i++)
 						{
@@ -337,7 +337,7 @@ void Editor::Update(float deltaTime
 					}
 				}
 			}
-			
+
 			break;
 		}
 		case brushType:
@@ -348,28 +348,28 @@ void Editor::Update(float deltaTime
 				{
 					DestroyWall(Walls, chunksToRebuildWalls, x, y);
 					DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
-					int vec4[4] = {x,y,x,y};
+					int vec4[4] = { x,y,x,y };
 					DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
 
 				}
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
 				{
-			
+
 					std::vector<tree> t;
 					int index;
 					bool found = FindBlock(blocks, x, y, index);
-					if (!isAnythingOnThisTransform(x,y,blocks,saplings,t,CraftingStations,Doors,Chests) || found)
+					if (!isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || found)
 					{
 
-						DestroyBlock(chunksToRebuildBlocks ,blocks, SandsXs, x, y);
-						CreateBlock(x, y, m_Selected,chunksToRebuildBlocks, blocks, SandsXs);
+						DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
+						CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 
 					}
 				}
 				else if (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1))
 				{
 					DestroyWall(Walls, chunksToRebuildWalls, x, y);
-					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt),chunksToRebuildWalls, Walls);
+					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 				}
 				else if (m_Selected >= t_BlocksSize + (i_WallIce - i_WallDirt + 1) && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
 				{
@@ -382,7 +382,7 @@ void Editor::Update(float deltaTime
 						int  vertices[4];
 						bool floors = true;
 						getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
-			
+
 						switch (m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1))
 						{
 						case s_TrapDoor:
@@ -446,9 +446,163 @@ void Editor::Update(float deltaTime
 			}
 			break;
 		}
+		case bucketType:
+		{
+			if (Input::LeftMousePress)
+			{
+				int indexB;
+				bool foundB = FindBlock(blocks, x, y, indexB);
+				int indexW;
+				bool founW = FindWall(Walls, x, y, indexW);
+				if (m_Eraser )
+				{
+					if (foundB)
+					{
+						std::vector<int> stack;
+						int type = blocks.at(x).at(indexB).m_Type;
+						stack.emplace_back(x);
+						stack.emplace_back(y);
+						while(stack.size())
+						{
+							int newY = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int newX = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int index;
+							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
+							
+							for (int i = 0; i < 4;i++)
+							{
+								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+								if (FindBlock(blocks, newX + table[0][i], newY+ table[1][i], index))
+								{
+									if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
+									{
+										stack.emplace_back(newX + table[0][i]);
+										stack.emplace_back(newY + table[1][i]);
+									}
+								}
+							}
+							std::vector<int> sandFill;
+							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, newX, newY);
+
+						}
+					}
+					if(founW)
+					{
+						std::vector<int> stack;
+						int type = Walls.at(x).at(indexW).m_Type;
+						stack.emplace_back(x);
+						stack.emplace_back(y);
+						while (stack.size())
+						{
+							int newY = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int newX = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int index;
+							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
+
+							for (int i = 0; i < 4;i++)
+							{
+								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+
+								if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
+								{
+									if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
+									{
+										stack.emplace_back(newX + table[0][i]);
+										stack.emplace_back(newY + table[1][i]);
+									}
+								}
+							}
+							std::vector<int> sandFill;
+							DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
+							
+						}
+					}
+
+				}
+				else if (m_Selected >= 0 && m_Selected < t_BlocksSize && foundB)
+				{
+					if (m_Selected != blocks.at(x).at(indexB).m_Type)
+					{
+
+						std::vector<int> stack;
+						int type = blocks.at(x).at(indexB).m_Type;
+						stack.emplace_back(x);
+						stack.emplace_back(y);
+						while (stack.size())
+						{
+							int newY = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int newX = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int index;
+							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
+
+							for (int i = 0; i < 4;i++)
+							{
+								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+								if (FindBlock(blocks, newX + table[0][i], newY + table[1][i], index))
+								{
+									if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
+									{
+										stack.emplace_back(newX + table[0][i]);
+										stack.emplace_back(newY + table[1][i]);
+									}
+								}
+							}
+							std::vector<int> sandFill;
+							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, newX, newY);
+							CreateBlock(newX, newY, m_Selected, chunksToRebuildBlocks, blocks, sandFill);
+						}
+					}
+				}
+				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt))
+				{
+					int typeWanted = getTypeByItem(m_Selected + i_WallDirt);
+					if (typeWanted != Walls.at(x).at(indexW).m_Type)
+					{
+						std::vector<int> stack;
+						int type = Walls.at(x).at(indexW).m_Type;
+						stack.emplace_back(x);
+						stack.emplace_back(y);
+						while (stack.size())
+						{
+							int newY = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int newX = stack.at(stack.size() - 1);
+							stack.pop_back();
+							int index;
+							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
+
+							for (int i = 0; i < 4;i++)
+							{
+								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+								if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
+								{
+									if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
+									{
+										stack.emplace_back(newX + table[0][i]);
+										stack.emplace_back(newY + table[1][i]);
+									}
+								}
+							}
+							std::vector<int> sandFill;
+							DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
+							createWall(newX, newY, typeWanted, chunksToRebuildWalls, Walls);
+
+						}
+					}
+					
+				}
+			}
+			break;
+
+		}
 		}
 	}
-
 }
 void Editor::Draw(Shader& animSh
 	, float* transform
@@ -493,7 +647,8 @@ EditorHUD::EditorHUD(unsigned int eob
 {
 	m_Icons[0] = CreateTextureRGBA("res/textures/PaintBrush.png");
 	m_Icons[1] = CreateTextureRGBA("res/textures/SelectIcon.png");
-	m_Icons[2] = CreateTextureRGBA("res/textures/RubberIcon.png");
+	m_Icons[2] = CreateTextureRGBA("res/textures/Bucket.png");
+	m_Icons[3] = CreateTextureRGBA("res/textures/RubberIcon.png");
 	m_SlotTexs = CreateTextureRGBA("res/textures/inventorySlot.png");
 	m_SelectZoneTex = CreateTextureRGBA("res/textures/SelectZone.png");
 	std::vector<Letter> l;
@@ -507,9 +662,9 @@ void EditorHUD::Create(unsigned int eob
 {
 	if (!first)
 	{
-		ErrorGL(glDeleteBuffers(7, m_VBOs));
+		ErrorGL(glDeleteBuffers(9, m_VBOs));
 		ErrorGL(glDeleteBuffers(4 , m_EOBs));
-		ErrorGL(glDeleteVertexArrays(7, m_DDs));
+		ErrorGL(glDeleteVertexArrays(9, m_DDs));
 	}
 	ErrorGL(glGenBuffers(4, m_EOBs));
 	if (m_OpenChest)
@@ -527,6 +682,8 @@ void EditorHUD::Create(unsigned int eob
 	m_SideLength = DistanceOnUI(0.11f);
 	m_GapLengthChest = DistanceOnUI(0.008f);
 	m_SideLengthChest = DistanceOnUI(0.055f);
+	m_DDs[IconSlotDD] = CreateDrawData(eob, 0.2f * m_SideLength, -0.2f * m_SideLength, 0.2f * m_SideLength, -0.2f * m_SideLength, m_VBOs[IconSlotDD]);
+	m_DDs[IconUseSlotDD] = CreateDrawData(eob, 0.3f * m_SideLength, -0.3f * m_SideLength, 0.3f * m_SideLength, -0.3f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2 * TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[slotChestDefaultUV] = CreateDrawData(eob, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, m_VBOs[slotChestDefaultUV]);
@@ -696,26 +853,26 @@ void EditorHUD::Create(unsigned int eob
 	m_EOBSizes[2] = order.size();
 	order.clear();
 	Vertices.clear();
-	for (int i = 0; i < 3;i++)
+	for (int i = 0; i < 4;i++)
 	{
 
-		Vertices.emplace_back(m_GapLength);
-		Vertices.emplace_back(Window::height - (m_GapLength + i * (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(0.5f * m_GapLength);
+		Vertices.emplace_back(Window::height - 0.5f * (m_GapLength + i * (m_GapLength + m_SideLength)));
 		Vertices.emplace_back(0);
 		Vertices.emplace_back(0);
 
-		Vertices.emplace_back(m_GapLength + m_SideLength);
-		Vertices.emplace_back(Window::height - (m_GapLength + i * (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(0.5f * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(Window::height - 0.5f * (m_GapLength + i * (m_GapLength + m_SideLength)));
 		Vertices.emplace_back(TEXSLOTDISTANCE);
 		Vertices.emplace_back(0);
 
-		Vertices.emplace_back(m_GapLength + m_SideLength);
-		Vertices.emplace_back(Window::height - ((i+1) * (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(0.5f * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(Window::height - 0.5f * ((i+1) * (m_GapLength + m_SideLength)));
 		Vertices.emplace_back(TEXSLOTDISTANCE);
 		Vertices.emplace_back(1);
 
-		Vertices.emplace_back(m_GapLength);
-		Vertices.emplace_back(Window::height - ((i + 1) * (m_GapLength + m_SideLength)));
+		Vertices.emplace_back(0.5f * m_GapLength);
+		Vertices.emplace_back(Window::height - 0.5f * ((i + 1) * (m_GapLength + m_SideLength)));
 		Vertices.emplace_back(0);
 		Vertices.emplace_back(1);
 	}
@@ -875,9 +1032,9 @@ int EditorHUD::Update(float deltaTime
 	case 2:
 	{
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			if (m_GapLength + i * (m_GapLength + m_SideLength) < Input::YRawMousePos && (i + 1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+			if (0.5f*(m_GapLength + i * (m_GapLength + m_SideLength)) < Input::YRawMousePos && 0.5f * (i + 1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
 			{
 				if (Input::LeftMousePress)
 				{
@@ -892,6 +1049,10 @@ int EditorHUD::Update(float deltaTime
 						editor.m_placingType = selectType;
 						break;
 					case 2:
+						editor.m_placingType = bucketType;
+						break;
+
+					case 3:
 						editor.m_Eraser = !editor.m_Eraser;
 						break;
 					}
@@ -1001,6 +1162,10 @@ int EditorHUD::Update(float deltaTime
 			editor.m_Eraser = false;
 			editor.m_placingType = selectType;
 		}
+		else if (Input::NumberPress[2])
+		{
+			editor.m_placingType = bucketType;
+		}
 	}
 	if (Input::MouseWheel)
 	{
@@ -1098,27 +1263,31 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
+	ErrorGL(glBindVertexArray(m_DDs[IconUseSlotDD]));
+
 	if (editor.m_placingType != -1)
 	{
-		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + editor.m_placingType * (m_GapLength + m_SideLength)), transform);
+		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + editor.m_placingType * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 	if (editor.m_Eraser)
 	{
-		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + 2 * (m_GapLength + m_SideLength)), transform);
+		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + 3 * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
-	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
+	ErrorGL(glBindVertexArray(m_DDs[IconSlotDD]));
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		ChangeTransform(m_SideLength / 2.0f + m_GapLength, Window::height - (m_SideLength / 2.0f + m_GapLength + i * (m_GapLength + m_SideLength)), transform);
+		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + i * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Icons[i]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
+	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
+
 	if (m_OpenChest)
 	{ 
 
