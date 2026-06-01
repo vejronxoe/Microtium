@@ -5,26 +5,25 @@
 #include "glfw/Window.h"
 #include "ItemList.h"
 #define TIMETOGROW 10
-int FindWood(std::vector<tree>& woods
+bool FindWood(std::vector<tree>& woods
 	, int x
 	, int y
-	, bool& found)
+	, int& index)
 {
-	found = false;
 	for (int i = 0; i < woods.size(); i++)
 	{
 		if (woods.at(i).m_PartOfTree == part_Log)
 		{
 			if (woods.at(i).m_Transform[0] == x && woods.at(i).m_Transform[1] == y)
 			{
-				found = true;
-				return i;
+				index = i;
+				return true;
 			}
 		}
 	}
-	return -1;
+	return false;
 }
-bool WoodInArea(std::vector<tree>& woods
+bool FindWood(std::vector<tree>& woods
 	, int* vertices)
 {
 	for (int i = 0; i < woods.size(); i++)
@@ -39,22 +38,22 @@ bool WoodInArea(std::vector<tree>& woods
 	}
 	return false;
 }
-int FindSeedling(std::vector<seedling>& seedlings
+bool FindSeedling(std::vector<seedling>& seedlings
 	, int x
 	, int y
-	, bool& found)
+	, int& index)
 {
 	for (int i = 0; i < seedlings.size(); i++)
 	{
 		if (seedlings.at(i).m_Transform[0] == x && (seedlings.at(i).m_Transform[1] == y || seedlings.at(i).m_Transform[1] + 1 == y))
 		{
-			found = true;
-			return i;
+			index = i;
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
-bool SeedlingInArea(std::vector<seedling>& seedlings
+bool FindSeedling(std::vector<seedling>& seedlings
 	, int* vertices)
 {
 	for (int i = 0; i < seedlings.size(); i++)
@@ -120,6 +119,10 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 					vertices[2] = trees.at(i).m_Transform[0] + 2; vertices[3] = trees.at(i).m_Transform[1] - 1;
 					break;
 				default:
+					vertices[0] = 0;
+					vertices[1] = 0;
+					vertices[2] = 0;
+					vertices[3] = 0;
 					printf("error in sapling everyFrame wrong Rotation : %d\n", trees.at(i).m_Rotation);
 					break;
 				}
@@ -276,7 +279,7 @@ void createBranchs(std::vector <std::vector<Block>>& blocks
 		}
 		if (!inBlock)
 		{
-			inBlock = SeedlingInArea(seedlings, branchVertices);
+			inBlock = FindSeedling(seedlings, branchVertices);
 		}
 		if (inBlock)
 		{

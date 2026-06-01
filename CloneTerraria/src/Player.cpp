@@ -1975,8 +1975,8 @@ void Player::EveryFrame(float deltaTime
 		m_CursorOnMinableWood = false;	
 		if (CHESTANDDOORSREACH >= sqrtf(rangeX * rangeX + rangeY * rangeY))
 		{
-			bool found = false;
-			m_AimingAtChest = FindChest(chests, x, y, found);
+			m_AimingAtChest = -1;
+			bool found = FindChest(chests, x, y, m_AimingAtChest);
 			if (Input::RightMousePress && found)
 			{
 				m_IsInventoryOpen = true;
@@ -2000,11 +2000,9 @@ void Player::EveryFrame(float deltaTime
 			}
 			else
 			{
+				m_AimingAtDoors = -1;
 
-				
-				found = false;
-				m_AimingAtDoors = FindDoors(doors, x, y, found);
-				if (found)
+				if (FindDoor(doors, x, y, m_AimingAtDoors))
 				{
 					playerVertices[0] = RoundFiveUp(playerVertices[0]);
 					playerVertices[1] = RoundFiveDown(playerVertices[1]);
@@ -2054,6 +2052,7 @@ void Player::EveryFrame(float deltaTime
 						
 					}
 				}
+		
 
 			}
 		}
@@ -2145,11 +2144,11 @@ void Player::EveryFrame(float deltaTime
 
 				if (!m_CursorOnMinableBlock)
 				{
-					craftingStationIndex = FindCraftStation(craftStations, x, y, m_CursorOnMinableBlock);
+					m_CursorOnMinableBlock = FindCraftStation(craftStations, x, y, craftingStationIndex);
 				}
 				if (!m_CursorOnMinableBlock)
 				{
-					chestIndex = FindChest(chests, x, y, m_CursorOnMinableBlock);
+					m_CursorOnMinableBlock = FindChest(chests, x, y, chestIndex);
 					if (m_CursorOnMinableBlock)
 					{
 						if (chests.at(chestIndex).m_Indestrucrtible)
@@ -2161,11 +2160,11 @@ void Player::EveryFrame(float deltaTime
 				}
 				if (!m_CursorOnMinableBlock)
 				{
-					seedlingIndex = FindSeedling(seedlings, x, y, m_CursorOnMinableBlock);
+					m_CursorOnMinableBlock = FindSeedling(seedlings, x, y, seedlingIndex);
 				}
 				if (!m_CursorOnMinableBlock)
 				{
-					doorsIndex = FindDoors(doors, x, y, m_CursorOnMinableBlock);
+					m_CursorOnMinableBlock = FindDoor(doors, x, y, doorsIndex);
 				}
 				
 			}
@@ -2179,7 +2178,7 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_AxeStreanght)
 			{
-				woodIndex = FindWood(trees, x, y, m_CursorOnMinableWood);
+				m_CursorOnMinableWood = FindWood(trees, x, y,woodIndex);
 				if (m_CursorOnMinableWood && trees.at(woodIndex).m_Hardness > m_AxeStreanght)
 				{
 					m_CursorOnMinableWood = false;

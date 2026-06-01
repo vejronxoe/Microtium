@@ -319,7 +319,7 @@ int main()
 	basicSh.Bind();
 	basicSh.GetUniformLocation("camera");
 	basicSh.GetUniformLocation("transform");
-	unsigned int cursorTextures[9];
+	unsigned int cursorTextures[sizeOfCursors];
 	unsigned int cursorDD = CreateCursorDrawData(cursorTextures, eob);
 
 	unsigned int checkBoxTex[2] = { CreateTextureRGBA("res/textures/UncheckBox.png"), CreateTextureRGBA("res/textures/CheckBox.png") };
@@ -1634,7 +1634,7 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				cursorState = editorHUD.Update(deltaTime,eob,letters,chests, editor);
+				cursorState = editorHUD.Update(deltaTime,eob,blockSize,letters,chests, editor);
 				editor.Update(deltaTime, cursorState, blockTextures, structuresTextures,chunksToRebuildBlock, blocks,chunksToRebuildWall,Walls,seedlings,craftStations,chests,doors,isSandOnX);
 				if (menuState != stateNone)
 				{

@@ -4,15 +4,17 @@
 
 enum cursor
 {
-	canNotDoIt = 0,
-	canSlideIt,
-	canClickOnIt,
-	canPickaxeIt,
-	canAxeIt,
-	canHammerIt,
-	canPutBin,
-	canOpenChest,
-	canOpenDoors
+	canNotDoIt = 0
+	, canSlideIt
+	, canClickOnIt
+	, canPickaxeIt
+	, canAxeIt
+	, canHammerIt
+	, canPutBin
+	, canOpenChest
+	, canOpenDoors
+	, canBlockPick
+	, sizeOfCursors
 
 };
 

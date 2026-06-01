@@ -68,22 +68,22 @@ Door::Door(int x
 
 
 }
-int FindDoors(std::vector<Door>& structures
+bool FindDoor(std::vector<Door>& structures
 	, float x
 	, float y
-	, bool& found)
+	, int& index)
 {
 	for (int i = 0; i < structures.size(); i++)
 	{
 		if (structures.at(i).m_Vertices[0] <= x && structures.at(i).m_Vertices[2] >= x && structures.at(i).m_Vertices[3] <= y && structures.at(i).m_Vertices[1] >= y)
 		{
-			found = true;
-			return i;
+			index = i;
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
-bool IsInAreaDoors(std::vector<Door>& structures
+bool FindDoor(std::vector<Door>& structures
 	, int* vertice)
 {
 
@@ -404,10 +404,10 @@ void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
 		}
 	}
 }
-int FindChest(std::vector<Chest>& structures
+bool FindChest(std::vector<Chest>& structures
 	, float x
 	, float y
-	, bool& found)
+	, int& index)
 {
 	for (int i = 0; i < structures.size(); i++)
 	{
@@ -415,13 +415,13 @@ int FindChest(std::vector<Chest>& structures
 		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], s_Chest, structureVertices);
 		if (structureVertices[0] <= x && structureVertices[2] >= x && structureVertices[3] <= y && structureVertices[1] >= y)
 		{
-			found = true;
-			return i;
+			index = i;
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
-bool IsInAreaChest(std::vector<Chest>& structures
+bool FindChest(std::vector<Chest>& structures
 	, int* vertice)
 {
 	for (int i = 0; i < structures.size(); i++)
@@ -486,7 +486,7 @@ void DrawCraftStations(std::vector<CraftStation>& structures
 	}
 }
 
-bool IsInAreaCraftStation(std::vector<CraftStation>& structures
+bool FindCraftStation(std::vector<CraftStation>& structures
 	, int* vertice)
 {
 	for (int i = 0; i < structures.size(); i++)
@@ -505,10 +505,10 @@ bool IsInAreaCraftStation(std::vector<CraftStation>& structures
 	}
 	return false;
 }
-int FindCraftStation(std::vector<CraftStation>& structures
+bool FindCraftStation(std::vector<CraftStation>& structures
 	, float x
 	, float y
-	, bool& found)
+	, int& index)
 {
 	for (int i = 0; i < structures.size(); i++)
 	{
@@ -516,11 +516,11 @@ int FindCraftStation(std::vector<CraftStation>& structures
 		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
 		if (structureVertices[0] <= x && structureVertices[2] >= x && structureVertices[3] <= y && structureVertices[1] >= y)
 		{
-			found =  true;
-			return i;
+			index = i;
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
 void getStructureVertices(int x
 	, int y
@@ -665,33 +665,27 @@ bool isAnythingOnThisTransform(int x
 	bool inBlock = false;
 	
 	int fill;
-	inBlock = FindBlock(blocks, x, y, fill);
-	if (inBlock)
+	if (FindBlock(blocks, x, y, fill))
 	{
 		return true;
 	}
-	FindWood(trees, x, y, inBlock);
-	if (inBlock)
+	if (FindWood(trees, x, y, fill))
 	{
 		return true;
 	}
-	FindChest(chests, x, y, inBlock);
-	if (inBlock)
+	if (FindChest(chests, x, y, fill))
 	{
 		return true;
 	}
-	FindCraftStation(craftingStations, x, y, inBlock);
-	if (inBlock)
+	if (FindCraftStation(craftingStations, x, y, fill))
 	{
 		return true;
 	}
-	FindSeedling(seedlings, x, y, inBlock);
-	if (inBlock)
+	if (FindSeedling(seedlings, x, y, fill))
 	{
 		return true;
 	}
-	FindDoors(doors, x, y, inBlock);
-	return inBlock;
+	return FindDoor(doors, x, y, fill);
 }
 bool isAnythinginArea(int* vertices
 	, std::vector<std::vector<Block>>& blocks
@@ -701,7 +695,7 @@ bool isAnythinginArea(int* vertices
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
 	{
-	bool inBlock = false;
+
 	if (vertices[0] <= Blocks::xMin)
 	{
 		return true;
@@ -721,35 +715,28 @@ bool isAnythinginArea(int* vertices
 
 	}
 
-	inBlock = FindBlock(blocks, vertices);
-	if (inBlock)
+	if (FindBlock(blocks, vertices))
 	{
 		return true;
 	}
-	inBlock = WoodInArea(trees, vertices);
-	if (inBlock)
+	if (FindWood(trees, vertices))
 	{
 		return true;
 	}
-	inBlock = IsInAreaCraftStation(craftingStations, vertices);
-	if (inBlock)
+	if (FindCraftStation(craftingStations, vertices))
 	{
 		return true;
 	}
-	inBlock = SeedlingInArea(seedlings, vertices);
-
-	if (inBlock)
+	if (FindSeedling(seedlings, vertices))
 	{
 		return true;
 	}
-	inBlock = IsInAreaDoors(doors, vertices);
-
-	if (inBlock)
+	if (FindDoor(doors, vertices))
 	{
 		return true;
 	}
 
-	return IsInAreaChest(chests, vertices);
+	return FindChest(chests, vertices);
 }
 void CreateStructure(int StructureID
 	,int x

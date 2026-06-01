@@ -190,13 +190,10 @@ void Editor::Update(float deltaTime
 	
 	
 	
-	
+	int x = roundf(Input::XMousePos + m_Transform[0]);
+	int y = roundf(Input::YMousePos + m_Transform[1]);
 	if (cursorState == canNotDoIt || cursorState == canOpenChest)
 	{
-		int x = roundf(Input::XMousePos + m_Transform[0]);
-		int y = roundf(Input::YMousePos + m_Transform[1]);
-
-
 		switch (m_placingType)
 		{
 		case selectType:
@@ -402,6 +399,7 @@ void Editor::Update(float deltaTime
 							{
 								break;
 							}
+							break;
 						default:
 
 							for (int i = vertices[0]; i <= vertices[2]; i++)
@@ -601,6 +599,46 @@ void Editor::Update(float deltaTime
 			break;
 
 		}
+		}
+	}
+	else if (cursorState == canBlockPick && Input::LeftMousePress)
+	{
+		int index = 0;
+		bool blockFound = FindBlock(blocks, x, y, index);
+		if (blockFound)
+		{
+			if (blocks.at(x).at(index).m_Type == t_DoorBlock)
+			{
+				blockFound = false;
+			}
+		}
+		if (blockFound)
+		{
+			m_Selected = blocks.at(x).at(index).m_Type;
+		}
+		else if (FindSeedling(saplings,x,y,index))
+		{
+			int structType = saplings.at(index).m_Type;
+			m_Selected = (t_BlocksSize + (i_WallIce - i_WallDirt + 1)) + structType;
+		}
+		else if(FindDoor(Doors,x,y,index))
+		{
+			int structType = Doors.at(index).m_Type;
+			m_Selected = (t_BlocksSize + (i_WallIce - i_WallDirt + 1)) + structType;
+		}
+		else if(FindCraftStation(CraftingStations,x,y,index))
+		{
+			int structType = CraftingStations.at(index).m_CraftStationtype;
+			m_Selected = (t_BlocksSize + (i_WallIce - i_WallDirt + 1)) + structType;
+		}
+		else if (FindChest(Chests, x, y, index))
+		{
+			int structType = s_Chest;
+			m_Selected = (t_BlocksSize + (i_WallIce - i_WallDirt + 1)) + structType;
+		}
+		else if (FindWall(Walls, x, y, index))
+		{
+			m_Selected = t_BlocksSize + GetWallItemBytype(Walls.at(x).at(index).m_Type) - i_WallDirt;
 		}
 	}
 }
@@ -967,6 +1005,7 @@ void EditorHUD::Create(unsigned int eob
 }
 int EditorHUD::Update(float deltaTime
 	, unsigned int eob 
+	, float& blockSize
 	, std::vector<Letter>& ancii
 	, std::vector<Chest>& chests
 	, Editor& editor)
@@ -980,206 +1019,232 @@ int EditorHUD::Update(float deltaTime
 		{
 			amountInChest[i] = chests[m_ChestIndex].m_amount[i];
 		}
-		numberOfElements = i_ItemSize-1;
+		numberOfElements = i_ItemSize - 1;
 	}
 
-	int row = -1;
-	if (Window::width - m_GapLength - m_SideLength <= Input::XRawMousePos && Window::width - m_GapLength >= Input::XRawMousePos)
+	if (!Input::CtrlHold || m_OpenChest)
 	{
-		row = 0;
-	}
-
-	if (Window::width - 2 * (m_GapLength + m_SideLength) <= Input::XRawMousePos && Window::width - 2 * m_GapLength - m_SideLength >= Input::XRawMousePos)
-	{
-		row = 1;
-	}
-
-	if (m_GapLength <= Input::XRawMousePos && m_GapLength + m_SideLength >= Input::XRawMousePos)
-	{
-		row = 2;
-	}
 
 
-	switch (row)
-	{
-	case 0:
-	case 1:
-	{
-		int i;
-		for (i = 0; i < numberOfElements / 2; i++)
+	
+		int row = -1;
+		if (Window::width - m_GapLength - m_SideLength <= Input::XRawMousePos && Window::width - m_GapLength >= Input::XRawMousePos)
 		{
-			if (-i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
+			row = 0;
+		}
+
+		if (Window::width - 2 * (m_GapLength + m_SideLength) <= Input::XRawMousePos && Window::width - 2 * m_GapLength - m_SideLength >= Input::XRawMousePos)
+		{
+			row = 1;
+		}
+
+		if (m_GapLength <= Input::XRawMousePos && m_GapLength + m_SideLength >= Input::XRawMousePos)
+		{
+			row = 2;
+		}
+
+
+		switch (row)
+		{
+		case 0:
+		case 1:
+		{
+			int i;
+			for (i = 0; i < numberOfElements / 2; i++)
+			{
+				if (-i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
+				{
+					if (Input::LeftMousePress)
+					{
+						editor.m_Selected = i * 2 + row;
+					}
+					cursorBehavior = canClickOnIt;
+					break;
+				}
+			}
+			if (row == 0 && i * 2 != numberOfElements && -i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
 			{
 				if (Input::LeftMousePress)
 				{
 					editor.m_Selected = i * 2 + row;
 				}
 				cursorBehavior = canClickOnIt;
-				break;
-			}
-		}
-		if (row == 0 && i * 2 != numberOfElements && -i * (m_GapLength + m_SideLength) + m_GapLength + m_Scroll * (m_GapLength + m_SideLength) < Window::height - Input::YRawMousePos && m_GapLength + m_SideLength - i * (m_GapLength + m_SideLength) + m_Scroll * (m_GapLength + m_SideLength) > Window::height - Input::YRawMousePos)
-		{
-			if (Input::LeftMousePress)
-			{
-				editor.m_Selected = i * 2 + row;
-			}
-			cursorBehavior = canClickOnIt;
 
+			}
+			break;
 		}
-		break;
-	}
-	case 2:
-	{
-
-		for (int i = 0; i < 4; i++)
+		case 2:
 		{
-			if (0.5f*(m_GapLength + i * (m_GapLength + m_SideLength)) < Input::YRawMousePos && 0.5f * (i + 1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+
+			for (int i = 0; i < 4; i++)
 			{
+				if (0.5f * (m_GapLength + i * (m_GapLength + m_SideLength)) < Input::YRawMousePos && 0.5f * (i + 1) * (m_GapLength + m_SideLength) > Input::YRawMousePos)
+				{
+					if (Input::LeftMousePress)
+					{
+						switch (i)
+						{
+						case 0:
+							editor.m_placingType = brushType;
+							break;
+						case 1:
+							editor.m_Selected = -1;
+							editor.m_Eraser = false;
+							editor.m_placingType = selectType;
+							break;
+						case 2:
+							editor.m_placingType = bucketType;
+							break;
+
+						case 3:
+							editor.m_Eraser = !editor.m_Eraser;
+							break;
+						}
+					}
+					cursorBehavior = canClickOnIt;
+					break;
+				}
+			}
+
+			break;
+		}
+		}
+		if (m_OpenChest)
+		{
+			int trasform[2] = { -1,-1 };
+			for (int i = 0; i < 10;i++)
+			{
+				if (Input::XRawMousePos > m_GapLengthChest + i * (m_GapLengthChest + m_SideLengthChest) && Input::XRawMousePos < (1 + i) * (m_GapLengthChest + m_SideLengthChest))
+				{
+					trasform[0] = i;
+					break;
+				}
+			}
+			for (int i = 0; i < 5;i++)
+			{
+				if (Input::YRawMousePos > 4 * m_GapLength + 3 * m_SideLength + m_GapLengthChest + i * (m_GapLengthChest + m_SideLengthChest) && Input::YRawMousePos < 4 * m_GapLength + 3 * m_SideLength + (i + 1) * (m_GapLengthChest + m_SideLengthChest))
+				{
+					trasform[1] = i;
+					break;
+				}
+			}
+			if (trasform[0] != -1 && trasform[1] != -1)
+			{
+				cursorBehavior = canClickOnIt;
+				int aimingSlot = trasform[0] + trasform[1] * 10;
 				if (Input::LeftMousePress)
 				{
-					switch (i)
+					if (editor.m_Eraser)
 					{
-					case 0:
-						editor.m_placingType = brushType;
-						break;
-					case 1:
-						editor.m_Selected = -1;
-						editor.m_Eraser = false;
-						editor.m_placingType = selectType;
-						break;
-					case 2:
-						editor.m_placingType = bucketType;
-						break;
-
-					case 3:
-						editor.m_Eraser = !editor.m_Eraser;
-						break;
+						chests[m_ChestIndex].m_amount[aimingSlot] = 0;
+						chests[m_ChestIndex].m_Items[aimingSlot] = i_Nothing;
+					}
+					else if (editor.m_Selected != -1)
+					{
+						chests[m_ChestIndex].m_amount[aimingSlot] += 1;
+						chests[m_ChestIndex].m_Items[aimingSlot] = editor.m_Selected + 1;
 					}
 				}
-				cursorBehavior = canClickOnIt;
-				break;
-			}
-		}
-
-		break;
-	}
-	}
-	if (m_OpenChest)
-	{
-		int trasform[2] = { -1,-1 };
-		for (int i = 0; i < 10;i++)
-		{
-			if (Input::XRawMousePos > m_GapLengthChest + i * (m_GapLengthChest + m_SideLengthChest) && Input::XRawMousePos < (1 + i) * (m_GapLengthChest + m_SideLengthChest))
-			{
-				trasform[0] = i;
-				break;
-			}
-		}
-		for (int i = 0; i < 5;i++)
-		{
-			if (Input::YRawMousePos > 4 * m_GapLength + 3 * m_SideLength + m_GapLengthChest + i * (m_GapLengthChest + m_SideLengthChest) && Input::YRawMousePos < 4 * m_GapLength + 3 * m_SideLength + (i + 1) * (m_GapLengthChest + m_SideLengthChest))
-			{
-				trasform[1] = i;
-				break;
-			}
-		}
-		if (trasform[0] != -1 && trasform[1] != -1)
-		{
-			cursorBehavior = canClickOnIt;
-			int aimingSlot = trasform[0] + trasform[1] * 10;
-			if (Input::LeftMousePress)
-			{
-				if (editor.m_Eraser)
+				else if (Input::RightMousePress)
 				{
-					chests[m_ChestIndex].m_amount[aimingSlot] = 0;
-					chests[m_ChestIndex].m_Items[aimingSlot] =  i_Nothing;
-				}
-				else if(editor.m_Selected != -1)
-				{
-					chests[m_ChestIndex].m_amount[aimingSlot] += 1;
-					chests[m_ChestIndex].m_Items[aimingSlot] = editor.m_Selected+1;
-				}
-			}
-			else if (Input::RightMousePress)
-			{
-				if (chests[m_ChestIndex].m_Items[aimingSlot] != i_Nothing)
-				{
-					chests[m_ChestIndex].m_amount[aimingSlot] *= 2;
-				}
-			}
-		}
-	}
-	if (!cursorBehavior)
-	{
-		int x = roundf(Input::XMousePos + editor.m_Transform[0]);
-		int y = roundf(Input::YMousePos + editor.m_Transform[1]);
-
-
-		bool found = false;
-		int index = FindChest(chests, x, y, found);
-		if (found)
-		{
-			cursorBehavior = canOpenChest;
-			if (Input::RightMousePress)
-			{
-				for (int j = 0; j < 5; j++)
-				{
-					for (int i = 0; i < 10; i++)
+					if (chests[m_ChestIndex].m_Items[aimingSlot] != i_Nothing)
 					{
-						m_ChestAmount[i + j * 10].CreateText(std::to_string(chests[m_ChestIndex].m_amount[i + j * 10]), std::vector<Format> {Format(5, 1, 1, 1, 1, 1)}, ancii, eob, middleBottom, m_GapLengthChest + m_SideLengthChest / 2.0f + i * (m_GapLengthChest + m_SideLengthChest), Window::height - (4 * m_GapLength + 3 * m_SideLength) - (1 + j) * (m_GapLengthChest + m_SideLengthChest));
+						chests[m_ChestIndex].m_amount[aimingSlot] *= 2;
 					}
 				}
-				if (m_OpenChest)
+			}
+		}
+		if (!cursorBehavior)
+		{
+			int x = roundf(Input::XMousePos + editor.m_Transform[0]);
+			int y = roundf(Input::YMousePos + editor.m_Transform[1]);
+
+
+			int index;
+			if (FindChest(chests, x, y, index))
+			{
+				cursorBehavior = canOpenChest;
+				if (Input::RightMousePress)
 				{
-					chests[m_ChestIndex].m_Open = false;
+					for (int j = 0; j < 5; j++)
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							m_ChestAmount[i + j * 10].CreateText(std::to_string(chests[m_ChestIndex].m_amount[i + j * 10]), std::vector<Format> {Format(5, 1, 1, 1, 1, 1)}, ancii, eob, middleBottom, m_GapLengthChest + m_SideLengthChest / 2.0f + i * (m_GapLengthChest + m_SideLengthChest), Window::height - (4 * m_GapLength + 3 * m_SideLength) - (1 + j) * (m_GapLengthChest + m_SideLengthChest));
+						}
+					}
+					if (m_OpenChest)
+					{
+						chests[m_ChestIndex].m_Open = false;
+					}
+					chests[index].m_Open = true;
+					m_ChestIndex = index;
+					m_OpenChest = true;
+					editor.m_placingType = -1;
+					editor.m_Eraser = false;
 				}
-				chests[index].m_Open = true;
-				m_ChestIndex = index;
-				m_OpenChest = true;
-				editor.m_placingType = -1;
+
+			}
+
+		}
+
+		if (!Input::LeftMouseHold)
+		{
+			if (Input::EPress)
+			{
+				editor.m_Eraser = !editor.m_Eraser;
+
+			}
+			if (Input::NumberPress[0])
+			{
+				editor.m_placingType = brushType;
+			}
+			else if (Input::NumberPress[1])
+			{
+				editor.m_Selected = -1;
 				editor.m_Eraser = false;
+				editor.m_placingType = selectType;
 			}
-
+			else if (Input::NumberPress[2])
+			{
+				editor.m_placingType = bucketType;
+			}
 		}
-
 	}
-	
-	if (!Input::LeftMouseHold)
+	else if(!(Input::XPress || Input::CPress || Input::VPress))
 	{
-		if (Input::EPress)
-		{
-			editor.m_Eraser = !editor.m_Eraser;
-
-		}
-		if (Input::NumberPress[0])
-		{
-			editor.m_placingType = brushType;
-		}
-		else if (Input::NumberPress[1])
-		{
-			editor.m_Selected = -1;
-			editor.m_Eraser = false;
-			editor.m_placingType = selectType;
-		}
-		else if (Input::NumberPress[2])
-		{
-			editor.m_placingType = bucketType;
-		}
+		cursorBehavior = canBlockPick;
 	}
-	if (Input::MouseWheel)
+	if (Window::width - 3 * m_GapLength - 2 * m_SideLength <= Input::XRawMousePos)
 	{
-		m_WantedScroll -= Input::MouseWheel;
 
-
+		if (Input::MouseWheel)
+		{
+			m_WantedScroll -= 2 * Input::MouseWheel;
+		}
+		m_WantedScroll = Clamp(m_WantedScroll, 0, numberOfElements / 2.0f);
+		editor.m_Selected = Clamp(editor.m_Selected, -1, numberOfElements - 1);
 
 	}
-	m_WantedScroll = Clamp(m_WantedScroll, 0, numberOfElements / 2.0f);
-	editor.m_Selected = Clamp(editor.m_Selected,-1,numberOfElements-1);
+	else
+	{
+		if (Input::MouseWheel)
+		{
+			Window::gameZoom += 4 * Input::MouseWheel;
+			Window::gameZoom = Clamp(Window::gameZoom, 0, 100);
+			blockSize = DistanceOnUI(BlockSize);
+			Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
+			Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
+		}		
+		if (m_StaticBlockBar)
+		{
+			m_WantedScroll = 0;
+		}
+	}
 	if (m_WantedScroll != m_Scroll)
 	{
 		float diff = (m_WantedScroll - m_Scroll);
-		m_Scroll += (diff + 1 * diff / abs(diff)) * deltaTime;
+		m_Scroll += (diff + 1 * diff / abs(diff))*4.0f * deltaTime;
 		float newDiff = (m_WantedScroll - m_Scroll);
 		if (newDiff != 0)
 		{
@@ -1209,6 +1274,10 @@ int EditorHUD::Update(float deltaTime
 				}
 			}
 		}
+	}
+	if (Input::RPress)
+	{
+		m_StaticBlockBar = !m_StaticBlockBar;
 	}
 	return cursorBehavior;
 }

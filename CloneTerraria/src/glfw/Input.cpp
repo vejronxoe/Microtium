@@ -26,6 +26,7 @@ namespace Input
 	bool DPress = false;
 	bool THold = false;
 	bool TPress = false;
+	bool RPress = false;
 	bool SpaceHold = false;
 	bool SpacePress = false;
 	bool CtrlHold = false;
@@ -62,6 +63,7 @@ namespace Input
 		SpacePress = false;
 		CtrlHold = false;
 		EPress = false;
+		RPress = false;
 
 		for (int i = 0; i < 10;i++)
 		{
@@ -85,6 +87,7 @@ namespace Input
 		CPress = false;
 		F5Press = false;
 		F8Press = false;
+		RPress = false;
 		LeftMouseRelease = false;
 		SpacePress = false;
 		for (int i = 0; i < 10; i++)
@@ -114,7 +117,10 @@ namespace Input
 			WHold = false;
 		}
 
-
+		if (key == GLFW_KEY_R && action == GLFW_PRESS)
+		{
+			RPress = true;
+		}
 
 		if (key == GLFW_KEY_A && action == GLFW_PRESS)
 		{

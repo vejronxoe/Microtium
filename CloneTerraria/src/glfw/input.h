@@ -25,6 +25,7 @@ namespace Input
 	extern bool DPress;
 	extern bool TPress;
 	extern bool THold;
+	extern bool RPress;
 	extern bool SpaceHold;
 	extern bool SpacePress;
 	extern bool CtrlHold;

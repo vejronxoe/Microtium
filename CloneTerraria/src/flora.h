@@ -72,18 +72,18 @@ public:
 		, float* transform
 		, unsigned int* texture);
 };
-int FindWood(std::vector<tree>& woods
+bool FindWood(std::vector<tree>& woods
 	, int x
 	, int y
-	, bool& found);
+	, int& index);
 
-int FindSeedling(std::vector<seedling>& seedlings
+bool FindSeedling(std::vector<seedling>& seedlings
 	, int x
 	, int y
-	, bool& found);
+	, int& index);
 
-bool SeedlingInArea(std::vector<seedling>& seedlings
+bool FindSeedling(std::vector<seedling>& seedlings
 	, int* vertices);
 
-bool WoodInArea(std::vector<tree>& woods
+bool FindWood(std::vector<tree>& woods
 	, int* vertices);

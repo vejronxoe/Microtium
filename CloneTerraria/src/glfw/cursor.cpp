@@ -19,6 +19,7 @@ unsigned int CreateCursorDrawData(unsigned int* CursorTextures
 	CursorTextures[canOpenChest] = CreateTextureRGBA("res/textures/CanChest.png");
 	CursorTextures[canOpenDoors] = CreateTextureRGBA("res/textures/CanOpenDoor.png");
 	CursorTextures[canSlideIt] = CreateTextureRGBA("res/textures/CanSlide.png");
+	CursorTextures[canBlockPick] = CreateTextureRGBA("res/textures/BlockPicker.png");
 	return drawData;
 }
 

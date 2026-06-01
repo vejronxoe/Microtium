@@ -68,6 +68,7 @@ struct EditorHUD
 	unsigned int m_Icons[4] = {};
 	unsigned int m_SelectZoneTex = 0;
 	bool m_OpenChest = false;
+	bool m_StaticBlockBar = false;
 	int m_ChestIndex = 0;
 	float m_Scroll = 0;
 	int m_WantedScroll = 0;
@@ -84,6 +85,7 @@ struct EditorHUD
 		, bool first);
 	int Update(float deltaTime
 		, unsigned int eob
+		, float& blockSize
 		, std::vector<Letter>& ancii
 		, std::vector<Chest>& chests
 		, Editor& editor);

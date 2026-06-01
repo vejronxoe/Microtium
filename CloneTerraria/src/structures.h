@@ -49,11 +49,11 @@ struct Door
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<DroppedItem>& droppedItems);
 };
-int FindDoors(std::vector<Door>& structures
+bool FindDoor(std::vector<Door>& structures
 	, float x
 	, float y
-	, bool& found);
-bool IsInAreaDoors(std::vector<Door>& structures
+	, int& index);
+bool FindDoor(std::vector<Door>& structures
 	, int* vertice);
 void DrawDoors(std::vector<Door>& doors
 	, Shader& sh
@@ -64,11 +64,11 @@ void DrawDoors(std::vector<Door>& doors
 	, float* transform
 	, float* scale
 	, float* rotation);
-int FindChest(std::vector<Chest>& structures
+bool FindChest(std::vector<Chest>& structures
 	, float x
 	, float y
-	, bool& found);
-bool IsInAreaChest(std::vector<Chest>& structures
+	, int& index);
+bool FindChest(std::vector<Chest>& structures
 	, int* vertice);
 
 void DrawChests(std::vector<Chest>& structures
@@ -83,17 +83,11 @@ void DrawCraftStations(std::vector<CraftStation>& structures
 	, float* transform
 	, unsigned int* structureDDs
 	, unsigned int* structureTexs);
-int FindCraftStation(std::vector<CraftStation>& structures
+bool FindCraftStation(std::vector<CraftStation>& structures
 	, float x
 	, float y
-	, bool& found);
-bool IsInAreaCraftStation(std::vector<CraftStation>& structures
-	, int* vertice);
-int FindCraftStation(std::vector<Door>& structures
-	, float x
-	, float y
-	, bool& found);
-bool IsInAreaCraftStation(std::vector<Door>& structures
+	, int& index);
+bool FindCraftStation(std::vector<CraftStation>& structures
 	, int* vertice);
 
 void getStructureVertices(int x
