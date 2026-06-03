@@ -559,7 +559,7 @@ void Editor::Update(float deltaTime
 				}
 				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt))
 				{
-					int typeWanted = getTypeByItem(m_Selected + i_WallDirt);
+					int typeWanted = getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt);
 					if (typeWanted != Walls.at(x).at(indexW).m_Type)
 					{
 						std::vector<int> stack;
