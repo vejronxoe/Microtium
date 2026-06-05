@@ -16,7 +16,8 @@ struct Editor
 	float m_Velocity[2] = {0,0};
 	int m_Selected = 0;
 	char m_placingType = -1;
-	bool m_Eraser = false;
+	bool m_BlocksEraser = false;
+	bool m_WallsEraser = false;
 	unsigned int m_SelectBoxDD = 0;
 	unsigned int m_SelectBoxTex = 0;
 	int m_FirstPointBox[2] = {};
@@ -57,11 +58,13 @@ enum drawDataHUD
 	, IconSlotDD
 	, IconUseSlotDD
 	, slotChestDefaultUV
+	, WallEraserDD
+	, BlockEraserDD
 };
 struct EditorHUD
 {
-	unsigned int m_DDs[9] = {};
-	unsigned int m_VBOs[9] = {};
+	unsigned int m_DDs[11] = {};
+	unsigned int m_VBOs[11] = {};
 	unsigned int m_EOBs[4] = {};
 	unsigned int m_EOBSizes[4] = {};
 	unsigned int m_SlotTexs = {};

@@ -11,6 +11,7 @@ namespace Input
 	double YRawMousePos;
 	double XRawMousePos;
 	char MouseWheel;
+	bool EnterPress = false;
 	bool LeftMouseHold = false;
 	bool LeftMousePress = false;
 	bool LeftMouseRelease = false;
@@ -49,6 +50,7 @@ namespace Input
 		LeftMouseRelease = false;
 		RightMouseHold = false;
 		RightMousePress = false;
+		EnterPress = false;
 		WHold = false;
 		WPress = false;
 		AHold = false;
@@ -76,6 +78,7 @@ namespace Input
 		MouseWheel = 0;
 		LeftMousePress = false;
 		RightMousePress = false;
+		EnterPress = false;
 		WPress = false;
 		SPress = false;
 		DPress = false;
@@ -98,6 +101,10 @@ namespace Input
 	}
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
+		if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+		{
+			EnterPress = true;
+		}
 
 		if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 		{

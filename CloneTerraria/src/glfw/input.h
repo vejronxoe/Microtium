@@ -10,6 +10,7 @@ namespace Input
 	extern double YRawMousePos;
 	extern double XRawMousePos;
 	extern char MouseWheel;
+	extern bool EnterPress;
 	extern bool LeftMouseHold;
 	extern bool LeftMousePress;
 	extern bool LeftMouseRelease;

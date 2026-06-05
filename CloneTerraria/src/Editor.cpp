@@ -192,6 +192,102 @@ void Editor::Update(float deltaTime
 	
 	int x = roundf(Input::XMousePos + m_Transform[0]);
 	int y = roundf(Input::YMousePos + m_Transform[1]);
+	if (m_BoxSelected && m_placingType == selectType)
+	{
+		if (Input::EnterPress)
+		{
+			if (m_BlocksEraser || m_WallsEraser)
+			{
+				if (m_BlocksEraser)
+				{
+					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
+					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
+				}
+				if (m_WallsEraser)
+				{
+					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
+				}
+			}
+			else if (m_Selected < t_BlocksSize && m_Selected > -1)
+			{
+				DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
+				DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
+
+
+				for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
+				{
+					for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
+					{
+						CreateBlock(i, j, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
+
+					}
+				}
+
+			}
+			else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt + 1))
+			{
+				DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
+				DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
+				for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
+				{
+					for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
+					{
+
+						createWall(i, j, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+					}
+				}
+
+			}
+		}
+		else if (Input::CtrlHold && Input::XPress)
+		{
+
+			CopyBlocksAndWalls(blocksTex, blocks, Walls);
+			DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
+			DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
+			DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
+
+		}
+		else if (Input::CtrlHold && Input::CPress)
+		{
+			CopyBlocksAndWalls(blocksTex, blocks, Walls);
+		}
+		else if (Input::CtrlHold && Input::VPress)
+		{
+			if (m_CopiedBlocks.size())
+			{
+				int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
+				DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
+
+				for (int i = 0; i < m_CopiedBlocks.size();i++)
+				{
+					for (int j = 0; j < m_CopiedBlocks[i].size();j++)
+					{
+						if (m_CopiedBlocks[i][j] != -1)
+						{
+							std::vector<int> sandFill;
+							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, m_FirstPointBox[0] + i, m_FirstPointBox[1] - j);
+							CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j], chunksToRebuildBlocks, blocks, SandsXs);
+
+						}
+					}
+				}
+
+				for (int i = 0; i < m_CopiedWalls.size();i++)
+				{
+					for (int j = 0; j < m_CopiedWalls[i].size();j++)
+					{
+						if (m_CopiedWalls[i][j] != -1)
+						{
+							DestroyWall(Walls, chunksToRebuildWalls, m_FirstPointBox[0] + i, m_FirstPointBox[1] - j);
+							createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls, Walls);
+
+						}
+					}
+				}
+			}
+		}
+	}
 	if (cursorState == canNotDoIt || cursorState == canOpenChest)
 	{
 		switch (m_placingType)
@@ -247,107 +343,25 @@ void Editor::Update(float deltaTime
 			{
 				m_BoxSelected = true;
 			}
-			if (m_BoxSelected)
-			{
-				if (m_Eraser)
-				{
-					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
-					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
-					m_Eraser = false;
-				}
-				else if (m_Selected < t_BlocksSize && m_Selected > -1)
-				{
-					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
-
-
-					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
-					{
-						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
-						{
-							CreateBlock(i, j, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
-
-						}
-					}
-					m_Selected = -1;
-				}
-				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt + 1))
-				{
-					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
-					for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
-					{
-						for (int j = m_SelectBoxSides[3]; j <= m_SelectBoxSides[1];j++)
-						{
-
-							createWall(i, j, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
-						}
-					}
-					m_Selected = -1;
-				}
-				else if (Input::CtrlHold && Input::XPress)
-				{
-
-					CopyBlocksAndWalls(blocksTex, blocks, Walls);
-					DeleteStructuresInArea(m_SelectBoxSides, Doors, Chests, CraftingStations, saplings);
-					DeleteWallsInArea(chunksToRebuildWalls, Walls, m_SelectBoxSides);
-					DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, m_SelectBoxSides);
-
-				}
-				else if (Input::CtrlHold && Input::CPress)
-				{
-					CopyBlocksAndWalls(blocksTex, blocks, Walls);
-				}
-				else if (Input::CtrlHold && Input::VPress)
-				{
-					if (m_CopiedBlocks.size())
-					{
-						int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
-						DeleteBlocksInArea(chunksToRebuildBlocks, blocks, SandsXs, Vertices);
-						DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
-
-						for (int i = 0; i < m_CopiedBlocks.size();i++)
-						{
-							for (int j = 0; j < m_CopiedBlocks[i].size();j++)
-							{
-								if (m_CopiedBlocks[i][j] != -1)
-								{
-									CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j], chunksToRebuildBlocks, blocks, SandsXs);
-
-								}
-							}
-						}
-
-						DeleteWallsInArea(chunksToRebuildWalls, Walls, Vertices);
-						for (int i = 0; i < m_CopiedWalls.size();i++)
-						{
-							for (int j = 0; j < m_CopiedWalls[i].size();j++)
-							{
-								if (m_CopiedWalls[i][j] != -1)
-								{
-									createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls, Walls);
-
-								}
-							}
-						}
-					}
-				}
-			}
-
+		
 			break;
 		}
 		case brushType:
 		{
 			if (Input::LeftMouseHold)
 			{
-				if (m_Eraser)
+				if (m_WallsEraser || m_BlocksEraser)
 				{
-					DestroyWall(Walls, chunksToRebuildWalls, x, y);
-					DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
-					int vec4[4] = { x,y,x,y };
-					DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
-
+					if (m_WallsEraser)
+					{
+						DestroyWall(Walls, chunksToRebuildWalls, x, y);
+					}
+					if (m_BlocksEraser)
+					{
+						DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
+						int vec4[4] = { x,y,x,y };
+						DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
+					}
 				}
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
 				{
@@ -452,74 +466,79 @@ void Editor::Update(float deltaTime
 				bool foundB = FindBlock(blocks, x, y, indexB);
 				int indexW;
 				bool founW = FindWall(Walls, x, y, indexW);
-				if (m_Eraser )
+				if (m_WallsEraser || m_BlocksEraser)
 				{
-					if (foundB)
+					if (m_BlocksEraser)
 					{
-						std::vector<int> stack;
-						int type = blocks.at(x).at(indexB).m_Type;
-						stack.emplace_back(x);
-						stack.emplace_back(y);
-						while(stack.size())
+						if (foundB)
 						{
-							int newY = stack.at(stack.size() - 1);
-							stack.pop_back();
-							int newX = stack.at(stack.size() - 1);
-							stack.pop_back();
-							int index;
-							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
-							
-							for (int i = 0; i < 4;i++)
+							std::vector<int> stack;
+							int type = blocks.at(x).at(indexB).m_Type;
+							stack.emplace_back(x);
+							stack.emplace_back(y);
+							while (stack.size())
 							{
-								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
-								if (FindBlock(blocks, newX + table[0][i], newY+ table[1][i], index))
+								int newY = stack.at(stack.size() - 1);
+								stack.pop_back();
+								int newX = stack.at(stack.size() - 1);
+								stack.pop_back();
+								int index;
+								int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
+
+								for (int i = 0; i < 4;i++)
 								{
-									if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
+									table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+									if (FindBlock(blocks, newX + table[0][i], newY + table[1][i], index))
 									{
-										stack.emplace_back(newX + table[0][i]);
-										stack.emplace_back(newY + table[1][i]);
+										if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
+										{
+											stack.emplace_back(newX + table[0][i]);
+											stack.emplace_back(newY + table[1][i]);
+										}
 									}
 								}
-							}
-							std::vector<int> sandFill;
-							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, newX, newY);
+								std::vector<int> sandFill;
+								DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, newX, newY);
 
+							}
 						}
 					}
-					if(founW)
+					if (m_WallsEraser)
 					{
-						std::vector<int> stack;
-						int type = Walls.at(x).at(indexW).m_Type;
-						stack.emplace_back(x);
-						stack.emplace_back(y);
-						while (stack.size())
+						if (founW)
 						{
-							int newY = stack.at(stack.size() - 1);
-							stack.pop_back();
-							int newX = stack.at(stack.size() - 1);
-							stack.pop_back();
-							int index;
-							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
-
-							for (int i = 0; i < 4;i++)
+							std::vector<int> stack;
+							int type = Walls.at(x).at(indexW).m_Type;
+							stack.emplace_back(x);
+							stack.emplace_back(y);
+							while (stack.size())
 							{
-								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+								int newY = stack.at(stack.size() - 1);
+								stack.pop_back();
+								int newX = stack.at(stack.size() - 1);
+								stack.pop_back();
+								int index;
+								int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
 
-								if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
+								for (int i = 0; i < 4;i++)
 								{
-									if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
+									table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
+
+									if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
 									{
-										stack.emplace_back(newX + table[0][i]);
-										stack.emplace_back(newY + table[1][i]);
+										if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
+										{
+											stack.emplace_back(newX + table[0][i]);
+											stack.emplace_back(newY + table[1][i]);
+										}
 									}
 								}
+								std::vector<int> sandFill;
+								DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
+
 							}
-							std::vector<int> sandFill;
-							DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
-							
 						}
 					}
-
 				}
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize && foundB)
 				{
@@ -700,9 +719,9 @@ void EditorHUD::Create(unsigned int eob
 {
 	if (!first)
 	{
-		ErrorGL(glDeleteBuffers(9, m_VBOs));
+		ErrorGL(glDeleteBuffers(11, m_VBOs));
 		ErrorGL(glDeleteBuffers(4 , m_EOBs));
-		ErrorGL(glDeleteVertexArrays(9, m_DDs));
+		ErrorGL(glDeleteVertexArrays(11, m_DDs));
 	}
 	ErrorGL(glGenBuffers(4, m_EOBs));
 	if (m_OpenChest)
@@ -725,6 +744,8 @@ void EditorHUD::Create(unsigned int eob
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[slotChestDefaultUV] = CreateDrawData(eob, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, m_VBOs[slotChestDefaultUV]);
+	m_DDs[WallEraserDD] = CreateDrawData(eob,-0.1f * m_SideLength, -0.3f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, m_VBOs[WallEraserDD]);
+	m_DDs[BlockEraserDD] = CreateDrawData(eob, -0.1f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, -0.3f * m_SideLength, m_VBOs[BlockEraserDD]);
 
 	std::vector<float> Vertices;
 	std::vector<unsigned char> order;
@@ -1088,8 +1109,7 @@ int EditorHUD::Update(float deltaTime
 							editor.m_placingType = brushType;
 							break;
 						case 1:
-							editor.m_Selected = -1;
-							editor.m_Eraser = false;
+
 							editor.m_placingType = selectType;
 							break;
 						case 2:
@@ -1097,7 +1117,11 @@ int EditorHUD::Update(float deltaTime
 							break;
 
 						case 3:
-							editor.m_Eraser = !editor.m_Eraser;
+							editor.m_BlocksEraser = !editor.m_BlocksEraser;
+							if (editor.m_BlocksEraser == false)
+							{
+								editor.m_WallsEraser = !editor.m_WallsEraser;
+							}
 							break;
 						}
 					}
@@ -1134,7 +1158,7 @@ int EditorHUD::Update(float deltaTime
 				int aimingSlot = trasform[0] + trasform[1] * 10;
 				if (Input::LeftMousePress)
 				{
-					if (editor.m_Eraser)
+					if (editor.m_BlocksEraser|| editor.m_WallsEraser)
 					{
 						chests[m_ChestIndex].m_amount[aimingSlot] = 0;
 						chests[m_ChestIndex].m_Items[aimingSlot] = i_Nothing;
@@ -1181,19 +1205,22 @@ int EditorHUD::Update(float deltaTime
 					m_ChestIndex = index;
 					m_OpenChest = true;
 					editor.m_placingType = -1;
-					editor.m_Eraser = false;
+					editor.m_WallsEraser = false;
+					editor.m_BlocksEraser = false;
 				}
 
 			}
 
 		}
-
 		if (!Input::LeftMouseHold)
 		{
 			if (Input::EPress)
 			{
-				editor.m_Eraser = !editor.m_Eraser;
-
+				editor.m_BlocksEraser = !editor.m_BlocksEraser;
+				if (editor.m_BlocksEraser == false)
+				{
+					editor.m_WallsEraser = !editor.m_WallsEraser;
+				}
 			}
 			if (Input::NumberPress[0])
 			{
@@ -1201,8 +1228,6 @@ int EditorHUD::Update(float deltaTime
 			}
 			else if (Input::NumberPress[1])
 			{
-				editor.m_Selected = -1;
-				editor.m_Eraser = false;
 				editor.m_placingType = selectType;
 			}
 			else if (Input::NumberPress[2])
@@ -1340,11 +1365,25 @@ void EditorHUD::Draw(Shader& sh
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
-	if (editor.m_Eraser)
+	if (editor.m_BlocksEraser || editor.m_WallsEraser)
 	{
 		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + 3 * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	}
+	if (editor.m_BlocksEraser)
+	{
+		ErrorGL(glBindVertexArray(m_DDs[BlockEraserDD]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_Stone]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+	if (editor.m_WallsEraser) 
+	{
+		ErrorGL(glBindVertexArray(m_DDs[WallEraserDD]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallStone]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 	}
 	ErrorGL(glBindVertexArray(m_DDs[IconSlotDD]));
 
@@ -1356,7 +1395,22 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
 	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
+		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + 3 * (m_GapLength + m_SideLength)), transform);
+		sh.SetUniformMat4(basicTransform, transform);
 
+	if (editor.m_BlocksEraser)
+	{
+		ErrorGL(glBindVertexArray(m_DDs[BlockEraserDD]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_Stone]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	}
+	if (editor.m_WallsEraser)
+	{
+		ErrorGL(glBindVertexArray(m_DDs[WallEraserDD]));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallStone]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+	}
 	if (m_OpenChest)
 	{ 
 
