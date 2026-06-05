@@ -745,7 +745,7 @@ void EditorHUD::Create(unsigned int eob
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[slotChestDefaultUV] = CreateDrawData(eob, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, m_VBOs[slotChestDefaultUV]);
 	m_DDs[WallEraserDD] = CreateDrawData(eob,-0.1f * m_SideLength, -0.3f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, m_VBOs[WallEraserDD]);
-	m_DDs[BlockEraserDD] = CreateDrawData(eob, -0.1f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, -0.3f * m_SideLength, m_VBOs[BlockEraserDD]);
+	m_DDs[BlockEraserDD] = CreateDrawData(eob, -0.1f * m_SideLength, -0.3f * m_SideLength, 0.1f * m_SideLength, 0.3f * m_SideLength, m_VBOs[BlockEraserDD]);
 
 	std::vector<float> Vertices;
 	std::vector<unsigned char> order;
@@ -1372,19 +1372,7 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
-	if (editor.m_BlocksEraser)
-	{
-		ErrorGL(glBindVertexArray(m_DDs[BlockEraserDD]));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_Stone]));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	}
-	if (editor.m_WallsEraser) 
-	{
-		ErrorGL(glBindVertexArray(m_DDs[WallEraserDD]));
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallStone]));
-		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
-	}
 	ErrorGL(glBindVertexArray(m_DDs[IconSlotDD]));
 
 	for (int i = 0; i < 4; i++)
@@ -1394,7 +1382,6 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Icons[i]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
-	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
 		ChangeTransform(0.5f * (m_SideLength / 2.0f + m_GapLength), Window::height - 0.5f * (m_SideLength / 2.0f + m_GapLength + 3 * (m_GapLength + m_SideLength)), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 
@@ -1406,11 +1393,16 @@ void EditorHUD::Draw(Shader& sh
 	}
 	if (editor.m_WallsEraser)
 	{
+		sh.SetUniform1i(basicSize + ShadowLocation, 1);
+
 		ErrorGL(glBindVertexArray(m_DDs[WallEraserDD]));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallStone]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		sh.SetUniform1i(basicSize + ShadowLocation, 0);
 
 	}
+	ErrorGL(glBindVertexArray(m_DDs[defaultSlotUV]));
+
 	if (m_OpenChest)
 	{ 
 
