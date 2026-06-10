@@ -133,6 +133,7 @@
     <Image Include="res\textures\benchInv.png" />
     <Image Include="res\textures\bleedArrow.png" />
     <Image Include="res\textures\bleedBullet.png" />
+    <Image Include="res\textures\BlockPicker.png" />
     <Image Include="res\textures\blue.png" />
     <Image Include="res\textures\bodyAnimDefault.png" />
     <Image Include="res\textures\bodyAnimWood.png" />
@@ -229,6 +230,7 @@
     <Image Include="res\textures\sand.png" />
     <Image Include="res\textures\sandBrick.png" />
     <Image Include="res\textures\SandPlatform.png" />
+    <Image Include="res\textures\SandStone.png" />
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingInv.png" />
     <Image Include="res\textures\scrapCannonBall.png" />

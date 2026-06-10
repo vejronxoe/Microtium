@@ -30,6 +30,7 @@ enum Items
 	, i_WallHardStone
 	, i_WallHardStoneBrick
 	, i_WallSandBrick
+	, i_WallSandStone
 	, i_WallSnow
 	, i_WallIce////////
 	, i_Sand
@@ -70,6 +71,7 @@ enum Items
 	, i_StoneBrick
 	, i_HardStone
 	, i_HardStoneBrick
+	, i_SandStone
 	, i_SandBrick
 	, i_Terracotta
 	, i_SnowPlatform

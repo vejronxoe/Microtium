@@ -675,6 +675,12 @@
     <Image Include="res\textures\Bucket.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\BlockPicker.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\SandStone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />

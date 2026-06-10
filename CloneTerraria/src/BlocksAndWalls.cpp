@@ -78,7 +78,9 @@ unsigned char getTypeByItem(unsigned char item)
 	types[i_WallSnow] = t_Snow;
 	types[i_Snow] = t_Snow;
 	types[i_HeartGem] = t_HeartBlock;
-
+	types[i_WallSandStone] = t_SandStone;
+	types[i_SandStone] = t_SandStone;
+	
 	return types[item];
 }
 unsigned char GetWallItemBytype(unsigned char blocksType)
@@ -94,10 +96,10 @@ unsigned char GetWallItemBytype(unsigned char blocksType)
 	WallIDs[t_Cloude] = i_WallCloude;
 	WallIDs[t_Terracotta] = i_WallTerracotta;
 	WallIDs[t_Stone] = i_WallStone;
-	WallIDs[t_StoneBrick] = i_WallStoneBrick;
 	WallIDs[t_HardStone] = i_WallHardStone;
 	WallIDs[t_HardStoneBrick] = i_WallHardStoneBrick;
 	WallIDs[t_SandBrick] = i_WallSandBrick;
+	WallIDs[t_SandStone] = i_WallSandStone;
 	WallIDs[t_Snow] = i_WallSnow;
 	return WallIDs[blocksType];
 
@@ -129,6 +131,8 @@ unsigned char GetBlockItemByType(unsigned char blocksType)
 	blocksIDs[t_Terracotta] = i_Terracotta;
 	blocksIDs[t_SnowPlatform] = i_SnowPlatform;
 	blocksIDs[t_SandPlatform] = i_SandPlatform;
+	blocksIDs[t_SandStone] = i_SandStone;
+
 	blocksIDs[t_Snow] = i_Snow;
 	blocksIDs[t_HeartBlock] = i_HeartGem;
 	return blocksIDs[blocksType];
@@ -170,6 +174,7 @@ Block::Block(unsigned char blockType
 	hardness[t_Platform] = 30;
 	hardness[t_ForestPlank] = 30;
 	hardness[t_CopperOre] = 20;
+	hardness[t_SandStone] = 40;
 	hardness[t_IronOre] = 35;
 	hardness[t_AdamantiteOre] = 100;
 	hardness[t_GoldOre] = 20;
@@ -197,6 +202,7 @@ Wall::Wall(unsigned char wallType
 	{
 		hardness[i] = 20;
 	}
+	hardness[t_SandStone] = 40;
 	hardness[t_ForestPlank] = 30;
 	hardness[t_Stone] = 35;
 	hardness[t_Cloude] = 10;
@@ -270,6 +276,7 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_SandPlatform] = CreateTextureRepeatRGBA("res/textures/sandPlatform.png");
 	IDs[t_Snow] = CreateTextureRepeatRGBA("res/textures/Snow.png");
 	IDs[t_HeartBlock] = CreateTextureRepeatRGBA("res/textures/HeartBlock.png");
+	IDs[t_SandStone] = CreateTextureRepeatRGBA("res/textures/SandStone.png");
 }
 
 void createWall(int x
