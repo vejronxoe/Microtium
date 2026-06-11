@@ -99,6 +99,7 @@ unsigned char GetWallItemBytype(unsigned char blocksType)
 	WallIDs[t_HardStone] = i_WallHardStone;
 	WallIDs[t_HardStoneBrick] = i_WallHardStoneBrick;
 	WallIDs[t_SandBrick] = i_WallSandBrick;
+	WallIDs[t_StoneBrick] = i_WallStoneBrick;
 	WallIDs[t_SandStone] = i_WallSandStone;
 	WallIDs[t_Snow] = i_WallSnow;
 	return WallIDs[blocksType];
