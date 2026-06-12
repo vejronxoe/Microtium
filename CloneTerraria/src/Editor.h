@@ -49,24 +49,28 @@ struct Editor
 };
 enum drawDataHUD
 {
-	rightHUDSlots = 0
+	rightItemSlots = 0
+	, rightBlockSlots
 	, leftHUDSlots
-	, rightItemSlots
-	, InvOfChest
+	, invOfChest
 	, useSlotDD
 	, defaultSlotUV
-	, IconSlotDD
-	, IconUseSlotDD
+	, iconSlotDD
+	, iconUseSlotDD
 	, slotChestDefaultUV
-	, WallEraserDD
-	, BlockEraserDD
+	, wallEraserDD
+	, blockEraserDD
+	, sizeOfHUDDD
+	, sizeOfEOB = invOfChest+1
+
 };
+
 struct EditorHUD
 {
-	unsigned int m_DDs[11] = {};
-	unsigned int m_VBOs[11] = {};
-	unsigned int m_EOBs[4] = {};
-	unsigned int m_EOBSizes[4] = {};
+	unsigned int m_DDs[sizeOfHUDDD] = {};
+	unsigned int m_VBOs[sizeOfHUDDD] = {};
+	unsigned int m_EOBs[sizeOfEOB] = {};
+	unsigned int m_EOBSizes[sizeOfEOB] = {};
 	unsigned int m_SlotTexs = {};
 	unsigned int m_Icons[4] = {};
 	unsigned int m_SelectZoneTex = 0;
@@ -100,4 +104,7 @@ struct EditorHUD
 		, unsigned int* itemsTex
 		, unsigned int* blockTex
 		, float* transform);
+	private:
+		void CreateListRightSideHUD(int numberOfSlots, int DDnumber);
+
 };

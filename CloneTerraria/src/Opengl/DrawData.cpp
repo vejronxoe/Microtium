@@ -1,6 +1,14 @@
 #include"DrawData.h"
 
-unsigned int CreateDrawData(unsigned int eob ,float corTop, float corBottom, float corRight, float corLeft, float texTop, float texBottom, float texRight, float texLeft )
+unsigned int CreateDrawData(unsigned int eob 
+	,float corTop
+	, float corBottom
+	, float corRight
+	, float corLeft
+	, float texTop
+	, float texBottom
+	, float texRight
+	, float texLeft )
 {
 	float vertices[16];
 	vertices[0] = corLeft; vertices[1] = corTop; vertices[2] = texLeft; vertices[3] = texTop;
@@ -64,4 +72,58 @@ unsigned int CreateDrawData(unsigned int eob
 	return drawData;
 
 
+}
+unsigned int CreateDrawData(unsigned int& EOB
+	, unsigned int& VBO
+	, unsigned int& sizeEOB
+	, std::vector<uint16_t>& order
+	, std::vector<float>& vertices)
+{
+	unsigned int DD = 0;
+	ErrorGL(glGenBuffers(1, &EOB));
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size()* 2, order.data(), GL_STATIC_DRAW));
+	ErrorGL(glGenVertexArrays(1, &DD));
+	ErrorGL(glBindVertexArray(DD));
+	ErrorGL(glGenBuffers(1, &VBO));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+
+	ErrorGL(glBindVertexArray(0));
+	sizeEOB = order.size();
+	return DD;
+}
+unsigned int CreateDrawData(unsigned int& EOB
+	, unsigned int& VBO
+	, unsigned int& sizeEOB
+	, std::vector<uint8_t>& order
+	, std::vector<float>& vertices)
+{
+	unsigned int DD = 0;
+	ErrorGL(glGenBuffers(1, &EOB));
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size(), order.data(), GL_STATIC_DRAW));
+	ErrorGL(glGenVertexArrays(1, &DD));
+	ErrorGL(glBindVertexArray(DD));
+	ErrorGL(glGenBuffers(1, &VBO));
+	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+	ErrorGL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
+
+	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	ErrorGL(glEnableVertexAttribArray(0));
+	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
+	ErrorGL(glEnableVertexAttribArray(1));
+
+	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+
+	ErrorGL(glBindVertexArray(0));
+	sizeEOB = order.size();
+	return DD;
 }

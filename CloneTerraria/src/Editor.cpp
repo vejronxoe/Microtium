@@ -13,7 +13,75 @@
 #include <iostream>
 #define NUMBEROFSLOTS (t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
 
+void EditorHUD::CreateListRightSideHUD(int numberOfSlots, int DDnumber)
+{
+	std::vector<float> Vertices;
+	std::vector<uint16_t> order;
+	int placebleObjectsNumber;
+	int j;
+	Vertices.reserve(numberOfSlots * 16);
+	placebleObjectsNumber = floorf(numberOfSlots / 2.0f);
+	for (j = 0; j < placebleObjectsNumber; j++)
+	{
+		for (int i = 0;i < 2;i++)
+		{
+			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
+			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
+			Vertices.emplace_back(0);
+			Vertices.emplace_back(0);
 
+			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
+			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
+			Vertices.emplace_back(TEXSLOTDISTANCE);
+			Vertices.emplace_back(0);
+
+			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
+			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
+			Vertices.emplace_back(TEXSLOTDISTANCE);
+			Vertices.emplace_back(1);
+
+			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
+			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
+			Vertices.emplace_back(0);
+			Vertices.emplace_back(1);
+
+		}
+	}
+
+	if (j * 2 != numberOfSlots)
+	{
+		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
+		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(0);
+		Vertices.emplace_back(0);
+
+		Vertices.emplace_back(Window::width - m_GapLength);
+		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(TEXSLOTDISTANCE);
+		Vertices.emplace_back(0);
+
+		Vertices.emplace_back(Window::width - m_GapLength);
+		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(TEXSLOTDISTANCE);
+		Vertices.emplace_back(1);
+
+		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
+		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
+		Vertices.emplace_back(0);
+		Vertices.emplace_back(1);
+	}
+	order.resize((Vertices.size() / 16) * 6);
+	for (int i = 0; i < Vertices.size() / 16; i++)
+	{
+		order.emplace_back(0 + i * 4);
+		order.emplace_back(1 + i * 4);
+		order.emplace_back(2 + i * 4);
+		order.emplace_back(0 + i * 4);
+		order.emplace_back(3 + i * 4);
+		order.emplace_back(2 + i * 4);
+	}
+	m_DDs[DDnumber] = CreateDrawData(m_EOBs[DDnumber], m_VBOs[DDnumber], m_EOBSizes[DDnumber], order, Vertices);
+}
 Editor::Editor(unsigned int eob)
 {
 	m_SelectBoxDD = CreateDrawData(eob,0.5f,-0.5f,0.5f,-0.5f,1,0,1.0f/4.0f,0);
@@ -390,7 +458,7 @@ void Editor::Update(float deltaTime
 					if (!isAnythinginArea(vertices, blocks, saplings, trees, CraftingStations, Doors, Chests))
 					{
 						int index;
-						int  vertices[4];
+						
 						bool floors = true;
 						getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
 
@@ -719,11 +787,10 @@ void EditorHUD::Create(unsigned int eob
 {
 	if (!first)
 	{
-		ErrorGL(glDeleteBuffers(11, m_VBOs));
-		ErrorGL(glDeleteBuffers(4 , m_EOBs));
-		ErrorGL(glDeleteVertexArrays(11, m_DDs));
+		ErrorGL(glDeleteBuffers(sizeOfHUDDD, m_VBOs));
+		ErrorGL(glDeleteBuffers(sizeOfEOB , m_EOBs));
+		ErrorGL(glDeleteVertexArrays(sizeOfHUDDD, m_DDs));
 	}
-	ErrorGL(glGenBuffers(4, m_EOBs));
 	if (m_OpenChest)
 	{
 		for (int j = 0; j < 5; j++)
@@ -739,179 +806,27 @@ void EditorHUD::Create(unsigned int eob
 	m_SideLength = DistanceOnUI(0.11f);
 	m_GapLengthChest = DistanceOnUI(0.008f);
 	m_SideLengthChest = DistanceOnUI(0.055f);
-	m_DDs[IconSlotDD] = CreateDrawData(eob, 0.2f * m_SideLength, -0.2f * m_SideLength, 0.2f * m_SideLength, -0.2f * m_SideLength, m_VBOs[IconSlotDD]);
-	m_DDs[IconUseSlotDD] = CreateDrawData(eob, 0.3f * m_SideLength, -0.3f * m_SideLength, 0.3f * m_SideLength, -0.3f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2 * TEXSLOTDISTANCE, TEXSLOTDISTANCE);
+	m_DDs[iconSlotDD] = CreateDrawData(eob, 0.2f * m_SideLength, -0.2f * m_SideLength, 0.2f * m_SideLength, -0.2f * m_SideLength, m_VBOs[iconSlotDD]);
+	m_DDs[iconUseSlotDD] = CreateDrawData(eob, 0.3f * m_SideLength, -0.3f * m_SideLength, 0.3f * m_SideLength, -0.3f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2 * TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[useSlotDD] = CreateDrawData(eob, 0.6f * m_SideLength, -0.6f * m_SideLength, 0.6f * m_SideLength, -0.6f * m_SideLength, m_VBOs[useSlotDD], 1, 0, 2*TEXSLOTDISTANCE, TEXSLOTDISTANCE);
 	m_DDs[defaultSlotUV] = CreateDrawData(eob, 0.4f * m_SideLength, -0.4f * m_SideLength, 0.4f * m_SideLength, -0.4f * m_SideLength, m_VBOs[defaultSlotUV]);
 	m_DDs[slotChestDefaultUV] = CreateDrawData(eob, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, 0.4f * m_SideLengthChest, -0.4f * m_SideLengthChest, m_VBOs[slotChestDefaultUV]);
-	m_DDs[WallEraserDD] = CreateDrawData(eob,-0.1f * m_SideLength, -0.3f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, m_VBOs[WallEraserDD]);
-	m_DDs[BlockEraserDD] = CreateDrawData(eob, -0.1f * m_SideLength, -0.3f * m_SideLength, 0.1f * m_SideLength, 0.3f * m_SideLength, m_VBOs[BlockEraserDD]);
+	m_DDs[wallEraserDD] = CreateDrawData(eob,-0.1f * m_SideLength, -0.3f * m_SideLength, -0.3f * m_SideLength, -0.1f * m_SideLength, m_VBOs[wallEraserDD]);
+	m_DDs[blockEraserDD] = CreateDrawData(eob, -0.1f * m_SideLength, -0.3f * m_SideLength, 0.1f * m_SideLength, 0.3f * m_SideLength, m_VBOs[blockEraserDD]);
 
 	std::vector<float> Vertices;
-	std::vector<unsigned char> order;
-	Vertices.reserve(NUMBEROFSLOTS * 16);
-	int placebleObjectsNumber = floorf(NUMBEROFSLOTS / 2.0f);
+	std::vector<uint16_t> order;
+	int placebleObjectsNumber ;
 	int j;
-	for (j = 0; j <placebleObjectsNumber; j++)
-	{
-		for (int i = 0;i < 2;i++)
-		{
-			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(0);
-			Vertices.emplace_back(0);
-
-			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
-			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(TEXSLOTDISTANCE);
-			Vertices.emplace_back(0);
-
-			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
-			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(TEXSLOTDISTANCE);
-			Vertices.emplace_back(1);
-
-			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
-			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(0);
-			Vertices.emplace_back(1);
-
-		}
-	}
-	if (j*2 != NUMBEROFSLOTS)
-	{
-		Vertices.emplace_back(Window::width -  (m_GapLength + m_SideLength));
-		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(0);
-		Vertices.emplace_back(0);
-
-		Vertices.emplace_back(Window::width - m_GapLength);
-		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(TEXSLOTDISTANCE);
-		Vertices.emplace_back(0);
-
-		Vertices.emplace_back(Window::width - m_GapLength);
-		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(TEXSLOTDISTANCE);
-		Vertices.emplace_back(1);
-
-		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
-		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(0);
-		Vertices.emplace_back(1);
-	}
-	order.resize((Vertices.size() / 16)*6);
-
-	for (int i = 0; i < Vertices.size()/16; i++)
-	{
-		order.emplace_back(0 + i * 4);
-		order.emplace_back(1 + i * 4);
-		order.emplace_back(2 + i * 4);
-		order.emplace_back(0 + i * 4);
-		order.emplace_back(3 + i * 4);
-		order.emplace_back(2 + i * 4);
-	}
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[0]));
-	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size(), order.data(), GL_STATIC_DRAW));
-	ErrorGL(glGenVertexArrays(1, &m_DDs[rightHUDSlots]));
-	ErrorGL(glBindVertexArray(m_DDs[rightHUDSlots]));
-	ErrorGL(glGenBuffers(1, &m_VBOs[rightHUDSlots]));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_VBOs[rightHUDSlots]));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), Vertices.data(), GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[0]));
-
-	ErrorGL(glBindVertexArray(0));
-	m_EOBSizes[0] = order.size();
+	
+	
+	
 	order.clear();
 	Vertices.clear();
 
+	CreateListRightSideHUD(i_ItemSize-1, rightItemSlots);
+	CreateListRightSideHUD(NUMBEROFSLOTS, rightBlockSlots);
 
-	Vertices.reserve((i_ItemSize-1) * 16);
-	placebleObjectsNumber = floorf((i_ItemSize - 1) / 2.0f);
-	for (j = 0; j < placebleObjectsNumber; j++)
-	{
-		for (int i = 0;i < 2;i++)
-		{
-			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(0);
-			Vertices.emplace_back(0);
-
-			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
-			Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(TEXSLOTDISTANCE);
-			Vertices.emplace_back(0);
-
-			Vertices.emplace_back(Window::width - (m_GapLength + i * (m_GapLength + m_SideLength)));
-			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(TEXSLOTDISTANCE);
-			Vertices.emplace_back(1);
-
-			Vertices.emplace_back(Window::width - (i + 1) * (m_GapLength + m_SideLength));
-			Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-			Vertices.emplace_back(0);
-			Vertices.emplace_back(1);
-
-		}
-	}
-	if (j * 2 != (i_ItemSize - 1))
-	{
-		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
-		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(0);
-		Vertices.emplace_back(0);
-
-		Vertices.emplace_back(Window::width - m_GapLength);
-		Vertices.emplace_back(m_GapLength - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(TEXSLOTDISTANCE);
-		Vertices.emplace_back(0);
-
-		Vertices.emplace_back(Window::width - m_GapLength);
-		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(TEXSLOTDISTANCE);
-		Vertices.emplace_back(1);
-
-		Vertices.emplace_back(Window::width - (m_GapLength + m_SideLength));
-		Vertices.emplace_back((m_GapLength + m_SideLength) - j * (m_GapLength + m_SideLength));
-		Vertices.emplace_back(0);
-		Vertices.emplace_back(1);
-	}
-	order.resize((Vertices.size() / 16) * 6);
-
-	for (int i = 0; i < Vertices.size() / 16; i++)
-	{
-		order.emplace_back(0 + i * 4);
-		order.emplace_back(1 + i * 4);
-		order.emplace_back(2 + i * 4);
-		order.emplace_back(0 + i * 4);
-		order.emplace_back(3 + i * 4);
-		order.emplace_back(2 + i * 4);
-	}
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[2]));
-	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size(), order.data(), GL_STATIC_DRAW));
-	ErrorGL(glGenVertexArrays(1, &m_DDs[rightItemSlots]));
-	ErrorGL(glBindVertexArray(m_DDs[rightItemSlots]));
-	ErrorGL(glGenBuffers(1, &m_VBOs[rightItemSlots]));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_VBOs[rightItemSlots]));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), Vertices.data(), GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[2]));
-
-	ErrorGL(glBindVertexArray(0));
-	m_EOBSizes[2] = order.size();
-	order.clear();
-	Vertices.clear();
 	for (int i = 0; i < 4;i++)
 	{
 
@@ -935,10 +850,6 @@ void EditorHUD::Create(unsigned int eob
 		Vertices.emplace_back(0);
 		Vertices.emplace_back(1);
 	}
-
-
-
-
 	order.resize((Vertices.size()/16)*6);
 	for (int i = 0; i<Vertices.size() / 16; i++)
 	{
@@ -949,26 +860,12 @@ void EditorHUD::Create(unsigned int eob
 		order.emplace_back(3 + i*4);
 		order.emplace_back(2 + i*4);
 	}
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[1]));
-	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size(), order.data(), GL_STATIC_DRAW));
-	ErrorGL(glGenVertexArrays(1, &m_DDs[leftHUDSlots]));
-	ErrorGL(glBindVertexArray(m_DDs[leftHUDSlots]));
-	ErrorGL(glGenBuffers(1, &m_VBOs[leftHUDSlots]));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_VBOs[leftHUDSlots]));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), Vertices.data(), GL_STATIC_DRAW));
-
-	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[1]));
-
-	ErrorGL(glBindVertexArray(0));
-	m_EOBSizes[1] = order.size();
+	m_DDs[leftHUDSlots] = CreateDrawData(m_EOBs[leftHUDSlots],m_VBOs[leftHUDSlots],m_EOBSizes[leftHUDSlots],order,Vertices);
 	order.clear();
 	Vertices.clear();
+
+
+
 	for (j = 0; j < 5; j++)
 	{
 		for (int i = 0; i < 10;i++)
@@ -1005,23 +902,8 @@ void EditorHUD::Create(unsigned int eob
 		order.emplace_back(3 + i * 4);
 		order.emplace_back(2 + i * 4);
 	}
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[3]));
-	ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, order.size(), order.data(), GL_STATIC_DRAW));
-	ErrorGL(glGenVertexArrays(1, &m_DDs[InvOfChest]));
-	ErrorGL(glBindVertexArray(m_DDs[InvOfChest]));
-	ErrorGL(glGenBuffers(1, &m_VBOs[InvOfChest]));
-	ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, m_VBOs[InvOfChest]));
-	ErrorGL(glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), Vertices.data(), GL_STATIC_DRAW));
+	m_DDs[invOfChest] = CreateDrawData(m_EOBs[invOfChest], m_VBOs[invOfChest], m_EOBSizes[invOfChest], order, Vertices);
 
-	ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	ErrorGL(glEnableVertexAttribArray(0));
-	ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	ErrorGL(glEnableVertexAttribArray(1));
-
-	ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EOBs[3]));
-
-	ErrorGL(glBindVertexArray(0));
-	m_EOBSizes[3] = order.size();
 
 }
 int EditorHUD::Update(float deltaTime
@@ -1321,16 +1203,16 @@ void EditorHUD::Draw(Shader& sh
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SlotTexs));
 	ErrorGL(glBindVertexArray(m_DDs[leftHUDSlots]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[1], GL_UNSIGNED_BYTE, 0));
+	ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[leftHUDSlots], GL_UNSIGNED_SHORT, 0));
 	if (m_OpenChest)
 	{
-		ErrorGL(glBindVertexArray(m_DDs[InvOfChest]));
-		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[3], GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glBindVertexArray(m_DDs[invOfChest]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[invOfChest], GL_UNSIGNED_SHORT, 0));
 		ChangeTransform(0, m_Scroll * (m_GapLength + m_SideLength), transform);
 		sh.SetUniformMat4(basicTransform, transform);
 
 		ErrorGL(glBindVertexArray(m_DDs[rightItemSlots]));
-		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[2], GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[rightItemSlots], GL_UNSIGNED_SHORT, 0));
 		ErrorGL(glBindVertexArray(m_DDs[slotChestDefaultUV]));
 		for (int j =0 ; j < 5; j++)
 		{
@@ -1346,8 +1228,8 @@ void EditorHUD::Draw(Shader& sh
 	{
 		ChangeTransform(0, m_Scroll * (m_GapLength + m_SideLength), transform);
 		sh.SetUniformMat4(basicTransform, transform);
-		ErrorGL(glBindVertexArray(m_DDs[rightHUDSlots]));
-		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[0], GL_UNSIGNED_BYTE, 0));
+		ErrorGL(glBindVertexArray(m_DDs[rightBlockSlots]));
+		ErrorGL(glDrawElements(GL_TRIANGLES, m_EOBSizes[rightBlockSlots], GL_UNSIGNED_SHORT, 0));
 	}
 	ErrorGL(glBindVertexArray(m_DDs[useSlotDD]));
 	if (editor.m_Selected != -1)
@@ -1357,7 +1239,7 @@ void EditorHUD::Draw(Shader& sh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 	}
-	ErrorGL(glBindVertexArray(m_DDs[IconUseSlotDD]));
+	ErrorGL(glBindVertexArray(m_DDs[iconUseSlotDD]));
 
 	if (editor.m_placingType != -1)
 	{
@@ -1373,7 +1255,7 @@ void EditorHUD::Draw(Shader& sh
 
 	}
 
-	ErrorGL(glBindVertexArray(m_DDs[IconSlotDD]));
+	ErrorGL(glBindVertexArray(m_DDs[iconSlotDD]));
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -1387,7 +1269,7 @@ void EditorHUD::Draw(Shader& sh
 
 	if (editor.m_BlocksEraser)
 	{
-		ErrorGL(glBindVertexArray(m_DDs[BlockEraserDD]));
+		ErrorGL(glBindVertexArray(m_DDs[blockEraserDD]));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_Stone]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 	}
@@ -1395,7 +1277,7 @@ void EditorHUD::Draw(Shader& sh
 	{
 		sh.SetUniform1i(basicSize + ShadowLocation, 1);
 
-		ErrorGL(glBindVertexArray(m_DDs[WallEraserDD]));
+		ErrorGL(glBindVertexArray(m_DDs[wallEraserDD]));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, itemsTex[i_WallStone]));
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		sh.SetUniform1i(basicSize + ShadowLocation, 0);
