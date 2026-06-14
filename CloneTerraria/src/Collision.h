@@ -28,5 +28,3 @@ bool AddVelocityToTransform(float* objectVertices4f
 	, float deltaTime);
 int RoundFiveDown(float x);
 int RoundFiveUp(float x);
-void memoryDefender(int* vertices
-	, int lenghtOfArray);

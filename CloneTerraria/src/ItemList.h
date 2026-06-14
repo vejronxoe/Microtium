@@ -119,3 +119,5 @@ enum StablePoint
 	, rightMiddle
 	, rightBottom
 };
+void memoryDefender(int* vertices
+	, int lenghtOfArray);

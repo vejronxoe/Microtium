@@ -907,19 +907,45 @@ void DrawChunks(Shader& shadowSh
 }
 void ClaculateLightMap(int chunkNumber
 , std::vector<std::vector<Block>>& blocks
-, std::vector<std::vector<Wall>>& walls)
+, std::vector<std::vector<Wall>>& walls
+, std::vector<std::vector<float>>& StaticLightMap)
 {
-	int lightMapSpace[4] = {};
-	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3] + 1;
-	int lightMapWitdh = lightMapSpace[2] - lightMapSpace[0] + 1;
+	int lightMapSpace[4] = { (chunkNumber - (chunkNumber / 54) * 54) * 20-14,((chunkNumber / 54) * 20) + Blocks::yMin + 34,(chunkNumber - (chunkNumber / 54) * 54) * 20+34,((chunkNumber / 54) * 20) + Blocks::yMin-14 };
+	for (int i = 0; i < 4; i++)
+	{
+		if (i % 2 == 0)
+		{
+			if (lightMapSpace[i] >= Blocks::xMax)
+			{
+				lightMapSpace[i] = Blocks::xMax-1;
+			}
+			else if (lightMapSpace[i] < Blocks::xMin)
+			{
+				lightMapSpace[i] = Blocks::xMin;
+			}
+		}
+		else
+		{
+			if (lightMapSpace[i] >= Blocks::yMax)
+			{
+				lightMapSpace[i] = Blocks::yMax-1;
+			}
+			else if (lightMapSpace[i] < Blocks::yMin)
+			{
+				lightMapSpace[i] = Blocks::yMin;
+			}
+		}
+	}
+	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3];
+	int lightMapWitdh = lightMapSpace[2] - lightMapSpace[0];
 	std::vector<std::vector<int>> blockMap;
 	{
 		std::vector<int> fill;
-		for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
+		for (int i = 0; i <= lightMapHeight;i++)
 		{
 			fill.emplace_back(1);
 		}
-		blockMap.assign(lightMapWitdh, fill);
+		blockMap.assign(lightMapWitdh+1, fill);
 
 	}
 	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
@@ -932,22 +958,33 @@ void ClaculateLightMap(int chunkNumber
 			}
 			else if (blocks.at(i).at(j).m_Y <= lightMapSpace[1])
 			{
-				blockMap.at(i - lightMapSpace[0]).at(blocks.at(i).at(j).m_Y - lightMapSpace[3]) = 2;
+		
+				blockMap.at(i - lightMapSpace[0]).at(lightMapHeight-(blocks.at(i).at(j).m_Y - lightMapSpace[3])) = 2;
 			}
 		}
 	}
 	std::vector<int> Stack;
-	std::vector<std::vector<float>> biggerLightMap;
+	for (int i = lightMapSpace[0]+1; i < lightMapSpace[2]; i++)
 	{
-		std::vector<float> fill;
-		for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
+		for (int j = lightMapSpace[3] + 1; j < lightMapSpace[1]; j++)
 		{
-			fill.emplace_back(0);
+			StaticLightMap.at(i).at(j-Blocks::yMin) = 0;
 		}
-		biggerLightMap.assign(lightMapWitdh, fill);
 	}
-	
-
+	for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
+	{
+		Stack.emplace_back(lightMapSpace[0]);
+		Stack.emplace_back(i - Blocks::yMin);
+		Stack.emplace_back(lightMapSpace[2]);
+		Stack.emplace_back(i - Blocks::yMin);
+	}
+	for (int i = lightMapSpace[0]; i <= lightMapSpace[2]; i++)
+	{
+		Stack.emplace_back(i);
+		Stack.emplace_back(lightMapSpace[1] - Blocks::yMin);
+		Stack.emplace_back(i);
+		Stack.emplace_back(lightMapSpace[3] - Blocks::yMin);
+	}
 	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
 	{
 		int height = lightMapSpace[1];
@@ -960,21 +997,21 @@ void ClaculateLightMap(int chunkNumber
 			while (walls.at(i).at(j).m_Y <= height)
 			{
 
-
+				if (height < lightMapSpace[3])
+				{
+					break;
+				}
 				if (walls.at(i).at(j).m_Y != height)
 				{
-					biggerLightMap.at(i - lightMapSpace[0]).at(lightMapHeight - 1 - (height - lightMapSpace[3])) = 1;
-					Stack.emplace_back(i - lightMapSpace[0]);
-					Stack.emplace_back(lightMapHeight - 1 - (height - lightMapSpace[3]));
+					StaticLightMap.at(i).at(height - Blocks::yMin) = 1;
+					Stack.emplace_back(i);
+					Stack.emplace_back(height - Blocks::yMin);
 				}
 				if (height < 0)
 				{
 					break;
 				}
-				if (height < lightMapSpace[3])
-				{
-					break;
-				}
+				
 				height--;
 			}
 			if (height < lightMapSpace[3])
@@ -989,9 +1026,9 @@ void ClaculateLightMap(int chunkNumber
 			{
 				break;
 			}
-			biggerLightMap.at(i - lightMapSpace[0]).at(lightMapHeight - 1 - (height - lightMapSpace[3])) = 1;
-			Stack.emplace_back(i - lightMapSpace[0]);
-			Stack.emplace_back(lightMapHeight - 1 - (height - lightMapSpace[3]));
+			StaticLightMap.at(i).at(height - Blocks::yMin) = 1;
+			Stack.emplace_back(i);
+			Stack.emplace_back(height - Blocks::yMin);
 			height--;
 		}
 	}
@@ -1001,20 +1038,20 @@ void ClaculateLightMap(int chunkNumber
 		Stack.pop_back();
 		int IndexX = Stack.at(Stack.size() - 1);
 		Stack.pop_back();
-		float baseLight = biggerLightMap.at(IndexX).at(IndexY);
+		float baseLight = StaticLightMap.at(IndexX).at(IndexY);
 
 
 		{
-			int Table[2][4] = { {0,-1 + (0 == IndexX),0,1 - (lightMapWitdh - 1 == IndexX)}, {-1 + (0 == IndexY),0,1 - (lightMapHeight - 1 == IndexY),0} };
+			int Table[2][4] = { {0,-1 + (lightMapSpace[0] == IndexX),0,1 - (lightMapSpace[2] == IndexX)}, {-1 + (lightMapSpace[3] - Blocks::yMin == IndexY),0,1 - (lightMapSpace[1] -Blocks::yMin == IndexY),0}};
 			for (int i = 0; i < 4;i++)
 			{
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
 
-				float hold = baseLight - 0.08f * blockMap.at(CheckingX).at(CheckingY);
-				if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
+				float hold = baseLight - 0.08f * blockMap.at(CheckingX - lightMapSpace[0]).at(CheckingY + Blocks::yMin - lightMapSpace[3]);
+				if (hold > StaticLightMap.at(CheckingX).at(CheckingY))
 				{
-					biggerLightMap.at(CheckingX).at(CheckingY) = hold;
+					StaticLightMap.at(CheckingX).at(CheckingY) = hold;
 					Stack.emplace_back(CheckingX);
 					Stack.emplace_back(CheckingY);
 				}
@@ -1023,15 +1060,15 @@ void ClaculateLightMap(int chunkNumber
 		}
 		
 		{
-			int Table[2][4] = { {-1 + (0 == IndexX),-1 + (0 == IndexX),1 - (lightMapWitdh - 1 == IndexX),1 - (lightMapWitdh - 1 == IndexX)}, {-1 + (0 == IndexY),1 - (lightMapHeight - 1 == IndexY),1 - (lightMapHeight - 1 == IndexY),-1 + (0 == IndexY)} };
+			int Table[2][4] = { {-1 + (lightMapSpace[0] == IndexX),-1 + (lightMapSpace[0] == IndexX),1 - (lightMapSpace[2] == IndexX),1 - (lightMapSpace[2] == IndexX)}, {-1 + +(lightMapSpace[3] - Blocks::yMin == IndexY),1 - (lightMapSpace[1] - Blocks::yMin == IndexY),1 - (lightMapSpace[1] - Blocks::yMin == IndexY) ,-1 + (lightMapSpace[3] - Blocks::yMin == IndexY)} };
 			for (int i = 0; i < 4;i++)
 			{
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
-				float hold = baseLight - 0.08f *1.41f * blockMap.at(CheckingX).at(CheckingY);
-				if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
+				float hold = baseLight - 0.08f *1.41f * blockMap.at(CheckingX-lightMapSpace[0]).at(CheckingY + Blocks::yMin -lightMapSpace[3]);
+				if (hold > StaticLightMap.at(CheckingX).at(CheckingY))
 				{
-					biggerLightMap.at(CheckingX).at(CheckingY) = hold;
+					StaticLightMap.at(CheckingX).at(CheckingY) = hold;
 					Stack.emplace_back(CheckingX);
 					Stack.emplace_back(CheckingY);
 				}

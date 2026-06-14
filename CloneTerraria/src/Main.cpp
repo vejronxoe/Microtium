@@ -764,6 +764,8 @@ int main()
 				ChunkDD chunk;
 				wallChunks.assign(2322, chunk);
 			}
+			std::vector<std::vector<float>> staticLightMap;
+		
 			std::vector<Enemy> enemies;
 			std::vector<BoomParticle> boomParticles;
 			std::vector<Projectile> projectiles;
@@ -792,6 +794,23 @@ int main()
 
 			}
 			Background background(eob, backgroundSh);
+			{
+				std::vector<float> fill;				
+				fill.assign(Blocks::yMax - Blocks::yMin, 0);
+				staticLightMap.assign(Blocks::xMax, fill);
+			}
+			////////////////////
+			// 
+			// 
+			// 
+			for (int i = 0; i < 2322;i++)
+			{
+				ClaculateLightMap(i, blocks, Walls, staticLightMap);
+			}
+			// 
+			// 
+			// 
+			///////////////////
 
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
