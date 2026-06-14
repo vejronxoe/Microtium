@@ -905,3 +905,140 @@ void DrawChunks(Shader& shadowSh
 	}
 
 }
+void ClaculateLightMap(int chunkNumber
+, std::vector<std::vector<Block>>& blocks
+, std::vector<std::vector<Wall>>& walls)
+{
+	int lightMapSpace[4] = {};
+	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3] + 1;
+	int lightMapWitdh = lightMapSpace[2] - lightMapSpace[0] + 1;
+	std::vector<std::vector<int>> blockMap;
+	{
+		std::vector<int> fill;
+		for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
+		{
+			fill.emplace_back(1);
+		}
+		blockMap.assign(lightMapWitdh, fill);
+
+	}
+	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
+	{
+		for (int j = 0; j < blocks.at(i).size(); j++)
+		{
+			if (blocks.at(i).at(j).m_Y < lightMapSpace[3])
+			{
+				break;
+			}
+			else if (blocks.at(i).at(j).m_Y <= lightMapSpace[1])
+			{
+				blockMap.at(i - lightMapSpace[0]).at(blocks.at(i).at(j).m_Y - lightMapSpace[3]) = 2;
+			}
+		}
+	}
+	std::vector<int> Stack;
+	std::vector<std::vector<float>> biggerLightMap;
+	{
+		std::vector<float> fill;
+		for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
+		{
+			fill.emplace_back(0);
+		}
+		biggerLightMap.assign(lightMapWitdh, fill);
+	}
+	
+
+	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
+	{
+		int height = lightMapSpace[1];
+		for (int j = 0; j < walls.at(i).size();j++)
+		{
+			if (height < 0)
+			{
+				break;
+			}
+			while (walls.at(i).at(j).m_Y <= height)
+			{
+
+
+				if (walls.at(i).at(j).m_Y != height)
+				{
+					biggerLightMap.at(i - lightMapSpace[0]).at(lightMapHeight - 1 - (height - lightMapSpace[3])) = 1;
+					Stack.emplace_back(i - lightMapSpace[0]);
+					Stack.emplace_back(lightMapHeight - 1 - (height - lightMapSpace[3]));
+				}
+				if (height < 0)
+				{
+					break;
+				}
+				if (height < lightMapSpace[3])
+				{
+					break;
+				}
+				height--;
+			}
+			if (height < lightMapSpace[3])
+			{
+				break;
+			}
+		}
+		while (height >= lightMapSpace[3])
+		{
+
+			if (height < 0)
+			{
+				break;
+			}
+			biggerLightMap.at(i - lightMapSpace[0]).at(lightMapHeight - 1 - (height - lightMapSpace[3])) = 1;
+			Stack.emplace_back(i - lightMapSpace[0]);
+			Stack.emplace_back(lightMapHeight - 1 - (height - lightMapSpace[3]));
+			height--;
+		}
+	}
+	while (Stack.size() != 0)
+	{
+		int IndexY = Stack.at(Stack.size() - 1);
+		Stack.pop_back();
+		int IndexX = Stack.at(Stack.size() - 1);
+		Stack.pop_back();
+		float baseLight = biggerLightMap.at(IndexX).at(IndexY);
+
+
+		{
+			int Table[2][4] = { {0,-1 + (0 == IndexX),0,1 - (lightMapWitdh - 1 == IndexX)}, {-1 + (0 == IndexY),0,1 - (lightMapHeight - 1 == IndexY),0} };
+			for (int i = 0; i < 4;i++)
+			{
+				int CheckingX = IndexX + Table[0][i];
+				int CheckingY = IndexY + Table[1][i];
+
+				float hold = baseLight - 0.08f * blockMap.at(CheckingX).at(CheckingY);
+				if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
+				{
+					biggerLightMap.at(CheckingX).at(CheckingY) = hold;
+					Stack.emplace_back(CheckingX);
+					Stack.emplace_back(CheckingY);
+				}
+			}
+
+		}
+		
+		{
+			int Table[2][4] = { {-1 + (0 == IndexX),-1 + (0 == IndexX),1 - (lightMapWitdh - 1 == IndexX),1 - (lightMapWitdh - 1 == IndexX)}, {-1 + (0 == IndexY),1 - (lightMapHeight - 1 == IndexY),1 - (lightMapHeight - 1 == IndexY),-1 + (0 == IndexY)} };
+			for (int i = 0; i < 4;i++)
+			{
+				int CheckingX = IndexX + Table[0][i];
+				int CheckingY = IndexY + Table[1][i];
+				float hold = baseLight - 0.08f *1.41f * blockMap.at(CheckingX).at(CheckingY);
+				if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
+				{
+					biggerLightMap.at(CheckingX).at(CheckingY) = hold;
+					Stack.emplace_back(CheckingX);
+					Stack.emplace_back(CheckingY);
+				}
+			}
+
+		}
+	}
+
+
+}

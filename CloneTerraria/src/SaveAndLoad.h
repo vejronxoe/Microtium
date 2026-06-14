@@ -4,7 +4,8 @@
 #include"flora.h"
 #include "Player.h"
 bool Load(std::string path
-	, std::vector<std::vector<Block>>& blocks);
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& sandXs);
 
 bool Save(std::string path
 	, std::vector<std::vector<Block>>& blocks);

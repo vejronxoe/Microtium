@@ -772,7 +772,7 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
-			if(!Load(pathToSave, blocks))
+			if(!Load(pathToSave, blocks,isSandOnX))
 			{
 				std::cout << "error can not load blocks" << std::endl;
 			}
@@ -852,16 +852,7 @@ int main()
 					}
 
 				}
-				CheckFloorCraftStations(craftStations, blocks, dropItems);
-				for (int i = 0; i < doors.size(); i++)
-				{
-					if (doors.at(i).CheckFloorAndCeil(doors, blocks, dropItems))
-					{
-						dropItems.emplace_back(doors[i].m_Transform[0], doors[i].m_Transform[1], 0, GetItemIDByStructure(doors[i].m_Type), 1, true);
-						doors.at(i).DestroyDoor(blocks, Walls, isSandOnX);
-						doors.erase(i + doors.begin());
-					}
-				}
+				
 				for (int i = 0; i < enemies.size(); i++)
 				{
 					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
@@ -887,8 +878,7 @@ int main()
 				
 		
 				player.EveryFrame(deltaTime,chunksToRebuildBlock, blocks,chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
-				SandEveryFrame(isSandOnX, projectiles, blocks, Walls,chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
-			
+				
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
@@ -1232,7 +1222,7 @@ int main()
 						case 1:
 						case 2:
 							pathToSave = "res/save" + std::to_string(aimingAt) + "/";
-							if (!Load(pathToSave, blocks))
+							if (!Load(pathToSave, blocks, isSandOnX))
 							{
 								std::cout << "error can not load (blocks)" << std::endl;
 							}
@@ -1368,7 +1358,7 @@ int main()
 				}
 				else if (Input::F8Press)
 				{
-					if (!Load(pathToSave, blocks))
+					if (!Load(pathToSave, blocks, isSandOnX))
 					{
 						std::cout << "error can not load (blocks)" << std::endl;
 					}
@@ -1413,138 +1403,25 @@ int main()
 					basicSh.Bind();
 					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);		
 				}
+				if (chunksToRebuildBlock.size())
+				{
+					SandEveryFrame(isSandOnX, projectiles, blocks, Walls, chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
+					CheckFloorCraftStations(craftStations, blocks, dropItems);
+					for (int i = 0; i < doors.size(); i++)
+					{
+						if (doors.at(i).CheckFloorAndCeil(doors, blocks, dropItems))
+						{
+							dropItems.emplace_back(doors[i].m_Transform[0], doors[i].m_Transform[1], 0, GetItemIDByStructure(doors[i].m_Type), 1, true);
+							doors.at(i).DestroyDoor(blocks, Walls, isSandOnX);
+							doors.erase(i + doors.begin());
+						}
+					}
+				}
 				CreateChunks(chunksToRebuildWall,wallChunks, Walls);
 
 
 				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
-				{
-					int lightMapSpace[4] = {
-						RoundFiveDown(CameraCoordinates[0] - Window::halfWidthOfGameTransform - 14)
-						, RoundFiveUp(CameraCoordinates[1] + Window::halfHeightOfGameTransform + 14)
-						, RoundFiveUp(CameraCoordinates[0] + Window::halfWidthOfGameTransform + 14)
-						, RoundFiveDown(CameraCoordinates[1] - Window::halfHeightOfGameTransform - 14) };
-					memoryDefender(lightMapSpace, 4);
-					int lightMapHeight = lightMapSpace[1] - lightMapSpace[3]+1;
-					int lightMapWitdh = lightMapSpace[2] - lightMapSpace[0]+1;
-					std::vector<std::vector<int>> blockMap;
-					{
-						std::vector<int> fill;
-						for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
-						{
-							fill.emplace_back(1);
-						}
-						blockMap.assign(lightMapWitdh, fill);
-
-					}
-					for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
-					{
-						for (int j = 0; j < blocks.at(i).size(); j++)
-						{
-							if (blocks.at(i).at(j).m_Y < lightMapSpace[3])
-							{
-								break;
-							}
-							else if (blocks.at(i).at(j).m_Y <= lightMapSpace[1])
-							{
-								blockMap.at(i - lightMapSpace[0]).at(blocks.at(i).at(j).m_Y - lightMapSpace[3]) = 2;
-							}
-						}
-					}
-					std::vector<int> Stack;
-					std::vector<std::vector<float>> biggerLightMap;
-					{
-						std::vector<float> fill;
-						for (int i = lightMapSpace[3]; i <= lightMapSpace[1];i++)
-						{
-							fill.emplace_back(0);
-						}
-						biggerLightMap.assign(lightMapWitdh, fill);
-					}
-
-					for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
-					{
-						int height = lightMapSpace[1];
-						for (int j = 0; j < Walls.at(i).size();j++)
-						{
-							if (height < 0)
-							{
-								break;
-							}
-							while (Walls.at(i).at(j).m_Y <= height)
-							{
-
-
-								if (Walls.at(i).at(j).m_Y != height)
-								{
-									biggerLightMap.at(i - lightMapSpace[0]).at(lightMapHeight-1-(height - lightMapSpace[3])) = 1;
-									Stack.emplace_back(i - lightMapSpace[0]);
-									Stack.emplace_back(lightMapHeight - 1 - (height - lightMapSpace[3]));
-								}
-								if (height < 0)
-								{
-									break;
-								}
-								if (height < lightMapSpace[3])
-								{
-									break;
-								}
-								height--;
-							}
-							if (height < lightMapSpace[3])
-							{
-								break;
-							}
-						}
-					}
-
-					while (Stack.size() != 0)
-					{
-						int IndexY = Stack.at(Stack.size() - 1);
-						Stack.pop_back();
-						int IndexX = Stack.at(Stack.size() - 1);
-						Stack.pop_back();
-						float baseLight = biggerLightMap.at(IndexX).at(IndexY);
-
-
-						{
-							int Table[2][4] = { {0,-1+ (0 == IndexX),0,1- (lightMapWitdh-1 == IndexX)}, {-1+ (0 == IndexY),0,1- (lightMapHeight - 1 == IndexY),0}};
-							for (int i = 0; i < 4;i++)
-							{
-								int CheckingX = IndexX + Table[0][i];
-								int CheckingY = IndexY + Table[1][i];
-							
-								float hold = baseLight - 0.08f * blockMap.at(CheckingX).at(CheckingY);
-								if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
-								{
-									biggerLightMap.at(CheckingX).at(CheckingY) = hold;
-									Stack.emplace_back(CheckingX);
-									Stack.emplace_back(CheckingY);
-								}
-							}
-
-						}
-						/*
-						{
-							int Table[2][4] = { {-1,-1,1,1}, {-1,1,1,-1} };
-							for (int i = 0; i < 4;i++)
-							{
-								int CheckingX = std::clamp(IndexX + Table[0][i], 0, lightMapSpace[1] - lightMapSpace[3]);
-								int CheckingY = std::clamp(IndexY + Table[1][i], 0, lightMapSpace[1] - lightMapSpace[3]);
-								float hold = baseLight - 0.08f *1.41f * blockMap.at(CheckingX).at(CheckingY);
-								if (hold > biggerLightMap.at(CheckingX).at(CheckingY))
-								{
-									biggerLightMap.at(CheckingX).at(CheckingY) = hold;
-									Stack.emplace_back(CheckingX);
-									Stack.emplace_back(CheckingY);
-								}
-							}
-
-						}
-						*/
-					}
 				
-
-				}
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);
@@ -1698,7 +1575,7 @@ int main()
 			std::vector<CraftStation> craftStations;
 			std::vector<Chest> chests;
 			std::vector<Door> doors;
-			if (!Load(pathToSave, blocks))
+			if (!Load(pathToSave, blocks, isSandOnX))
 			{
 				std::cout << "error loading (blocks)" << std::endl;
 			}
@@ -1939,7 +1816,7 @@ int main()
 						case 1:
 						case 2:
 							pathToSave = "res/save" + std::to_string(aimingAt) + "/";
-							if (!Load(pathToSave, blocks))
+							if (!Load(pathToSave, blocks, isSandOnX))
 							{
 								std::cout << "error can not load (blocks)" << std::endl;
 							}
@@ -2065,7 +1942,7 @@ int main()
 				}
 				else if (Input::F8Press)
 				{
-					if (!Load(pathToSave, blocks))
+					if (!Load(pathToSave, blocks, isSandOnX))
 					{
 						std::cout << "error can not load (blocks)" << std::endl;
 					}

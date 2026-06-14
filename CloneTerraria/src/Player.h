@@ -306,7 +306,7 @@ enum SlotTextures
 
 };
 
-void DrawItem(Shader sh
+void DrawItem(Shader& sh
 	, int sizeOfVertex
 	, float* transform
 	, float x

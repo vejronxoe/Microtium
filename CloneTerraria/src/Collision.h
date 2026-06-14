@@ -8,6 +8,7 @@ unsigned char DynamicSquereHitbox(float deltaTime
 	, float* velocity
 	, float* oldVelocity
 	, float* objectVertices4f
+	, bool platformControl
 	, bool platformIgnore
 	, std::vector<std::vector<Block>>& hitbox
 	, bool& leftWallHit

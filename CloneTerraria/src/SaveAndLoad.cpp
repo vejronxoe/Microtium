@@ -170,13 +170,14 @@ bool SavingSafely(std::string pathAndName)
 }
 
 bool Load(std::string path
-	, std::vector<std::vector<Block>>& blocks)
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<int>& sandXs)
 {
 	if (!LoadingSafely(path +"Blocks"))
 	{
 		return false;
 	}
-	
+	sandXs.clear();
 	blocks.assign(Blocks::xMax, std::vector<Block> {});
 	std::ifstream file(path+ "Blocks0.dat", std::ios::binary);
 	if (!file.good())
@@ -196,6 +197,22 @@ bool Load(std::string path
 				break;
 			default:
 				blocks.at(i).emplace_back(type,j);
+				if (type == t_Sand)
+				{
+					bool isAlreadyThere = false;
+					for (int k = 0; k < sandXs.size(); k++)
+					{
+						if (sandXs.at(k) == i)
+						{
+							isAlreadyThere = true;
+							break;
+						}
+					}
+					if (!isAlreadyThere)
+					{
+						sandXs.emplace_back(i);
+					}
+				}
 				break;
 			}
 		}

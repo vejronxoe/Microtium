@@ -187,7 +187,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-				DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false,false, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
@@ -224,7 +224,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
@@ -258,7 +258,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
@@ -285,7 +285,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+		DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
@@ -312,7 +312,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
@@ -339,7 +339,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
@@ -363,7 +363,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
@@ -387,7 +387,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
@@ -411,7 +411,7 @@ bool Projectile::EveryFrame(float deltaTime
 		}
 		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
 		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
@@ -442,7 +442,7 @@ bool Projectile::EveryFrame(float deltaTime
 		
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 		{
 			return true;
@@ -461,7 +461,7 @@ bool Projectile::EveryFrame(float deltaTime
 	
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;
@@ -480,7 +480,7 @@ bool Projectile::EveryFrame(float deltaTime
 	
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 		{
 			return true;
@@ -498,7 +498,7 @@ bool Projectile::EveryFrame(float deltaTime
 	{
 		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
 		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false, blocks, hit[0], hit[1], hit[2], hit[3]);
+					DynamicSquereHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
 		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 		{
 			return true;

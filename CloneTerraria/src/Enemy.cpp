@@ -283,7 +283,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = GRAVITY;
 		}
 		bool hit[4] = { false, false, false, false };
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], blocks, hit[0], hit[2], hit[3], hit[1]);
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1],false, blocks, hit[0], hit[2], hit[3], hit[1]);
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
@@ -393,7 +393,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = 15;
 			m_AnimPhase = 0;
 		}
-		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], blocks, hit[0], hit[2], hit[3], hit[1]);
+		DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1],false, blocks, hit[0], hit[2], hit[3], hit[1]);
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
