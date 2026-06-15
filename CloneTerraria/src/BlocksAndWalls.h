@@ -181,3 +181,11 @@ void ClaculateLightMap(int chunkNumber
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<Wall>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap);
+void ClaculateLightMap(std::vector<std::vector<Block>>& blocks
+	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<float>>& StaticLightMap);
+unsigned int CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
+	, int x
+	, int y
+	, int width
+	, int height);

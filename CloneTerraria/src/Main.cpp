@@ -659,7 +659,12 @@ int main()
 			structureSh.GetUniformLocation("shadow");
 			structureSh.GetUniformLocation("lookAt");
 			menuState = stateNone;
-			
+			ChangeTransform(-0.5f, -0.5f, transform);
+			Shader lightMapSh("res/shaders/verBasic.txt", "res/shaders/fragLightMap.txt");
+			lightMapSh.Bind();
+			lightMapSh.GetUniformLocation("camera");
+			lightMapSh.GetUniformLocation("transform");
+			lightMapSh.SetUniformMat4(basicTransform,transform);
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
 			ChangeTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
@@ -796,17 +801,17 @@ int main()
 			Background background(eob, backgroundSh);
 			{
 				std::vector<float> fill;				
-				fill.assign(Blocks::yMax - Blocks::yMin, 0);
+				fill.assign(Blocks::yMax - Blocks::yMin+1, 0);
 				staticLightMap.assign(Blocks::xMax, fill);
 			}
 			////////////////////
 			// 
 			// 
 			// 
-			for (int i = 0; i < 2322;i++)
-			{
-				ClaculateLightMap(i, blocks, Walls, staticLightMap);
-			}
+			unsigned int lightMapVBO = 0;
+			unsigned int lightMapDD = CreateDrawData(eob,Blocks::yMax,Blocks::yMin,Blocks::xMax,Blocks::xMin,lightMapVBO);	
+			ClaculateLightMap( blocks, Walls, staticLightMap);
+			unsigned int lightMap = CreateLightMap(staticLightMap, 0, -500, Blocks::xMax, Blocks::yMax - Blocks::yMin);
 			// 
 			// 
 			// 
@@ -818,12 +823,12 @@ int main()
 
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
+				
 				glClear(GL_COLOR_BUFFER_BIT);
 
 				deltaTime = glfwGetTime() - pastTime;
 				pastTime = glfwGetTime();	
-
-
+				
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
 				if (newHeight != Window::height || newWidth != Window::width)
@@ -861,6 +866,7 @@ int main()
 				float CameraCoordinates[2];
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+			
 				EnemySpawnManager(deltaTime, spawnTimer, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
 
 				for (int i = 0; i < seedlings.size(); i++)
@@ -974,6 +980,8 @@ int main()
 				background.DrawBackground(backgroundSh, basicSh, transform, CameraCoordinates);
 				structureSh.Bind();
 				structureSh.SetUniformMat4(basicCamera, camera);
+				lightMapSh.Bind();
+				lightMapSh.SetUniformMat4(basicCamera, camera);
 				shadowSh.Bind();
 				shadowSh.SetUniformMat4(basicCamera, camera);
 				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
@@ -1398,6 +1406,11 @@ int main()
 					CreateChunks(wallChunks, Walls);
 
 				}
+				lightMapSh.Bind();
+				ErrorGL(glBindVertexArray(lightMapDD));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, numberTexture));
@@ -1436,7 +1449,7 @@ int main()
 						}
 					}
 				}
-				CreateChunks(chunksToRebuildWall,wallChunks, Walls);
+				
 
 
 				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
@@ -1608,6 +1621,7 @@ int main()
 				std::cout << "error can not load structs" << std::endl;
 
 			}
+			
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks, Walls);

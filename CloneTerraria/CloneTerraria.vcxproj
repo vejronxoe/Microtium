@@ -90,6 +90,7 @@
     <Text Include="res\shaders\fragBackground.txt" />
     <Text Include="res\shaders\fragFont.txt" />
     <Text Include="res\shaders\fragHUD.txt" />
+    <Text Include="res\shaders\fragLightMap.txt" />
     <Text Include="res\shaders\fragShadow.txt" />
     <Text Include="res\shaders\fragStructures.txt" />
     <Text Include="res\shaders\fragtTest.txt" />
