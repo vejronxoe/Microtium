@@ -1145,25 +1145,20 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	, int height
 	, unsigned int &iD)
 {
-	y = Blocks::yMax - y;
+	y -= Blocks::yMin;
 	std::vector<uint8_t> data;
 	data.reserve(width * height);
-	for (int j = y - height; j < y; j++)
+	for (int j = 0; j < height; j++)
 	{
-		for (int i = x; i < x + width; i++)
+		for (int i = 0; i <  width; i++)
 		{
 		
 
-			data.emplace_back((uint8_t)(StaticLightMap.at(i).at(j) * 255));
+			data.emplace_back((uint8_t)(StaticLightMap.at(x+i).at(y+j) * 255));
 		}
 	}
-	ErrorGL(glGenTextures(1, &iD));
+
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, iD));
-	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
+	ErrorGL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	ErrorGL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data.data()));
 }

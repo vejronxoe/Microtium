@@ -811,11 +811,17 @@ int main()
 			// 
 			// 
 			unsigned int lightMapVBO = 0;
-			unsigned int lightMapDD = CreateDrawData(eob,Blocks::yMax, Blocks::yMin, Blocks::xMax, Blocks::xMin, lightMapVBO);
+			unsigned int lightMapDD = CreateDrawData(eob, ceil(Window::halfHeightOfGameTransform + 1), -ceil(Window::halfHeightOfGameTransform + 1), ceil(Window::halfWidthOfGameTransform + 1), -ceil(Window::halfWidthOfGameTransform+1), lightMapVBO);
 			CalculateLightMap( blocks, Walls, staticLightMap);
 			unsigned int lightMap;
-			CreateLightMap(staticLightMap, Blocks::xMin, Blocks::yMin, Blocks::xMax, Blocks::yMax - Blocks::yMin, lightMap);
+			ErrorGL(glGenTextures(1, &lightMap));
+			ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
 
+			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 			// 
 			// 
 			// 
@@ -1101,8 +1107,11 @@ int main()
 				player.DrawPlayer(deltaTime, basicSh, animSh, handSh, particlesSh, transform, scale, rotation, camera, particlesDD);
 
 				lightMapSh.Bind();
-				ErrorGL(glBindVertexArray(lightMapDD));
+				CreateLightMap(staticLightMap, round(CameraCoordinates[0]) - ceil(Window::halfWidthOfGameTransform + 1), round(CameraCoordinates[1]) - ceil(Window::halfHeightOfGameTransform + 1), 2 * ceil(Window::halfWidthOfGameTransform + 1), 2 * ceil(Window::halfHeightOfGameTransform + 1), lightMap);
+				ChangeTransform(round(CameraCoordinates[0])-0.5f, round(CameraCoordinates[1]) - 0.5f,transform );
+				lightMapSh.SetUniformMat4(basicTransform,transform);
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
+				ErrorGL(glBindVertexArray(lightMapDD));
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 				player.DrawPlayerHUD(basicSh, HUDSh, numberSh, fontSh, animSh, chests, transform, scale, rotation, camera, fontTex, fontDrawData, numberTexture);
@@ -1490,11 +1499,6 @@ int main()
 				for (int i = 0; i < chunkToRebuildLightMap.size();i++)
 				{
 					CalculateLightMap(chunkToRebuildLightMap.at(i), blocks, Walls, staticLightMap);
-				}
-				if (chunkToRebuildLightMap.size())
-				{
-					ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
-					CreateLightMap(staticLightMap, Blocks::xMin, Blocks::yMin, Blocks::xMax, Blocks::yMax - Blocks::yMin, lightMap);
 				}
 				chunkToRebuildLightMap.clear();
 
