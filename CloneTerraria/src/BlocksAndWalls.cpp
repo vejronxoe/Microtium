@@ -1035,7 +1035,7 @@ void BlockMapAlgoRithm(std::vector<std::vector<Block>>& blocks
 		}
 	}
 }
-void ClaculateLightMap(int chunkNumber
+void CalculateLightMap(int chunkNumber
 , std::vector<std::vector<Block>>& blocks
 , std::vector<std::vector<Wall>>& walls
 , std::vector<std::vector<float>>& StaticLightMap)
@@ -1096,7 +1096,7 @@ void ClaculateLightMap(int chunkNumber
 
 }
 
-void ClaculateLightMap(std::vector<std::vector<Block>>& blocks
+void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<Wall>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap)
 {
@@ -1138,24 +1138,21 @@ void ClaculateLightMap(std::vector<std::vector<Block>>& blocks
 
 }
 
-unsigned int CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
+void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	, int x
 	, int y
 	, int width
-	, int height)
+	, int height
+	, unsigned int &iD)
 {
 	y = Blocks::yMax - y;
-	unsigned int iD;
 	std::vector<uint8_t> data;
 	data.reserve(width * height);
 	for (int j = y - height; j < y; j++)
 	{
 		for (int i = x; i < x + width; i++)
 		{
-			if (StaticLightMap.at(i).at(j) > 1 || StaticLightMap.at(i).at(j) <0)
-			{
-				std::cout << StaticLightMap.at(i).at(j) << std::endl;
-			}
+		
 
 			data.emplace_back((uint8_t)(StaticLightMap.at(i).at(j) * 255));
 		}
@@ -1169,6 +1166,4 @@ unsigned int CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
 	ErrorGL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data.data()));
-	return iD;
-	
 }

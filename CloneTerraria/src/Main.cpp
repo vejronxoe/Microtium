@@ -769,6 +769,7 @@ int main()
 				ChunkDD chunk;
 				wallChunks.assign(2322, chunk);
 			}
+			std::vector<int> chunkToRebuildLightMap;
 			std::vector<std::vector<float>> staticLightMap;
 		
 			std::vector<Enemy> enemies;
@@ -804,14 +805,17 @@ int main()
 				fill.assign(Blocks::yMax - Blocks::yMin+1, 0);
 				staticLightMap.assign(Blocks::xMax, fill);
 			}
+			
 			////////////////////
 			// 
 			// 
 			// 
 			unsigned int lightMapVBO = 0;
-			unsigned int lightMapDD = CreateDrawData(eob,Blocks::yMax,Blocks::yMin,Blocks::xMax,Blocks::xMin,lightMapVBO);	
-			ClaculateLightMap( blocks, Walls, staticLightMap);
-			unsigned int lightMap = CreateLightMap(staticLightMap, 0, -500, Blocks::xMax, Blocks::yMax - Blocks::yMin);
+			unsigned int lightMapDD = CreateDrawData(eob,Blocks::yMax, Blocks::yMin, Blocks::xMax, Blocks::xMin, lightMapVBO);
+			CalculateLightMap( blocks, Walls, staticLightMap);
+			unsigned int lightMap;
+			CreateLightMap(staticLightMap, Blocks::xMin, Blocks::yMin, Blocks::xMax, Blocks::yMax - Blocks::yMin, lightMap);
+
 			// 
 			// 
 			// 
@@ -823,12 +827,12 @@ int main()
 
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
-				
+
 				glClear(GL_COLOR_BUFFER_BIT);
 
 				deltaTime = glfwGetTime() - pastTime;
-				pastTime = glfwGetTime();	
-				
+				pastTime = glfwGetTime();
+
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
 				if (newHeight != Window::height || newWidth != Window::width)
@@ -857,7 +861,7 @@ int main()
 					numberSh.SetUniformMat4(numberCamera, camera);
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
-					player.ResizeHUD(eob,chests,letters);
+					player.ResizeHUD(eob, chests, letters);
 
 				}
 				Input::XMousePos = Clamp(Input::XMousePos, -Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform);
@@ -866,7 +870,7 @@ int main()
 				float CameraCoordinates[2];
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
-			
+
 				EnemySpawnManager(deltaTime, spawnTimer, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
 
 				for (int i = 0; i < seedlings.size(); i++)
@@ -877,7 +881,7 @@ int main()
 					}
 
 				}
-				
+
 				for (int i = 0; i < enemies.size(); i++)
 				{
 					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
@@ -900,22 +904,22 @@ int main()
 					Input::OffAllButtons();
 
 				}
-				
-		
-				player.EveryFrame(deltaTime,chunksToRebuildBlock, blocks,chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters,CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
-				
+
+
+				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
-					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX,chunksToRebuildBlock, blockTextures))
+					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures))
 					{
 						projectiles.erase(projectiles.begin() + i);
-						
+
 					}
 
 				}
 
-				
+
 
 				if (damagedBlocks.size() > 20)
 				{
@@ -932,8 +936,8 @@ int main()
 				for (int i = 0; i < damagedBlocks.size(); i++)
 				{
 					int index;
-					
-					if (!FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1],index))
+
+					if (!FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1], index))
 					{
 						damagedBlocks.erase(damagedBlocks.begin() + i);
 					}
@@ -984,7 +988,7 @@ int main()
 				lightMapSh.SetUniformMat4(basicCamera, camera);
 				shadowSh.Bind();
 				shadowSh.SetUniformMat4(basicCamera, camera);
-				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks,wallChunks);
+				DrawChunks(shadowSh, blockTextures, transform, CameraCoordinates, blockChunks, wallChunks);
 				basicSh.Bind();
 				ErrorGL(glBindVertexArray(blocksDrawData));
 				for (int i = 0; i < damagedBlocks.size(); i++)
@@ -1007,7 +1011,7 @@ int main()
 				{
 					damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
 				}
-				
+
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
 				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
@@ -1093,14 +1097,21 @@ int main()
 				{
 					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
 				}
-				player.DrawPlayer(deltaTime, basicSh, HUDSh, numberSh, fontSh, animSh, handSh, particlesSh, chests, transform, scale, rotation,camera, fontTex, fontDrawData, particlesDD, numberTexture);
-				
+
+				player.DrawPlayer(deltaTime, basicSh, animSh, handSh, particlesSh, transform, scale, rotation, camera, particlesDD);
+
+				lightMapSh.Bind();
+				ErrorGL(glBindVertexArray(lightMapDD));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+
+				player.DrawPlayerHUD(basicSh, HUDSh, numberSh, fontSh, animSh, chests, transform, scale, rotation, camera, fontTex, fontDrawData, numberTexture);
 				if (player.m_IsInventoryOpen && menuState != stateNone)
 				{
 					animSh.Bind();
 					ChangeTransform(0, 0, transform);
 					animSh.SetUniformMat4(animTransform, transform);
-					animSh.SetUniform1f (animSize + HUDCraftingY, 2);
+					animSh.SetUniform1f(animSize + HUDCraftingY, 2);
 					animSh.SetUniform1i(animNumber, 0);
 					ErrorGL(glBindVertexArray(menuBackgroundDD));
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, player.m_SlotTextures));
@@ -1118,7 +1129,7 @@ int main()
 				fontSh.Bind();
 				ErrorGL(glBindTexture(GL_TEXTURE_2D, fontTex));
 				int cursorState = canNotDoIt;
-				
+
 				switch (menuState)
 				{
 				case stateNone:
@@ -1135,7 +1146,7 @@ int main()
 
 						if (IsInArea(vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
 						{
-							
+
 							menuTexts[5].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, true);
 							if (Input::LeftMousePress)
 							{
@@ -1257,7 +1268,7 @@ int main()
 							{
 								std::cout << "error can not load (walls)" << std::endl;
 							}
-							if (!Load(pathToSave,blocks, craftStations, chests, doors, trees, seedlings,structuresTextures,treeTextures,treeDD))
+							if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
 							{
 								std::cout << "error can not load (struct)" << std::endl;
 							}
@@ -1288,7 +1299,7 @@ int main()
 					}
 					menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, aimingAt == 3);
 					break;
-				
+
 				}
 				case stateSave:
 				{
@@ -1341,7 +1352,7 @@ int main()
 							{
 								std::cout << "error can not make save (struct)" << std::endl;
 							}
-							if (!Save(pathToSave,player))
+							if (!Save(pathToSave, player))
 							{
 								std::cout << "error can not make save (player)" << std::endl;
 							}
@@ -1397,7 +1408,7 @@ int main()
 					{
 						std::cout << "error can not load (struct)" << std::endl;
 					}
-					if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems,letters,eob))
+					if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
 					{
 						std::cout << "error can not load player" << std::endl;
 
@@ -1406,10 +1417,6 @@ int main()
 					CreateChunks(wallChunks, Walls);
 
 				}
-				lightMapSh.Bind();
-				ErrorGL(glBindVertexArray(lightMapDD));
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 
 				numberSh.Bind();
 				ErrorGL(glBindVertexArray(fontDrawData));
@@ -1431,9 +1438,9 @@ int main()
 				}
 				else
 				{
-					
+
 					basicSh.Bind();
-					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);		
+					DrawCursor(cursorTextures, cursorState, cursorDD, basicSh, transform, camera);
 				}
 				if (chunksToRebuildBlock.size())
 				{
@@ -1449,11 +1456,52 @@ int main()
 						}
 					}
 				}
-				
+
+				for (int i = 0; i < chunksToRebuildBlock.size();i++)
+				{
+					bool alreadyThere = false;
+					for (int j = 0; j < chunkToRebuildLightMap.size(); j++)
+					{
+						if (chunksToRebuildBlock.at(i) == chunkToRebuildLightMap.at(j))
+						{
+							alreadyThere = true;
+						}
+					}
+					if (!alreadyThere)
+					{
+						chunkToRebuildLightMap.emplace_back(chunksToRebuildBlock.at(i));
+					}
+				}
+				for (int i = 0; i < chunksToRebuildWall.size();i++)
+				{
+					bool alreadyThere = false;
+					for (int j = 0; j < chunkToRebuildLightMap.size(); j++)
+					{
+						if (chunksToRebuildWall.at(i) == chunkToRebuildLightMap.at(j))
+						{
+							alreadyThere = true;
+						}
+					}
+					if (!alreadyThere)
+					{
+						chunkToRebuildLightMap.emplace_back(chunksToRebuildWall.at(i));
+					}
+				}
+				for (int i = 0; i < chunkToRebuildLightMap.size();i++)
+				{
+					CalculateLightMap(chunkToRebuildLightMap.at(i), blocks, Walls, staticLightMap);
+				}
+				if (chunkToRebuildLightMap.size())
+				{
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
+					CreateLightMap(staticLightMap, Blocks::xMin, Blocks::yMin, Blocks::xMax, Blocks::yMax - Blocks::yMin, lightMap);
+				}
+				chunkToRebuildLightMap.clear();
 
 
-				CreateChunks(chunksToRebuildBlock,blockChunks, blocks);
-				
+				CreateChunks(chunksToRebuildBlock, blockChunks, blocks);
+				CreateChunks(chunksToRebuildWall, wallChunks, Walls);
+
 
 				Input::EndOfLoop();
 				glfwSwapBuffers(window);

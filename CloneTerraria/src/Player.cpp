@@ -3148,21 +3148,14 @@ void Player::EveryFrame(float deltaTime
 }
 void Player::DrawPlayer(float deltaTime
 	, Shader& basicSh
-	, Shader& HUDSh
-	, Shader& numberSh
-	, Shader& fontSh
 	, Shader& animSh
 	, Shader& handSh
 	, Shader& particlesSh
-	, std::vector<Chest>& chests
 	, float* transform
 	, float* scale
 	, float* rotation
 	, float* camera
-	, unsigned int fontTex
-	, unsigned int fontDD
-	, unsigned int particlesDD
-	, unsigned int numberTexture)
+	, unsigned int particlesDD)
 {
 	{
 		animSh.Bind();
@@ -3271,7 +3264,21 @@ void Player::DrawPlayer(float deltaTime
 	{
 		m_OnFire.DrawParticles(particlesSh, deltaTime, false, m_Transform, transform);
 	}
-	
+}
+void Player::DrawPlayerHUD(Shader& basicSh
+		, Shader& HUDSh
+		, Shader& numberSh
+		, Shader& fontSh
+		, Shader& animSh
+		, std::vector<Chest>& chests
+		, float* transform
+		, float* scale
+		, float* rotation
+		, float* camera
+		, unsigned int fontTex
+		, unsigned int fontDD
+		, unsigned int numberTexture)
+{
 	animSh.Bind();
 	animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 

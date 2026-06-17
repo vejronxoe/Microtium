@@ -152,12 +152,19 @@ public:
 
 	void DrawPlayer(float deltaTime
 		, Shader& basicSh
+		, Shader& animSh
+		, Shader& handSh
+		, Shader& particlesSh
+		, float* transform
+		, float* scale
+		, float* rotation
+		, float* camera
+		, unsigned int particlesDD);
+	void DrawPlayerHUD(Shader& basicSh
 		, Shader& HUDSh
 		, Shader& numberSh
 		, Shader& fontSh
 		, Shader& animSh
-		, Shader& handSh
-		, Shader& particlesSh
 		, std::vector<Chest>& chests
 		, float* transform
 		, float* scale
@@ -165,7 +172,6 @@ public:
 		, float* camera
 		, unsigned int fontTex
 		, unsigned int fontDD
-		, unsigned int particlesDD
 		, unsigned int numberTexture);
 	void ChangeAmountText(Text& text
 		, std::vector<Letter>& ascii
@@ -238,7 +244,8 @@ public:
 
 
 	
-	
+	FireParticle m_OnFire;
+
 	
 	unsigned char m_AimingAtSlot = 0;
 	unsigned char m_UseSlot = 0;
@@ -286,7 +293,6 @@ public:
 	bool m_IsBurning = false;
 	float m_BurningTimer = 0;
 	int m_BurnDamageNextTime = 0;
-	FireParticle m_OnFire;
 };
 void CreateAllItemTextures(unsigned int* itemTex
 	, unsigned int* blockTex
