@@ -1139,6 +1139,8 @@ void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 }
 
 void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
+	, std::vector<std::vector<Block>>& blocks
+	, float* playerTransform
 	, int x
 	, int y
 	, int width
@@ -1147,17 +1149,125 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 {
 	y -= Blocks::yMin;
 	std::vector<uint8_t> data;
-	data.reserve(width * height);
+	data.assign(width * height,0);
 	for (int j = 0; j < height; j++)
 	{
 		for (int i = 0; i <  width; i++)
 		{
 		
+			data.at(width*j + i) = ((uint8_t)(StaticLightMap.at(x + i).at(y + j)*255));
 
-			data.emplace_back((uint8_t)(StaticLightMap.at(x+i).at(y+j) * 255));
 		}
 	}
 
+	std::vector<int> dynamicStack;
+	std::vector<int> staticStack;
+	////////////////
+	dynamicStack.emplace_back(playerTransform[0]);
+	dynamicStack.emplace_back(playerTransform[1]);
+	dynamicStack.emplace_back(1);
+	///////////
+	std::vector<std::vector<int>> blockMap;
+
+	{
+		std::vector<int> fill;
+		for (int i = 0; i < height;i++)
+		{
+			fill.emplace_back(1);
+		}
+		blockMap.assign(width + 1, fill);
+
+	}
+	for (int i = x; i < x + height;i++)
+	{
+		for (int j = 0; j < blocks.at(i).size(); j++)
+		{
+			if (blocks.at(i).at(j).m_Y < y + Blocks::yMin)
+			{
+				break;
+			}
+			else if (blocks.at(i).at(j).m_Y < y+height + Blocks::yMin)
+			{
+
+				blockMap.at(i - x).at(blocks.at(i).at(j).m_Y - (y + Blocks::yMin)) = 2;
+			}
+		}
+	}
+	while (dynamicStack.size() != 0)
+	{
+		float emittingLight = dynamicStack.at(dynamicStack.size() - 1);
+		dynamicStack.pop_back();
+		float lightY = dynamicStack.at(dynamicStack.size() - 1);
+		dynamicStack.pop_back();
+		float lightX = dynamicStack.at(dynamicStack.size() - 1);
+		dynamicStack.pop_back();
+
+		int index[2] = { round(lightX) - x, round(lightY) - (y + Blocks::yMin) };
+
+		int Table[2][8] = { {0,-1,-1,-1,0,1,1,1}, {-1,-1,0,1,1,1,0,-1} };
+		for (int i = 0; i < 8 ; i++)
+		{
+			int checkingIndex[2] = {index[0] +Table[0][i],index[1] + Table[1][i] };
+			int checking[2] = { round(lightX) + Table[1][i],round(lightY) + Table[0][i] };
+			float hold = emittingLight - 0.08f * (Pyt2D(checking[0]-lightX,checking[1]-lightY)) * blockMap.at(checkingIndex[0]).at(checkingIndex[1]);
+			if (hold*255 > data.at(checkingIndex[0] + checkingIndex[1] * width))
+			{
+				data.at(checkingIndex[0] + checkingIndex[1] * width) = hold * 255;
+				staticStack.emplace_back(checkingIndex[0]);
+				staticStack.emplace_back(checkingIndex[1]);
+			}
+		}
+	}
+	while (staticStack.size() != 0)
+	{
+		int IndexY = staticStack.at(staticStack.size() - 1);
+		staticStack.pop_back();
+		int IndexX = staticStack.at(staticStack.size() - 1);
+		staticStack.pop_back();
+		float baseLight = data.at(IndexX + IndexY * width)/255.0f;
+
+		int minX = +(0 == IndexX);
+		int maxX = -(width-1 == IndexX);
+		int minY = +(0 == IndexY);
+		int maxY = -(height == IndexY);
+		{
+			int Table[2][4] = { {0,-1 +minX ,0,1 +maxX}, {-1 + minY ,0,1+ maxX ,0} };
+			for (int i = 0; i < 4;i++)
+			{
+				int CheckingX = IndexX + Table[0][i];
+				int CheckingY = IndexY + Table[1][i];
+
+				float hold = baseLight - 0.08f * blockMap[CheckingX][CheckingY];
+				if (hold*255 > data.at(CheckingX + CheckingY * width))
+				{
+					data[CheckingX + CheckingY * width] = hold * 255;
+
+					staticStack.emplace_back(CheckingX);
+					staticStack.emplace_back(CheckingY);
+				}
+			}
+
+		}
+
+		{
+			int Table[2][4] = { {-1 + minX,-1 + minX,1 + maxX,1 +maxX}, {-1 + minY,1+maxY ,1 + maxY  ,-1 + minY} };
+			for (int i = 0; i < 4;i++)
+			{
+				int CheckingX = IndexX + Table[0][i];
+				int CheckingY = IndexY + Table[1][i];
+
+				float hold = baseLight - 0.08f *1.4142f* blockMap[CheckingX][CheckingY];
+				if (hold * 255 > data[CheckingX + CheckingY * width])
+				{
+					data[CheckingX + CheckingY * width] = hold * 255;
+
+					staticStack.emplace_back(CheckingX);
+					staticStack.emplace_back(CheckingY);
+				}
+			}
+
+		}
+	}
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, iD));
 	ErrorGL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	ErrorGL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data.data()));

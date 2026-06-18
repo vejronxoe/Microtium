@@ -682,7 +682,6 @@ int main()
 			numberSh.SetUniformMat4(numberCamera, camera);
 			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
-			int lightMapSize[2] = { 0,0 };
 			unsigned int enemiesTex1[enemySize];
 			unsigned int enemiesTex2[enemySize];
 			unsigned int enemiesDD1[enemySize];
@@ -806,10 +805,8 @@ int main()
 				staticLightMap.assign(Blocks::xMax, fill);
 			}
 			
-			////////////////////
-			// 
-			// 
-			// 
+	
+			int lightMapSize[2] = { 2 * ceil(Window::halfWidthOfGameTransform + 1),2 * ceil(Window::halfHeightOfGameTransform + 1) };
 			unsigned int lightMapVBO = 0;
 			unsigned int lightMapDD = CreateDrawData(eob, ceil(Window::halfHeightOfGameTransform + 1), -ceil(Window::halfHeightOfGameTransform + 1), ceil(Window::halfWidthOfGameTransform + 1), -ceil(Window::halfWidthOfGameTransform+1), lightMapVBO);
 			CalculateLightMap( blocks, Walls, staticLightMap);
@@ -822,11 +819,7 @@ int main()
 
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-			// 
-			// 
-			// 
-			///////////////////
-
+	
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
@@ -1105,15 +1098,29 @@ int main()
 				}
 
 				player.DrawPlayer(deltaTime, basicSh, animSh, handSh, particlesSh, transform, scale, rotation, camera, particlesDD);
+				if (Window::height)
+				{
+					lightMapSh.Bind();
+					if (lightMapSize[0] != 2 * ceil(Window::halfWidthOfGameTransform + 1) || lightMapSize[1] != 2 * ceil(Window::halfHeightOfGameTransform + 1))
+					{
 
-				lightMapSh.Bind();
-				CreateLightMap(staticLightMap, round(CameraCoordinates[0]) - ceil(Window::halfWidthOfGameTransform + 1), round(CameraCoordinates[1]) - ceil(Window::halfHeightOfGameTransform + 1), 2 * ceil(Window::halfWidthOfGameTransform + 1), 2 * ceil(Window::halfHeightOfGameTransform + 1), lightMap);
-				ChangeTransform(round(CameraCoordinates[0])-0.5f, round(CameraCoordinates[1]) - 0.5f,transform );
-				lightMapSh.SetUniformMat4(basicTransform,transform);
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
-				ErrorGL(glBindVertexArray(lightMapDD));
-				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+						ErrorGL(glDeleteBuffers(1, &lightMapVBO));
 
+						ErrorGL(glDeleteVertexArrays(1, &lightMapDD));
+
+						lightMapSize[0] = 2.0f * ceil(Window::halfWidthOfGameTransform + 1);
+						lightMapSize[1] = 2.0f * ceil(Window::halfHeightOfGameTransform + 1);
+						lightMapDD = CreateDrawData(eob, ceil(Window::halfHeightOfGameTransform + 1), -ceil(Window::halfHeightOfGameTransform + 1), ceil(Window::halfWidthOfGameTransform + 1), -ceil(Window::halfWidthOfGameTransform + 1), lightMapVBO);
+
+					}
+
+					CreateLightMap(staticLightMap, blocks, player.m_Transform, round(CameraCoordinates[0]) - ceil(Window::halfWidthOfGameTransform + 1), round(CameraCoordinates[1]) - ceil(Window::halfHeightOfGameTransform + 1), 2 * ceil(Window::halfWidthOfGameTransform + 1), 2 * ceil(Window::halfHeightOfGameTransform + 1), lightMap);
+					ChangeTransform(round(CameraCoordinates[0]) - 0.5f, round(CameraCoordinates[1]) - 0.5f, transform);
+					lightMapSh.SetUniformMat4(basicTransform, transform);
+					ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
+					ErrorGL(glBindVertexArray(lightMapDD));
+					ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+				}
 				player.DrawPlayerHUD(basicSh, HUDSh, numberSh, fontSh, animSh, chests, transform, scale, rotation, camera, fontTex, fontDrawData, numberTexture);
 				if (player.m_IsInventoryOpen && menuState != stateNone)
 				{

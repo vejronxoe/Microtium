@@ -185,6 +185,8 @@ void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<Wall>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap);
 void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
+	, std::vector<std::vector<Block>>& blocks
+	, float* playerTransform
 	, int x
 	, int y
 	, int width
