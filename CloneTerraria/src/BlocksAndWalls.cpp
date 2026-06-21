@@ -1164,34 +1164,30 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	/////////////////
 	dynamicStack.emplace_back(playerTransform[0]);
 	dynamicStack.emplace_back(playerTransform[1]);
-	dynamicStack.emplace_back(0.8f);
+	dynamicStack.emplace_back(1);
 	///////////
-	/*
-	std::vector<std::vector<int>> blockMap;
+	
+	std::vector<int> blockMap;
 	{
-		std::vector<int> fill;
-		for (int i = 0; i < height;i++)
-		{
-			fill.emplace_back(1);
-		}
-		blockMap.assign(width + 1, fill);
-
+		blockMap.assign(width *height, 1);
 	}
-	for (int i = x; i < x + height;i++)
+	for (int i = 0; i <  width;i++)
 	{
-		for (int j = 0; j < blocks.at(i).size(); j++)
+	
+		for (int j = 0; j < blocks.at(x + i).size(); j++)
 		{
-			if (blocks.at(i).at(j).m_Y < y + Blocks::yMin)
+			if (blocks.at(x + i).at(j).m_Y < y + Blocks::yMin)
 			{
 				break;
 			}
-			else if (blocks.at(i).at(j).m_Y < y+height + Blocks::yMin)
+			else if (blocks.at(x + i).at(j).m_Y < y+height + Blocks::yMin)
 			{
 
-				blockMap.at(i - x).at(blocks.at(i).at(j).m_Y - (y + Blocks::yMin)) = 2;
+				blockMap.at(i + width * (blocks.at(x + i).at(j).m_Y - (y + Blocks::yMin))) = 2;
 			}
 		}
-	}*/
+	}
+	
 	while (dynamicStack.size() != 0)
 	{
 		float emittingLight = dynamicStack.at(dynamicStack.size() - 1);
@@ -1216,7 +1212,70 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 		{
 			for (int j = SpaceOfLight[3]; j <  SpaceOfLight[1]; j++)
 			{
-				float hold = emittingLight - 0.08f * Pyt2D(altTransform[0]- i, altTransform[1]-j);
+			
+				int blockValue = 1;
+				int searchIndex[2] = { i,j };
+				float searchAdd[2] = {};
+				if (searchIndex[1] != index[1] && searchIndex[0] != index[0])
+				{
+					
+					float searchScale[2] = {};
+					float searchLeanghts[2] = {};
+					float leanght[3] = { altTransform[0] - searchIndex[0],altTransform[1] -searchIndex[1],Pyt2D(searchIndex[0] - altTransform[0], searchIndex[1] - altTransform[1])};
+					searchAdd[0] = (leanght[0]) / abs(leanght[0]);
+					searchAdd[1] = (leanght[1]) / abs(leanght[1]);
+					searchScale[0] = Pyt2D( 1 ,leanght[1] / leanght[0]);
+					searchScale[1] = Pyt2D(1, leanght[0] / leanght[1]);
+					searchLeanghts[0] = searchScale[0];
+					searchLeanghts[1] = searchScale[1];
+
+					
+					while (leanght[2] >= searchLeanghts[0] || leanght[2] >= searchLeanghts[1])
+					{
+						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						{
+							blockValue = 2;
+							break;
+						}
+						if (searchLeanghts[0] > searchLeanghts[1])
+						{
+							searchLeanghts[1] += searchScale[1];
+							searchIndex[1] += searchAdd[1];
+						}
+						else
+						{
+							searchLeanghts[0] += searchScale[0];
+							searchIndex[0] += searchAdd[0];
+						}
+					}
+				}
+				else if (searchIndex[0] != index[0])
+				{
+					searchAdd[0] = (index[0] - searchIndex[0]) / abs(index[0] - searchIndex[0]);
+					while (searchIndex[0] != index[0])
+					{
+						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						{
+							blockValue = 2;
+							break;
+						}
+						searchIndex[0] += searchAdd[0];
+					}
+				}
+				else if (searchIndex[1] != index[1])
+				{
+					searchAdd[1] = (index[1] - searchIndex[1]) / abs(index[1] - searchIndex[1]);
+					while (searchIndex[1] != index[1])
+					{
+						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						{
+							blockValue = 2;
+							break;
+						}
+						searchIndex[1] += searchAdd[1];
+					}
+				}
+				float hold = emittingLight - 0.08f * blockValue * Pyt2D(altTransform[0]- i, altTransform[1]-j);
 				if (hold * 255 > data.at(width * j + i))
 				{
 					data.at(width * j + i) = hold * 255;
