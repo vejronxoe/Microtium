@@ -3,7 +3,7 @@
 
 #include"BlocksAndWalls.h"
 
-unsigned char DynamicSquereHitbox(float deltaTime
+unsigned char DynamicHitbox(float deltaTime
 	, float* transform
 	, float* velocity
 	, float* oldVelocity

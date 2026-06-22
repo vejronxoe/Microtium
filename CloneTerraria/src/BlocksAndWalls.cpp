@@ -1167,9 +1167,11 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	dynamicStack.emplace_back(1);
 	///////////
 	
-	std::vector<int> blockMap;
+	std::vector< std::vector<int>> blockMap;
 	{
-		blockMap.assign(width *height, 1);
+		std::vector<int> fill;
+		fill.assign(height, 1);
+		blockMap.assign(width, fill);
 	}
 	for (int i = 0; i <  width;i++)
 	{
@@ -1183,7 +1185,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 			else if (blocks.at(x + i).at(j).m_Y < y+height + Blocks::yMin)
 			{
 
-				blockMap.at(i + width * (blocks.at(x + i).at(j).m_Y - (y + Blocks::yMin))) = 2;
+				blockMap.at(i ).at(blocks.at(x + i).at(j).m_Y - (y + Blocks::yMin)) = 2;
 			}
 		}
 	}
@@ -1232,7 +1234,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					
 					while (leanght[2] >= searchLeanghts[0] || leanght[2] >= searchLeanghts[1])
 					{
-						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
 						{
 							blockValue = 2;
 							break;
@@ -1254,7 +1256,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[0] = (index[0] - searchIndex[0]) / abs(index[0] - searchIndex[0]);
 					while (searchIndex[0] != index[0])
 					{
-						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
 						{
 							blockValue = 2;
 							break;
@@ -1267,7 +1269,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[1] = (index[1] - searchIndex[1]) / abs(index[1] - searchIndex[1]);
 					while (searchIndex[1] != index[1])
 					{
-						if (blockMap.at(searchIndex[0] + width * (searchIndex[1])) == 2)
+						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
 						{
 							blockValue = 2;
 							break;

@@ -284,7 +284,7 @@ bool AddVelocityToTransform(float* objectVertices4f
 	return false;
 }
 
-unsigned char DynamicSquereHitbox(float deltaTime
+unsigned char DynamicHitbox(float deltaTime
 	, float* transform
 	, float* velocity
 	, float* oldVelocity

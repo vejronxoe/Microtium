@@ -79,7 +79,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 	else
 	{
 	
-		unsigned char behavior =  DynamicSquereHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, itemVertices,false, false, blocks,hit, hit, floorHit, hit);
+		unsigned char behavior =  DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, itemVertices,false, false, blocks,hit, hit, floorHit, hit);
 		int goingWay;
 		if (m_Velocity[0])
 		{
