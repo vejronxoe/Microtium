@@ -20,17 +20,14 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	bool count = false;
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < blocks.at(j).size(); i++)
+		for (int i = vertices[3]; i < vertices[1]; i++)
 		{
-			if (blocks.at(j).at(i).m_Y < vertices[3])
+
+			if (blocks.at(j).at(i - Blocks::yMin).m_Type != b_Air)
 			{
-				break;
-			}
-			if (blocks.at(j).at(i).m_Y <= vertices[1])
-			{
-				if (blocks.at(j).at(i).m_Behavior != b_Platform || blocks.at(j).at(i).m_Behavior == b_Platform && !platformIgnore && (objVertices[3] > blocks.at(j).at(i).m_Y + 0.5f || objVertices[3] == blocks.at(j).at(i).m_Y + 0.5f && !PlatformControl))
+				if (blocks.at(j).at(i - Blocks::yMin).m_Behavior != b_Platform || blocks.at(j).at(i - Blocks::yMin).m_Behavior == b_Platform && !platformIgnore && (objVertices[3] > i + 0.5f || objVertices[3] == i + 0.5f && !PlatformControl))
 				{
-					int chooser[4] = { j, blocks.at(j).at(i).m_Y, j, blocks.at(j).at(i).m_Y };
+					int chooser[4] = { j, i, j, i };
 					if (count)
 					{
 						if (abs(closest - vertices[index]) > abs(chooser[index] - vertices[index]))

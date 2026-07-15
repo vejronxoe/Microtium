@@ -226,7 +226,6 @@ seedling::seedling(char type
 ,m_Type(type)
 ,m_Texture(structuresTextures[type])
 {
-	FindBlock(blocks,x,y - 1, m_IndexOfGroundBlock);
 }
 void createBranchs(std::vector <std::vector<Block>>& blocks
 	, std::vector<tree>& trees
@@ -314,19 +313,9 @@ bool seedling::everyFrame(float deltaTime
 {
 
 	bool noGround = true;
-	if (m_IndexOfGroundBlock < blocks.at(m_Transform[0]).size() && m_IndexOfGroundBlock != -1)
+	if (blocks.at(m_Transform[0]).at(m_Transform[1] - 1  - Blocks::yMin).m_Behavior != b_Air)
 	{
-		noGround = !(blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Y == m_Transform[1] - 1);
-		if (noGround)
-		{
-			noGround = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, m_IndexOfGroundBlock);
-			noGround = !noGround;
-		}
-	}
-	else
-	{
-		noGround = FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, m_IndexOfGroundBlock);
-		noGround = !noGround;
+		noGround = false;
 	}
 	m_Timer += deltaTime;
 	if (m_Timer > TIMETOGROW && !noGround)
@@ -362,7 +351,7 @@ bool seedling::everyFrame(float deltaTime
 		}
 		else
 		{
-			blocks.at(m_Transform[0]).at(m_IndexOfGroundBlock).m_Behavior = b_Indestructible;
+			blocks.at(m_Transform[0]).at(m_Transform[1] - 1 - Blocks::yMin) = b_Indestructible;
 
 			for (int i = m_Transform[1]; i < m_Transform[1] + leangth; i++)
 			{

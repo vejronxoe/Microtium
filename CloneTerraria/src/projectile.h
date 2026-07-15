@@ -54,7 +54,7 @@ struct Projectile
 	bool EveryFrame(float deltaTime
 		, std::vector<Enemy>& enemies
 		, std::vector<std::vector<Block>>& blocks
-		, std::vector<std::vector<Wall>>& Walls
+		, std::vector<std::vector<uint8_t>>& Walls
 		, std::vector<CraftStation>& craftStations
 		, std::vector<seedling>& seedlings
 		, std::vector<tree>& trees
@@ -74,7 +74,7 @@ struct Projectile
 void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
+	, std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<int>& chunksToRebuild
 	, unsigned int projectileTextures
 	, unsigned int blockDD);

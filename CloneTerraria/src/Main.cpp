@@ -750,7 +750,7 @@ int main()
 
 			std::vector<std::vector<Block>> blocks;
 			std::vector<DamagedBlock> damagedBlocks;
-			std::vector<std::vector<Wall>> Walls;
+			std::vector<std::vector<uint8_t>> Walls;
 			std::vector<DamagedBlock> damagedWalls;
 			std::vector<tree> trees;
 			std::vector<damagedWood> damagedTrees;
@@ -1645,7 +1645,7 @@ int main()
 		
 			std::vector<std::vector<Block>> blocks;
 		
-			std::vector<std::vector<Wall>> Walls;
+			std::vector<std::vector<uint8_t>> Walls;
 		
 			std::vector<tree> trees;
 		

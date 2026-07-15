@@ -28,6 +28,7 @@ unsigned char getBehaviorByType(unsigned char blocksType)
 	{
 		behaviours[i] = b_BasicSolid;
 	}
+	behaviours[t_Air] = b_Air;
 	behaviours[t_Ice] = b_Slippery;
 	behaviours[t_Asphalt] = b_Asphalt;
 	behaviours[t_Platform] = b_Platform;
@@ -138,36 +139,10 @@ unsigned char GetBlockItemByType(unsigned char blocksType)
 	blocksIDs[t_HeartBlock] = i_HeartGem;
 	return blocksIDs[blocksType];
 }
-
-
-DamagedBlock::DamagedBlock(int x
-	, int y
-	, char HP)
-	:m_Transform{ x, y }, m_HP(HP)
+unsigned char GetHardnessBytype(unsigned char type)
 {
-}
-void DamagedBlock::DrawDamage(Shader& basicShader
-	, float* transform
-	, unsigned int* texture)
-{
-
-	ChangeTransform(m_Transform[0], m_Transform[1], transform);
-	basicShader.SetUniformMat4(basicTransform, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-}
-
-
-
-Block::Block(unsigned char blockType
-	, int y)
-{
-	blockType = Clamp(blockType, 0, t_BlocksSize -1);
-	m_Y = y;
-	m_Type = blockType;
-	m_Behavior = getBehaviorByType(blockType);
-	unsigned char hardness[t_BlocksSize] ;
-	for (int i = 0 ; i< t_BlocksSize;i++)
+	unsigned char hardness[t_BlocksSize];
+	for (int i = 0; i < t_BlocksSize;i++)
 	{
 		hardness[i] = 20;
 	}
@@ -191,51 +166,38 @@ Block::Block(unsigned char blockType
 	hardness[t_SandPlatform] = 30;
 	hardness[t_Snow] = 20;
 	hardness[t_HeartBlock] = 10;
-	m_Hardness = hardness[blockType];
+	return hardness[type];
 }
-Wall::Wall(unsigned char wallType
-	, int y)
-{
-	m_Type = wallType;
-	m_Y = y;
-	unsigned char hardness[t_BlocksSize];
-	for (int i = 0; i < t_BlocksSize; i++)
-	{
-		hardness[i] = 20;
-	}
-	hardness[t_SandStone] = 40;
-	hardness[t_ForestPlank] = 30;
-	hardness[t_Stone] = 35;
-	hardness[t_Cloude] = 10;
-	hardness[t_StoneBrick] = 35;
-	hardness[t_HardStone] = 100;
-	hardness[t_HardStoneBrick] = 100;
-	hardness[t_SandBrick] = 35;
-	hardness[t_Terracotta] = 40;
-	hardness[t_Snow] = 20;
 
-	m_Hardness = hardness[wallType];
-}
-void Block::Draw(Shader& basicSh
-	, unsigned int* blockTex
-	, int x
-	, float* transform)
+DamagedBlock::DamagedBlock(int x
+	, int y
+	, char HP)
+	:m_Transform{ x, y }, m_HP(HP)
 {
-	ChangeTransform(x, m_Y, transform);
-	basicSh.SetUniformMat4(basicTransform, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[m_Type]));
+}
+void DamagedBlock::DrawDamage(Shader& basicShader
+	, float* transform
+	, unsigned int* texture)
+{
+
+	ChangeTransform(m_Transform[0], m_Transform[1], transform);
+	basicShader.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindTexture(GL_TEXTURE_2D, texture[m_HP - 1]));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
-void Wall::Draw(Shader& shadowSh
-	, unsigned int* blockTex
-	, int x
-	, float* transform)
+
+
+void Block::Create(unsigned char Type)
 {
-	ChangeTransform(x, m_Y, transform);
-	shadowSh.SetUniformMat4(basicTransform, transform);
-	ErrorGL(glBindTexture(GL_TEXTURE_2D, blockTex[m_Type]));
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	m_Type = Clamp(Type, 0, t_BlocksSize - 1);
+	m_Behavior = getBehaviorByType(m_Type);
+
 }
+Block::Block(unsigned char blockType)
+{
+	Create(blockType);
+}
+
 void CreateAllBlockTextures(unsigned int* IDs)
 {
 	IDs[t_TopGrass] = CreateTextureRepeatRGBA("res/textures/topGrassBlock.png");
@@ -284,16 +246,9 @@ void createWall(int x
 	, int y
 	, unsigned short int wallType
 	, std::vector<int>& chunksToRebuildWalls
-	, std::vector<std::vector<Wall>>& walls)
+	, std::vector<std::vector<uint8_t>>& walls)
 {
-	int indexToPlace;
-	for (indexToPlace = 0; indexToPlace < walls.at(x).size(); indexToPlace++)
-	{
-		if (walls.at(x).at(indexToPlace).m_Y < y)
-		{
-			break;
-		}
-	}
+	
 	bool alreadyThere = false;
 	int chunkIndex = FindChunk(x, y);
 	for (int i = 0; i < chunksToRebuildWalls.size(); i++)
@@ -308,10 +263,10 @@ void createWall(int x
 	{
 		chunksToRebuildWalls.emplace_back(chunkIndex);
 	}
-	walls.at(x).emplace(walls.at(x).begin() + indexToPlace, wallType, y);
+	walls.at(x).at(y - Blocks::yMin) = wallType;
 }
 
-void DestroyWall(std::vector<std::vector<Wall>>& Walls
+void DestroyWall(std::vector<std::vector<uint8_t>>& walls
 	, std::vector<int>& chunksToRebuildWalls
 	, int x
 	, int y)
@@ -330,12 +285,8 @@ void DestroyWall(std::vector<std::vector<Wall>>& Walls
 	{
 		chunksToRebuildWalls.emplace_back(chunkIndex);
 	}
-	int index;
-	if (FindWall(Walls, x, y, index))
-	{
-		Walls.at(x).erase(Walls.at(x).begin()+index);
-	}
 
+	walls.at(x).at(y -Blocks::yMin) = t_Air;
 }
 
 void CreateBlock(int x
@@ -346,7 +297,7 @@ void CreateBlock(int x
 	, std::vector<int>& isThereSandOnX)
 {
 	
-	int	indexOfTheWall; 
+ 
 	
 	if (blockType == t_Sand)
 	{
@@ -364,15 +315,8 @@ void CreateBlock(int x
 			isThereSandOnX.emplace_back(x);
 		}
 	}
-	int indexToPlace;
-	for (indexToPlace = 0; indexToPlace < blocks.at(x).size(); indexToPlace++)
-	{
-		if (blocks.at(x).at(indexToPlace).m_Y < y)
-		{
-			break;
-		}
-	}
-	blocks.at(x).emplace(blocks.at(x).begin() + indexToPlace, blockType,y);
+
+	blocks.at(x).at(y-Blocks::yMin).Create(blockType);
 	bool alreadyThere = false;
 	int chunkIndex = FindChunk(x, y);
 	for (int i = 0; i < chunksToRebuild.size(); i++)
@@ -396,33 +340,31 @@ void DestroyBlock(std::vector<int>& chunksToRebuild
 {
 	int index; 
 
-	if (FindBlock(blocks, x, y, index))
+	
+	if (blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Sand)
 	{
-		if (blocks.at(x).at(index).m_Behavior == b_Sand)
+	
+		bool isThereSand = false;
+		for (int i = 0; i < blocks.at(x).size(); i++)
 		{
-		
-			bool isThereSand = false;
-			for (int i = 0; i < blocks.at(x).size(); i++)
+			if (blocks.at(x).at(i).m_Behavior == b_Sand && i + Blocks::yMin != y)
 			{
-				if (blocks.at(x).at(i).m_Behavior == b_Sand && blocks.at(x).at(i).m_Y != y)
-				{
-					isThereSand = true;
-				}
+				isThereSand = true;
 			}
-			if (!isThereSand)
+		}
+		if (!isThereSand)
+		{
+			for (int i = 0; i < isThereSandOnX.size();i++)
 			{
-				for (int i = 0; i < isThereSandOnX.size();i++)
+				if (isThereSandOnX.at(i) == x)
 				{
-					if (isThereSandOnX.at(i) == x)
-					{
-						isThereSandOnX.erase(isThereSandOnX.begin() + i);
-						break;
-					}
+					isThereSandOnX.erase(isThereSandOnX.begin() + i);
+					break;
 				}
 			}
 		}
-		blocks.at(x).erase(blocks.at(x).begin() + index);
 	}
+	blocks.at(x).at(y - Blocks::yMin).Create(t_Air);
 	bool alreadyThere = false;
 	int chunkIndex = FindChunk(x, y);
 	for (int i = 0; i < chunksToRebuild.size(); i++)
@@ -439,90 +381,47 @@ void DestroyBlock(std::vector<int>& chunksToRebuild
 	}
 }
 
-bool FindBlock(std::vector<std::vector<Block>>& blocks
-	, int x
-	, int y
-	, int& index)
-{
-	index = -1;
-	for (int i = 0; i < blocks.at(x).size(); i++)
-	{
-		if (blocks.at(x).at(i).m_Y == y)
-		{
-			index = i;
-			return true;
-		}
-		if (blocks.at(x).at(i).m_Y < y)
-		{
-			break;
-		}
-	}
-	return false;
-}
+
 bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int* vertices)
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < blocks.at(j).size(); i++)
+		for (int i = vertices[3]; i < vertices[1]; i++)
 		{
-			if (blocks.at(j).at(i).m_Y < vertices[3])
-			{
-				break;
-			}
-			if (blocks.at(j).at(i).m_Y <= vertices[1])
+			if (blocks.at(j).at(i - Blocks::yMin).m_Type != t_Air)
 			{
 				return true;
 			}
+		}
+	}
+	return false;
+}
 
-		}
-	}
-	return false;
-}
-bool FindWall(std::vector<std::vector<Wall>>& Walls
-	, int x
-	, int y
-	, int& index)
-{
-	index = -1;
-	for (int i = 0; i < Walls.at(x).size(); i++)
-	{
-		if (Walls.at(x).at(i).m_Y == y)
-		{
-			index = i;
-			return true;
-		}
-		if (Walls.at(x).at(i).m_Y < y)
-		{
-			break;
-		}
-	}
-	return false;
-}
-bool FindWall(std::vector<std::vector<Wall>>& Walls
+bool FindWall(std::vector<std::vector<uint8_t>>& walls
 	, int* vertices)
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = 0; i < Walls.at(j).size(); i++)
+		for (int i = vertices[3]; i < vertices[1]; i++)
 		{
-			if (Walls.at(j).at(i).m_Y < vertices[3])
-			{
-				break;
-			}
-			if (Walls.at(j).at(i).m_Y <= vertices[1])
+			if (walls.at(j).at(i - Blocks::yMin) != t_Air)
 			{
 				return true;
 			}
-
 		}
 	}
 	return false;
 }
+
+
+
+
 int FindChunk(int x ,int y)
 {
 	return x / 20 + ((y-Blocks::yMin) / 20) * 54;
 }
+
 void CreateChunks(std::vector<ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks)
 {
@@ -536,7 +435,7 @@ void CreateChunks(std::vector<ChunkDD>& chunks
 	CreateChunks(chunksToRebuild, chunks, blocks);
 }
 void CreateChunks(std::vector<ChunkDD>& chunks
-	, std::vector<std::vector<Wall>>& walls)
+	, std::vector<std::vector<uint8_t>>& walls)
 {
 	std::vector<int> chunksToRebuild;
 	for (int i = 0; i < 2322; i++)
@@ -558,21 +457,15 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
-			for (int j = 0; j < blocks.at(k).size();j++)
+			for (int j = transform[1]; j < transform[1] + 20;j++)
 			{
 
-				if (transform[1] > blocks.at(k).at(j).m_Y)
+				unsigned char blockType = blocks.at(k).at(j - Blocks::yMin).m_Type;
+				if (blockType < t_BlocksSize - 1 && blockType > 0)
 				{
-					break;
+					map[blockType][k - transform[0]][j - transform[1]] = true;
 				}
-				else if (transform[1] + 20 > blocks.at(k).at(j).m_Y)
-				{
-					unsigned char blockType = blocks.at(k).at(j).m_Type;
-					if (blockType < t_BlocksSize - 1 && blockType >= 0)
-					{
-						map[blockType][k - transform[0]][blocks.at(k).at(j).m_Y - transform[1]] = true;
-					}
-				}
+
 
 			}
 		}
@@ -698,33 +591,29 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 }
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
-	, std::vector<std::vector<Wall>>& walls)
+	, std::vector<std::vector<uint8_t>>& walls)
 {
 	for (int l = 0;l < chunksToRebuild.size();l++)
 	{
 		int i = chunksToRebuild[l];
 		bool map[t_BlocksSize - 1][20][20] = {};
 		int transform[2] = { (i - (i / 54) * 54) * 20,((i / 54) * 20) + Blocks::yMin };
+	
 		for (int k = transform[0];k < transform[0] + 20;k++)
 		{
-			for (int j = 0; j < walls.at(k).size();j++)
+			for (int j = transform[1]; j < transform[1] + 20;j++)
 			{
 
-				if (transform[1] > walls.at(k).at(j).m_Y)
+				unsigned char blockType = walls.at(k).at(j - Blocks::yMin);
+				if (blockType < t_BlocksSize - 1 && blockType > 0)
 				{
-					break;
+					map[blockType][k - transform[0]][j - transform[1]] = true;
 				}
-				else if (transform[1] + 20 > walls.at(k).at(j).m_Y)
-				{
-					unsigned char blockType = walls.at(k).at(j).m_Type;
-					if (blockType < t_BlocksSize - 1 && blockType >= 0)
-					{
-						map[blockType][k - transform[0]][walls.at(k).at(j).m_Y - transform[1]] = true;
-					}
-				}
+
 
 			}
 		}
+
 		for (int j = 0; j < t_BlocksSize - 1;j++)
 		{
 			std::vector<float> vertices;
@@ -905,58 +794,30 @@ void DrawChunks(Shader& shadowSh
 	}
 
 }
+
+
+
+
 void LightMapAlgorithm(int *lightMapSpace
 , std::vector<int>& Stack
-, std::vector<std::vector<Wall>>& walls
-, std::vector<std::vector<int>>& blockMap
+, std::vector<std::vector<uint8_t>>& walls
+, std::vector<std::vector<Block>>& blocks
 , std::vector<std::vector<float>> &StaticLightMap)
 {
 	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
 	{
-		int height = lightMapSpace[1];
-		for (int j = 0; j < walls.at(i).size();j++)
+		for (int j = lightMapSpace[3]; j <= lightMapSpace[1];j++)
 		{
-			if (height < 0)
+			if (j < 0)
 			{
 				break;
 			}
-			while (walls.at(i).at(j).m_Y <= height)
+			if (walls.at(i).at(j-Blocks::yMin) != t_Air)
 			{
-
-				if (height < lightMapSpace[3])
-				{
-					break;
-				}
-				if (walls.at(i).at(j).m_Y != height)
-				{
-				
-					StaticLightMap.at(i).at(height - Blocks::yMin) = 1;
-					Stack.emplace_back(i);
-					Stack.emplace_back(height - Blocks::yMin);
-				}
-				if (height < 0)
-				{
-					break;
-				}
-
-				height--;
+				StaticLightMap.at(i).at(j - Blocks::yMin) = 1;
+				Stack.emplace_back(i);
+				Stack.emplace_back(j - Blocks::yMin);
 			}
-			if (height < lightMapSpace[3])
-			{
-				break;
-			}
-		}
-		while (height >= lightMapSpace[3])
-		{
-
-			if (height < 0)
-			{
-				break;
-			}
-			StaticLightMap.at(i).at(height - Blocks::yMin) = 1;
-			Stack.emplace_back(i);
-			Stack.emplace_back(height - Blocks::yMin);
-			height--;
 		}
 	}
 	while (Stack.size() != 0)
@@ -967,15 +828,19 @@ void LightMapAlgorithm(int *lightMapSpace
 		Stack.pop_back();
 		float baseLight = StaticLightMap.at(IndexX).at(IndexY);
 
-
+		int rules[4] = { (lightMapSpace[0] == IndexX) , -(lightMapSpace[1] - Blocks::yMin == IndexY), -(lightMapSpace[2] == IndexX), (lightMapSpace[3] - Blocks::yMin == IndexY) };
 		{
-			int Table[2][4] = { {0,-1 + (lightMapSpace[0] == IndexX),0,1 - (lightMapSpace[2] == IndexX)}, {-1 + (lightMapSpace[3] - Blocks::yMin == IndexY),0,1 - (lightMapSpace[1] - Blocks::yMin == IndexY),0} };
+			int Table[2][4] = { {0,-1 + rules[0],0,1 + rules[2]}, {-1 + rules[3],0,1 + rules[1],0}};
 			for (int i = 0; i < 4;i++)
 			{
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
-
-				float hold = baseLight - 0.08f * blockMap.at(CheckingX - lightMapSpace[0]).at(CheckingY + Blocks::yMin - lightMapSpace[3]);
+				int lightBlock = 2;
+				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Type == b_Air)
+				{
+					lightBlock = 1;
+				}
+				float hold = baseLight - 0.08f * lightBlock;
 				if (hold > StaticLightMap.at(CheckingX).at(CheckingY))
 				{
 					StaticLightMap.at(CheckingX).at(CheckingY) = hold;
@@ -987,12 +852,17 @@ void LightMapAlgorithm(int *lightMapSpace
 		}
 
 		{
-			int Table[2][4] = { {-1 + (lightMapSpace[0] == IndexX),-1 + (lightMapSpace[0] == IndexX),1 - (lightMapSpace[2] == IndexX),1 - (lightMapSpace[2] == IndexX)}, {-1 + +(lightMapSpace[3] - Blocks::yMin == IndexY),1 - (lightMapSpace[1] - Blocks::yMin == IndexY),1 - (lightMapSpace[1] - Blocks::yMin == IndexY) ,-1 + (lightMapSpace[3] - Blocks::yMin == IndexY)} };
+			int Table[2][4] = { {-1 + rules[0],-1 + rules[0],1 + rules[2],1 + rules[2]}, {-1 + rules[3],1 +rules[1],1 + rules[1] ,-1 + rules[3]}};
 			for (int i = 0; i < 4;i++)
 			{
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
-				float hold = baseLight - 0.08f * 1.4142f * blockMap.at(CheckingX - lightMapSpace[0]).at(CheckingY + Blocks::yMin - lightMapSpace[3]);
+				int lightBlock = 2;
+				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Type == b_Air)
+				{
+					lightBlock = 1;
+				}
+				float hold = baseLight - 0.08f * 1.4142f * lightBlock;
 				if (hold > StaticLightMap.at(CheckingX).at(CheckingY))
 				{
 					StaticLightMap.at(CheckingX).at(CheckingY) = hold;
@@ -1001,43 +871,12 @@ void LightMapAlgorithm(int *lightMapSpace
 				}
 			}
 
-		}
-	}
-}
-void BlockMapAlgoRithm(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<int>>& blockMap
-	, int* lightMapSpace
-	, int lightMapHeight
-	, int lightMapWidth)
-{
-	{
-		std::vector<int> fill;
-		for (int i = 0; i <= lightMapHeight;i++)
-		{
-			fill.emplace_back(1);
-		}
-		blockMap.assign(lightMapWidth + 1, fill);
-
-	}
-	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
-	{
-		for (int j = 0; j < blocks.at(i).size(); j++)
-		{
-			if (blocks.at(i).at(j).m_Y < lightMapSpace[3])
-			{
-				break;
-			}
-			else if (blocks.at(i).at(j).m_Y <= lightMapSpace[1])
-			{
-
-				blockMap.at(i - lightMapSpace[0]).at(blocks.at(i).at(j).m_Y - lightMapSpace[3]) = 2;
-			}
 		}
 	}
 }
 void CalculateLightMap(int chunkNumber
 , std::vector<std::vector<Block>>& blocks
-, std::vector<std::vector<Wall>>& walls
+, std::vector<std::vector<uint8_t>>& walls
 , std::vector<std::vector<float>>& StaticLightMap)
 {
 	int lightMapSpace[4] = { (chunkNumber - (chunkNumber / 54) * 54) * 20-14,((chunkNumber / 54) * 20) + Blocks::yMin + 34,(chunkNumber - (chunkNumber / 54) * 54) * 20+34,((chunkNumber / 54) * 20) + Blocks::yMin-14 };
@@ -1068,8 +907,6 @@ void CalculateLightMap(int chunkNumber
 	}
 	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3];
 	int lightMapWidth = lightMapSpace[2] - lightMapSpace[0];
-	std::vector<std::vector<int>> blockMap;
-	BlockMapAlgoRithm(blocks, blockMap, lightMapSpace, lightMapHeight, lightMapWidth);
 	std::vector<int> Stack;
 	for (int i = lightMapSpace[0]+1; i < lightMapSpace[2]; i++)
 	{
@@ -1092,12 +929,12 @@ void CalculateLightMap(int chunkNumber
 		Stack.emplace_back(i);
 		Stack.emplace_back(lightMapSpace[3] - Blocks::yMin);
 	}
-	LightMapAlgorithm(lightMapSpace, Stack, walls, blockMap, StaticLightMap);
+	LightMapAlgorithm(lightMapSpace, Stack, walls, blocks, StaticLightMap);
 
 }
 
 void CalculateLightMap(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<uint8_t>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap)
 {
 	int lightMapSpace[4] = {Blocks::xMin,Blocks::yMax,Blocks::xMax,Blocks::yMin };
@@ -1129,12 +966,10 @@ void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3];
 	int lightMapWidth = lightMapSpace[2] - lightMapSpace[0];
 	std::vector<std::vector<int>> blockMap;
-	BlockMapAlgoRithm(blocks, blockMap, lightMapSpace, lightMapHeight, lightMapWidth);
-
 	std::vector<int> Stack;
 
 	
-	LightMapAlgorithm(lightMapSpace, Stack, walls, blockMap, StaticLightMap);
+	LightMapAlgorithm(lightMapSpace, Stack, walls, blocks, StaticLightMap);
 
 }
 
@@ -1167,28 +1002,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	dynamicStack.emplace_back(1);
 	///////////
 	
-	std::vector< std::vector<int>> blockMap;
-	{
-		std::vector<int> fill;
-		fill.assign(height, 1);
-		blockMap.assign(width, fill);
-	}
-	for (int i = 0; i <  width;i++)
-	{
 	
-		for (int j = 0; j < blocks.at(x + i).size(); j++)
-		{
-			if (blocks.at(x + i).at(j).m_Y < y + Blocks::yMin)
-			{
-				break;
-			}
-			else if (blocks.at(x + i).at(j).m_Y < y+height + Blocks::yMin)
-			{
-
-				blockMap.at(i ).at(blocks.at(x + i).at(j).m_Y - (y + Blocks::yMin)) = 2;
-			}
-		}
-	}
 	
 	while (dynamicStack.size() != 0)
 	{
@@ -1234,7 +1048,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					
 					while (leanght[2] >= searchLeanghts[0] || leanght[2] >= searchLeanghts[1])
 					{
-						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;
@@ -1256,7 +1070,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[0] = (index[0] - searchIndex[0]) / abs(index[0] - searchIndex[0]);
 					while (searchIndex[0] != index[0])
 					{
-						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;
@@ -1269,7 +1083,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[1] = (index[1] - searchIndex[1]) / abs(index[1] - searchIndex[1]);
 					while (searchIndex[1] != index[1])
 					{
-						if (blockMap.at(searchIndex[0]).at(searchIndex[1]) == 2)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;

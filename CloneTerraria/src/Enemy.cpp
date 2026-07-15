@@ -492,47 +492,40 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 
 	}
 	memoryDefender(spawnVertices, 4);
+	float enemyVertices[4] = {};
+	GetEnemyVerticesByType(enemyType, enemyVertices);
+	int dimensions[2] = { enemyVertices[2] - enemyVertices[0], enemyVertices[1] - enemyVertices[3] };
+	spawnVertices[2] -= dimensions[0];
+	spawnVertices[1] -= dimensions[1];
 	for(int i  = spawnVertices[0]; i < spawnVertices[2]; i++)
 	{
-		int checked = 0;
-		for (int j = 0; j < blocks.at(i).size();j++)
+		for (int j = spawnVertices[3]; j < spawnVertices[1];j++)
 		{
-			if (spawnVertices[3] > blocks.at(i).at(j).m_Y)
+			if (blocks.at(i).at(j - Blocks::yMin).m_Behavior == b_Air)
 			{
-				break;
-			}
-			else if(spawnVertices[1] >= blocks.at(i).at(j).m_Y)
-			{
-				if (checked + spawnVertices[1] == blocks.at(i).at(j).m_Y)
+				bool spaceForEnemy = true;
+				for (int k = i; k < i + dimensions[0]; k++)
 				{
-					checked++;
-				}
-				else
-				{
-					float enemyVertices[4];
-					GetEnemyVerticesByType(enemyType, enemyVertices);
-					int vertices[4];
-					vertices[0] = i;
-					vertices[1] = blocks.at(i).at(j).m_Y+1 + ceil(abs(enemyVertices[1] - enemyVertices[3]));
-					vertices[2] = i + ceil(abs(enemyVertices[2] - enemyVertices[0]));
-					vertices[3] = blocks.at(i).at(j).m_Y + 1;
-					
-					while (vertices[1] < checked + spawnVertices[1])
+					for (int l = j; l < j + dimensions[1]; l++)
 					{
-						if (!FindBlock(blocks, vertices))
+						if (blocks.at(k).at(l- Blocks::yMin).m_Behavior != b_Air)
 						{
-							spawntransform[0] = vertices[0] + enemyVertices[2];
-							spawntransform[1] = vertices[1] + enemyVertices[3];
-							return true;
+							spaceForEnemy = false;
+							break;
 						}
-						vertices[1] += ceil(abs(enemyVertices[1] - enemyVertices[3]));
-						vertices[3] += ceil(abs(enemyVertices[1] - enemyVertices[3]));
-
 					}
-					checked = blocks.at(i).at(j).m_Y - spawnVertices[1] + 1;
+					if (!spaceForEnemy)
+					{
+						break;
+					}
+				}
+				if (spaceForEnemy)
+				{
+					spawntransform[0] = i;
+					spawntransform[1] = j;
+					return true;
 				}
 			}
-
 		}
 	}
 	return false;

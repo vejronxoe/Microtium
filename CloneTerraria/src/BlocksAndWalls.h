@@ -14,8 +14,8 @@ namespace Blocks
 }
 enum TexturesOfBlocks
 {
-	
-	 t_Dirt =0 
+	t_Air = 0
+	, t_Dirt 
 	, t_LeftGrass
 	, t_DownGrass
 	, t_DownLeftGrass
@@ -74,37 +74,18 @@ unsigned char getBehaviorByType(unsigned char blocksType);
 unsigned char getTypeByItem(unsigned char item);
 unsigned char GetWallItemBytype(unsigned char blocksType);
 unsigned char GetBlockItemByType(unsigned char blocksType);
-
+unsigned char GetHardnessBytype(unsigned char type);
 class Block
 {
 public:
 	unsigned char m_Type = t_Dirt;
-	int m_Y = 0;
 	unsigned char m_Behavior = b_BasicSolid;
-	unsigned char m_Hardness = 15;
 
-	Block(unsigned char blockType 
-		, int y);
+	Block(unsigned char blockType);
+	void Create(unsigned char Type);
 
-	void Draw( Shader& basicSh
-		, unsigned int* blockTex
-		, int x
-		, float* transform);
 };
-class Wall
-{
-public:
-	unsigned char m_Type;
-	int m_Y;
-	unsigned char m_Hardness;
-	Wall(unsigned char WallType
-		, int y);
 
-	void Draw(Shader& shadowSh
-		, unsigned int* blockTex
-		, int x
-		, float* transform);
-};
 struct DamagedBlock
 {
 	DamagedBlock(int x
@@ -132,8 +113,8 @@ void createWall(int x
 	, int y
 	, unsigned short int wallType
 	, std::vector<int>& chunksToRebuildWalls
-	, std::vector<std::vector<Wall>>& walls);
-void DestroyWall(std::vector<std::vector<Wall>>& Walls
+	, std::vector<std::vector<uint8_t>>& walls);
+void DestroyWall(std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<int>& chunksToRebuildWalls
 	, int x
 	, int y);
@@ -148,17 +129,10 @@ void DestroyBlock(std::vector<int>& chunksToRebuild
 	, std::vector<int>& isThereSandOnX
 	, int x
 	, int y);
-bool FindBlock(std::vector<std::vector<Block>>& blocks
-	, int x
-	, int y
-	, int& index);
+
 bool FindBlock(std::vector<std::vector<Block>>& blocks
 	, int* vertices);
-bool FindWall(std::vector<std::vector<Wall>>& Walls
-	, int x
-	, int y
-	, int& index);
-bool FindWall(std::vector<std::vector<Wall>>& Walls
+bool FindWall(std::vector<std::vector<uint8_t>>& Walls
 	, int* vertices);
 int FindChunk(int x, int y);
 void CreateChunks(std::vector<int>& chunksToRebuild
@@ -166,11 +140,11 @@ void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector<std::vector<Block>>& blocks);
 void CreateChunks(std::vector<int>& chunksToRebuild
 	, std::vector < ChunkDD>& chunks
-	, std::vector<std::vector<Wall>>& walls);
+	, std::vector<std::vector<uint8_t>>& walls);
 void CreateChunks(std::vector<ChunkDD>& chunks
 	, std::vector<std::vector<Block>>& blocks);
 void CreateChunks(std::vector<ChunkDD>& chunks
-	, std::vector<std::vector<Wall>>& walls);
+	, std::vector<std::vector<uint8_t>>& walls);
 void DrawChunks(Shader& basicSh
 	, unsigned int* textures
 	, float* trasform
@@ -179,10 +153,10 @@ void DrawChunks(Shader& basicSh
 	, std::vector<ChunkDD>& chunksWall);
 void CalculateLightMap(int chunkNumber
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<uint8_t>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap);
 void CalculateLightMap(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& walls
+	, std::vector<std::vector<uint8_t>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap);
 void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	, std::vector<std::vector<Block>>& blocks

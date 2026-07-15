@@ -130,7 +130,7 @@ public:
 		, std::vector<int>& chunksToRebuildBlocks
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<int>& chunksToRebuildWalls
-		, std::vector<std::vector<Wall>>& Walls
+		, std::vector<std::vector<uint8_t>>& Walls
 		, std::vector<Enemy>& enemies
 		, std::vector<int>& isThereSandOnX
 		, std::vector<CraftStation>& craftStations

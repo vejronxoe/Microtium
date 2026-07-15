@@ -40,7 +40,6 @@ public:
 	float m_Timer;
 	char m_Type;
 	unsigned int m_Texture;
-	int m_IndexOfGroundBlock;
 	seedling(char type
 		, int x
 		, int y

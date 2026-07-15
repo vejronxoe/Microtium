@@ -7,9 +7,9 @@ Chest::Chest(int x
 	, int y
 	, std::vector<std::vector<Block>>& blocks)
 {
-	 
+
 	m_Indestrucrtible = false;
-	for (int i= 0; i < 50; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		m_amount[i] = 0;
 		m_Items[i] = 0;
@@ -18,21 +18,22 @@ Chest::Chest(int x
 	m_Transform[0] = x;
 	m_Transform[1] = y;
 	m_Open = 0;
-	int index;
-	bool found = FindBlock(blocks, x, y - 1, index);
-	blocks.at(x).at(index).m_Behavior = b_Indestructible;
-	found = FindBlock(blocks, x + 1, y - 1, index);
-	blocks.at(x + 1).at(index).m_Behavior = b_Indestructible;
+	if (blocks.at(x).at(y - 1 - Blocks::yMin).m_Behavior != b_Air)
+	{
+		blocks.at(x).at(y - 1 - Blocks::yMin).m_Behavior = b_Indestructible;
+	}
+
+	if (blocks.at(x + 1).at(y - 1 - Blocks::yMin).m_Behavior != b_Air)
+	{
+		blocks.at(x + 1).at(y - 1 - Blocks::yMin).m_Behavior = b_Indestructible;
+	}
 }
+
 
 void Chest::DestroyChest(std::vector<std::vector<Block>>& blocks)
 {
-	int index;
-	FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, index);
-	blocks.at(m_Transform[0]).at(index).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0]).at(index).m_Type);
-	FindBlock(blocks, m_Transform[0] + 1, m_Transform[1] - 1, index);
-	blocks.at(m_Transform[0] + 1).at(index).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0] + 1).at(index).m_Type);
-
+	blocks.at(m_Transform[0]).at(m_Transform[1] - 1 - Blocks::yMin).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0]).at(m_Transform[1] - 1 - Blocks::yMin).m_Type);
+	blocks.at(m_Transform[0] + 1).at(m_Transform[1] - 1 - Blocks::yMin).m_Behavior = getBehaviorByType(blocks.at(m_Transform[0] + 1).at(m_Transform[1] - 1 - Blocks::yMin).m_Type);
 }
 Door::Door(int x
 	, int y
@@ -98,7 +99,7 @@ bool FindDoor(std::vector<Door>& structures
 
 }
 void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
-	, std::vector< std::vector<Wall>>& Walls
+	, std::vector< std::vector<uint8_t>>& Walls
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
 	, std::vector<CraftStation>& craftingStations
@@ -271,10 +272,9 @@ bool Door::CheckFloorAndCeil(std::vector<Door>& doors
 	case s_TrapDoor:
 	{
 		int fill;
-		if (FindBlock(blocks, m_Transform[0] - 1, m_Transform[1], fill))
+		if (blocks.at(m_Transform[0] - 1).at(m_Transform[1] - Blocks::yMin).m_Behavior != b_Air)
 		{
-			return !FindBlock(blocks, m_Vertices[2] + 1, m_Transform[1], fill);
-			
+			return blocks.at(m_Vertices[2] + 1).at(m_Transform[1] - Blocks::yMin).m_Behavior == b_Air;
 		}
 		break;
 	}
@@ -282,14 +282,9 @@ bool Door::CheckFloorAndCeil(std::vector<Door>& doors
 	{
 		
 		int fill;
-		if (FindBlock(blocks, m_Transform[0], m_Vertices[1] + 1,fill))
+		if (blocks.at(m_Transform[0]).at(m_Vertices[1] + 1 - Blocks::yMin).m_Behavior != b_Air)
 		{
-			
-			
-			
-				return !FindBlock(blocks, m_Transform[0], m_Transform[1] - 1, fill);
-
-		
+			return blocks.at(m_Transform[0]).at(m_Transform[1] - 1).m_Behavior == b_Air;
 		}
 		break;
 	}
@@ -376,7 +371,7 @@ void DrawDoors(std::vector<Door>& doors
 	}
 }
 void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
-	, std::vector< std::vector<Wall>>& Walls
+	, std::vector< std::vector<uint8_t>>& Walls
 	, std::vector<int>& sandX)
 {
 	std::vector<int> fill;
@@ -639,8 +634,7 @@ void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 		getStructureVertices(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], craftingStation.at(i).m_CraftStationtype, vertices);
 		for (int j = vertices[0]; j <= vertices[2]; j++)
 		{
-			int fill;
-			if (!FindBlock(blocks, j, craftingStation.at(i).m_Transform[1] - 1, fill))
+			if (blocks.at(j).at(craftingStation.at(i).m_Transform[1] - 1 - Blocks::yMin).m_Behavior == b_Air)
 			{
 				droppedItems.emplace_back(craftingStation.at(i).m_Transform[0], craftingStation.at(i).m_Transform[1], 0, GetItemIDByStructure(craftingStation.at(i).m_CraftStationtype),1,true);
 				craftingStation.erase(i + craftingStation.begin());
@@ -665,7 +659,7 @@ bool isAnythingOnThisTransform(int x
 	bool inBlock = false;
 	
 	int fill;
-	if (FindBlock(blocks, x, y, fill))
+	if (blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
 	{
 		return true;
 	}

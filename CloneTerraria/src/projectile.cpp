@@ -152,7 +152,7 @@ bool Projectile::HitEnemies(float deltaTime
 bool Projectile::EveryFrame(float deltaTime
 	, std::vector<Enemy>& enemies
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
+	, std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<CraftStation>& craftStations
 	, std::vector<seedling>& seedlings
 	, std::vector<tree>& trees
@@ -556,51 +556,21 @@ void Projectile::Draw(Shader& sh
 void SandEveryFrame(std::vector<int>& isSandOnX
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls
+	, std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<int>& chunksToRebuild
 	, unsigned int projectileSand
 	, unsigned int blockDD)
 {
-	bool checkNext = false;
-	int nextY;
 	for (int i = 0; i < isSandOnX.size(); i++)
 	{
 		int x = isSandOnX.at(i);
-		checkNext = false;
-		for (int j = 0; j < blocks.at(x).size(); j++)
+		for (int j = Blocks::yMin + 1; j < Blocks::yMax; j++)
 		{
-			if (checkNext)
-			{
-				checkNext = false;
-				if (blocks.at(x).at(j).m_Y != nextY)
-				{
-					int sizeBefore = isSandOnX.size();
-					projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-					DestroyBlock(chunksToRebuild, blocks, isSandOnX, x, nextY + 1);
-					j--;
-					if (sizeBefore == isSandOnX.size())
-					{
-						i--;
-						break;
-					}
-					
-				}
-			}
-			
-			if (blocks.at(x).at(j).m_Behavior == b_Sand)
-			{
-				checkNext = true;
-				nextY = blocks.at(x).at(j).m_Y - 1;
-
-			}
-		}
-		if (checkNext)
-		{
-			if ((Blocks::yMin + SAFEDISTANCE-0.5f) != nextY)
+			if (blocks.at(x).at(j - Blocks::yMin).m_Behavior == b_Sand && blocks.at(x).at(j - 1 - Blocks::yMin).m_Behavior == b_Air)
 			{
 				int sizeBefore = isSandOnX.size();
-				projectiles.emplace_back(p_Sand, x, nextY + 1, 0, -5, 5, blockDD, projectileSand);
-				DestroyBlock(chunksToRebuild, blocks, isSandOnX, x, nextY + 1);
+				projectiles.emplace_back(p_Sand, x, j, 0, -5, 5, blockDD, projectileSand);
+				DestroyBlock(chunksToRebuild, blocks, isSandOnX, x, j);
 				if (sizeBefore == isSandOnX.size())
 				{
 					i--;
@@ -608,7 +578,7 @@ void SandEveryFrame(std::vector<int>& isSandOnX
 				}
 			}
 		}
+
 	}
-	
 }
 

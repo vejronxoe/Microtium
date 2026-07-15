@@ -148,7 +148,7 @@ void DeleteBlocksInArea(std::vector<int>& ChunksToBulid
 	}
 }
 void DeleteWallsInArea(std::vector<int>& ChunksToBulid
-, std::vector<std::vector<Wall>>& Walls
+, std::vector<std::vector<uint8_t>>& Walls
 , int* vertices)
 {
 
@@ -163,26 +163,22 @@ void DeleteWallsInArea(std::vector<int>& ChunksToBulid
 
 void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<Wall>>& Walls)
+	, std::vector<std::vector<uint8_t>>& Walls)
 {
-	m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
-	for (int i = 0; i < m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1; i++)
 	{
-		m_CopiedBlocks[i].assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, -1);
+		std::vector<int> fill;
+		fill.assign(m_SelectBoxSides[1] - m_SelectBoxSides[3] + 1, -1);
+
+		m_CopiedBlocks.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, fill);
 	}
 	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 	{
-		for (int j = 0; j < blocks.at(i).size();j++)
+		for (int j = m_SelectBoxSides[3]; j < m_SelectBoxSides[1];j++)
 		{
-			if (blocks.at(i)[j].m_Y < m_SelectBoxSides[3])
+			if (blocks.at(i).at(j -Blocks::yMin).m_Type != t_Air)
 			{
-				break;
+				m_CopiedBlocks.at(i - m_SelectBoxSides[0]).at(j - m_SelectBoxSides[1]) = blocks.at(i).at(j - Blocks::yMin).m_Type;
 			}
-			else if (blocks.at(i)[j].m_Y <= m_SelectBoxSides[1])
-			{
-				m_CopiedBlocks[i - m_SelectBoxSides[0]].at(abs(blocks.at(i)[j].m_Y - m_SelectBoxSides[1])) = blocks.at(i)[j].m_Type;
-			}
-
 		}
 	}
 	m_CopiedWalls.assign(m_SelectBoxSides[2] - m_SelectBoxSides[0] + 1, std::vector<int> {});
@@ -192,17 +188,12 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 	}
 	for (int i = m_SelectBoxSides[0]; i <= m_SelectBoxSides[2]; i++)
 	{
-		for (int j = 0; j < Walls.at(i).size();j++)
+		for (int j = m_SelectBoxSides[3]; j < m_SelectBoxSides[1];j++)
 		{
-			if (Walls[i][j].m_Y < m_SelectBoxSides[3])
+			if (Walls.at(i).at(j - Blocks::yMin) != t_Air)
 			{
-				break;
+				m_CopiedWalls.at(i - m_SelectBoxSides[0]).at(j - m_SelectBoxSides[1]) = Walls.at(i).at(j - Blocks::yMin);
 			}
-			else if (Walls[i][j].m_Y <= m_SelectBoxSides[1])
-			{
-				m_CopiedWalls[i - m_SelectBoxSides[0]].at(abs(Walls[i][j].m_Y - m_SelectBoxSides[1])) = Walls[i][j].m_Type;
-			}
-
 		}
 	}
 }
@@ -213,7 +204,7 @@ void Editor::Update(float deltaTime
 	, std::vector<int>& chunksToRebuildBlocks
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& chunksToRebuildWalls
-	, std::vector<std::vector<Wall>>& Walls
+	, std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<seedling>& saplings
 	, std::vector<CraftStation>& CraftingStations
 	, std::vector<Chest>& Chests
@@ -334,7 +325,6 @@ void Editor::Update(float deltaTime
 						if (m_CopiedBlocks[i][j] != -1)
 						{
 							std::vector<int> sandFill;
-							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, m_FirstPointBox[0] + i, m_FirstPointBox[1] - j);
 							CreateBlock(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedBlocks[i][j], chunksToRebuildBlocks, blocks, SandsXs);
 
 						}
@@ -347,7 +337,6 @@ void Editor::Update(float deltaTime
 					{
 						if (m_CopiedWalls[i][j] != -1)
 						{
-							DestroyWall(Walls, chunksToRebuildWalls, m_FirstPointBox[0] + i, m_FirstPointBox[1] - j);
 							createWall(m_FirstPointBox[0] + i, m_FirstPointBox[1] - j, m_CopiedWalls[i][j], chunksToRebuildWalls, Walls);
 
 						}
@@ -435,19 +424,14 @@ void Editor::Update(float deltaTime
 				{
 
 					std::vector<tree> t;
-					int index;
-					bool found = FindBlock(blocks, x, y, index);
-					if (!isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || found)
+					if (!isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
 					{
-
-						DestroyBlock(chunksToRebuildBlocks, blocks, SandsXs, x, y);
 						CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 
 					}
 				}
 				else if (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1))
 				{
-					DestroyWall(Walls, chunksToRebuildWalls, x, y);
 					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 				}
 				else if (m_Selected >= t_BlocksSize + (i_WallIce - i_WallDirt + 1) && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
@@ -457,8 +441,6 @@ void Editor::Update(float deltaTime
 					std::vector<tree> trees;
 					if (!isAnythinginArea(vertices, blocks, saplings, trees, CraftingStations, Doors, Chests))
 					{
-						int index;
-						
 						bool floors = true;
 						getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
 
@@ -466,40 +448,30 @@ void Editor::Update(float deltaTime
 						{
 						case s_TrapDoor:
 						{
-							floors = FindBlock(blocks, x - 1, y, index);
+							floors = blocks.at(x - 1).at(y - Blocks::yMin).m_Type != t_Air;
 							if (!floors)
 							{
 								break;
 							}
-							floors = FindBlock(blocks, vertices[2] + 1, y, index);
+							floors = blocks.at(vertices[2] + 1).at(y - Blocks::yMin).m_Type != t_Air;
 							break;
 						}
 						case s_Door:
 						case s_Gate:
-							floors = FindBlock(blocks, x, vertices[1] + 1, index);
+							floors = blocks.at(x).at(vertices[1] + 1 - Blocks::yMin).m_Type;
 							if (!floors)
 							{
 								break;
 							}
-							break;
 						default:
-
 							for (int i = vertices[0]; i <= vertices[2]; i++)
 							{
 								floors = false;
-								for (int j = 0; j < blocks.at(i).size(); j++)
+								if (blocks.at(i).at(vertices[3] - 1 - Blocks::yMin).m_Type != t_Air)
 								{
-									if (blocks.at(i).at(j).m_Y == vertices[3] - 1)
-									{
-										floors = true;
-										break;
-									}
-									if (blocks.at(i).at(j).m_Y < vertices[3] - 1)
-									{
-										break;
-									}
+									floors = true;
 								}
-								if (!floors)
+								else
 								{
 									break;
 								}
@@ -530,10 +502,10 @@ void Editor::Update(float deltaTime
 		{
 			if (Input::LeftMousePress)
 			{
-				int indexB;
-				bool foundB = FindBlock(blocks, x, y, indexB);
-				int indexW;
-				bool founW = FindWall(Walls, x, y, indexW);
+				int indexB = y - Blocks::yMin;
+				bool foundB = (blocks.at(x).at(indexB).m_Type != t_Air);
+				int indexW = y - Blocks::yMin;
+				bool foundW = (Walls.at(x).at(indexW) != t_Air);;
 				if (m_WallsEraser || m_BlocksEraser)
 				{
 					if (m_BlocksEraser)
@@ -550,19 +522,16 @@ void Editor::Update(float deltaTime
 								stack.pop_back();
 								int newX = stack.at(stack.size() - 1);
 								stack.pop_back();
-								int index;
 								int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
 
 								for (int i = 0; i < 4;i++)
 								{
 									table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
-									if (FindBlock(blocks, newX + table[0][i], newY + table[1][i], index))
+									table[1][i] = Clamp(newY + table[1][i], Blocks::yMin, Blocks::yMax) - newY;
+									if (blocks.at(newX + table[0][i]).at( newY + table[1][i] - Blocks::yMin).m_Type == type)
 									{
-										if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
-										{
 											stack.emplace_back(newX + table[0][i]);
 											stack.emplace_back(newY + table[1][i]);
-										}
 									}
 								}
 								std::vector<int> sandFill;
@@ -573,10 +542,10 @@ void Editor::Update(float deltaTime
 					}
 					if (m_WallsEraser)
 					{
-						if (founW)
+						if (foundW)
 						{
 							std::vector<int> stack;
-							int type = Walls.at(x).at(indexW).m_Type;
+							int type = Walls.at(x).at(indexW);
 							stack.emplace_back(x);
 							stack.emplace_back(y);
 							while (stack.size())
@@ -591,15 +560,13 @@ void Editor::Update(float deltaTime
 								for (int i = 0; i < 4;i++)
 								{
 									table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
-
-									if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
+									table[1][i] = Clamp(newY + table[1][i], Blocks::yMin, Blocks::yMax) - newY;
+									if (Walls.at(newX + table[0][i]).at(newY + table[1][i] - Blocks::yMin) == type)
 									{
-										if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
-										{
-											stack.emplace_back(newX + table[0][i]);
-											stack.emplace_back(newY + table[1][i]);
-										}
+										stack.emplace_back(newX + table[0][i]);
+										stack.emplace_back(newY + table[1][i]);
 									}
+									
 								}
 								std::vector<int> sandFill;
 								DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
@@ -623,15 +590,15 @@ void Editor::Update(float deltaTime
 							stack.pop_back();
 							int newX = stack.at(stack.size() - 1);
 							stack.pop_back();
-							int index;
 							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
 
 							for (int i = 0; i < 4;i++)
 							{
+								table[1][i] = Clamp(newY + table[1][i], Blocks::yMin, Blocks::yMax) - newY;
 								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
-								if (FindBlock(blocks, newX + table[0][i], newY + table[1][i], index))
+								if (blocks.at(newX + table[0][i]).at(newY + table[1][i]-Blocks::yMin).m_Type == type)
 								{
-									if (type == blocks.at(newX + table[0][i]).at(index).m_Type)
+									if (type == blocks.at(newX + table[0][i]).at(newY + table[1][i] - Blocks::yMin).m_Type)
 									{
 										stack.emplace_back(newX + table[0][i]);
 										stack.emplace_back(newY + table[1][i]);
@@ -639,7 +606,6 @@ void Editor::Update(float deltaTime
 								}
 							}
 							std::vector<int> sandFill;
-							DestroyBlock(chunksToRebuildBlocks, blocks, sandFill, newX, newY);
 							CreateBlock(newX, newY, m_Selected, chunksToRebuildBlocks, blocks, sandFill);
 						}
 					}
@@ -647,10 +613,10 @@ void Editor::Update(float deltaTime
 				else if (m_Selected >= t_BlocksSize && m_Selected <= t_BlocksSize + (i_WallIce - i_WallDirt))
 				{
 					int typeWanted = getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt);
-					if (typeWanted != Walls.at(x).at(indexW).m_Type)
+					if (typeWanted != Walls.at(x).at(indexW))
 					{
 						std::vector<int> stack;
-						int type = Walls.at(x).at(indexW).m_Type;
+						int type = Walls.at(x).at(indexW);
 						stack.emplace_back(x);
 						stack.emplace_back(y);
 						while (stack.size())
@@ -659,23 +625,18 @@ void Editor::Update(float deltaTime
 							stack.pop_back();
 							int newX = stack.at(stack.size() - 1);
 							stack.pop_back();
-							int index;
 							int table[2][4] = { {0,-1,0,1},{-1, 0,1,0} };
-
 							for (int i = 0; i < 4;i++)
 							{
 								table[0][i] = Clamp(newX + table[0][i], Blocks::xMin, Blocks::xMax) - newX;
-								if (FindWall(Walls, newX + table[0][i], newY + table[1][i], index))
+								table[1][i] = Clamp(newY + table[1][i], Blocks::yMin, Blocks::yMax) - newY;
+								if (blocks.at(newX + table[0][i]).at(newY + table[1][i] - Blocks::yMin).m_Type == type)
 								{
-									if (type == Walls.at(newX + table[0][i]).at(index).m_Type)
-									{
-										stack.emplace_back(newX + table[0][i]);
-										stack.emplace_back(newY + table[1][i]);
-									}
+									stack.emplace_back(newX + table[0][i]);
+									stack.emplace_back(newY + table[1][i]);
 								}
 							}
 							std::vector<int> sandFill;
-							DestroyWall(Walls, chunksToRebuildWalls, newX, newY);
 							createWall(newX, newY, typeWanted, chunksToRebuildWalls, Walls);
 
 						}
@@ -690,8 +651,8 @@ void Editor::Update(float deltaTime
 	}
 	else if (cursorState == canBlockPick && Input::LeftMousePress)
 	{
-		int index = 0;
-		bool blockFound = FindBlock(blocks, x, y, index);
+		int index = y - Blocks::yMin;
+		bool blockFound = blocks.at(x).at(y- Blocks::yMin).m_Type != t_Air;
 		if (blockFound)
 		{
 			if (blocks.at(x).at(index).m_Type == t_DoorBlock)
@@ -723,9 +684,9 @@ void Editor::Update(float deltaTime
 			int structType = s_Chest;
 			m_Selected = (t_BlocksSize + (i_WallIce - i_WallDirt + 1)) + structType;
 		}
-		else if (FindWall(Walls, x, y, index))
+		else if (Walls.at(x).at(y - Blocks::yMin) != t_Air)
 		{
-			m_Selected = t_BlocksSize + GetWallItemBytype(Walls.at(x).at(index).m_Type) - i_WallDirt;
+			m_Selected = t_BlocksSize + GetWallItemBytype(Walls.at(x).at(y - Blocks::yMin)) - i_WallDirt;
 		}
 	}
 }

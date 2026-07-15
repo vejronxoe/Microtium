@@ -34,7 +34,7 @@ struct Door
 		, short type
 		, std::vector<std::vector<Block>>& blocks);
 	void DoorInteract(std::vector<std::vector<Block>>& blocks
-		, std::vector< std::vector<Wall>>& Walls
+		, std::vector< std::vector<uint8_t>>& Walls
 		, std::vector<seedling>& seedlings
 		, std::vector<tree>& trees
 		, std::vector<CraftStation>& craftingStations
@@ -43,7 +43,7 @@ struct Door
 		, std::vector<int>& sandX
 		, float* playerTransform);
 	void DestroyDoor(std::vector<std::vector<Block>>& blocks
-		, std::vector< std::vector<Wall>>& Walls
+		, std::vector< std::vector<uint8_t>>& Walls
 		, std::vector<int>& sandX);
 	bool CheckFloorAndCeil(std::vector<Door>& doors
 		, std::vector<std::vector<Block>>& blocks
