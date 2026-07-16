@@ -33,23 +33,23 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 						if (abs(closest - vertices[index]) > abs(chooser[index] - vertices[index]))
 						{
 							closest = chooser[index];
-							if (behavior < blocks.at(j).at(i).m_Behavior)
+							if (behavior < blocks.at(j).at(i - Blocks::yMin).m_Behavior)
 							{
-								behavior = blocks.at(j).at(i).m_Behavior;
+								behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
 							}
 						}
 						else if (abs(closest - vertices[index]) == abs(chooser[index] - vertices[index]))
 						{
-							if (behavior < blocks.at(j).at(i).m_Behavior)
+							if (behavior < blocks.at(j).at(i - Blocks::yMin).m_Behavior)
 							{
-								behavior = blocks.at(j).at(i).m_Behavior;
+								behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
 							}
 						}
 					}
 					else
 					{
 						closest = chooser[index];
-						behavior = blocks.at(j).at(i).m_Behavior;
+						behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
 						count = true;
 					}
 				}

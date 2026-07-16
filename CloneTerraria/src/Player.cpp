@@ -3075,7 +3075,7 @@ void Player::EveryFrame(float deltaTime
 			for (int j = playerVertices[3]; j < playerVertices[1]; j++)
 			{
 				
-				if (blocks.at(i).at(j).m_Behavior != b_Air && blocks.at(i).at(j).m_Behavior != b_Platform)
+				if (blocks.at(i).at(j - Blocks::yMin).m_Behavior != b_Air && blocks.at(i).at(j- Blocks::yMin).m_Behavior != b_Platform)
 				{
 					IsPlayerInBlock = true;
 					break;

@@ -1048,7 +1048,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					
 					while (leanght[2] >= searchLeanghts[0] || leanght[2] >= searchLeanghts[1])
 					{
-						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y ).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;
@@ -1070,7 +1070,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[0] = (index[0] - searchIndex[0]) / abs(index[0] - searchIndex[0]);
 					while (searchIndex[0] != index[0])
 					{
-						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;
@@ -1083,7 +1083,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					searchAdd[1] = (index[1] - searchIndex[1]) / abs(index[1] - searchIndex[1]);
 					while (searchIndex[1] != index[1])
 					{
-						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y - Blocks::yMin).m_Type != b_Air)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;

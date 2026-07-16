@@ -11,10 +11,10 @@ bool Save(std::string path
 	, std::vector<std::vector<Block>>& blocks);
 
 bool Load(std::string path
-	, std::vector<std::vector<Wall>>& walls);
+	, std::vector<std::vector<uint8_t>>& walls);
 
 bool Save(std::string path
-	, std::vector<std::vector<Wall>>& walls);
+	, std::vector<std::vector<uint8_t>>& walls);
 bool Save(std::string path
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests

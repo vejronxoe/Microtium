@@ -934,9 +934,7 @@ int main()
 				}
 				for (int i = 0; i < damagedBlocks.size(); i++)
 				{
-					int index;
-
-					if (!FindBlock(blocks, damagedBlocks.at(i).m_Transform[0], damagedBlocks.at(i).m_Transform[1], index))
+					if (blocks.at(damagedBlocks.at(i).m_Transform[0]).at( damagedBlocks.at(i).m_Transform[1] - Blocks::yMin).m_Type == t_Air)
 					{
 						damagedBlocks.erase(damagedBlocks.begin() + i);
 					}
