@@ -2781,10 +2781,7 @@ void Player::EveryFrame(float deltaTime
 			m_Friction = 70;
 			m_MaxMovementSpeed = 25 * m_SpeedMultiplier;
 			break;
-		case(b_BasicSolid):
-		case(b_Platform):
-		case(b_Door):
-		case(b_Sand):
+		default:
 			m_Acceleration = 25.0f;
 			m_Friction = 40;
 			m_MaxMovementSpeed = 10 * m_SpeedMultiplier;

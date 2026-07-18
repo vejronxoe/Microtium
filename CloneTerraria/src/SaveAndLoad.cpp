@@ -191,33 +191,30 @@ bool Load(std::string path
 	}
 	for (int i = 0; i < Blocks::xMax;i++)
 	{
-		//for (int j = Blocks::yMin ; j < Blocks::yMax; j++)
-		for (int j = Blocks::yMax; j >= Blocks::yMin; j--)
+		for (int j = Blocks::yMax-1; j >= Blocks::yMin; j--)
 		{
-			int16_t type = -1;
+			uint8_t type = 0;
 			file.read(reinterpret_cast<char*>(&type), sizeof(type));
-			type++;
-			if (Blocks::yMax != j)
-			{
-				blocks.at(i).at(j - Blocks::yMin).Create(type);
 
-				if (type == t_Sand)
+			blocks.at(i).at(j - Blocks::yMin).Create(type);
+
+			if (type == t_Sand)
+			{
+				bool isAlreadyThere = false;
+				for (int k = 0; k < sandXs.size(); k++)
 				{
-					bool isAlreadyThere = false;
-					for (int k = 0; k < sandXs.size(); k++)
+					if (sandXs.at(k) == i)
 					{
-						if (sandXs.at(k) == i)
-						{
-							isAlreadyThere = true;
-							break;
-						}
-					}
-					if (!isAlreadyThere)
-					{
-						sandXs.emplace_back(i);
+						isAlreadyThere = true;
+						break;
 					}
 				}
+				if (!isAlreadyThere)
+				{
+					sandXs.emplace_back(i);
+				}
 			}
+
 		}
 	}
 	
@@ -270,7 +267,7 @@ bool Save(std::string path
 		for (int j = Blocks::yMax - Blocks::yMin-1 ; j >= 0; j--)
 		{
 
-			int8_t type = blocks.at(i).at(j).m_Type;
+			uint8_t type = blocks.at(i).at(j).m_Type;
 			file.write(reinterpret_cast<char*>(&type), sizeof(type));
 		}
 
@@ -308,16 +305,13 @@ bool Load(std::string path
 	}
 	for (int i = 0; i < Blocks::xMax;i++)
 	{
-		for (int j = Blocks::yMax; j >= Blocks::yMin; j--)
+		for (int j = Blocks::yMax-1; j >= Blocks::yMin; j--)
 		{
 
-			int16_t type = -1;
+			uint8_t type = 0;
 			file.read(reinterpret_cast<char*>(&type), sizeof(type));
-			if (Blocks::yMax != j)
-			{
-				type++;
-				walls.at(i).at(j - Blocks::yMin) = type;
-			}
+			walls.at(i).at(j - Blocks::yMin) = type;
+			
 		}
 	}
 	if (!file.good())
@@ -342,7 +336,7 @@ bool Save(std::string path
 	{
 		for (int j = Blocks::yMax - Blocks::yMin - 1; j >= 0; j--)
 		{
-			int8_t type = walls.at(i).at(j);
+			uint8_t type = walls.at(i).at(j);
 			file.write(reinterpret_cast<char*>(&type), sizeof(type));
 		}
 

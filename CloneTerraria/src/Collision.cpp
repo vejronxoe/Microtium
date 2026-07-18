@@ -20,10 +20,10 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	bool count = false;
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = vertices[3]; i < vertices[1]; i++)
+		for (int i = vertices[3]; i <= vertices[1]; i++)
 		{
 
-			if (blocks.at(j).at(i - Blocks::yMin).m_Type != b_Air)
+			if (blocks.at(j).at(i - Blocks::yMin).m_Behavior != b_Air)
 			{
 				if (blocks.at(j).at(i - Blocks::yMin).m_Behavior != b_Platform || blocks.at(j).at(i - Blocks::yMin).m_Behavior == b_Platform && !platformIgnore && (objVertices[3] > i + 0.5f || objVertices[3] == i + 0.5f && !PlatformControl))
 				{
@@ -59,7 +59,6 @@ bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
 	}
 	return count;
 }
-
 int RoundFiveUp(float x)
 {
 

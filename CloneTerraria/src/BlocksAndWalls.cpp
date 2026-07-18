@@ -200,6 +200,7 @@ Block::Block(unsigned char blockType)
 
 void CreateAllBlockTextures(unsigned int* IDs)
 {
+	IDs[t_Air] = CreateTextureRepeatRGBA("res/textures/red.png");
 	IDs[t_TopGrass] = CreateTextureRepeatRGBA("res/textures/topGrassBlock.png");
 	IDs[t_LeftGrass] = CreateTextureRepeatRGBA("res/textures/leftGrassBlock.png");
 	IDs[t_DownGrass] = CreateTextureRepeatRGBA("res/textures/downGrassBlock.png");
@@ -806,13 +807,13 @@ void LightMapAlgorithm(int *lightMapSpace
 {
 	for (int i = lightMapSpace[0]; i <= lightMapSpace[2];i++)
 	{
-		for (int j = lightMapSpace[3]; j <= lightMapSpace[1];j++)
+		for (int j = lightMapSpace[1]; j >= lightMapSpace[3];j--)
 		{
 			if (j < 0)
 			{
 				break;
 			}
-			if (walls.at(i).at(j-Blocks::yMin) != t_Air)
+			if (walls.at(i).at(j-Blocks::yMin) == t_Air)
 			{
 				StaticLightMap.at(i).at(j - Blocks::yMin) = 1;
 				Stack.emplace_back(i);
@@ -836,7 +837,7 @@ void LightMapAlgorithm(int *lightMapSpace
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
 				int lightBlock = 2;
-				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Type == b_Air)
+				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Behavior == b_Air)
 				{
 					lightBlock = 1;
 				}
@@ -858,7 +859,7 @@ void LightMapAlgorithm(int *lightMapSpace
 				int CheckingX = IndexX + Table[0][i];
 				int CheckingY = IndexY + Table[1][i];
 				int lightBlock = 2;
-				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Type == b_Air)
+				if (blocks.at(CheckingX).at(CheckingY - Blocks::xMin).m_Behavior == b_Air)
 				{
 					lightBlock = 1;
 				}
@@ -937,40 +938,9 @@ void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<uint8_t>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap)
 {
-	int lightMapSpace[4] = {Blocks::xMin,Blocks::yMax,Blocks::xMax,Blocks::yMin };
-	for (int i = 0; i < 4; i++)
-	{
-		if (i % 2 == 0)
-		{
-			if (lightMapSpace[i] >= Blocks::xMax)
-			{
-				lightMapSpace[i] = Blocks::xMax - 1;
-			}
-			else if (lightMapSpace[i] < Blocks::xMin)
-			{
-				lightMapSpace[i] = Blocks::xMin;
-			}
-		}
-		else
-		{
-			if (lightMapSpace[i] >= Blocks::yMax)
-			{
-				lightMapSpace[i] = Blocks::yMax - 1;
-			}
-			else if (lightMapSpace[i] < Blocks::yMin)
-			{
-				lightMapSpace[i] = Blocks::yMin;
-			}
-		}
-	}
-	int lightMapHeight = lightMapSpace[1] - lightMapSpace[3];
-	int lightMapWidth = lightMapSpace[2] - lightMapSpace[0];
-	std::vector<std::vector<int>> blockMap;
+	int lightMapSpace[4] = {Blocks::xMin,Blocks::yMax-1,Blocks::xMax-1,Blocks::yMin };
 	std::vector<int> Stack;
-
-	
 	LightMapAlgorithm(lightMapSpace, Stack, walls, blocks, StaticLightMap);
-
 }
 
 void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
@@ -1048,7 +1018,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					
 					while (leanght[2] >= searchLeanghts[0] || leanght[2] >= searchLeanghts[1])
 					{
-						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y ).m_Type != b_Air)
+						if (blocks.at(searchIndex[0] + x).at(searchIndex[1] + y).m_Type != b_Air)
 						{
 							blockValue = 2;
 							break;

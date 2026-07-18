@@ -284,7 +284,7 @@ bool Door::CheckFloorAndCeil(std::vector<Door>& doors
 		int fill;
 		if (blocks.at(m_Transform[0]).at(m_Vertices[1] + 1 - Blocks::yMin).m_Behavior != b_Air)
 		{
-			return blocks.at(m_Transform[0]).at(m_Transform[1] - 1).m_Behavior == b_Air;
+			return blocks.at(m_Transform[0]).at(m_Transform[1] - 1 - Blocks::yMin).m_Behavior == b_Air;
 		}
 		break;
 	}
