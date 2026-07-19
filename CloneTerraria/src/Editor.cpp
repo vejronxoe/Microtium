@@ -177,7 +177,7 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 		{
 			if (blocks.at(i).at(j -Blocks::yMin).m_Type != t_Air)
 			{
-				m_CopiedBlocks.at(i - m_SelectBoxSides[0]).at(j - m_SelectBoxSides[1]) = blocks.at(i).at(j - Blocks::yMin).m_Type;
+				m_CopiedBlocks.at(i - m_SelectBoxSides[0]).at(abs(j - m_SelectBoxSides[1])) = blocks.at(i).at(j - Blocks::yMin).m_Type;
 			}
 		}
 	}
@@ -192,7 +192,7 @@ void Editor::CopyBlocksAndWalls(unsigned int* blocksTex
 		{
 			if (Walls.at(i).at(j - Blocks::yMin) != t_Air)
 			{
-				m_CopiedWalls.at(i - m_SelectBoxSides[0]).at(j - m_SelectBoxSides[1]) = Walls.at(i).at(j - Blocks::yMin);
+				m_CopiedWalls.at(i - m_SelectBoxSides[0]).at(abs(j - m_SelectBoxSides[1])) = Walls.at(i).at(j - Blocks::yMin);
 			}
 		}
 	}

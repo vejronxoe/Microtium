@@ -103,20 +103,18 @@ Slider::Slider(unsigned int SliderTex
 	, unsigned int trailTex
 	, unsigned int sliderDD
 	, unsigned int eob
-	, float value
 	, int stablePoint
 	, float left
 	, float down
 	, float right
 	, float top)
 {
-	CreateSlider(SliderTex, trailTex, sliderDD, eob, value, stablePoint, left, down, right, top);
+	CreateSlider(SliderTex, trailTex, sliderDD, eob, stablePoint, left, down, right, top);
 }
 void Slider::CreateSlider(unsigned int SliderTex
 	, unsigned int trailTex
 	, unsigned int sliderDD
 	, unsigned int eob
-	, float value
 	, int stablePoint
 	, float left
 	, float down
@@ -127,52 +125,52 @@ void Slider::CreateSlider(unsigned int SliderTex
 	{
 		Delete();
 	}
-	m_Value = value;
 	UITranslatorToPixels(left, down, right, top, m_Vertices, stablePoint);
-	m_SliderX = (value/100.0f * (m_Vertices[2] - m_Vertices[0]) + m_Vertices[0]);
 	m_SliderDD = sliderDD;
 	m_TrailDD = CreateDrawData(eob ,m_Vertices[1], m_Vertices[3], m_Vertices[2], m_Vertices[0], m_TrailVBO);
 	m_SliderTex = SliderTex;
 	m_TrailTex = trailTex;
 }
-bool Slider::Update()
+ float Slider::Update(float value
+	 , bool& howerOver)
 {
+	 howerOver = false;
 
-	if (!m_IsActive && IsInArea(m_Vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
-	{
-		
-		if(Input::LeftMousePress)
-		{
-			m_IsActive = true;
+	 if (!m_IsActive && IsInArea(m_Vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
+	 {
 
-		}
-		else
-		{
-			return true;
-		}
-	}
+		 if (Input::LeftMousePress)
+		 {
+			 m_IsActive = true;
+
+		 }
+		 howerOver = true;
+	 }
 	if (Input::LeftMouseRelease)
 	{
 		m_IsActive = false;
 	}
 	if (m_IsActive)
 	{
-		m_SliderX = Clamp(Input::XRawMousePos, m_Vertices[0], m_Vertices[2]);
-		m_Value = Clamp(((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0])),0,1) * 100;
+		howerOver = true;
+		value = Clamp(((Input::XRawMousePos - m_Vertices[0]) / (m_Vertices[2] - m_Vertices[0])),0,1);
 
-		return true;
+
 	}
-	return false;
+	return value;
 }
-void Slider::Draw(Shader sh, float* transform)
+void Slider::Draw(Shader sh
+	, float value
+	, float* transform)
 {
-	
+	float sliderX = Clamp(value* (m_Vertices[2] - m_Vertices[0]) + m_Vertices[0], m_Vertices[0], m_Vertices[2]);
+
 	ChangeTransform( 0, 0, transform);
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_TrailDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_TrailTex));
 	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	ChangeTransform(m_SliderX, (m_Vertices[1] + m_Vertices[3]) / 2.0f, transform);
+	ChangeTransform(sliderX, (m_Vertices[1] + m_Vertices[3]) / 2.0f, transform);
 	sh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_SliderDD));
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, m_SliderTex));
@@ -186,32 +184,16 @@ void Slider::Delete()
 	glDeleteBuffers(1, &m_TrailVBO);
 }
 
-void CheckBox::Draw(Shader sh
-	, float* transform)
-{
-	ChangeTransform(0, 0, transform);
-	sh.SetUniformMat4(basicTransform, transform);
-	ErrorGL(glBindVertexArray(m_DD));
-	if (m_Check)
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[1]));
-	}
-	else
-	{
-		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[0]));
-	}
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-}
+
 CheckBox::CheckBox(unsigned int* tex
 	, unsigned int eob
 	, int stablePoint
 	, float left
 	, float down
 	, float right
-	, float top
-	, bool check)
+	, float top)
 {
-	Create(tex, eob, stablePoint, left, down, right, top,check);
+	Create(tex, eob, stablePoint, left, down, right, top);
 }
 void CheckBox::Create(unsigned int* tex
 	, unsigned int eob
@@ -219,8 +201,7 @@ void CheckBox::Create(unsigned int* tex
 	, float left
 	, float down
 	, float right
-	, float top
-	, bool check)
+	, float top)
 {
 	if (m_DD != -1)
 	{
@@ -230,16 +211,33 @@ void CheckBox::Create(unsigned int* tex
 	m_Tex[1] = tex[1];
 	UITranslatorToPixels(left, down, right, top, m_Vertices, stablePoint);
 	m_DD = CreateDrawData(eob, m_Vertices[1], m_Vertices[3], m_Vertices[2], m_Vertices[0], m_VBO);
-	m_Check = check;
 }
-bool CheckBox::Update(bool isActive)
+bool CheckBox::Update(bool isActive
+	, bool& value)
 {
 	if (IsInArea(m_Vertices, Input::XRawMousePos, Window::height - Input::YRawMousePos))
 	{
-		m_Check = (!m_Check && isActive) || (m_Check && !isActive);
+		value = (!value && isActive) || (value && !isActive);
 		return true;
 	}
 	return false;
+}
+void CheckBox::Draw(Shader sh
+	, bool value
+	, float* transform)
+{
+	ChangeTransform(0, 0, transform);
+	sh.SetUniformMat4(basicTransform, transform);
+	ErrorGL(glBindVertexArray(m_DD));
+	if (value)
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[1]));
+	}
+	else
+	{
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, m_Tex[0]));
+	}
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 }
 void CheckBox::Delete()
 {

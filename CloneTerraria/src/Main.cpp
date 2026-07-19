@@ -36,8 +36,8 @@
 struct Menu
 {
 	Slider sliders[2];
-	CheckBox checkBoxs[2];
-	Text description[4];
+	CheckBox checkBoxs[3];
+	Text description[5];
 	Text values[2];
 	Text saveText[3];
 	Text loadText[3];
@@ -53,6 +53,7 @@ void CreateMenu(bool first
 	, unsigned int trailTex
 	, unsigned int eob)
 {
+	Format basicform(14, 6, 0.8f, 0.8f, 0.8f, 1);
 	if (!first)
 	{
 		ErrorGL(glDeleteBuffers(1, &sliderVBO));
@@ -60,43 +61,31 @@ void CreateMenu(bool first
 	}
 	float sideLength = DistanceOnUI(0.05f);
 	sliderDD = CreateDrawData(eob, sideLength, -sideLength, sideLength, -sideLength, sliderVBO);
-
-	for (int i = 0; i < 2; i++)
+	std::string texts[5] = { "smooth shadows\n(please reset the game in order\nto see differnt shadows)", "vsync", "full screne", "game zoom", "volume" };
+	menu.description[4].CreateText(texts[4], std::vector<Format>{basicform}, letters, eob, leftTop, 0.02f * Window::width, 0.98f * Window::height);
+	for (int i = 3; i > 0; i--)
 	{
-		float optionsValues[2] = { Window::volume, Window::gameZoom };
-		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, optionsValues[i], middleMiddle, 0.5f, 0.4f + 0.15f * i, 1, 0.5f + 0.15f * i);
+		menu.description[i].CreateText(texts[i], std::vector<Format>{{basicform}}, letters, eob, leftTop, 0.02f * Window::width, menu.description[i + 1].m_TextVertices[3] + menu.description[i + 1].m_Transform[1] - Window::height * 0.02f);
 	}
-	
+	menu.description[0].CreateText(texts[0], std::vector<Format>{basicform, {80, 2, 1, 0.5f, 0.5f, 1 }}, letters, eob, leftTop, 0.02f * Window::width, menu.description[1].m_TextVertices[3] + menu.description[ 1].m_Transform[1] - Window::height * 0.02f);
+	for (int i = 0 ; i < 3; i++)
 	{
-		float distance = DistanceOnUI(0.15f);
-		for (int i = 0; i < 2; i++)
-		{
-			menu.values[i].CreateText("100  ", std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, menu.sliders[0].m_Vertices[3] + distance * i);
-		}
-
-		std::string Texts[2] = { "Volume: ", "GameZoom: " };
-		
-		menu.description[2].CreateText("VSync:  ", std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, menu.sliders[0].m_Vertices[3] + distance * 2);
-		menu.description[3].CreateText("Full Screen:  ", std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, rightBottom, Window::width / 2.0f, menu.sliders[0].m_Vertices[3] + distance * 3);
-		for (int i = 0; i < 2; i++)
-		{
-			menu.description[i].CreateText(Texts[i], std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, rightBottom, menu.values[i].m_TextVertices[0] + menu.values[i].m_Transform[0], menu.values[i].m_TextVertices[3] + menu.values[i].m_Transform[1]);
-		}
+		menu.checkBoxs[i].Create(checkBoxTex, eob, leftTop, (menu.description[i].m_TextVertices[2]) / Window::width, (menu.description[i].m_TextVertices[1] - Window::lineHeight) / Window::height, (menu.description[i].m_TextVertices[2] + Window::lineHeight) / Window::width, (menu.description[i].m_TextVertices[1]) / Window::height);
 	}
-	menu.checkBoxs[0].Create(checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 2, 0.6f, 0.5f + 0.15f * 2, Window::VSync);
-	menu.checkBoxs[1].Create(checkBoxTex, eob, middleMiddle, 0.5f, 0.4f + 0.15f * 3, 0.6f, 0.5f + 0.15f * 3, Window::fullScreen);
-
-	menu.backText.CreateText("Back", std::vector<Format>{ Format(4, 13, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 6.0f);;
-	for (int i = 0; i < 3; i++)
+	for (int i  = 0; i < 2; i++)
 	{
-		menu.saveText[i].CreateText("Save " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
-		menu.loadText[i].CreateText("Load " + std::to_string(i + 1), std::vector<Format>{ Format(6, 13, 0, 0, 0, 1) }, letters, eob, middleBottom, Window::width / 2.0f, Window::height / 6.0f * (4 - i));
+		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.55f,(menu.description[3+i].m_TextVertices[3]+ menu.description[3 + i].m_Transform[1])/Window::height,0.95f,(menu.description[3 + i].m_TextVertices[1] + menu.description[3 + i].m_Transform[1]) / Window::height);
 	}
-	menu.values[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0], menu.description[0].m_TextVertices[3] + menu.description[0].m_Transform[1]);
-	menu.values[1].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[2].m_TextVertices[2] + menu.description[1].m_Transform[0], menu.description[1].m_TextVertices[3] + menu.description[1].m_Transform[1]);
-
-
-
+	for (int i = 0; i < 2 ; i++)
+	{
+		menu.values[i].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{basicform},letters,eob,leftTop,menu.sliders[i].m_Vertices[2], menu.sliders[i].m_Vertices[1]);
+	}
+	menu.backText.CreateText("Back", std::vector<Format>{basicform}, letters, eob, middleBottom, 0.5f * Window::width, 0.02f *Window::height);
+	for (int i = 0; i < 3;i++)
+	{
+		menu.loadText[i].CreateText("Load" + std::to_string(i), std::vector<Format>{basicform}, letters, eob, middleTop, 0.5f, 1.0f - (i + 1) * (1 / 6.0f));
+		menu.saveText[i].CreateText("Save"+std::to_string(i), std::vector<Format>{basicform}, letters, eob, middleTop, 0.5f, 1.0f-(i+1)*(1/6.0f));
+	}
 
 }
 void optionsUpdate(Menu& menu
@@ -112,23 +101,23 @@ void optionsUpdate(Menu& menu
 	, int& cursorState
 	,unsigned int& menuState)
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		menu.description[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	}
-	if (Window::volume != menu.sliders[0].m_Value)
+	if (Window::volume && false)
 	{
-		Window::volume = menu.sliders[0].m_Value;
+
 		menu.values[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0], menu.description[0].m_TextVertices[3] + menu.description[0].m_Transform[1]);
 
 	}
-	if (Window::gameZoom != menu.sliders[1].m_Value)
+	if (Window::gameZoom && false)
 	{
-		Window::gameZoom = menu.sliders[1].m_Value;
+	
 		blockSize = DistanceOnUI(BlockSize);
 		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
-
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		menu.values[1].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[1].m_TextVertices[2] + menu.description[1].m_Transform[0], menu.description[1].m_TextVertices[3] + menu.description[1].m_Transform[1]);
 	}
 	for (int i = 0; i < 2; i++)
@@ -153,20 +142,24 @@ void optionsUpdate(Menu& menu
 	}
 	menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	basicSh.Bind();
-
-	for (int i = 0; i < 2; i++)
+	bool howeringOver = false;
+	Window::gameZoom = menu.sliders[0].Update(Window::gameZoom, howeringOver);
+	if (howeringOver)
 	{
-		if (menu.sliders[i].Update())
-		{
-			cursorState = canSlideIt;
-		}
-		menu.sliders[i].Draw(basicSh, transform);
+		cursorState = canSlideIt;
 	}
-	if (menu.checkBoxs[1].Update(Input::LeftMousePress))
+	menu.sliders[0].Draw(basicSh, Window::gameZoom , transform);
+	Window::volume = menu.sliders[1].Update(Window::volume, howeringOver);
+	if (howeringOver)
+	{
+		cursorState = canSlideIt;
+	}
+	menu.sliders[1].Draw(basicSh, Window::volume, transform);
+	if (menu.checkBoxs[1].Update(Input::LeftMousePress, Window::fullScreen))
 	{
 		if (Input::LeftMousePress)
 		{
-			Window::fullScreen = !Window::fullScreen;
+			
 			if (Window::fullScreen)
 			{
 				GLFWmonitor* primary = glfwGetPrimaryMonitor();
@@ -184,7 +177,7 @@ void optionsUpdate(Menu& menu
 		}
 		cursorState = canClickOnIt;
 	}
-	if (menu.checkBoxs[0].Update(Input::LeftMousePress))
+	if (menu.checkBoxs[0].Update(Input::LeftMousePress, Window::VSync))
 	{
 		if (Input::LeftMousePress)
 		{
@@ -200,10 +193,12 @@ void optionsUpdate(Menu& menu
 		}
 		cursorState = canClickOnIt;
 	}
+
 	basicSh.Bind();
-	for (int i = 0; i < 2; i++)
+	bool table[3] = {Window::smoothShadows,Window::VSync,Window::fullScreen};
+	for (int i = 0; i < 3; i++)
 	{
-		menu.checkBoxs[i].Draw(basicSh, transform);
+		menu.checkBoxs[i].Draw(basicSh,table[i], transform);
 	}
 
 }
@@ -965,7 +960,15 @@ int main()
 				}
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
+				{
+					float pixelPerUnit =  Window::width/ (Window::halfWidthOfGameTransform * 2);
+					CameraCoordinates[0] = floor(CameraCoordinates[0] * pixelPerUnit) / pixelPerUnit;
+					CameraCoordinates[1] = floor(CameraCoordinates[1] * pixelPerUnit) / pixelPerUnit;
+
+				}
 				ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+
+				
 				animSh.Bind();
 				animSh.SetUniformMat4(animCamera, camera);
 				basicSh.Bind();
@@ -1741,7 +1744,16 @@ int main()
 				}
 				editor.m_Transform[0] = CameraHitboxX(editor.m_Transform[0]);
 				editor.m_Transform[1] = CameraHitboxY(editor.m_Transform[1]);
-				ChangeCamera(-Window::halfWidthOfGameTransform + editor.m_Transform[0], Window::halfWidthOfGameTransform + editor.m_Transform[0], -Window::halfHeightOfGameTransform + editor.m_Transform[1], Window::halfHeightOfGameTransform + editor.m_Transform[1], camera);
+				{
+					float CameraCoordinates[2];
+					float pixelPerUnit = Window::width / (Window::halfWidthOfGameTransform * 2);
+					CameraCoordinates[0] = floor( editor.m_Transform[0] * pixelPerUnit) / pixelPerUnit;
+					CameraCoordinates[1] = floor( editor.m_Transform[1] * pixelPerUnit) / pixelPerUnit;
+			
+					ChangeCamera(-Window::halfWidthOfGameTransform + CameraCoordinates[0], Window::halfWidthOfGameTransform + CameraCoordinates[0], -Window::halfHeightOfGameTransform + CameraCoordinates[1], Window::halfHeightOfGameTransform + CameraCoordinates[1], camera);
+
+				}
+
 				animSh.Bind();
 				animSh.SetUniformMat4(animCamera, camera);
 				basicSh.Bind();
@@ -1781,7 +1793,7 @@ int main()
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
 				DrawCraftStations(craftStations, structureSh, transform, structuresDD, structuresTextures);
 				DrawChests(chests, structureSh, transform, openChestTex, structuresDD, structuresTextures);
-
+		
 				editor.Draw(animSh, transform, scale);
 
 				ChangeCamera(0, Window::width, 0, Window::height, camera);

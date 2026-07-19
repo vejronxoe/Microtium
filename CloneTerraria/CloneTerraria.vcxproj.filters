@@ -193,7 +193,6 @@
     <Text Include="res\shaders\fragBasic.txt" />
     <Text Include="res\save0\mapBlocks.txt" />
     <Text Include="res\shaders\verBasic.txt" />
-    <Text Include="res\settings.txt" />
     <Text Include="res\shaders\fragtTest.txt" />
     <Text Include="res\shaders\verHUD.txt" />
     <Text Include="res\shaders\verNumber.txt" />

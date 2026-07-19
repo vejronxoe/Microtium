@@ -13,10 +13,11 @@ namespace Window
 	int windowWidth;
 	float halfHeightOfGameTransform;
 	float halfWidthOfGameTransform;
+	float volume;
+	float gameZoom;
 	bool fullScreen;
 	bool VSync;
-	float gameZoom;
-	float volume;
+	bool smoothShadows;
 	float lineHeight;
 	float FontSize;
 	bool GetInfoForWindow(const char* filepath)
@@ -38,115 +39,101 @@ namespace Window
 		windowWidth = maxWidth / 2.0f;
 		fullScreen = false;
 		VSync = false;
+		smoothShadows = true;
+
 		volume = 50;
 		gameZoom = 50;
-		std::string line;
-		std::ifstream settings(filepath);
+		std::ifstream file(filepath, std::ios::binary);
+		
 		bool corrupted = true;
-		if (settings)
+		if (file.good())
 		{
 			corrupted = false;
-			int i = 0;
-			while (std::getline(settings, line))
+			for (int i = 0; i < 6; i++)
 			{
 				switch (i)
 				{
 				case 0:
-					if (line.length() == 1)
-					{
-						fullScreen = (line[0] == '1');
-					}
-					else
-					{
-						corrupted = true;
-					}
+					file.read(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
+					windowHeight = Clamp(windowHeight, 400, maxHeight);
 					break;
 				case 1:
-					if (line.length() == 1)
-					{
-						VSync = (line[0] == '1');
-					}
-					else
-					{
-						corrupted = true;
-					}
-
+					file.read(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
+					windowWidth = Clamp(windowWidth, 400, maxHeight);
 					break;
 				case 2:
-					windowWidth = atoi(line.c_str());
-					windowWidth = Clamp(width, 400, maxWidth);
-					if (fullScreen)
-					{
-						width = maxWidth;
-					}
-					else
-					{
-						width = windowWidth;
-					}
-
+					file.read(reinterpret_cast<char*>(&volume), sizeof(volume));
+					volume = Clamp(volume, 0, 1);
 					break;
 				case 3:
-					windowHeight = atoi(line.c_str());
-					windowHeight = Clamp(height, 400, maxHeight);
-					if (fullScreen)
-					{
-						height = maxHeight;
-					}
-					else
-					{
-						height = windowHeight;
-					}
+					file.read(reinterpret_cast<char*>(&gameZoom), sizeof(gameZoom));
+					gameZoom = Clamp(gameZoom, 0, 1);
 					break;
 				case 4:
-					volume = atof(line.c_str());
-					volume = Clamp(volume, 0, 100);
+					file.read(reinterpret_cast<char*>(&fullScreen), sizeof(fullScreen));
 					break;
 				case 5:
-					gameZoom = atof(line.c_str());
-					gameZoom = Clamp(gameZoom, 0, 100);
+					file.read(reinterpret_cast<char*>(&VSync), sizeof(VSync));
 					break;
-				default:
+				case 6:
+					file.read(reinterpret_cast<char*>(&smoothShadows), sizeof(smoothShadows));
+					break;
+				}
+
+				if (!file.good())
+				{
 					corrupted = true;
 					break;
 				}
-				if (corrupted == true)
-				{
-					break;
-				}
-				i++;
-			}
-			if (i < 6)
-			{
-				corrupted = true;
 			}
 		}
-		settings.close();
+		if (!file.good())
+		{
+			corrupted = true;
+		}
+		file.close();
+		
+		corrupted = true;
 		if (corrupted)
 		{
 			height = maxHeight / 2.0f;
 			width = maxWidth / 2.0f;
 			windowHeight = maxHeight / 2.0f;
 			windowWidth = maxWidth / 2.0f;
+			volume = 0.5f;
+			gameZoom = 0.5f;
 			fullScreen = false;
 			VSync = false;
-			volume = 50;
-			gameZoom = 50;
-			SaveSetting(filepath);
+			smoothShadows = true;
+			if (!SaveSetting(filepath))
+			{
+				std::cout << "error: fail to save settings\n";
+			}
 		}
 		 
 	
 		return true;
 	}
-	void SaveSetting(const char* filePath)
+	bool SaveSetting(const char* filePath)
 	{
-		std::ofstream settings(filePath);
-		settings << (fullScreen ? '1' : '0') << std::endl;
-		settings << (VSync ? '1' : '0') << std::endl;
-		settings << windowWidth << std::endl;
-		settings << windowHeight << std::endl;
-		settings << volume << std::endl;
-		settings << gameZoom;
-		settings.close();
+		std::ofstream file(filePath, std::ios::binary | std::ios::trunc);
+		if (!file.good())
+		{
+			return false;
+		}
+		file.write(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
+		file.write(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
+		file.write(reinterpret_cast<char*>(&volume), sizeof(volume));
+		file.write(reinterpret_cast<char*>(&gameZoom), sizeof(gameZoom));
+		file.write(reinterpret_cast<char*>(&fullScreen), sizeof(fullScreen));
+		file.write(reinterpret_cast<char*>(&VSync), sizeof(VSync));
+		file.write(reinterpret_cast<char*>(&smoothShadows), sizeof(smoothShadows));
+		if (!file.good())
+		{
+			return false;
+		}
+		file.close();
+		return true;
 	}
 
 }

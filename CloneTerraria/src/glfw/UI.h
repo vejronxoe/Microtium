@@ -7,8 +7,6 @@ struct Slider
 	unsigned int m_TrailVBO = -1;
 	unsigned int m_SliderTex = -1;
 	unsigned int m_TrailTex = -1;
-	float m_SliderX = 0;
-	float m_Value = 0;
 	float m_Vertices[4] = {};
 	bool m_IsActive = false;
 	Slider() = default;
@@ -16,7 +14,6 @@ struct Slider
 		, unsigned int trailTex
 		, unsigned int sliderDD
 		, unsigned int eob
-		, float slideX
 		, int stablePoint
 		, float left
 		, float down
@@ -26,19 +23,20 @@ struct Slider
 		, unsigned int trailTex
 		, unsigned int sliderDD
 		, unsigned int eob
-		, float slideX
 		, int stablePoint
 		, float left
 		, float down
 		, float right
 		, float top);
-	bool Update();
-	void Draw(Shader sh,float* transform);
+	float Update(float value
+		, bool& howerOver);
+	void Draw(Shader sh
+		, float value
+		, float* transform);
 	void Delete();
 };
 struct CheckBox
 {
-	bool m_Check = false;
 	unsigned int m_DD = -1;
 	unsigned int m_VBO = -1;
 	unsigned int m_Tex[2] = {};
@@ -50,18 +48,18 @@ struct CheckBox
 		, float left
 		, float down
 		, float right
-		, float top
-		, bool check);
+		, float top);
 	void Create(unsigned int* tex
 		, unsigned int eob
 		, int stablePoint
 		, float left
 		, float down
 		, float right
-		, float top
-		, bool check);
-	bool Update(bool isActive);
+		, float top);
+	bool Update(bool isActive
+		, bool& value);
 	void Draw(Shader sh
+		, bool value
 		, float* transform);
 	void Delete();
 };

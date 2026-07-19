@@ -168,7 +168,6 @@ bool SavingSafely(std::string pathAndName)
 	return true;
 	
 }
- //////////////////////////////////////////////////////
 bool Load(std::string path
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<int>& sandXs)
@@ -246,13 +245,12 @@ bool Load(std::string path
 					sides[3] = 0;
 
 				}
-				blocks.at(i).at(j).m_Type = sides[0] + sides[1] * 2 + sides[2] * 4 + sides[3] * 8 + 1;
+				blocks.at(i).at(j - Blocks::yMin).m_Type = sides[0] + sides[1] * 2 + sides[2] * 4 + sides[3] * 8 + 1;
 			}
 		}
 	}
 	return true;
 }
-///////////////////////////////////////////////////////////////////////
 bool Save(std::string path
 	, std::vector<std::vector<Block>>& blocks)
 {
@@ -285,7 +283,6 @@ bool Save(std::string path
 	}
 	return true;
 }
-////////////////////////////////////////////////////////////////////
 bool Load(std::string path
 	, std::vector<std::vector<uint8_t>>& walls)
 {
@@ -321,7 +318,6 @@ bool Load(std::string path
 	file.close();
 	return true;
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Save(std::string path
 	, std::vector<std::vector<uint8_t>>& walls)

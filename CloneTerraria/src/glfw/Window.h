@@ -13,9 +13,10 @@ namespace Window
 	extern bool VSync;
 	extern float gameZoom;
 	extern float volume;
+	extern bool smoothShadows;
 	extern float lineHeight;
 	extern float FontSize;
 	bool GetInfoForWindow(const char* filepath);
-	void SaveSetting(const char* filePath);
+	bool SaveSetting(const char* filePath);
 
 }

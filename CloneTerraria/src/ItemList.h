@@ -1,6 +1,6 @@
 #pragma once
 #define GRAVITY -40
-#define BlockSize 1.0f/(60.0f - (Window::gameZoom-50))
+#define BlockSize (1.0f/(5.0f + 75.0f * Window::gameZoom))
 #define TEXSLOTDISTANCE 1.0f/10.0f
 
 enum Items
