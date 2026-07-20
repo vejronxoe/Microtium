@@ -123,6 +123,9 @@ void Text::CreateText(std::string Letters
 		}
 	}
 	std::vector<float> lineHeights;
+	std::vector<float> lineLengths;
+	lineLengths.emplace_back(0);
+	int currentLine = 0;
 	float biggestSizeOfLetter = 1;
 	for (int i = 0; i < Letters.length(); i++)
 	{
@@ -145,15 +148,17 @@ void Text::CreateText(std::string Letters
 
 			if (Letters[i] != ' ')
 			{
-				m_TextVertices[2] += Ascii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter * Window::FontSize;
+				lineLengths.at(currentLine) += Ascii.at(Letters[i] - BEGINLETTER).m_DefalutSize[0] * sizeOfLetter * Window::FontSize;
 			}
 			else
 			{
-				m_TextVertices[2] += sizeOfLetter * Window::FontSize / 2;
+				lineLengths.at(currentLine) += sizeOfLetter * Window::FontSize / 2;
 			}
 		}
 		else
 		{
+			currentLine++;
+			lineLengths.emplace_back(0);
 			m_TextVertices[3] -= Window::lineHeight * Window::FontSize * biggestSizeOfLetter;
 			lineHeights.emplace(lineHeights.begin(), Window::lineHeight * Window::FontSize * biggestSizeOfLetter);
 			biggestSizeOfLetter = 1;
@@ -163,7 +168,14 @@ void Text::CreateText(std::string Letters
 	}
 	m_TextVertices[3] -= Window::lineHeight * Window::FontSize * biggestSizeOfLetter;
 	lineHeights.emplace(lineHeights.begin(), Window::lineHeight * Window::FontSize * biggestSizeOfLetter);
-
+	m_TextVertices[2] = lineLengths.at(0);
+	for (int i = 0; i < lineLengths.size(); i++)
+	{
+		if (lineLengths.at(i) > m_TextVertices[2])
+		{
+			m_TextVertices[2] = lineLengths.at(i);
+		}
+	}
 
 	switch (stablePoint)
 	{

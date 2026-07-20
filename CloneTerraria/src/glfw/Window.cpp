@@ -93,7 +93,7 @@ namespace Window
 		}
 		file.close();
 		
-		corrupted = true;
+	
 		if (corrupted)
 		{
 			height = maxHeight / 2.0f;

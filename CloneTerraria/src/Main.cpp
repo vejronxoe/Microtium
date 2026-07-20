@@ -53,11 +53,20 @@ void CreateMenu(bool first
 	, unsigned int trailTex
 	, unsigned int eob)
 {
-	Format basicform(14, 6, 0.8f, 0.8f, 0.8f, 1);
+	Format basicform(14, 5, 0, 0, 0, 1);
 	if (!first)
 	{
 		ErrorGL(glDeleteBuffers(1, &sliderVBO));
 		ErrorGL(glDeleteVertexArrays(1, &sliderDD));
+	}
+	float winSideLength = 0;
+	if (Window::height > Window::width)
+	{
+		winSideLength = Window::width;
+	}
+	else
+	{
+		winSideLength = Window::height;
 	}
 	float sideLength = DistanceOnUI(0.05f);
 	sliderDD = CreateDrawData(eob, sideLength, -sideLength, sideLength, -sideLength, sliderVBO);
@@ -70,21 +79,22 @@ void CreateMenu(bool first
 	menu.description[0].CreateText(texts[0], std::vector<Format>{basicform, {80, 2, 1, 0.5f, 0.5f, 1 }}, letters, eob, leftTop, 0.02f * Window::width, menu.description[1].m_TextVertices[3] + menu.description[ 1].m_Transform[1] - Window::height * 0.02f);
 	for (int i = 0 ; i < 3; i++)
 	{
-		menu.checkBoxs[i].Create(checkBoxTex, eob, leftTop, (menu.description[i].m_TextVertices[2]) / Window::width, (menu.description[i].m_TextVertices[1] - Window::lineHeight) / Window::height, (menu.description[i].m_TextVertices[2] + Window::lineHeight) / Window::width, (menu.description[i].m_TextVertices[1]) / Window::height);
+		menu.checkBoxs[i].Create(checkBoxTex, eob, leftTop, (menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0] ) / winSideLength, (menu.description[1].m_TextVertices[3] + menu.description[i].m_Transform[1] + winSideLength - Window::height) / winSideLength, (menu.description[0].m_TextVertices[2] - menu.description[1].m_TextVertices[3] + menu.description[0].m_Transform[0] ) / winSideLength, (menu.description[i].m_TextVertices[1] + menu.description[i].m_Transform[1] + winSideLength - Window::height) / winSideLength);
 	}
 	for (int i  = 0; i < 2; i++)
 	{
-		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.55f,(menu.description[3+i].m_TextVertices[3]+ menu.description[3 + i].m_Transform[1])/Window::height,0.95f,(menu.description[3 + i].m_TextVertices[1] + menu.description[3 + i].m_Transform[1]) / Window::height);
+		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.50f,(menu.description[3+i].m_TextVertices[3]+ menu.description[3 + i].m_Transform[1] + winSideLength - Window::height)/winSideLength,0.87f,(menu.description[3 + i].m_TextVertices[1] + menu.description[3 + i].m_Transform[1] + winSideLength - Window::height) / winSideLength);
 	}
+	int values[2] = { Window::gameZoom*100, Window::volume*100};
 	for (int i = 0; i < 2 ; i++)
 	{
-		menu.values[i].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{basicform},letters,eob,leftTop,menu.sliders[i].m_Vertices[2], menu.sliders[i].m_Vertices[1]);
+		menu.values[i].CreateText("   " + std::to_string(values[i]), std::vector<Format>{{15, 3, 0, 0, 0, 1}}, letters, eob, leftTop, menu.sliders[i].m_Vertices[2], menu.sliders[i].m_Vertices[1]);
 	}
 	menu.backText.CreateText("Back", std::vector<Format>{basicform}, letters, eob, middleBottom, 0.5f * Window::width, 0.02f *Window::height);
 	for (int i = 0; i < 3;i++)
 	{
-		menu.loadText[i].CreateText("Load" + std::to_string(i), std::vector<Format>{basicform}, letters, eob, middleTop, 0.5f, 1.0f - (i + 1) * (1 / 6.0f));
-		menu.saveText[i].CreateText("Save"+std::to_string(i), std::vector<Format>{basicform}, letters, eob, middleTop, 0.5f, 1.0f-(i+1)*(1/6.0f));
+		menu.loadText[i].CreateText("Load" + std::to_string(i), std::vector<Format>{{15, 12, 0, 0, 0, 1}}, letters, eob, middleTop, 0.5f * Window::width, (1.0f - (i + 1) * (1 / 6.0f))*Window::height);
+		menu.saveText[i].CreateText("Save"+std::to_string(i), std::vector<Format>{{15, 12, 0, 0, 0, 1}}, letters, eob, middleTop, 0.5f * Window::width, (1.0f-(i+1)*(1/6.0f))* Window::height);
 	}
 
 }
@@ -105,21 +115,6 @@ void optionsUpdate(Menu& menu
 	{
 		menu.description[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	}
-	if (Window::volume && false)
-	{
-
-		menu.values[0].CreateText(std::to_string(int(Window::volume)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0], menu.description[0].m_TextVertices[3] + menu.description[0].m_Transform[1]);
-
-	}
-	if (Window::gameZoom && false)
-	{
-	
-		blockSize = DistanceOnUI(BlockSize);
-		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
-		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////
-		menu.values[1].CreateText(std::to_string(int(Window::gameZoom)), std::vector<Format>{ Format(15, 3, 0, 0, 0, 1) }, letters, eob, leftBottom, menu.description[1].m_TextVertices[2] + menu.description[1].m_Transform[0], menu.description[1].m_TextVertices[3] + menu.description[1].m_Transform[1]);
-	}
 	for (int i = 0; i < 2; i++)
 	{
 		menu.values[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
@@ -136,30 +131,42 @@ void optionsUpdate(Menu& menu
 		cursorState = canClickOnIt;
 		if (Input::LeftMousePress)
 		{
-			Window::SaveSetting("res/settings.txt");
+			Window::SaveSetting("res/settings.dat");
 			menuState = stateDefault;
 		}
 	}
 	menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	basicSh.Bind();
 	bool howeringOver = false;
-	Window::gameZoom = menu.sliders[0].Update(Window::gameZoom, howeringOver);
-	if (howeringOver)
+	float value = menu.sliders[0].Update(Window::gameZoom, howeringOver);
+	if (Window::gameZoom != value)
 	{
-		cursorState = canSlideIt;
+		Window::gameZoom = value;
+		blockSize = floorf(DistanceOnUI(BlockSize));
+		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
+		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
+		menu.values[0].CreateText("   " + std::to_string(int(Window::gameZoom*100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders[0].m_Vertices[2], menu.sliders[0].m_Vertices[1]);
+
 	}
+	if (howeringOver){cursorState = canSlideIt;}
 	menu.sliders[0].Draw(basicSh, Window::gameZoom , transform);
-	Window::volume = menu.sliders[1].Update(Window::volume, howeringOver);
-	if (howeringOver)
+
+	value = menu.sliders[1].Update(Window::volume, howeringOver);
+	if (Window::volume != value)
 	{
-		cursorState = canSlideIt;
+		Window::volume = value;
+		menu.values[1].CreateText("   " + std::to_string(int(Window::volume * 100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders[1].m_Vertices[2], menu.sliders[1].m_Vertices[1]);
 	}
+	if (howeringOver){cursorState = canSlideIt;}
 	menu.sliders[1].Draw(basicSh, Window::volume, transform);
-	if (menu.checkBoxs[1].Update(Input::LeftMousePress, Window::fullScreen))
+
+
+
+
+	if (menu.checkBoxs[2].Update(Input::LeftMousePress, Window::fullScreen))
 	{
 		if (Input::LeftMousePress)
 		{
-			
 			if (Window::fullScreen)
 			{
 				GLFWmonitor* primary = glfwGetPrimaryMonitor();
@@ -177,11 +184,10 @@ void optionsUpdate(Menu& menu
 		}
 		cursorState = canClickOnIt;
 	}
-	if (menu.checkBoxs[0].Update(Input::LeftMousePress, Window::VSync))
+	if (menu.checkBoxs[1].Update(Input::LeftMousePress, Window::VSync))
 	{
 		if (Input::LeftMousePress)
 		{
-			Window::VSync = !Window::VSync;
 			if (Window::VSync)
 			{
 				glfwSwapInterval(1);
@@ -191,6 +197,11 @@ void optionsUpdate(Menu& menu
 				glfwSwapInterval(0);
 			}
 		}
+		cursorState = canClickOnIt;
+	}
+
+	if (menu.checkBoxs[0].Update(Input::LeftMousePress, Window::smoothShadows))
+	{
 		cursorState = canClickOnIt;
 	}
 
@@ -218,7 +229,7 @@ int main()
 	}
 
 
-	if (!Window::GetInfoForWindow("res/settings.txt"))
+	if (!Window::GetInfoForWindow("res/settings.dat"))
 	{
 		std::cout << "settings error dont read all informations" << std::endl;
 		std::cin.get();
@@ -243,7 +254,7 @@ int main()
 	glfwSetWindowSizeLimits(window, 400, 400, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 	glfwGetWindowSize(window, &Window::width, &Window::height);
-	float blockSize = DistanceOnUI(BlockSize);
+	float blockSize = (DistanceOnUI(BlockSize));
 
 	Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 	Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
@@ -811,10 +822,17 @@ int main()
 
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			if (Window::smoothShadows)
+			{
+				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+			}
+			else
+			{
+				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	
+			}
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
