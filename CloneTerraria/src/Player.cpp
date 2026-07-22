@@ -2741,7 +2741,7 @@ void Player::EveryFrame(float deltaTime
 		m_LeftWallHit = false;
 		m_RightWallHit = false;
 	
-		m_FloorBehaviour = DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, Input::SHold,false, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
+		m_FloorBehaviour = CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, Input::SHold,false, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
 		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, oldVelocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
 		{
 			m_FloorBehaviour = b_BasicSolid;

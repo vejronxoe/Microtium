@@ -409,3 +409,77 @@ float CameraHitboxY(float y)
 	}
 	return y;
 }
+
+
+
+unsigned char CharacterHitbox(float deltaTime
+	, float* transform
+	, float* velocity
+	, float* oldVelocity
+	, float* objectVertices4f
+	, bool platformControl
+	, bool platformIgnore
+	, std::vector<std::vector<Block>>& hitbox
+	, bool& leftWallHit
+	, bool& rightWallHit
+	, bool& floorHit
+	, bool& ceilHit)
+{
+	float  vel[2] = { velocity[0] , velocity[1] };
+	float  oldVel[2] = { oldVelocity[0] , oldVelocity[1] };
+	unsigned char behavior = DynamicHitbox(deltaTime, transform, velocity, oldVelocity, objectVertices4f, platformControl, platformIgnore, hitbox, leftWallHit, rightWallHit, floorHit, ceilHit);
+	bool autoJump = false;
+	if ((leftWallHit || rightWallHit)&& abs(vel[0]) > 9)
+	{
+		if (floorHit)
+		{
+			autoJump = true;
+		}
+		else if (objectVertices4f[3] - floorf(objectVertices4f[3]) == 0.5f)
+		{
+			for (int i = RoundFiveDown( objectVertices4f[0]); i < RoundFiveDown( objectVertices4f[2]); i++)
+			{
+
+				if (hitbox.at(i).at(RoundFiveDown(objectVertices4f[3] - Blocks::yMin)).m_Behavior != b_Air)
+				{
+					autoJump = true;
+				}
+				if (hitbox.at(i).at(RoundFiveDown(objectVertices4f[1])+1 - Blocks::yMin).m_Behavior != b_Air)
+				{
+					autoJump = false;
+					break;
+				}
+			}
+		}
+
+	}
+	if (autoJump)
+	{
+		int wallX = 0;
+		if (leftWallHit)
+		{
+			wallX = RoundFiveUp( - 1 + objectVertices4f[0]);
+		}
+		else
+		{
+			wallX = RoundFiveDown( 1 + objectVertices4f[2]);
+		}
+		for (int i = RoundFiveUp(objectVertices4f[3]) +1; i < RoundFiveDown(objectVertices4f[1])+1; i++)
+		{
+			if (hitbox.at(wallX).at(i-Blocks::yMin).m_Behavior != b_Air)
+			{
+				autoJump = false;
+				break;
+			}
+		}
+		if (autoJump)
+		{
+			velocity[0] = vel[0];
+			velocity[1] = 0;
+			oldVelocity[0] = oldVel[0];
+			oldVelocity[1] = 0;
+			transform[1]++;
+		}
+	}
+	return behavior;
+}
