@@ -142,7 +142,7 @@ void optionsUpdate(Menu& menu
 	if (Window::gameZoom != value)
 	{
 		Window::gameZoom = value;
-		blockSize = floorf(DistanceOnUI(BlockSize));
+		blockSize = DistanceOnUI(BlockSize);
 		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
 		menu.values[0].CreateText("   " + std::to_string(int(Window::gameZoom*100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders[0].m_Vertices[2], menu.sliders[0].m_Vertices[1]);
@@ -712,9 +712,8 @@ int main()
 			structuresTextures[s_Door] = DoorTextures[0];
 			structuresTextures[s_TrapDoor] = trapDoorTextures[0];
 			structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
-			treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
-			treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
-			treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
+			treeTextures[crown_Forest] = CreateTextureRGBA("res/textures/forestBush.png");
+			treeTextures[crown_ForestSmall] = CreateTextureRGBA("res/textures/forestSmallBush.png");
 			unsigned int treeDD[3];
 			unsigned int structuresDD[8];
 			unsigned int alternativeBlockDD = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f, 1, 0, TEXSLOTDISTANCE, 0);
@@ -727,9 +726,8 @@ int main()
 			structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 			structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
 			structuresDD[s_Gate] = CreateDrawData(eob, 3.5f, -0.5f, 0.5f, -0.5f);
-			treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
-			treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
-			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			treeDD[crown_Forest] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+			treeDD[crown_ForestSmall] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 
 
 

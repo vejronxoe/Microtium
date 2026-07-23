@@ -32,6 +32,7 @@ enum Items
 	, i_WallSandBrick
 	, i_WallSandStone
 	, i_WallSnow
+	, i_WallSnowPlank
 	, i_WallIce////////
 	, i_Sand
 	, i_Sapling
@@ -61,7 +62,7 @@ enum Items
 	, i_Door
 	, i_TrapDoor
 	, i_Gate
-	, i_IronOre/////////////////////////
+	, i_IronOre
 	, i_CopperOre
 	, i_AdamantiteOre
 	, i_GoldOre
@@ -78,6 +79,8 @@ enum Items
 	, i_SandPlatform
 	, i_Snow
 	, i_HeartGem
+	, i_SnowPlank
+	, i_Cactus
 	, i_ItemSize
 };
 enum Structures

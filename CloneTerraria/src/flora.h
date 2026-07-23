@@ -4,35 +4,23 @@
 #include "BlocksAndWalls.h"
 
 
-enum treeParts
+enum CrownTypes : uint8_t
 {
-	part_Log = 0,
-	part_SmallCrown,
-	part_Crown,
+	crown_ForestSmall = 0
+	, crown_SnowSmall
+	, crown_Forest
+	, crown_Snow
 };
-class tree
+struct Crown
 {
-public:
-	int m_Transform[2];
-	char m_PartOfTree;
-	unsigned short int m_ItemDrop;
-	unsigned char m_Hardness;
-	unsigned int m_texture;
-	unsigned int m_DrawData;
-	int m_Rotation;
-	tree(unsigned int texture
-		, unsigned int drawData
-		, unsigned short int itemDrop
-		, unsigned char hardness
-		, char partOfTree
-		, int x
-		, int y
-		, int rotation);
-	void drawTree(Shader& sh
-		, float* cameraCoordinate
-		, float* transform
-		, float* rotation);
+	int m_Transform[2] = {0,0};
+	int m_Rotation = 0;
+	CrownTypes m_Type = crown_ForestSmall;
 };
+void DrawTrees(Shader& sh
+	, float* cameraCoordinate
+	, float* transform
+	, float* rotation);
 class seedling
 {
 public:

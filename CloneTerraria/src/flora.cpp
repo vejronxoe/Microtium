@@ -5,39 +5,7 @@
 #include "glfw/Window.h"
 #include "ItemList.h"
 #define TIMETOGROW 10
-bool FindWood(std::vector<tree>& woods
-	, int x
-	, int y
-	, int& index)
-{
-	for (int i = 0; i < woods.size(); i++)
-	{
-		if (woods.at(i).m_PartOfTree == part_Log)
-		{
-			if (woods.at(i).m_Transform[0] == x && woods.at(i).m_Transform[1] == y)
-			{
-				index = i;
-				return true;
-			}
-		}
-	}
-	return false;
-}
-bool FindWood(std::vector<tree>& woods
-	, int* vertices)
-{
-	for (int i = 0; i < woods.size(); i++)
-	{
-		if (woods.at(i).m_PartOfTree == part_Log)
-		{
-			if (vertices[0] <= woods.at(i).m_Transform[0] && vertices[2] >= woods.at(i).m_Transform[0] && vertices[3] <= woods.at(i).m_Transform[1] && vertices[1] >= woods.at(i).m_Transform[1])
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
+
 bool FindSeedling(std::vector<seedling>& seedlings
 	, int x
 	, int y
@@ -69,7 +37,7 @@ bool FindSeedling(std::vector<seedling>& seedlings
 	return false;
 }
 
-void checkTreesWithCrowns(std::vector<tree>& trees
+void checkTreesWithCrowns(std::vector<Crown>& trees
 	, int* objVertices4
 	, bool& inBlock)
 {
@@ -79,18 +47,10 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 		{
 
 			float vertices[4];
-			switch (trees.at(i).m_PartOfTree)
+			switch (trees.at(i).m_Type)
 			{
-
-
-			case part_Log:
-				if (objVertices4[1] >= trees.at(i).m_Transform[1] && objVertices4[3] <= trees.at(i).m_Transform[1] && objVertices4[2] >= trees.at(i).m_Transform[0] && objVertices4[0] <= trees.at(i).m_Transform[0])
-				{
-					inBlock = true;
-					break;
-				}
-				break;
-			case part_Crown:
+			case crown_Forest:
+			case crown_Snow:
 
 				vertices[0] = trees.at(i).m_Transform[0] - 3; vertices[1] = trees.at(i).m_Transform[1] + 3;
 				vertices[2] = trees.at(i).m_Transform[0] + 3; vertices[3] = trees.at(i).m_Transform[1];
@@ -103,7 +63,8 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 					}
 				} 
 				break;
-			case part_SmallCrown:
+			case crown_ForestSmall:
+			case crown_SnowSmall:
 				switch (trees.at(i).m_Rotation)
 				{
 				case 0:
@@ -142,49 +103,42 @@ void checkTreesWithCrowns(std::vector<tree>& trees
 
 }
 
-void tree::drawTree(Shader& sh
+void DrawTrees(Shader& sh
+	, std::vector<Crown> crowns
+	, unsigned int* DDs
+	, unsigned int* textures
 	, float* cameraCoordinate
 	, float* transform
 	, float* rotation)
 {
-	if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5) >= m_Transform[0] && floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5) <= m_Transform[0])
+	for (int i = 0; i < crowns.size(); i++)
 	{
-		if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5) <= m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5) >= m_Transform[1])
+		Crown crown = crowns.at(i);
+		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5) >= crown.m_Transform[0] && floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5) <= crown.m_Transform[0])
 		{
-			if (m_Rotation != 0)
+			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5) <= crown.m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5) >= crown.m_Transform[1])
 			{
-				ChangeRotation(m_Rotation, rotation);
-				sh.SetUniformMat4(treeRotation, rotation);
-			}
-			ErrorGL(glBindVertexArray(m_DrawData));
-			ChangeTransform(m_Transform[0], m_Transform[1], transform);
-			sh.SetUniformMat4(treeTransform, transform);
-			ErrorGL(glBindTexture(GL_TEXTURE_2D, m_texture));
-			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-			if (m_Rotation != 0)
-			{
-				ChangeRotation(0, rotation);
-				sh.SetUniformMat4(treeRotation, rotation);
+				if (crown.m_Rotation != 0)
+				{
+					ChangeRotation(crown.m_Rotation, rotation);
+					sh.SetUniformMat4(treeRotation, rotation);
+				}
+				ErrorGL(glBindVertexArray(DDs[crown.m_Type]));
+				ChangeTransform(crown.m_Transform[0], crown.m_Transform[1], transform);
+				sh.SetUniformMat4(treeTransform, transform);
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[crown.m_Type]));
+				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+				if (crown.m_Rotation != 0)
+				{
+					ChangeRotation(0, rotation);
+					sh.SetUniformMat4(treeRotation, rotation);
+				}
 			}
 		}
 	}
 }
-tree::tree(unsigned int texture
-	, unsigned int drawData
-	, unsigned short int itemDrop
-	, unsigned char hardness
-	, char partOfTree
-	, int x
-	, int y
-	, int rotation)
-	: m_Transform{ x, y }
-	, m_PartOfTree(partOfTree)
-	, m_ItemDrop(itemDrop)
-	, m_Hardness(hardness)
-	, m_texture(texture)
-	, m_DrawData(drawData)
-	, m_Rotation(rotation)
-{}
+
+
 damagedWood::damagedWood(int x
 	, int y
 	, int rotation
@@ -227,83 +181,7 @@ seedling::seedling(char type
 ,m_Texture(structuresTextures[type])
 {
 }
-void createBranchs(std::vector <std::vector<Block>>& blocks
-	, std::vector<tree>& trees
-	, std::vector<seedling>& seedlings
-	, unsigned int* treeTextures
-	, unsigned int* treeDD
-	, int* m_Transform
-	, int* branchVertices
-	, int leangth
-	, int countBranchs)
-{
-	std::vector<int> order;
-	bool inBlock;
-	for (int i = 2; i < leangth - 2; i++)
-	{
-		order.emplace_back(i);
-	}
-	for (int i = 0; i < (leangth - 4); i++)
-	{
-		int swapNumber = rand() % (leangth - 4);
-		int holder = order.at(swapNumber);
-		order.at(swapNumber) = order.at(i);
-		order.at(i) = holder;
-	}
-	for (int j = 0; j < order.size(); j++)
-	{
-		for (int i = 0; i < order.size(); i++)
-		{
-			if (order.at(j) != order.at(i) && order.at(j) + 2 >= order.at(i) && order.at(j) - 2 <= order.at(i))
-			{
-				if (i < j)
-				{
-					j--;
-				}
 
-				order.erase(order.begin() + i);
-				i--;
-			}
-		}
-	}
-	while (countBranchs != 0 && order.size())
-	{
-		branchVertices[1] = m_Transform[1] + order.at(0) + 1;
-		branchVertices[3] = m_Transform[1] + order.at(0) - 1;
-		inBlock = false;
-		inBlock = FindBlock(blocks, branchVertices);
-		if (!inBlock)
-		{
-			checkTreesWithCrowns(trees, branchVertices, inBlock);
-		}
-		if (!inBlock)
-		{
-			inBlock = FindSeedling(seedlings, branchVertices);
-		}
-		if (inBlock)
-		{
-			order.erase(order.begin());
-		}
-		else
-		{
-			int decider = rand() % 4;
-			if (decider)
-			{
-				decider = i_Sapling;
-			}
-			else
-			{
-				decider = i_Nothing;
-			}
-			int side = abs(branchVertices[0] - m_Transform[0])/ (branchVertices[0] - m_Transform[0]);
-			trees.emplace_back(treeTextures[part_Log], treeDD[part_Log], i_ForestPlank, 35, part_Log, m_Transform[0] + 1 * side, m_Transform[1] + order.at(0), side * -90.0f);
-			trees.emplace_back(treeTextures[part_SmallCrown], treeDD[part_SmallCrown], decider, 35, part_SmallCrown, m_Transform[0] + 2 * side , m_Transform[1] + order.at(0), side * -90.0f);
-			countBranchs--;
-			order.erase(order.begin());
-		}
-
-	}
-}
 bool seedling::everyFrame(float deltaTime
 	, unsigned int* treeTextures
 	, unsigned int* treeDD

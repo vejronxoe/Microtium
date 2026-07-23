@@ -29,6 +29,13 @@ unsigned char getBehaviorByType(unsigned char blocksType)
 		behaviours[i] = b_BasicSolid;
 	}
 	behaviours[t_Air] = b_Air;
+	behaviours[t_LightWoodHor] = b_Air;
+	behaviours[t_LightWoodVer] = b_Air;
+	behaviours[t_DarkWoodHor] = b_Air;
+	behaviours[t_DarkWoodVer] = b_Air;
+	behaviours[t_CactusHor] = b_Air;
+	behaviours[t_CactusVer] = b_Air;
+	behaviours[t_CactusTop] = b_Air;
 	behaviours[t_Ice] = b_Slippery;
 	behaviours[t_Asphalt] = b_Asphalt;
 	behaviours[t_Platform] = b_Platform;
@@ -81,7 +88,8 @@ unsigned char getTypeByItem(unsigned char item)
 	types[i_HeartGem] = t_HeartBlock;
 	types[i_WallSandStone] = t_SandStone;
 	types[i_SandStone] = t_SandStone;
-	
+	types[i_Cactus] = t_CactusVer;
+	types[i_WallSnowPlank] = t_SnowPlank;
 	return types[item];
 }
 unsigned char GetWallItemBytype(unsigned char blocksType)
@@ -103,6 +111,7 @@ unsigned char GetWallItemBytype(unsigned char blocksType)
 	WallIDs[t_StoneBrick] = i_WallStoneBrick;
 	WallIDs[t_SandStone] = i_WallSandStone;
 	WallIDs[t_Snow] = i_WallSnow;
+	WallIDs[t_SnowPlank] = i_WallSnowPlank;
 	return WallIDs[blocksType];
 
 }
@@ -135,6 +144,16 @@ unsigned char GetBlockItemByType(unsigned char blocksType)
 	blocksIDs[t_SandPlatform] = i_SandPlatform;
 	blocksIDs[t_SandStone] = i_SandStone;
 
+	blocksIDs[t_LightWoodHor] = i_ForestPlank;
+	blocksIDs[t_LightWoodVer] = i_ForestPlank;
+	blocksIDs[t_DarkWoodHor] = i_SnowPlank;
+	blocksIDs[t_DarkWoodVer] = i_SnowPlank;
+	blocksIDs[t_SnowPlank] = i_SnowPlank;
+	blocksIDs[t_CactusHor] = i_Cactus;
+	blocksIDs[t_CactusVer] = i_Cactus;
+	blocksIDs[t_CactusTop] = i_Cactus;
+
+
 	blocksIDs[t_Snow] = i_Snow;
 	blocksIDs[t_HeartBlock] = i_HeartGem;
 	return blocksIDs[blocksType];
@@ -149,6 +168,7 @@ unsigned char GetHardnessBytype(unsigned char type)
 	hardness[t_Asphalt] = 40;
 	hardness[t_Platform] = 30;
 	hardness[t_ForestPlank] = 30;
+	hardness[t_SnowPlank] = 30;
 	hardness[t_CopperOre] = 20;
 	hardness[t_SandStone] = 40;
 	hardness[t_IronOre] = 35;
@@ -241,6 +261,14 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Snow] = CreateTextureRepeatRGBA("res/textures/Snow.png");
 	IDs[t_HeartBlock] = CreateTextureRepeatRGBA("res/textures/HeartBlock.png");
 	IDs[t_SandStone] = CreateTextureRepeatRGBA("res/textures/SandStone.png");
+	IDs[t_LightWoodHor] = CreateTextureRepeatRGBA("res/textures/lightWoodHor.png");
+	IDs[t_LightWoodVer] = CreateTextureRepeatRGBA("res/textures/woodLog.png");
+	IDs[t_DarkWoodHor] = CreateTextureRepeatRGBA("res/textures/darkWoodHor.png");
+	IDs[t_DarkWoodVer] = CreateTextureRepeatRGBA("res/textures/darkWoodVer.png");
+	IDs[t_CactusHor] = CreateTextureRepeatRGBA("res/textures/cactusHor.png");
+	IDs[t_CactusVer] = CreateTextureRepeatRGBA("res/textures/cactusVer.png");
+	IDs[t_CactusTop] = CreateTextureRepeatRGBA("res/textures/cactusTop.png");
+	IDs[t_SnowPlank] = CreateTextureRepeatRGBA("res/textures/snowPlank.png");
 }
 
 void createWall(int x

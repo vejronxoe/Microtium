@@ -12,7 +12,7 @@ namespace Blocks
 	extern int yMax;
 	extern int yMin;
 }
-enum TexturesOfBlocks
+enum blockTypes
 {
 	t_Air = 0
 	, t_Dirt 
@@ -53,6 +53,14 @@ enum TexturesOfBlocks
 	, t_Snow
 	, t_HeartBlock
 	, t_SandStone
+	, t_LightWoodHor
+	, t_LightWoodVer
+	, t_DarkWoodHor
+	, t_DarkWoodVer
+	, t_CactusHor
+	, t_CactusVer
+	, t_CactusTop
+	, t_SnowPlank
 	, t_DoorBlock
 	, t_BlocksSize
 

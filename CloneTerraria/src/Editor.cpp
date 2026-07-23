@@ -1098,8 +1098,8 @@ int EditorHUD::Update(float deltaTime
 	{
 		if (Input::MouseWheel)
 		{
-			Window::gameZoom += 4 * Input::MouseWheel;
-			Window::gameZoom = Clamp(Window::gameZoom, 0, 100);
+			Window::gameZoom -= 0.04 * Input::MouseWheel;
+			Window::gameZoom = Clamp(Window::gameZoom, 0, 1);
 			blockSize = DistanceOnUI(BlockSize);
 			Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 			Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
