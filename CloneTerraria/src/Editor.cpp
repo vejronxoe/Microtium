@@ -125,7 +125,7 @@ void DeleteStructuresInArea(int* vertices
 
 	for (int i = 0; i < saplings.size(); i++)
 	{
-		getStructureVertices(saplings[i].m_Transform[0], saplings[i].m_Transform[1], s_Sapling, verticesObj);
+		getStructureVertices(saplings[i].m_Transform[0], saplings[i].m_Transform[1], s_ForestSapling, verticesObj);
 		if (DoTheyIntersect(vertices, verticesObj))
 		{
 
@@ -423,7 +423,7 @@ void Editor::Update(float deltaTime
 				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
 				{
 
-					std::vector<tree> t;
+					std::vector<Crown> t;
 					if (!isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
 					{
 						CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
@@ -438,8 +438,8 @@ void Editor::Update(float deltaTime
 				{
 					int vertices[4];
 					getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);
-					std::vector<tree> trees;
-					if (!isAnythinginArea(vertices, blocks, saplings, trees, CraftingStations, Doors, Chests))
+					std::vector<Crown> Crowns;
+					if (!isAnythinginArea(vertices, blocks, saplings, Crowns, CraftingStations, Doors, Chests))
 					{
 						bool floors = true;
 						getStructureVertices(x, y, m_Selected - t_BlocksSize - (i_WallIce - i_WallDirt + 1), vertices);

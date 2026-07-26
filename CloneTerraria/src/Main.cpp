@@ -620,11 +620,11 @@ int main()
 			shadowSh.GetUniformLocation("camera");
 			shadowSh.GetUniformLocation("transform");
 			shadowSh.GetUniformLocation("shadow");
-			Shader treeSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
-			treeSh.Bind();
-			treeSh.GetUniformLocation("treeCamera");
-			treeSh.GetUniformLocation("treeTransform");
-			treeSh.GetUniformLocation("treeRotation");
+			Shader CrownSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
+			CrownSh.Bind();
+			CrownSh.GetUniformLocation("CrownCamera");
+			CrownSh.GetUniformLocation("CrownTransform");
+			CrownSh.GetUniformLocation("CrownRotation");
 			Shader animSh("res/shaders/verAnimation.txt", "res/shaders/fragHUD.txt");
 			animSh.Bind();
 			animSh.GetUniformLocation("animCamera");
@@ -680,8 +680,8 @@ int main()
 			advancedSh.SetUniformMat4(advancedRotation, rotation);
 			handSh.Bind();
 			handSh.SetUniformMat4(handBeginTransform, transform);
-			treeSh.Bind();
-			treeSh.SetUniformMat4(treeRotation, rotation);
+			CrownSh.Bind();
+			CrownSh.SetUniformMat4(CrownRotation, rotation);
 			HUDSh.Bind();
 			HUDSh.SetUniformMat4(HUDCamera, camera);
 			numberSh.Bind();
@@ -693,9 +693,9 @@ int main()
 			unsigned int enemiesDD1[enemySize];
 			unsigned int enemiesDD2[enemySize];
 			unsigned int blockTextures[t_BlocksSize];
-			unsigned int treeTextures[3];
+			unsigned int CrownTextures[4];
 			unsigned int CutTextures[4];
-			unsigned int structuresTextures[8];
+			unsigned int structuresTextures[s_StructureSize];
 			unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png") };
 			unsigned int trapDoorTextures[2] = { CreateTextureRGBA("res/textures/CloseTrapDoor.png"), CreateTextureRGBA("res/textures/OpenTrapDoor.png") };
 			unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
@@ -704,7 +704,10 @@ int main()
 			CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 			CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 			CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
-			structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
+
+			structuresTextures[s_ForestSapling] = CreateTextureRGBA("res/textures/sapling.png");
+			structuresTextures[s_SnowSapling] = CreateTextureRGBA("res/textures/saplingSnow.png");
+			structuresTextures[s_CactusSapling] = CreateTextureRGBA("res/textures/saplingCactus.png");
 			structuresTextures[s_Chest] = CreateTextureRGBA("res/textures/Chest.png");
 			structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
 			structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
@@ -712,13 +715,17 @@ int main()
 			structuresTextures[s_Door] = DoorTextures[0];
 			structuresTextures[s_TrapDoor] = trapDoorTextures[0];
 			structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
-			treeTextures[crown_Forest] = CreateTextureRGBA("res/textures/forestBush.png");
-			treeTextures[crown_ForestSmall] = CreateTextureRGBA("res/textures/forestSmallBush.png");
-			unsigned int treeDD[3];
-			unsigned int structuresDD[8];
+			CrownTextures[crown_Forest] = CreateTextureRGBA("res/textures/forestBush.png");
+			CrownTextures[crown_ForestSmall] = CreateTextureRGBA("res/textures/forestSmallBush.png");
+			CrownTextures[crown_Snow] = CreateTextureRGBA("res/textures/snowBush.png");
+			CrownTextures[crown_SnowSmall] = CreateTextureRGBA("res/textures/snowSmallBush.png");
+			unsigned int CrownDD[4];
+			unsigned int structuresDD[s_StructureSize];
 			unsigned int alternativeBlockDD = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f, 1, 0, TEXSLOTDISTANCE, 0);
 
-			structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+			structuresDD[s_ForestSapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+			structuresDD[s_CactusSapling] = structuresDD[s_ForestSapling];
+			structuresDD[s_SnowSapling]  = structuresDD[s_ForestSapling];
 			structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
 			structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
 			structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
@@ -726,8 +733,10 @@ int main()
 			structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 			structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
 			structuresDD[s_Gate] = CreateDrawData(eob, 3.5f, -0.5f, 0.5f, -0.5f);
-			treeDD[crown_Forest] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
-			treeDD[crown_ForestSmall] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			CrownDD[crown_Forest] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+			CrownDD[crown_ForestSmall] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			CrownDD[crown_Snow] = CrownDD[crown_Forest];
+			CrownDD[crown_SnowSmall] = CrownDD[crown_ForestSmall];
 
 
 
@@ -756,8 +765,8 @@ int main()
 			std::vector<DamagedBlock> damagedBlocks;
 			std::vector<std::vector<uint8_t>> Walls;
 			std::vector<DamagedBlock> damagedWalls;
-			std::vector<tree> trees;
-			std::vector<damagedWood> damagedTrees;
+			std::vector<Crown> Crowns;
+			std::vector<damagedWood> damagedCrowns;
 			std::vector<seedling> seedlings;
 			std::vector<int> isSandOnX;
 			std::vector<int> chunksToRebuildBlock;
@@ -792,12 +801,12 @@ int main()
 				std::cout << "error can not load walls" << std::endl;
 
 			}
-			if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+			if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 			{
 				std::cout << "error can not load structs" << std::endl;
 
 			}
-			if (!Load(pathToSave,player,damagedTrees,damagedBlocks,damagedWalls,projectiles,enemies,dropItems, letters, eob))
+			if (!Load(pathToSave,player,damagedCrowns,damagedBlocks,damagedWalls,projectiles,enemies,dropItems, letters, eob))
 			{
 				std::cout << "error can not load player" << std::endl;
 
@@ -885,7 +894,7 @@ int main()
 
 				for (int i = 0; i < seedlings.size(); i++)
 				{
-					if (seedlings.at(i).everyFrame(deltaTime, treeTextures, treeDD, blocks, seedlings, trees))
+					if (seedlings.at(i).everyFrame(deltaTime,chunksToRebuildBlock, blocks, seedlings, Crowns))
 					{
 						seedlings.erase(seedlings.begin() + i);
 					}
@@ -916,12 +925,12 @@ int main()
 				}
 
 
-				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedTrees, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, trees, seedlings, dropItems, projectiles, doors, chests);
+				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedCrowns, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, Crowns, seedlings, dropItems, projectiles, doors, chests);
 
 
 				for (int i = 0; i < projectiles.size(); i++)
 				{
-					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, trees, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures))
+					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures))
 					{
 						projectiles.erase(projectiles.begin() + i);
 
@@ -939,9 +948,9 @@ int main()
 				{
 					damagedWalls.erase(damagedWalls.begin());
 				}
-				else if (damagedTrees.size() > 20)
+				else if (damagedCrowns.size() > 20)
 				{
-					damagedTrees.erase(damagedTrees.begin());
+					damagedCrowns.erase(damagedCrowns.begin());
 				}
 				for (int i = 0; i < damagedBlocks.size(); i++)
 				{
@@ -950,20 +959,19 @@ int main()
 						damagedBlocks.erase(damagedBlocks.begin() + i);
 					}
 				}
-				for (int j = 0; j < damagedTrees.size(); j++)
+				for (int j = 0; j < damagedCrowns.size(); j++)
 				{
 					bool ExistenceOfWood = false;
-					for (int i = 0; i < trees.size(); i++)
+				
+				
+					if (blocks.at(damagedCrowns.at(j).m_Transform[0]).at(damagedCrowns.at(j).m_Transform[1]- Blocks::yMin).m_Type != t_Air)
 					{
-						if (trees.at(i).m_Transform[0] == damagedTrees.at(j).m_Transform[0] && trees.at(i).m_Transform[1] == damagedTrees.at(j).m_Transform[1])
-						{
-							ExistenceOfWood = true;
-							break;
-						}
+						ExistenceOfWood = true;
 					}
+
 					if (!ExistenceOfWood)
 					{
-						damagedTrees.erase(damagedTrees.begin() + j);
+						damagedCrowns.erase(damagedCrowns.begin() + j);
 					}
 				}
 
@@ -1011,21 +1019,21 @@ int main()
 				{
 					damagedBlocks.at(i).DrawDamage(basicSh, transform, damageTexture);
 				}
-				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
+				ErrorGL(glBindVertexArray(structuresDD[s_ForestSapling]));
 				for (int i = 0; i < seedlings.size(); i++)
 				{
 					seedlings.at(i).drawSeedling(basicSh, transform);
 				}
-				treeSh.Bind();
-				treeSh.SetUniformMat4(treeCamera, camera);
-				for (int i = 0; i < trees.size(); i++)
+				CrownSh.Bind();
+				CrownSh.SetUniformMat4(CrownCamera, camera);
+				for (int i = 0; i < Crowns.size(); i++)
 				{
-					trees.at(i).drawTree(treeSh, CameraCoordinates, transform, rotation);
+					DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, CameraCoordinates, transform, rotation);
 				}
 				ErrorGL(glBindVertexArray(blocksDrawData));
-				for (int i = 0; i < damagedTrees.size(); i++)
+				for (int i = 0; i < damagedCrowns.size(); i++)
 				{
-					damagedTrees.at(i).DrawCut(treeSh, rotation, transform, CutTextures);
+					damagedCrowns.at(i).DrawCut(CrownSh, rotation, transform, CutTextures);
 				}
 
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);
@@ -1301,11 +1309,11 @@ int main()
 							{
 								std::cout << "error can not load (walls)" << std::endl;
 							}
-							if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+							if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 							{
 								std::cout << "error can not load (struct)" << std::endl;
 							}
-							if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
+							if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
 							{
 								std::cout << "error can not load player" << std::endl;
 
@@ -1381,7 +1389,7 @@ int main()
 							{
 								std::cout << "error can not make save (walls)" << std::endl;
 							}
-							if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+							if (!Save(pathToSave, craftStations, chests, doors, Crowns, seedlings))
 							{
 								std::cout << "error can not make save (struct)" << std::endl;
 							}
@@ -1422,7 +1430,7 @@ int main()
 					{
 						std::cout << "error can not make save (walls)" << std::endl;
 					}
-					if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+					if (!Save(pathToSave, craftStations, chests, doors, Crowns, seedlings))
 					{
 						std::cout << "error can not make save (struct)" << std::endl;
 					}
@@ -1437,11 +1445,11 @@ int main()
 					{
 						std::cout << "error can not load (walls)" << std::endl;
 					}
-					if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+					if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 					{
 						std::cout << "error can not load (struct)" << std::endl;
 					}
-					if (!Load(pathToSave, player, damagedTrees, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
+					if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
 					{
 						std::cout << "error can not load player" << std::endl;
 
@@ -1550,11 +1558,11 @@ int main()
 			shadowSh.GetUniformLocation("camera");
 			shadowSh.GetUniformLocation("transform");
 			shadowSh.GetUniformLocation("shadow");
-			Shader treeSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
-			treeSh.Bind();
-			treeSh.GetUniformLocation("treeCamera");
-			treeSh.GetUniformLocation("treeTransform");
-			treeSh.GetUniformLocation("treeRotation");
+			Shader CrownSh("res/shaders/verTree.txt", "res/shaders/fragBasic.txt");
+			CrownSh.Bind();
+			CrownSh.GetUniformLocation("CrownCamera");
+			CrownSh.GetUniformLocation("CrownTransform");
+			CrownSh.GetUniformLocation("CrownRotation");
 			Shader structureSh("res/shaders/verBasic.txt", "res/shaders/fragStructures.txt");
 			structureSh.Bind();
 			structureSh.GetUniformLocation("camera");
@@ -1591,8 +1599,8 @@ int main()
 			advancedSh.Bind();
 			advancedSh.SetUniform1i(advancedSize + ShadowLocation, 0);
 			advancedSh.SetUniformMat4(advancedRotation, rotation);
-			treeSh.Bind();
-			treeSh.SetUniformMat4(treeRotation, rotation);
+			CrownSh.Bind();
+			CrownSh.SetUniformMat4(CrownRotation, rotation);
 			numberSh.Bind();
 			numberSh.SetUniformMat4(numberCamera, camera);
 			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
@@ -1601,9 +1609,9 @@ int main()
 			unsigned int enemiesDD1[enemySize];
 			unsigned int enemiesDD2[enemySize];
 			unsigned int blockTextures[t_BlocksSize];
-			unsigned int treeTextures[3];
+			unsigned int CrownTextures[4];
 			unsigned int CutTextures[4];
-			unsigned int structuresTextures[8];
+			unsigned int structuresTextures[s_StructureSize];
 			unsigned int DoorTextures[2] = { CreateTextureRGBA("res/textures/CloseDoor.png"), CreateTextureRGBA("res/textures/openDoor.png") };
 			unsigned int trapDoorTextures[2] = { CreateTextureRGBA("res/textures/CloseTrapDoor.png"), CreateTextureRGBA("res/textures/OpenTrapDoor.png") };
 			unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
@@ -1612,7 +1620,10 @@ int main()
 			CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 			CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
 			CutTextures[3] = CreateTextureRGBA("res/textures/cut1.png");
-			structuresTextures[s_Sapling] = CreateTextureRGBA("res/textures/sapling.png");
+
+			structuresTextures[s_ForestSapling] = CreateTextureRGBA("res/textures/sapling.png");
+			structuresTextures[s_SnowSapling] = CreateTextureRGBA("res/textures/saplingSnow.png");
+			structuresTextures[s_CactusSapling] = CreateTextureRGBA("res/textures/saplingCactus.png");
 			structuresTextures[s_Chest] = CreateTextureRGBA("res/textures/Chest.png");
 			structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
 			structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
@@ -1620,14 +1631,17 @@ int main()
 			structuresTextures[s_Door] = DoorTextures[0];
 			structuresTextures[s_TrapDoor] = trapDoorTextures[0];
 			structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
-			treeTextures[part_Crown] = CreateTextureRGBA("res/textures/forestBush.png");
-			treeTextures[part_SmallCrown] = CreateTextureRGBA("res/textures/forestSmallBush.png");
-			treeTextures[part_Log] = CreateTextureRGBA("res/textures/woodLog.png");
-			unsigned int treeDD[3];
-			unsigned int structuresDD[8];
+			CrownTextures[crown_Forest] = CreateTextureRGBA("res/textures/forestBush.png");
+			CrownTextures[crown_ForestSmall] = CreateTextureRGBA("res/textures/forestSmallBush.png");
+			CrownTextures[crown_Snow] = CreateTextureRGBA("res/textures/snowBush.png");
+			CrownTextures[crown_SnowSmall] = CreateTextureRGBA("res/textures/snowSmallBush.png");
+			unsigned int CrownDD[4];
+			unsigned int structuresDD[s_StructureSize];
 			unsigned int alternativeBlockDD = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f, 1, 0, TEXSLOTDISTANCE, 0);
 
-			structuresDD[s_Sapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+			structuresDD[s_ForestSapling] = CreateDrawData(eob, 1.5f, -0.5f, 0.5f, -0.5f);
+			structuresDD[s_CactusSapling] = structuresDD[s_ForestSapling];
+			structuresDD[s_SnowSapling] = structuresDD[s_ForestSapling];
 			structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
 			structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
 			structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
@@ -1635,9 +1649,10 @@ int main()
 			structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 			structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
 			structuresDD[s_Gate] = CreateDrawData(eob, 3.5f, -0.5f, 0.5f, -0.5f);
-			treeDD[part_Log] = CreateDrawData(eob, 0.5f, -0.5f, 0.5f, -0.5f);
-			treeDD[part_Crown] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
-			treeDD[part_SmallCrown] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			CrownDD[crown_Forest] = CreateDrawData(eob, 4.5f, -0.5f, 3.5f, -3.5f);
+			CrownDD[crown_ForestSmall] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
+			CrownDD[crown_Snow] = CrownDD[crown_Forest];
+			CrownDD[crown_SnowSmall] = CrownDD[crown_ForestSmall];
 
 
 
@@ -1664,7 +1679,7 @@ int main()
 		
 			std::vector<std::vector<uint8_t>> Walls;
 		
-			std::vector<tree> trees;
+			std::vector<Crown> Crowns;
 		
 			std::vector<seedling> seedlings;
 			std::vector<int> isSandOnX;
@@ -1692,7 +1707,7 @@ int main()
 				std::cout << "error can not load walls" << std::endl;
 
 			}
-			if (!Load(pathToSave,blocks,craftStations,chests,doors,trees,seedlings,structuresTextures,treeTextures,treeDD))
+			if (!Load(pathToSave,blocks,craftStations,chests,doors,Crowns,seedlings,structuresTextures,CrownTextures,CrownDD))
 			{
 				std::cout << "error can not load structs" << std::endl;
 
@@ -1793,16 +1808,16 @@ int main()
 				DrawChunks(shadowSh, blockTextures, transform, editor.m_Transform, blockChunks,wallChunks);
 
 				basicSh.Bind();
-				ErrorGL(glBindVertexArray(structuresDD[s_Sapling]));
+				ErrorGL(glBindVertexArray(structuresDD[s_ForestSapling]));
 				for (int i = 0; i < seedlings.size(); i++)
 				{
 					seedlings.at(i).drawSeedling(basicSh, transform);
 				}
-				treeSh.Bind();
-				treeSh.SetUniformMat4(treeCamera, camera);
-				for (int i = 0; i < trees.size(); i++)
+				CrownSh.Bind();
+				CrownSh.SetUniformMat4(CrownCamera, camera);
+				for (int i = 0; i < Crowns.size(); i++)
 				{
-					trees.at(i).drawTree(treeSh, editor.m_Transform, transform, rotation);
+					DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, editor.m_Transform, transform, rotation);
 				}
 				ErrorGL(glBindVertexArray(blocksDrawData));
 			
@@ -1942,7 +1957,7 @@ int main()
 							{
 								std::cout << "error can not load (walls)" << std::endl;
 							}
-							if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+							if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 							{
 								std::cout << "error can not load (struct)" << std::endl;
 							}
@@ -2017,7 +2032,7 @@ int main()
 							{
 								std::cout << "error can not make save (walls)" << std::endl;
 							}
-							if (!Save(pathToSave,craftStations,chests,doors,trees,seedlings))
+							if (!Save(pathToSave,craftStations,chests,doors,Crowns,seedlings))
 							{
 								std::cout << "error can not make save (struct)" << std::endl;
 							}
@@ -2053,7 +2068,7 @@ int main()
 					{
 						std::cout << "error can not make save (walls)" << std::endl;
 					}
-					if (!Save(pathToSave, craftStations, chests, doors, trees, seedlings))
+					if (!Save(pathToSave, craftStations, chests, doors, Crowns, seedlings))
 					{
 						std::cout << "error can not make save (struct)" << std::endl;
 					}
@@ -2068,7 +2083,7 @@ int main()
 					{
 						std::cout << "error can not load (walls)" << std::endl;
 					}
-					if (!Load(pathToSave, blocks, craftStations, chests, doors, trees, seedlings, structuresTextures, treeTextures, treeDD))
+					if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 					{
 						std::cout << "error can not load (struct)" << std::endl;
 					}

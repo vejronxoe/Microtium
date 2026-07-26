@@ -101,7 +101,7 @@ bool FindDoor(std::vector<Door>& structures
 void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 	, std::vector< std::vector<uint8_t>>& Walls
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Chest>& chests
 	, std::vector<Door>& doors
@@ -153,7 +153,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					preferSide = 1;
 				}
 				int vertices[4] = { preferSide + m_Vertices[0], m_Vertices[1],preferSide + m_Vertices[2] ,m_Vertices[3] };
-				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+				if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
 				{
 
 					for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
@@ -177,7 +177,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					vertices[1] = m_Vertices[1];
 					vertices[2] = m_Vertices[2] - preferSide;
 					vertices[3] = m_Vertices[3];
-					if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+					if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
 					{
 						for (int i = m_Vertices[3]; i <= m_Vertices[1]; i++)
 						{
@@ -210,7 +210,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					preferSide = 1;
 				}
 				int vertices[4] = { m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
-				if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+				if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
 				{
 					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 					{
@@ -231,7 +231,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 					vertices[1] = m_Vertices[1] - preferSide;
 					vertices[2] = m_Vertices[2];
 					vertices[3] = m_Vertices[3] - preferSide;
-					if (!isAnythinginArea(vertices, blocks, seedlings, trees, craftingStations, doors, chests))
+					if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
 					{
 						for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 						{
@@ -524,7 +524,9 @@ void getStructureVertices(int x
 {
 	switch (ID)
 	{
-	case s_Sapling:
+	case s_ForestSapling:
+	case s_SnowSapling:
+	case s_CactusSapling:
 		vertices[0] = x;
 		vertices[1] = y + 1;
 		vertices[2] = x;
@@ -574,7 +576,11 @@ char GetStructureID(unsigned char Item)
 	switch (Item)
 	{
 	case i_Sapling:
-		return s_Sapling;
+		return s_ForestSapling;
+	case i_SnowSapling:
+		return s_SnowSapling;
+	case i_CactusSapling:
+		return s_CactusSapling;
 	case i_CraftingTable:
 		return s_CraftingTable;
 	case i_Anvil:
@@ -596,13 +602,17 @@ char GetStructureID(unsigned char Item)
 		return s_CraftingTable;
 	}
 }
-unsigned char GetItemIDByStructure(char structure)
+unsigned short GetItemIDByStructure(char structure)
 {
 
 	switch (structure)
 	{
-	case s_Sapling:
+	case s_ForestSapling:
 		return i_Sapling;
+	case s_SnowSapling:
+		return i_SnowSapling;
+	case s_CactusSapling:
+		return  i_CactusSapling;
 	case s_CraftingTable:
 		return i_CraftingTable;
 	case s_Anvil:
@@ -650,7 +660,7 @@ bool isAnythingOnThisTransform(int x
 	, int y 
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
@@ -660,10 +670,6 @@ bool isAnythingOnThisTransform(int x
 	
 	int fill;
 	if (blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
-	{
-		return true;
-	}
-	if (FindWood(trees, x, y, fill))
 	{
 		return true;
 	}
@@ -684,7 +690,7 @@ bool isAnythingOnThisTransform(int x
 bool isAnythinginArea(int* vertices
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests)
@@ -710,10 +716,6 @@ bool isAnythinginArea(int* vertices
 	}
 
 	if (FindBlock(blocks, vertices))
-	{
-		return true;
-	}
-	if (FindWood(trees, vertices))
 	{
 		return true;
 	}
@@ -745,9 +747,16 @@ void CreateStructure(int StructureID
 {
 	switch (StructureID)
 	{
-	case s_Sapling:
-		seedlings.emplace_back(s_Sapling, x, y, structuresTex, blocks);
+	case s_ForestSapling:
+		seedlings.emplace_back(s_ForestSapling, x, y, structuresTex, blocks);
 		break;
+	case s_SnowSapling:
+		seedlings.emplace_back(s_SnowSapling, x, y, structuresTex, blocks);
+		break;
+	case s_CactusSapling:
+		seedlings.emplace_back(s_CactusSapling, x, y, structuresTex, blocks);
+		break;
+
 	case s_CraftingTable:
 	{
 		CraftStation table;

@@ -57,7 +57,7 @@ struct Projectile
 		, std::vector<std::vector<uint8_t>>& Walls
 		, std::vector<CraftStation>& craftStations
 		, std::vector<seedling>& seedlings
-		, std::vector<tree>& trees
+		, std::vector<Crown>& Crowns
 		, std::vector<DroppedItem>& dropItems
 		, std::vector<BoomParticle>& particles
 		, std::vector<Door>& doors

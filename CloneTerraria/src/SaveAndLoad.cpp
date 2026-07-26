@@ -354,7 +354,7 @@ bool Save(std::string path
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests
 	, std::vector<Door>& doors
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<seedling>& sapling)
 {
 	std::ofstream file(path + "Struct0.dat", std::ios::binary | std::ios::trunc);
@@ -379,7 +379,7 @@ bool Save(std::string path
 	}
 	for (int i = 0; i < sapling.size();i++)
 	{
-		uint8_t type = s_Sapling;
+		uint8_t type = sapling.at(i).m_Type;
 		file.write(reinterpret_cast<char*>(&type), sizeof(type));
 		int16_t x = sapling.at(i).m_Transform[0];
 		file.write(reinterpret_cast<char*>(&x), sizeof(x));
@@ -427,18 +427,16 @@ bool Save(std::string path
 	{
 		return false;
 	}
-	for (int i = 0 ; i < trees.size(); i++)
+	for (int i = 0 ; i < Crowns.size(); i++)
 	{
-		uint8_t type = s_StructureSize + trees.at(i).m_PartOfTree;
+		uint8_t type = s_StructureSize + Crowns.at(i).m_Type;
 		file.write(reinterpret_cast<char*>(&type), sizeof(type));
-		int16_t x = trees.at(i).m_Transform[0];
+		int16_t x = Crowns.at(i).m_Transform[0];
 		file.write(reinterpret_cast<char*>(&x), sizeof(x));
-		int16_t y = trees.at(i).m_Transform[1];
+		int16_t y = Crowns.at(i).m_Transform[1];
 		file.write(reinterpret_cast<char*>(&y), sizeof(y));
-		int16_t rotation = trees.at(i).m_Rotation;
+		int8_t rotation = Crowns.at(i).m_Rotation;
 		file.write(reinterpret_cast<char*>(&rotation), sizeof(rotation));
-		int16_t itemDrop = trees.at(i).m_ItemDrop;
-		file.write(reinterpret_cast<char*>(&itemDrop), sizeof(itemDrop));
 	}
 	if (!file.good())
 	{
@@ -456,15 +454,15 @@ bool Load(std::string path
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests
 	, std::vector<Door>& doors
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<seedling>& sapling
 	, unsigned int* structTex
-	, unsigned int* treeTex
-	, unsigned int* treeDD)
+	, unsigned int* CrownTex
+	, unsigned int* CrownDD)
 {
 	chests.clear();
 	doors.clear();
-	trees.clear();
+	Crowns.clear();
 	craftStations.clear();
 	sapling.clear();
 	if (!LoadingSafely(path +"Struct"))
@@ -503,7 +501,9 @@ bool Load(std::string path
 		case s_Gate:
 		case s_Door:
 		case s_TrapDoor:
-		case s_Sapling:
+		case s_ForestSapling:
+		case s_SnowSapling:
+		case s_CactusSapling:
 		{
 			int16_t x;
 			file.read(reinterpret_cast<char*>(&x), sizeof(x));
@@ -537,9 +537,8 @@ bool Load(std::string path
 			}
 			break;
 		}
-		case s_StructureSize + part_Crown:
-		case s_StructureSize + part_SmallCrown:
-		case s_StructureSize + part_Log:
+		case s_StructureSize + crown_Forest:
+		case s_StructureSize + crown_ForestSmall:
 		{
 			int16_t x;
 			file.read(reinterpret_cast<char*>(&x), sizeof(x));
@@ -547,13 +546,10 @@ bool Load(std::string path
 			int16_t y;
 			file.read(reinterpret_cast<char*>(&y), sizeof(y));
 			totalSize -= sizeof(y);
-			int16_t rotation;
+			int8_t rotation;
 			file.read(reinterpret_cast<char*>(&rotation), sizeof(rotation));
 			totalSize -= sizeof(rotation);
-			int16_t itemDrop;
-			file.read(reinterpret_cast<char*>(&itemDrop), sizeof(itemDrop));
-			totalSize -= sizeof(itemDrop);
-			trees.emplace_back(treeTex[type - s_StructureSize],treeDD[type - s_StructureSize],itemDrop,35, type - s_StructureSize,x,y,rotation);
+			Crowns.emplace_back(x,y,rotation, type - s_StructureSize);
 			break;
 		}
 		default:

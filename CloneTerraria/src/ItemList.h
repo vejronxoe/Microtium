@@ -33,6 +33,7 @@ enum Items
 	, i_WallSandStone
 	, i_WallSnow
 	, i_WallSnowPlank
+	, i_WallCactusPlank
 	, i_WallIce////////
 	, i_Sand
 	, i_Sapling
@@ -80,7 +81,9 @@ enum Items
 	, i_Snow
 	, i_HeartGem
 	, i_SnowPlank
-	, i_Cactus
+	, i_CactusPlank
+	, i_SnowSapling
+	, i_CactusSapling
 	, i_ItemSize
 };
 enum Structures
@@ -89,7 +92,9 @@ enum Structures
 	, s_Forge
 	, s_Anvil
 	, s_Chest
-	, s_Sapling
+	, s_ForestSapling
+	, s_SnowSapling
+	, s_CactusSapling
 	, s_Gate
 	, s_Door
 	, s_TrapDoor

@@ -143,7 +143,7 @@ public:
 		, unsigned int eob
 		, unsigned int* texturesIDs
 		, unsigned int* structuresTextures
-		, std::vector<tree>& trees
+		, std::vector<Crown>& Crowns
 		, std::vector<seedling>& seedlings
 		, std::vector<DroppedItem>& droppedItems
 		, std::vector<Projectile>& projectiles

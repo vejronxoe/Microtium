@@ -19,18 +19,18 @@ bool Save(std::string path
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests
 	, std::vector<Door>& doors
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<seedling>& sapling);
 bool Load(std::string path
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<CraftStation>& craftStations
 	, std::vector<Chest>& chests
 	, std::vector<Door>& doors
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<seedling>& sapling
 	, unsigned int* structTex
-	, unsigned int* treeTex
-	, unsigned int* treeDD);
+	, unsigned int* CrownTex
+	, unsigned int* CrownDD);
 bool Save(std::string path
 	, Player& player);
 

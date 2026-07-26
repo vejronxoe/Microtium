@@ -155,7 +155,7 @@ bool Projectile::EveryFrame(float deltaTime
 	, std::vector<std::vector<uint8_t>>& Walls
 	, std::vector<CraftStation>& craftStations
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<DroppedItem>& dropItems
 	, std::vector<BoomParticle>& particles
 	, std::vector<Door>& doors
@@ -198,7 +198,7 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			int x = roundf(m_Transform[0]);
 			int y = roundf(m_Transform[1]);
-			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations,doors,chests);
+			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, Crowns, craftStations,doors,chests);
 			if (!inBlock)
 			{
 				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), t_Sand,chunksToRebuild, blocks, isSandOnX);

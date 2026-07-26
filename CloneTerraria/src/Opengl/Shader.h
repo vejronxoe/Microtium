@@ -50,12 +50,12 @@ enum HUDVertexSh
 	, HUDBasicLocation
 	, HUDSize
 };
-enum TreeVertexSh
+enum CrownVertexSh
 {
-	treeCamera = 0
-	, treeTransform
-	, treeRotation
-	, treeSize
+	CrownCamera = 0
+	, CrownTransform
+	, CrownRotation
+	, CrownSize
 };
 enum advancedVertexSh
 {

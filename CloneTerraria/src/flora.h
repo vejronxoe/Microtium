@@ -3,6 +3,7 @@
 
 #include "BlocksAndWalls.h"
 
+#include "DroppedItems.h"
 
 enum CrownTypes : uint8_t
 {
@@ -13,11 +14,22 @@ enum CrownTypes : uint8_t
 };
 struct Crown
 {
-	int m_Transform[2] = {0,0};
-	int m_Rotation = 0;
-	CrownTypes m_Type = crown_ForestSmall;
+public:
+	int16_t m_Transform[2] = {0,0};
+	int8_t m_Rotation = 0;
+	uint8_t m_Type = crown_ForestSmall;
+	Crown(int16_t x
+		, int16_t y
+		, int8_t rotation
+		, uint8_t type);
 };
-void DrawTrees(Shader& sh
+void DestroyCrown(int* transform
+	, std::vector<DroppedItem>& dropItems
+	, std::vector<Crown>& crowns);
+void DrawCrowns(Shader& sh
+	, std::vector<Crown>& crowns
+	, unsigned int* DDs
+	, unsigned int* textures
 	, float* cameraCoordinate
 	, float* transform
 	, float* rotation);
@@ -34,11 +46,10 @@ public:
 		, unsigned int* structuresTextures
 		, std::vector<std::vector<Block>>& blocks);
 	bool everyFrame(float deltaTime
-		, unsigned int* treeTextures
-		, unsigned int* treeDD
+		, std::vector<int>& chunksToRebuild
 		, std::vector<std::vector<Block>>& blocks
 		, std::vector<seedling>& seedlings
-		, std::vector<tree>& trees);
+		, std::vector<Crown>& Crowns);
 	void drawSeedling(Shader sh
 		, float* Transform);
 
@@ -59,10 +70,6 @@ public:
 		, float* transform
 		, unsigned int* texture);
 };
-bool FindWood(std::vector<tree>& woods
-	, int x
-	, int y
-	, int& index);
 
 bool FindSeedling(std::vector<seedling>& seedlings
 	, int x
@@ -72,5 +79,3 @@ bool FindSeedling(std::vector<seedling>& seedlings
 bool FindSeedling(std::vector<seedling>& seedlings
 	, int* vertices);
 
-bool FindWood(std::vector<tree>& woods
-	, int* vertices);

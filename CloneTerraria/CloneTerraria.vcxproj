@@ -145,6 +145,10 @@
     <Image Include="res\textures\bowInHand.png" />
     <Image Include="res\textures\bowInInv.png" />
     <Image Include="res\textures\Bucket.png" />
+    <Image Include="res\textures\cactusPlank.png" />
+    <Image Include="res\textures\cactusSaplingInv.png" />
+    <Image Include="res\textures\cactusTop.png" />
+    <Image Include="res\textures\cactusVer.png" />
     <Image Include="res\textures\canAxeIt.png" />
     <Image Include="res\textures\CanChest.png" />
     <Image Include="res\textures\canClickon.png" />
@@ -175,6 +179,8 @@
     <Image Include="res\textures\cut3.png" />
     <Image Include="res\textures\cut4.png" />
     <Image Include="res\textures\DamageBlock.png" />
+    <Image Include="res\textures\darkWoodHor.png" />
+    <Image Include="res\textures\darkWoodVer.png" />
     <Image Include="res\textures\dirtBlock.png" />
     <Image Include="res\textures\DoorInv.png" />
     <Image Include="res\textures\dot.png" />
@@ -209,6 +215,7 @@
     <Image Include="res\textures\legAnimDefault.png" />
     <Image Include="res\textures\legAnimWood.png" />
     <Image Include="res\textures\lightDamageBlock.png" />
+    <Image Include="res\textures\lightWoodHor.png" />
     <Image Include="res\textures\missingDownGrassBlock.png" />
     <Image Include="res\textures\missingIngredientSlot.png" />
     <Image Include="res\textures\missingLeftGrassBlock.png" />
@@ -232,7 +239,9 @@
     <Image Include="res\textures\SandPlatform.png" />
     <Image Include="res\textures\SandStone.png" />
     <Image Include="res\textures\sapling.png" />
+    <Image Include="res\textures\saplingCactus.png" />
     <Image Include="res\textures\saplingInv.png" />
+    <Image Include="res\textures\saplingSnow.png" />
     <Image Include="res\textures\scrapCannonBall.png" />
     <Image Include="res\textures\SelectIcon.png" />
     <Image Include="res\textures\SelectZone.png" />
@@ -240,7 +249,11 @@
     <Image Include="res\textures\Slider.png" />
     <Image Include="res\textures\slimeAnim.png" />
     <Image Include="res\textures\Snow.png" />
+    <Image Include="res\textures\snowBush.png" />
+    <Image Include="res\textures\snowPlank.png" />
     <Image Include="res\textures\SnowPlatform.png" />
+    <Image Include="res\textures\SnowSaplingInv.png" />
+    <Image Include="res\textures\snowSmallBush.png" />
     <Image Include="res\textures\stone.png" />
     <Image Include="res\textures\StoneBrick.png" />
     <Image Include="res\textures\terracotta.png" />
@@ -264,6 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />
+    <None Include="res\settings.dat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

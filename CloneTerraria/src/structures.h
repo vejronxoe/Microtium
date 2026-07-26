@@ -36,7 +36,7 @@ struct Door
 	void DoorInteract(std::vector<std::vector<Block>>& blocks
 		, std::vector< std::vector<uint8_t>>& Walls
 		, std::vector<seedling>& seedlings
-		, std::vector<tree>& trees
+		, std::vector<Crown>& Crowns
 		, std::vector<CraftStation>& craftingStations
 		, std::vector<Chest>& chests
 		, std::vector<Door>& doors
@@ -95,7 +95,7 @@ void getStructureVertices(int x
 	, unsigned int ID
 	, int* vertices);
 char GetStructureID(unsigned char Item);
-unsigned char GetItemIDByStructure(char structure);
+unsigned short GetItemIDByStructure(char structure);
 void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<DroppedItem>& droppedItems);
@@ -104,14 +104,14 @@ bool isAnythingOnThisTransform(int x
 	, int y
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests);
 bool isAnythinginArea(int* vertices
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<seedling>& seedlings
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<CraftStation>& craftingStations
 	, std::vector<Door>& doors
 	, std::vector<Chest>& chests);

@@ -53,14 +53,14 @@ enum blockTypes
 	, t_Snow
 	, t_HeartBlock
 	, t_SandStone
-	, t_LightWoodHor
 	, t_LightWoodVer
-	, t_DarkWoodHor
+	, t_LightWoodHor
 	, t_DarkWoodVer
-	, t_CactusHor
+	, t_DarkWoodHor
 	, t_CactusVer
 	, t_CactusTop
 	, t_SnowPlank
+	, t_CactusPlank
 	, t_DoorBlock
 	, t_BlocksSize
 

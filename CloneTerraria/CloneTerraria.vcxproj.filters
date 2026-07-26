@@ -681,8 +681,48 @@
     <Image Include="res\textures\SandStone.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\cactusVer.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cactusTop.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cactusPlank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\darkWoodHor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\darkWoodVer.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\lightWoodHor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\snowPlank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\cactusSaplingInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\SnowSaplingInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\saplingCactus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\saplingSnow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\snowBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\snowSmallBush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />
+    <None Include="res\settings.dat" />
   </ItemGroup>
 </Project>

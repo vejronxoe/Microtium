@@ -101,7 +101,8 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_AccessoriseFastShoes] = CreateTextureRGBA("res/textures/accessoriseFastShoes.png");
 	itemTex[i_Chest] = structureTex[s_Chest];
 	itemTex[i_AccessoriseShackle] = CreateTextureRGBA("res/textures/accessoriseShackle.png");
-
+	itemTex[i_CactusSapling] = CreateTextureRGBA("res/textures/cactusSaplingInv.png");
+	itemTex[i_SnowSapling] = CreateTextureRGBA("res/textures/SnowSaplingInv.png");
 	itemTex[i_IronIngot] = CreateTextureRGBA("res/textures/ironIngot.png");
 	itemTex[i_CopperIngot] = CreateTextureRGBA("res/textures/copperIngot.png");
 	itemTex[i_CraftingTable] = CreateTextureRGBA("res/textures/benchInv.png");
@@ -827,6 +828,8 @@ void Player::SwapItemStats()
 			m_Damage = 1;
 		break;
 		case i_Sapling:
+		case i_SnowSapling:
+		case i_CactusSapling:
 		case i_CraftingTable:
 		case i_Forge:
 		case i_Anvil:
@@ -1295,7 +1298,7 @@ void Player::EveryFrame(float deltaTime
 	, unsigned int eob
 	, unsigned int* texturesIDs
 	, unsigned int* structuresTextures
-	, std::vector<tree>& trees
+	, std::vector<Crown>& Crowns
 	, std::vector<seedling>& seedlings
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Projectile>& projectiles
@@ -1944,7 +1947,6 @@ void Player::EveryFrame(float deltaTime
 		int WallIndex = -1;
 		m_AimingAtChest = -1;
 		m_AimingAtDoors = -1;
-		int woodIndex = 0;
 		bool inBlock = false;
 
 		int rangeX = x - m_Transform[0];
@@ -2040,7 +2042,7 @@ void Player::EveryFrame(float deltaTime
 						}
 						else if (Input::RightMousePress )
 						{
-							doors.at(m_AimingAtDoors).DoorInteract(blocks, Walls, seedlings, trees, craftStations, chests, doors, isThereSandOnX, m_Transform);
+							doors.at(m_AimingAtDoors).DoorInteract(blocks, Walls, seedlings, Crowns, craftStations, chests, doors, isThereSandOnX, m_Transform);
 						}
 						
 					}
@@ -2084,7 +2086,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					bool inWall = Walls.at(x).at(y - Blocks::yMin) != t_Air;
 					m_CursorOnPlaceableSpot = inWall;
-					inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, trees, craftStations, doors, chests);
+					inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, Crowns, craftStations, doors, chests);
 					if (!m_CursorOnPlaceableSpot)
 					{
 						m_CursorOnPlaceableSpot = inBlock;
@@ -2109,10 +2111,13 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_PickaxeStreanght)
 			{
-				blockIndex = y - Blocks::yMin;
 				m_CursorOnMinableBlock = blocks.at(x).at(y - Blocks::yMin).m_Type != b_Air;
+				blockIndex = y - Blocks::yMin;
 
-				if (m_CursorOnMinableBlock && (blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Indestructible || blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Door || GetHardnessBytype(blocks.at(x).at(y - Blocks::yMin).m_Type) > m_PickaxeStreanght))
+				if (m_CursorOnMinableBlock && (blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Indestructible 
+					|| blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Door
+					|| blocks.at(x).at(y - Blocks::yMin).m_Type >= t_LightWoodVer && blocks.at(x).at(y - Blocks::yMin).m_Type <= t_CactusTop
+					|| GetHardnessBytype(blocks.at(x).at(y - Blocks::yMin).m_Type) > m_PickaxeStreanght))
 				{
 					m_CursorOnMinableBlock = false;
 					blockIndex = -1;
@@ -2121,6 +2126,7 @@ void Player::EveryFrame(float deltaTime
 				if (!m_CursorOnMinableBlock)
 				{
 					m_CursorOnMinableBlock = FindCraftStation(craftStations, x, y, craftingStationIndex);
+					blockIndex = -1;
 				}
 				if (!m_CursorOnMinableBlock)
 				{
@@ -2156,8 +2162,8 @@ void Player::EveryFrame(float deltaTime
 			}
 			else if (m_AxeStreanght)
 			{
-				m_CursorOnMinableWood = FindWood(trees, x, y,woodIndex);
-				if (m_CursorOnMinableWood && trees.at(woodIndex).m_Hardness > m_AxeStreanght)
+				m_CursorOnMinableWood = blocks.at(x).at(y - Blocks::yMin).m_Type >= t_LightWoodVer && blocks.at(x).at(y - Blocks::yMin).m_Type <= t_CactusTop;
+				if (m_CursorOnMinableWood && GetHardnessBytype(blocks.at(x).at(y - Blocks::yMin).m_Type) > m_AxeStreanght)
 				{
 					m_CursorOnMinableWood = false;
 				}
@@ -2167,7 +2173,7 @@ void Player::EveryFrame(float deltaTime
 				int  vertices[4];
 				bool floors = true;
 				getStructureVertices(x, y, GetStructureID(m_PlayerSlots[0]), vertices);
-				inBlock = isAnythinginArea(vertices, blocks, seedlings, trees, craftStations,doors, chests);
+				inBlock = isAnythinginArea(vertices, blocks, seedlings, Crowns, craftStations,doors, chests);
 				switch (m_PlayerSlots[0])
 				{
 				case s_TrapDoor:
@@ -2227,6 +2233,52 @@ void Player::EveryFrame(float deltaTime
 								}
 							}
 						}
+					}
+					switch (m_PlayerSlots[0])
+					{
+					case i_Sapling:
+						if (y >=0)
+						{
+							if (!(x >= 360 && x <= 720))
+							{
+
+								inBlock = true;
+							}
+						}
+						else
+						{
+							inBlock = true;
+						}
+						break;
+					case i_SnowSapling:
+						if (y >= 0)
+						{
+							if ((x > 360))
+							{
+
+								inBlock = true;
+							}
+						}
+						else
+						{
+							
+							inBlock = true;
+						}
+						break;
+					case i_CactusSapling:
+						if (y >= 0)
+						{
+							if ((x < 720))
+							{
+
+								inBlock = true;
+							}
+						}
+						else
+						{
+							inBlock = true;
+						}
+						break;
 					}
 					if (!inBlock)
 					{
@@ -2374,7 +2426,8 @@ void Player::EveryFrame(float deltaTime
 					}
 					else if (seedlingIndex != -1)
 					{
-						droppedItems.emplace_back(x, y, 0, i_Sapling, 1, true);
+						
+						droppedItems.emplace_back(x, y, 0, GetItemIDByStructure(seedlings.at(seedlingIndex).m_Type), 1, true);
 						seedlings.erase(seedlingIndex + seedlings.begin());
 					}
 					else if (doorsIndex != -1)
@@ -2463,129 +2516,65 @@ void Player::EveryFrame(float deltaTime
 					}
 					if (damaged)
 					{
-						damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness);
+						damagedWoods.at(damageIndex).m_HP -= floorf((float)m_AxeStreanght / (float)GetHardnessBytype(blocks.at(x).at(y - Blocks::yMin).m_Type));
 						if (0 >= damagedWoods.at(damageIndex).m_HP)
 						{
-							if (blocks.at(x).at(y - 1 - Blocks::yMin).m_Type != t_Air)
+							int typeOfWood = blocks.at(x).at(y - Blocks::yMin).m_Type;
+							if (typeOfWood == t_CactusVer || typeOfWood == t_CactusTop)
 							{
-								blocks.at(x).at(y - 1 - Blocks::yMin).m_Behavior = getBehaviorByType(blocks.at(x).at(y - 1 - Blocks::yMin).m_Type);
-							}
-							while (woodIndex != -1)
-							{
-								int specialIndex = -1;
-								int destroy[6] = { -1, -1, -1, -1, -1 , -1 };
-								for (int i = 0; i < trees.size(); i++)
+								int checkingTransform[2] = { x  , y };
+
+								while (blocks.at(checkingTransform[0]).at(checkingTransform[1] - Blocks::yMin).m_Type == t_CactusVer || blocks.at(checkingTransform[0]).at(checkingTransform[1]-Blocks::yMin).m_Type == t_CactusTop)
 								{
-									if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
-									{
-										specialIndex = i;
-									}
-									else if (trees.at(woodIndex).m_Transform[1] == trees.at(i).m_Transform[1] && trees.at(i).m_Transform[0] <= trees.at(woodIndex).m_Transform[0] + 2 && trees.at(i).m_Transform[0] >= trees.at(woodIndex).m_Transform[0] - 2 && trees.at(i).m_Transform[0] != trees.at(woodIndex).m_Transform[0])
-									{
-										int j;
-										for (j = 0; destroy[j] != -1; j++) {}
-										destroy[j] = i;
-									}
+
+									droppedItems.emplace_back(checkingTransform[0], checkingTransform[1], 0, GetBlockItemByType(blocks.at(checkingTransform[0]).at(checkingTransform[1] - Blocks::yMin).m_Type), 1, true);
+									DestroyBlock(chunksToRebuildBlocks, blocks, isThereSandOnX, checkingTransform[0], checkingTransform[1]);
+									checkingTransform[1]++;
 								}
+							}
+							else
+							{
+								std::vector<int> stack;
+								stack.push_back(x);
+								stack.push_back(y);
+								while (stack.size())
 								{
-									int j;
-									for (j = 0; destroy[j] != -1; j++) {}
-									destroy[j] = woodIndex;
-									for (int i = 0; i < 5; i++)
+									int table[2][3] = { {-1,0,1}, {0,1,0} };
+									int checkedTransform[2];
+									checkedTransform[1] = stack.at(stack.size() - 1);
+									stack.pop_back();
+									checkedTransform[0] = stack.at(stack.size() - 1);
+									stack.pop_back();
+									for (int i = 0; i < 3; i++)
 									{
-										for (int j = 1; j < 5; j++)
+										int checkingTransform[2] = { checkedTransform[0] + table[0][i] ,checkedTransform[1] + table[1][i] };
+										memoryDefender(checkingTransform, 2);
+										DestroyCrown(checkingTransform, droppedItems, Crowns);
+										int checkingType = blocks.at(checkingTransform[0]).at(checkingTransform[1] - Blocks::yMin).m_Type;
+										if (checkingType == typeOfWood || checkingType == typeOfWood + 1)
 										{
-											if (destroy[j - 1] < destroy[j])
-											{
-												int holder = destroy[j - 1];
-												destroy[j - 1] = destroy[j];
-												destroy[j] = holder;
-											}
+											stack.push_back(checkingTransform[0]);
+											stack.push_back(checkingTransform[1]);
 										}
 									}
+									droppedItems.emplace_back(checkedTransform[0], checkedTransform[1], 0, GetBlockItemByType(blocks.at(checkedTransform[0]).at(checkedTransform[1] - Blocks::yMin).m_Type), 1, true);
+									DestroyBlock(chunksToRebuildBlocks, blocks, isThereSandOnX, checkedTransform[0], checkedTransform[1]);
 								}
-								for (int i = 0; i < 5; i++)
-								{
-									if (destroy[i] < specialIndex && destroy[i] != -1)
-									{
-										specialIndex--;
-									}
-								}
-								woodIndex = specialIndex;
-								for (int j = 0; destroy[j] != -1; j++)
-								{
-									if (trees.at(destroy[j]).m_ItemDrop != i_Nothing)
-									{
-										droppedItems.emplace_back(trees.at(destroy[j]).m_Transform[0], trees.at(destroy[j]).m_Transform[1], 0, trees.at(destroy[j]).m_ItemDrop, 1, true);
-
-									}
-									trees.erase(trees.begin() + destroy[j]);
-								}
-							}
-							damagedWoods.erase(damagedWoods.begin() + damageIndex);
-
-						}
-					}
-					else if (0 >= ((float)trees.at(woodIndex).m_Hardness) - ((float)m_AxeStreanght / 12.0f))
-					{
-						while (woodIndex != -1)
-						{
-							int specialIndex = -1;
-							int destroy[5] = { -1, -1, -1, -1, -1 };
-							for (int i = 0; i < trees.size(); i++)
-							{
-								if (trees.at(woodIndex).m_Transform[0] == trees.at(i).m_Transform[0] && trees.at(woodIndex).m_Transform[1] + 1 == trees.at(i).m_Transform[1])
-								{
-									specialIndex = i;
-								}
-								else if (trees.at(woodIndex).m_Transform[1] == trees.at(i).m_Transform[1] && trees.at(i).m_Transform[0] <= trees.at(woodIndex).m_Transform[0] + 2 && trees.at(i).m_Transform[0] >= trees.at(woodIndex).m_Transform[0] - 2 && trees.at(i).m_Transform[0] != trees.at(woodIndex).m_Transform[0])
-								{
-									int j;
-									for (j = 0; destroy[j] != -1; j++) {}
-									destroy[j] = i;
-								}
-							}
-							{
-								int j;
-								for (j = 0; destroy[j] != -1; j++) {}
-								destroy[j] = woodIndex;
-								for (int i = 0; i < 5; i++)
-								{
-									for (int j = 1; j < 5; j++)
-									{
-										if (destroy[j - 1] < destroy[j])
-										{
-											int holder = destroy[j - 1];
-											destroy[j - 1] = destroy[j];
-											destroy[j] = holder;
-										}
-									}
-								}
-							}
-							for (int i = 0; i < 5; i++)
-							{
-								if (destroy[i] < specialIndex && destroy[i] != -1)
-								{
-									specialIndex--;
-								}
-							}
-							woodIndex = specialIndex;
-							for (int j = 0; destroy[j] != -1; j++)
-							{
-								if (trees.at(destroy[j]).m_ItemDrop != i_Nothing)
-								{
-									droppedItems.emplace_back(trees.at(destroy[j]).m_Transform[0], trees.at(destroy[j]).m_Transform[1], 0, trees.at(destroy[j]).m_ItemDrop, 1, true);
-
-								}
-								trees.erase(trees.begin() + destroy[j]);
 							}
 						}
 
 					}
 					else
 					{
-
-						damagedWoods.emplace_back(x, trees.at(woodIndex).m_Transform[1], trees.at(woodIndex).m_Rotation, ceilf(12.0f - ((float)m_AxeStreanght / (float)trees.at(woodIndex).m_Hardness)));
+						int8_t rotation = 0;
+						switch (blocks.at(x).at(y - Blocks::yMin).m_Type)
+						{
+						case t_DarkWoodHor:
+						case t_LightWoodHor:
+							rotation = 90;
+							break;
+						}
+						damagedWoods.emplace_back(x, y,rotation , ceilf(12.0f - ((float)m_AxeStreanght / (float)GetHardnessBytype(blocks.at(x).at(y - Blocks::yMin).m_Type))));
 					}
 
 				}
