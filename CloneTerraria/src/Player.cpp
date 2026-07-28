@@ -111,6 +111,9 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
 	itemTex[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
 	itemTex[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
+	itemTex[i_Lathe] = CreateTextureRGBA("res/textures/latheInv.png");
+	itemTex[i_WorkBench] = CreateTextureRGBA("res/textures/workBenchInv.png");
+	itemTex[i_AlchemyTable] = CreateTextureRGBA("res/textures/alechmyTableInv.png");
 
 
 }
@@ -837,6 +840,9 @@ void Player::SwapItemStats()
 		case i_Door:
 		case i_Gate:
 		case i_TrapDoor:
+		case i_Lathe:
+		case i_WorkBench:
+		case i_AlchemyTable:
 			m_CooldownToUse = 0.1f;
 			m_LargePlaceable = true;
 			break;

@@ -3,6 +3,198 @@
 #include"ItemList.h"
 #include"math/matrix.h"
 
+
+
+char GetStructureID(unsigned char Item)
+{
+
+	switch (Item)
+	{
+	case i_Sapling:
+		return s_ForestSapling;
+	case i_SnowSapling:
+		return s_SnowSapling;
+	case i_CactusSapling:
+		return s_CactusSapling;
+	case i_CraftingTable:
+		return s_CraftingTable;
+	case i_Anvil:
+		return s_Anvil;
+	case i_Forge:
+		return s_Forge;
+	case i_Chest:
+		return s_Chest;
+	case i_Door:
+		return s_Door;
+	case i_Gate:
+		return s_Gate;
+	case i_TrapDoor:
+		return s_TrapDoor;
+
+	case i_WorkBench:
+		return s_WorkBench;
+	case i_AlchemyTable:
+		return s_AlchemyTable;
+	case i_Lathe:
+		return s_Lathe;
+
+	default:
+		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
+		Assert(true);
+		return s_CraftingTable;
+	}
+}
+unsigned short GetItemIDByStructure(char structure)
+{
+
+	switch (structure)
+	{
+	case s_ForestSapling:
+		return i_Sapling;
+	case s_SnowSapling:
+		return i_SnowSapling;
+	case s_CactusSapling:
+		return  i_CactusSapling;
+	case s_CraftingTable:
+		return i_CraftingTable;
+	case s_Anvil:
+		return i_Anvil;
+	case s_Forge:
+		return i_Forge;
+	case s_Chest:
+		return i_Chest;
+	case s_Door:
+		return i_Door;
+	case s_Gate:
+		return i_Gate;
+	case s_TrapDoor:
+		return i_TrapDoor;
+	case s_WorkBench:
+		return i_WorkBench;
+	case s_AlchemyTable:
+		return i_AlchemyTable;
+	case s_Lathe:
+		return i_Lathe;
+	default:
+		std::cout << "error structure.cpp unknown structure :" << (unsigned int)structure << std::endl;
+		Assert(true);
+		return i_CraftingTable;
+	}
+}
+void CreateStructure(int StructureID
+	, int x
+	, int y
+	, int directionLook
+	, unsigned int* structuresTex
+	, std::vector<std::vector<Block>>& blocks
+	, std::vector<seedling>& seedlings
+	, std::vector<CraftStation>& craftStations
+	, std::vector<Chest>& chests
+	, std::vector<Door>& doors)
+{
+	switch (StructureID)
+	{
+	case s_ForestSapling:
+		seedlings.emplace_back(s_ForestSapling, x, y, structuresTex, blocks);
+		break;
+	case s_SnowSapling:
+		seedlings.emplace_back(s_SnowSapling, x, y, structuresTex, blocks);
+		break;
+	case s_CactusSapling:
+		seedlings.emplace_back(s_CactusSapling, x, y, structuresTex, blocks);
+		break;
+
+	case s_Lathe:
+	case s_WorkBench:
+	case s_CraftingTable:
+	case s_Forge:
+	case s_Anvil:
+	{
+		CraftStation station;
+		station.m_CraftStationtype = StructureID;
+		station.m_Transform[0] = x;
+		station.m_Transform[1] = y;
+		station.m_LookAt = directionLook;
+		craftStations.emplace_back(station);
+		break;
+	}
+	case s_Chest:
+	{
+		chests.emplace_back(x, y, blocks);
+
+
+		break;
+	}
+	case s_Door:
+	case s_TrapDoor:
+	case s_Gate:
+		doors.emplace_back(x, y, StructureID, blocks);
+		break;
+	}
+}
+void getStructureVertices(int x
+	, int y
+	, unsigned int ID
+	, int* vertices)
+{
+	switch (ID)
+	{
+	case s_ForestSapling:
+	case s_SnowSapling:
+	case s_CactusSapling:
+		vertices[0] = x;
+		vertices[1] = y + 1;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	case s_Anvil:
+	case s_TrapDoor:
+	case s_CraftingTable:
+		vertices[0] = x;
+		vertices[1] = y;
+		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+	case s_Forge:
+		vertices[0] = x;
+		vertices[1] = y + 2;
+		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+	case s_Chest:
+	case s_AlchemyTable:
+		vertices[0] = x;
+		vertices[1] = y + 1;
+		vertices[2] = x + 1;
+		vertices[3] = y;
+		break;
+	case s_Door:
+		vertices[0] = x;
+		vertices[1] = y + 2;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	case s_Gate:
+		vertices[0] = x;
+		vertices[1] = y + 3;
+		vertices[2] = x;
+		vertices[3] = y;
+		break;
+	case s_Lathe:
+	case s_WorkBench:
+		vertices[0] = x;
+		vertices[1] = y + 1;
+		vertices[2] = x + 2;
+		vertices[3] = y;
+		break;
+	default:
+		Assert(true);
+		break;
+
+	}
+}
+
+
 Chest::Chest(int x
 	, int y
 	, std::vector<std::vector<Block>>& blocks)
@@ -481,158 +673,6 @@ void DrawCraftStations(std::vector<CraftStation>& structures
 	}
 }
 
-bool FindCraftStation(std::vector<CraftStation>& structures
-	, int* vertice)
-{
-	for (int i = 0; i < structures.size(); i++)
-	{
-		int structureVertices[4];
-		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
-
-		bool a = structureVertices[0] <= vertice[2];
-		bool b = structureVertices[2] >= vertice[0];
-		bool c = structureVertices[3] <= vertice[1];
-		bool d = structureVertices[1] >= vertice[3];
-		if (structureVertices[0] <= vertice[2] && structureVertices[2] >= vertice[0] && structureVertices[3] <= vertice[1] && structureVertices[1] >= vertice[3])
-		{
-			return true;
-		}
-	}
-	return false;
-}
-bool FindCraftStation(std::vector<CraftStation>& structures
-	, float x
-	, float y
-	, int& index)
-{
-	for (int i = 0; i < structures.size(); i++)
-	{
-		int structureVertices[4];
-		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
-		if (structureVertices[0] <= x && structureVertices[2] >= x && structureVertices[3] <= y && structureVertices[1] >= y)
-		{
-			index = i;
-			return true;
-		}
-	}
-	return false;
-}
-void getStructureVertices(int x
-	, int y
-	, unsigned int ID
-	, int* vertices)
-{
-	switch (ID)
-	{
-	case s_ForestSapling:
-	case s_SnowSapling:
-	case s_CactusSapling:
-		vertices[0] = x;
-		vertices[1] = y + 1;
-		vertices[2] = x;
-		vertices[3] = y;
-		break;
-	case s_Anvil:
-	case s_TrapDoor:
-	case s_CraftingTable:
-		vertices[0] = x;
-		vertices[1] = y;
-		vertices[2] = x + 1;
-		vertices[3] = y;
-		break;
-	case s_Forge:
-		vertices[0] = x;
-		vertices[1] = y + 2;
-		vertices[2] = x + 1;
-		vertices[3] = y;
-		break;
-	case s_Chest:
-		vertices[0] = x;
-		vertices[1] = y + 1;
-		vertices[2] = x + 1;
-		vertices[3] = y;
-		break;
-	case s_Door:
-		vertices[0] = x;
-		vertices[1] = y + 2;
-		vertices[2] = x;
-		vertices[3] = y;
-		break;
-	case s_Gate:
-		vertices[0] = x;
-		vertices[1] = y + 3;
-		vertices[2] = x;
-		vertices[3] = y;
-		break;
-	default:
-		Assert(true);
-		break;
-		
-	}
-}
-char GetStructureID(unsigned char Item)
-{
-
-	switch (Item)
-	{
-	case i_Sapling:
-		return s_ForestSapling;
-	case i_SnowSapling:
-		return s_SnowSapling;
-	case i_CactusSapling:
-		return s_CactusSapling;
-	case i_CraftingTable:
-		return s_CraftingTable;
-	case i_Anvil:
-		return s_Anvil;
-	case i_Forge:
-		return s_Forge;
-	case i_Chest:
-		return s_Chest;
-	case i_Door:
-		return s_Door;
-	case i_Gate:
-		return s_Gate;
-	case i_TrapDoor:
-		return s_TrapDoor;
-
-	default:
-		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
-		Assert(true);
-		return s_CraftingTable;
-	}
-}
-unsigned short GetItemIDByStructure(char structure)
-{
-
-	switch (structure)
-	{
-	case s_ForestSapling:
-		return i_Sapling;
-	case s_SnowSapling:
-		return i_SnowSapling;
-	case s_CactusSapling:
-		return  i_CactusSapling;
-	case s_CraftingTable:
-		return i_CraftingTable;
-	case s_Anvil:
-		return i_Anvil;
-	case s_Forge:
-		return i_Forge;
-	case s_Chest:
-		return i_Chest;
-	case s_Door:
-		return i_Door;
-	case s_Gate:
-		return i_Gate;
-	case s_TrapDoor:
-		return i_TrapDoor;
-	default:
-		std::cout << "error structure.cpp unknown structure :" << (unsigned int)structure << std::endl;
-		Assert(true);
-		return i_CraftingTable;
-	}
-}
 void CheckFloorCraftStations(std::vector<CraftStation>& craftingStation
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<DroppedItem>& droppedItems)
@@ -734,70 +774,40 @@ bool isAnythinginArea(int* vertices
 
 	return FindChest(chests, vertices);
 }
-void CreateStructure(int StructureID
-	,int x
-	,int y
-	,int directionLook
-	,unsigned int* structuresTex 
-	, std::vector<std::vector<Block>>& blocks
-	,std::vector<seedling>& seedlings
-	,std::vector<CraftStation>& craftStations
-	,std::vector<Chest>& chests
-	,std::vector<Door>& doors)
+
+bool FindCraftStation(std::vector<CraftStation>& structures
+	, int* vertice)
 {
-	switch (StructureID)
+	for (int i = 0; i < structures.size(); i++)
 	{
-	case s_ForestSapling:
-		seedlings.emplace_back(s_ForestSapling, x, y, structuresTex, blocks);
-		break;
-	case s_SnowSapling:
-		seedlings.emplace_back(s_SnowSapling, x, y, structuresTex, blocks);
-		break;
-	case s_CactusSapling:
-		seedlings.emplace_back(s_CactusSapling, x, y, structuresTex, blocks);
-		break;
+		int structureVertices[4];
+		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
 
-	case s_CraftingTable:
+		bool a = structureVertices[0] <= vertice[2];
+		bool b = structureVertices[2] >= vertice[0];
+		bool c = structureVertices[3] <= vertice[1];
+		bool d = structureVertices[1] >= vertice[3];
+		if (structureVertices[0] <= vertice[2] && structureVertices[2] >= vertice[0] && structureVertices[3] <= vertice[1] && structureVertices[1] >= vertice[3])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+bool FindCraftStation(std::vector<CraftStation>& structures
+	, float x
+	, float y
+	, int& index)
+{
+	for (int i = 0; i < structures.size(); i++)
 	{
-		CraftStation table;
-		table.m_CraftStationtype = s_CraftingTable;
-		table.m_Transform[0] = x;
-		table.m_Transform[1] = y;
-		table.m_LookAt = directionLook;
-		craftStations.emplace_back(table);
-		break;
+		int structureVertices[4];
+		getStructureVertices(structures.at(i).m_Transform[0], structures.at(i).m_Transform[1], structures.at(i).m_CraftStationtype, structureVertices);
+		if (structureVertices[0] <= x && structureVertices[2] >= x && structureVertices[3] <= y && structureVertices[1] >= y)
+		{
+			index = i;
+			return true;
+		}
 	}
-	case s_Forge:
-	{
-		CraftStation forge;
-		forge.m_CraftStationtype = s_Forge;
-		forge.m_Transform[0] = x;
-		forge.m_Transform[1] = y;
-		forge.m_LookAt = directionLook;
-		craftStations.emplace_back(forge);
-		break;
-	}
-	case s_Anvil:
-	{
-		CraftStation anvil;
-		anvil.m_CraftStationtype = s_Anvil;
-		anvil.m_Transform[0] = x;
-		anvil.m_Transform[1] = y;
-		anvil.m_LookAt = directionLook;
-		craftStations.emplace_back(anvil);
-		break;
-	}
-	case s_Chest:
-	{
-		chests.emplace_back(x, y, blocks);
-
-
-		break;
-	}
-	case s_Door:
-	case s_TrapDoor:
-	case s_Gate:
-		doors.emplace_back(x, y,StructureID, blocks);
-		break;
-	}
+	return false;
 }

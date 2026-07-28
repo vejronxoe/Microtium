@@ -84,6 +84,9 @@ enum Items
 	, i_CactusPlank
 	, i_SnowSapling
 	, i_CactusSapling
+	, i_WorkBench
+	, i_AlchemyTable
+	, i_Lathe
 	, i_ItemSize
 };
 enum Structures
@@ -91,6 +94,9 @@ enum Structures
 	s_CraftingTable = 0
 	, s_Forge
 	, s_Anvil
+	, s_WorkBench
+	, s_AlchemyTable
+	, s_Lathe
 	, s_Chest
 	, s_ForestSapling
 	, s_SnowSapling
