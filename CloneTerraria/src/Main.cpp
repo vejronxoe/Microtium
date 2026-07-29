@@ -1634,6 +1634,9 @@ int main()
 			structuresTextures[s_CraftingTable] = CreateTextureRGBA("res/textures/bench.png");
 			structuresTextures[s_Forge] = CreateTextureRGBA("res/textures/forge.png");
 			structuresTextures[s_Anvil] = CreateTextureRGBA("res/textures/anvil.png");
+			structuresTextures[s_Lathe] = CreateTextureRGBA("res/textures/lathe.png");
+			structuresTextures[s_WorkBench] = CreateTextureRGBA("res/textures/workBench.png");
+			structuresTextures[s_AlchemyTable] = CreateTextureRGBA("res/textures/alchemyTable.png");
 			structuresTextures[s_Door] = DoorTextures[0];
 			structuresTextures[s_TrapDoor] = trapDoorTextures[0];
 			structuresTextures[s_Gate] = CreateTextureRGBA("res/textures/CloseGate.png");
@@ -1649,8 +1652,11 @@ int main()
 			structuresDD[s_CactusSapling] = structuresDD[s_ForestSapling];
 			structuresDD[s_SnowSapling] = structuresDD[s_ForestSapling];
 			structuresDD[s_Chest] = CreateDrawData(eob, 1.5f, -0.5f, 1.5f, -0.5f);
+			structuresDD[s_AlchemyTable] = structuresDD[s_Chest];
 			structuresDD[s_CraftingTable] = CreateDrawData(eob, 0.5f, -0.5f, 1.5f, -0.5f);
 			structuresDD[s_Forge] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -0.5f);
+			structuresDD[s_Lathe] = CreateDrawData(eob, 1.5f, -0.5f, 2.5f, -0.5f);
+			structuresDD[s_WorkBench] = structuresDD[s_Lathe];
 			structuresDD[s_Anvil] = structuresDD[s_CraftingTable];
 			structuresDD[s_Door] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 			structuresDD[s_TrapDoor] = CreateDrawData(eob, 1.5f, -1.5f, 1.5f, -0.5f);
@@ -1659,7 +1665,6 @@ int main()
 			CrownDD[crown_ForestSmall] = CreateDrawData(eob, 2.5f, -0.5f, 1.5f, -1.5f);
 			CrownDD[crown_Snow] = CrownDD[crown_Forest];
 			CrownDD[crown_SnowSmall] = CrownDD[crown_ForestSmall];
-
 
 
 			CreateAllBlockTextures(blockTextures);

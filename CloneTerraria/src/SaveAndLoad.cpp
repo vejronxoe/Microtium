@@ -484,6 +484,9 @@ bool Load(std::string path
 		{
 		case s_Anvil:
 		case s_CraftingTable:
+		case s_Lathe:
+		case s_AlchemyTable:
+		case s_WorkBench:
 		case s_Forge:
 		{
 			int16_t x;

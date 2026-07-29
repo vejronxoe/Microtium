@@ -1358,11 +1358,11 @@ void Player::EveryFrame(float deltaTime
 	//Crafting 
 	if (m_IsInventoryOpen)
 	{
-		bool isCloseToCraftStation[3];
-		isCloseToCraftStation[s_CraftingTable] = false;
-		isCloseToCraftStation[s_Forge] = false;
-		isCloseToCraftStation[s_Anvil] = false;
-
+		bool isCloseToCraftStation[s_Chest];
+		for (int i = 0; i < s_Chest;i++)
+		{
+			isCloseToCraftStation[i] = false;
+		}
 		for (int i = 0; i < craftStations.size(); i++)
 		{
 			if (m_Transform[1] == craftStations.at(i).m_Transform[1] + 1)
@@ -1371,7 +1371,7 @@ void Player::EveryFrame(float deltaTime
 				getStructureVertices(craftStations.at(i).m_Transform[0], craftStations.at(i).m_Transform[1], craftStations.at(i).m_CraftStationtype, vertices);
 				if (abs(m_Transform[0] - (float)(vertices[0] + vertices[2]) / 2.0f) < 5)
 				{
-					Assert(2 < craftStations.at(i).m_CraftStationtype);
+					Assert(s_Chest <= craftStations.at(i).m_CraftStationtype);
 					isCloseToCraftStation[craftStations.at(i).m_CraftStationtype] = true;
 				}
 			}
@@ -1381,7 +1381,7 @@ void Player::EveryFrame(float deltaTime
 		{
 			if (m_Recipes[l].m_CraftingStation != -1)
 			{
-				Assert(3 <= m_Recipes[l].m_CraftingStation);
+				Assert(s_Chest <= m_Recipes[l].m_CraftingStation);
 				if (!isCloseToCraftStation[m_Recipes[l].m_CraftingStation])
 				{
 					m_Recipes[l].m_CraftingState = cantCraft;

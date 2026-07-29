@@ -92,11 +92,11 @@ enum Items
 enum Structures
 {
 	s_CraftingTable = 0
+	, s_AlchemyTable
+	, s_WorkBench
+	, s_Lathe
 	, s_Forge
 	, s_Anvil
-	, s_WorkBench
-	, s_AlchemyTable
-	, s_Lathe
 	, s_Chest
 	, s_ForestSapling
 	, s_SnowSapling

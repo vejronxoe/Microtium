@@ -107,6 +107,7 @@ void CreateStructure(int StructureID
 	case s_Lathe:
 	case s_WorkBench:
 	case s_CraftingTable:
+	case s_AlchemyTable:
 	case s_Forge:
 	case s_Anvil:
 	{
