@@ -1041,10 +1041,9 @@ int main()
 				}
 				CrownSh.Bind();
 				CrownSh.SetUniformMat4(CrownCamera, camera);
-				for (int i = 0; i < Crowns.size(); i++)
-				{
-					DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, CameraCoordinates, transform, rotation);
-				}
+				
+				DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, CameraCoordinates, transform, rotation);
+				
 				ErrorGL(glBindVertexArray(blocksDrawData));
 				for (int i = 0; i < damagedCrowns.size(); i++)
 				{
@@ -1835,10 +1834,9 @@ int main()
 				}
 				CrownSh.Bind();
 				CrownSh.SetUniformMat4(CrownCamera, camera);
-				for (int i = 0; i < Crowns.size(); i++)
-				{
-					DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, editor.m_Transform, transform, rotation);
-				}
+				
+				DrawCrowns(CrownSh,Crowns,CrownDD,CrownTextures, editor.m_Transform, transform, rotation);
+				
 				ErrorGL(glBindVertexArray(blocksDrawData));
 			
 				DrawDoors(doors, advancedSh, structuresDD, structuresTextures, DoorTextures, trapDoorTextures, transform, scale, rotation);

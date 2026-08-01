@@ -52,7 +52,7 @@ void DrawCrowns(Shader& sh
 	{
 		if (cameraVertices[2] >= crowns.at(i).m_Transform[0] && cameraVertices[0] <= crowns.at(i).m_Transform[0])
 		{
-			if (cameraVertices[4] <= crowns.at(i).m_Transform[1] && cameraVertices[1] >= crowns.at(i).m_Transform[1])
+			if (cameraVertices[3] <= crowns.at(i).m_Transform[1] && cameraVertices[1] >= crowns.at(i).m_Transform[1])
 			{
 				ChangeRotation(crowns.at(i).m_Rotation, rotation);
 				sh.SetUniformMat4(CrownRotation, rotation);	
