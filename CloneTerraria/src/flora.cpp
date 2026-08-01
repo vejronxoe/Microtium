@@ -47,31 +47,26 @@ void DrawCrowns(Shader& sh
 	, float* transform
 	, float* rotation)
 {
+	int cameraVertices[4] = { floor(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5),ceil(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5),ceil(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5),floor(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5) };
 	for (int i = 0; i < crowns.size(); i++)
 	{
-		Crown crown = crowns.at(i);
-		if (ceilf(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5) >= crown.m_Transform[0] && floorf(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5) <= crown.m_Transform[0])
+		if (cameraVertices[2] >= crowns.at(i).m_Transform[0] && cameraVertices[0] <= crowns.at(i).m_Transform[0])
 		{
-			if (floorf(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5) <= crown.m_Transform[1] && ceilf(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5) >= crown.m_Transform[1])
+			if (cameraVertices[4] <= crowns.at(i).m_Transform[1] && cameraVertices[1] >= crowns.at(i).m_Transform[1])
 			{
-				if (crown.m_Rotation != 0)
-				{
-					ChangeRotation(crown.m_Rotation, rotation);
-					sh.SetUniformMat4(CrownRotation, rotation);
-				}
-				ErrorGL(glBindVertexArray(DDs[crown.m_Type]));
-				ChangeTransform(crown.m_Transform[0], crown.m_Transform[1], transform);
+				ChangeRotation(crowns.at(i).m_Rotation, rotation);
+				sh.SetUniformMat4(CrownRotation, rotation);	
+				ErrorGL(glBindVertexArray(DDs[crowns.at(i).m_Type]));
+				ChangeTransform(crowns.at(i).m_Transform[0], crowns.at(i).m_Transform[1], transform);
 				sh.SetUniformMat4(CrownTransform, transform);
-				ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[crown.m_Type]));
+				ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[crowns.at(i).m_Type]));
 				ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-				if (crown.m_Rotation != 0)
-				{
-					ChangeRotation(0, rotation);
-					sh.SetUniformMat4(CrownRotation, rotation);
-				}
+			
 			}
 		}
 	}
+	ChangeRotation(0, rotation);
+	sh.SetUniformMat4(CrownRotation, rotation);
 }
 Crown::Crown(int16_t x
 	, int16_t y

@@ -688,10 +688,19 @@ int main()
 			numberSh.SetUniformMat4(numberCamera, camera);
 			ChangeCamera(-Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform, camera);
 
-			unsigned int enemiesTex1[enemySize];
-			unsigned int enemiesTex2[enemySize];
-			unsigned int enemiesDD1[enemySize];
-			unsigned int enemiesDD2[enemySize];
+			unsigned int enemiesTexs[enemySize];
+			unsigned int enemiesDDs[enemySize];
+			
+			enemiesTexs[en_Zombie] = CreateTextureRGBA("res/textures/zombieAnim.png");
+			enemiesDDs[en_Zombie] = CreateDrawData(eob, 1.5f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
+
+			enemiesTexs[en_Slime] = CreateTextureRGBA("res/textures/slimeAnim.png");
+			enemiesDDs[en_Slime] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f / 2.0f);
+			
+
+
+
+
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int CrownTextures[4];
 			unsigned int CutTextures[4];
@@ -896,7 +905,7 @@ int main()
 				CameraCoordinates[0] = CameraHitboxX(player.m_Transform[0]);
 				CameraCoordinates[1] = CameraHitboxY(player.m_Transform[1]);
 
-				EnemySpawnManager(deltaTime, spawnTimer, eob, enemiesTex1, enemiesTex2, enemiesDD1, enemiesDD2, CameraCoordinates, blocks, enemies);
+				EnemySpawnManager(deltaTime, spawnTimer, eob, CameraCoordinates, blocks, enemies);
 
 				for (int i = 0; i < seedlings.size(); i++)
 				{
@@ -1081,7 +1090,7 @@ int main()
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh, transform, scale);
+					enemies.at(i).DrawEnemy(animSh,enemiesTexs,enemiesDDs, transform, scale);
 				}
 
 				particlesSh.Bind();

@@ -229,7 +229,6 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2] || hit[3])
 		{
 			m_Bouncing--;
@@ -247,6 +246,16 @@ bool Projectile::EveryFrame(float deltaTime
 			particles.emplace_back(m_Transform,c,1,15);
 			return true;
 		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4 ;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 0,0.4,0,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
+		}
 		break;
 	}
 	case p_PierceCannonBall:
@@ -263,7 +272,6 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			float c[4] = { 0.8f,0.8f,0.8f,1 };
@@ -273,6 +281,16 @@ bool Projectile::EveryFrame(float deltaTime
 		else if (hit[0] || hit[1])
 		{
 			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 0.8f,0.8f,0.8f,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
 		}
 		break;
 	}
@@ -290,7 +308,6 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			return true;
@@ -300,6 +317,16 @@ bool Projectile::EveryFrame(float deltaTime
 		else if (hit[0] || hit[1])
 		{
 			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 1,0.2f,0,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
 		}
 		break;
 	}
@@ -317,7 +344,6 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[2])
 		{
 			float c[4] = { 0,0,0,1 };
@@ -327,6 +353,16 @@ bool Projectile::EveryFrame(float deltaTime
 		else if (hit[0] || hit[1])
 		{
 			m_Velocity[0] = velocity[0] / -2.0f;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 0,0,0,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
 		}
 		break;
 	}
@@ -344,14 +380,22 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
 		if (hit[0] || hit[1] || hit[2] || hit[3])
 		{
 			float c[4] = { 0.7f,0.4f,0.2f,1 };
 			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
-
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 0.7f,0.4f,0.2f,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
+		}
 		break;
 	}
 	case p_FireArrow:
@@ -375,7 +419,7 @@ bool Projectile::EveryFrame(float deltaTime
 			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
 		}
-
+	
 		break;
 	}
 	case p_BasicArrow:
@@ -416,8 +460,6 @@ bool Projectile::EveryFrame(float deltaTime
 		{
 			return true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-
 		if (hit[2] || hit[3])
 		{
 			m_Bouncing--;
@@ -434,6 +476,16 @@ bool Projectile::EveryFrame(float deltaTime
 			float c[4] = { 0,0.4f,0,1 };
 			particles.emplace_back(m_Transform, c, 1, 5);
 			return true;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		for (int i = 0; i < 4;i++)
+		{
+			if (hit[i] == true)
+			{
+				float c[4] = { 0,0,0,1 };
+				particles.emplace_back(m_Transform, c, 1, 15);
+				return true;
+			}
 		}
 		break;
 	}
