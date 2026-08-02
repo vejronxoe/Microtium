@@ -943,15 +943,8 @@ int main()
 				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedCrowns, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, Crowns, seedlings, dropItems, projectiles, doors, chests);
 
 
-				for (int i = 0; i < projectiles.size(); i++)
-				{
-					if (projectiles.at(i).EveryFrame(deltaTime, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures))
-					{
-						projectiles.erase(projectiles.begin() + i);
-
-					}
-
-				}
+				ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures);
+			
 
 
 

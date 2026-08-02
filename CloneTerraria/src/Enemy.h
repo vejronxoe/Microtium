@@ -39,9 +39,9 @@ public:
 	float m_AbilityTimer =0;
 	int m_BurnDamageNextTime =0;
 	short int m_LookAt = 1;
+	int16_t m_HP = 10;
 	bool m_IsBurning = false;
 	uint8_t m_ID = 0;
-	uint8_t m_HP = 10;
 	int8_t m_Damage = 45;
 	int8_t m_TypeOfEnemy = en_Slime;
 	int8_t m_AnimPhase = 0;

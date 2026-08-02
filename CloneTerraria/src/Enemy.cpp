@@ -222,8 +222,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_AbilityTimer += deltaTime;
 		}
 		break;
-	}
-		
+	}		
 	case en_Slime:
 	{
 		m_Velocity[1] += deltaTime * GRAVITY;
@@ -247,7 +246,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		{
 			m_AbilityTimer = 0;
 			m_Velocity[1] = 20;
-			m_Velocity[0] = Clamp(distance[0] - 0.5f, 0, 7.5f);
+			m_Velocity[0] = direction[0] * Clamp((abs(distance[0]) - 0.5f), 0, 7.5f);
 			hit[3] = false;
 		}
 		m_Velocity[0] += direction[0] * deltaTime;

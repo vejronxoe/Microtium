@@ -13,8 +13,11 @@ Projectile::Projectile(unsigned char projectileType
 	, int damage
 	, unsigned int DD
 	, unsigned int projectileTexture)
-	:m_Transform{ x, y }, m_Velocity{ velocityX, velocityY}, m_ProjectileType{projectileType},m_DD{DD}, m_Texture{projectileTexture}
+	:m_Transform{ x, y }, m_Velocity{ velocityX, velocityY}
 {
+	m_ProjectileType = projectileType;
+	m_DD = DD; 
+	m_Texture = projectileTexture;
 	m_Damage = damage;
 	switch (projectileType)
 	{
@@ -149,7 +152,8 @@ bool Projectile::HitEnemies(float deltaTime
 	return false;
 }
 
-bool Projectile::EveryFrame(float deltaTime
+void ProjectileUpdate(float deltaTime
+	, std::vector<Projectile>& projectiles
 	, std::vector<Enemy>& enemies
 	, std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<uint8_t>>& Walls
@@ -164,422 +168,229 @@ bool Projectile::EveryFrame(float deltaTime
 	,std::vector<int> & chunksToRebuild
 	, unsigned int* blockTextures)
 {
+	float c[p_Size][4] = {};
+	for (int i = 0; i < p_Size;i++)
+	{
+		switch (i)
+		{
+		case p_Sand:
+			c[i][0] = 0.878;
+			c[i][1] = 0.82;
+			c[i][2] = 0.192;
+			c[i][3] = 1;
+			break;
+		case p_FireArrow:
+		case p_FireBullet:
+		case p_FireCannonBall:
+			c[i][0] = 0.922;
+			c[i][1] = 0.141;
+			c[i][2] = 0.141;
+			c[i][3] = 1;
+			break;
+		case p_BasicArrow:
+			
+			c[i][0] = 0.639;
+			c[i][1] = 0.325;
+			c[i][2] = 0;
+			c[i][3] = 1;
+			break;
+		case p_BasicCannonBall:
+			c[i][0] = 0;
+			c[i][1] = 0;
+			c[i][2] = 0;
+			c[i][3] = 1;
+			break;
+		case p_PierceBullet:
+		case p_PierceCannonBall:
+		case p_PierceArrow:
+			c[i][0] = 0.612;
+			c[i][1] = 0.612;
+			c[i][2] = 0.612;
+			c[i][3] = 1;
+			break;
+		case p_BouncingArrow:
+		case p_BouncingCannonBall:
+		case p_BouncingBullet:
+			c[i][0] = 0.165;
+			c[i][1] = 0.722;
+			c[i][2] = 0.161;
+			c[i][3] = 1;
+
+			break;
+		case p_BasicBullet:
+			c[i][0] = 0.961;
+			c[i][1] = 0.722;
+			c[i][2] = 0;
+			c[i][3] = 1;
+
+			break;
+		}
+	}
+	float blood[4] = { 1,0,0,1 };
+	float halfSize[p_Size] = {};
+	float gravity[p_Size] = {};
+	for (int i = 0; i < p_Size;i++)
+	{
+		switch (i)
+		{
+		case p_Sand:
+		case p_BouncingCannonBall:
+		case p_BasicCannonBall:
+		case p_FireCannonBall:
+		case p_PierceCannonBall:
+			halfSize[i] = 0.4f;
+			gravity[i] = 18;
+			break;
+		case p_BasicArrow:
+		case p_PierceArrow:
+		case p_BouncingArrow:
+		case p_FireArrow:
+			halfSize[i] = 0.4f;
+			gravity[i] = 8;
+			break;
+		case p_BouncingBullet:
+		case p_BasicBullet:
+		case p_FireBullet:
+		case p_PierceBullet:
+			gravity[i] = 0;
+			halfSize[i] = 0.2f;
+			break;
+		}
+	}
+
 	float vertices[4];
 	float velocity[2];
 	float oldVelocity[2];
-	velocity[0] = m_Velocity[0];
-	velocity[1] = m_Velocity[1];
-	oldVelocity[0] = m_Velocity[0];
-	oldVelocity[1] = m_Velocity[1];
-	bool hit[4];
-	hit[0] = false;
-	hit[1] = false;
-	hit[2] = false;
-	hit[3] = false;
-	switch (m_ProjectileType)
+	for (int i = 0; i < projectiles.size(); i++)
 	{
-	case p_Sand:
-	{
-		m_Velocity[1] -= 18 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,false,false, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
+		velocity[0] = projectiles.at(i).m_Velocity[0];
+		velocity[1] = projectiles.at(i).m_Velocity[1];
+		oldVelocity[0] = projectiles.at(i).m_Velocity[0];
+		oldVelocity[1] = projectiles.at(i).m_Velocity[1];
+		bool blockHit[4] = {};
+		bool wallHit[4] = {};
+		bool destroy = false;
 
-		if (hit[2])
+		projectiles.at(i).m_Velocity[1] -= gravity[projectiles.at(i).m_ProjectileType] * deltaTime;
+		if (projectiles.at(i).m_Velocity[1] < -30)
 		{
-			int x = roundf(m_Transform[0]);
-			int y = roundf(m_Transform[1]);
-			bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, Crowns, craftStations,doors,chests);
-			if (!inBlock)
+			projectiles.at(i).m_Velocity[1] = -30;
+		}
+		vertices[0] = projectiles.at(i).m_Transform[0] - halfSize[projectiles.at(i).m_ProjectileType]; vertices[1] = projectiles.at(i).m_Transform[1] + halfSize[projectiles.at(i).m_ProjectileType];
+		vertices[2] = projectiles.at(i).m_Transform[0] + halfSize[projectiles.at(i).m_ProjectileType]; vertices[3] = projectiles.at(i).m_Transform[1] - halfSize[projectiles.at(i).m_ProjectileType];
+		DynamicHitbox(deltaTime, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, oldVelocity, vertices, true, true, blocks, blockHit[0], blockHit[1], blockHit[2], blockHit[3]);
+		switch (projectiles.at(i).m_ProjectileType)
+		{
+		case p_BasicArrow:
+		case p_BasicBullet:
+		case p_BasicCannonBall:
+		{
+			if (projectiles.at(i).HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
 			{
-				CreateBlock(roundf(m_Transform[0]), roundf(m_Transform[1]), t_Sand,chunksToRebuild, blocks, isSandOnX);
+				destroy = true;
+				break;
 			}
-			else
+			if (blockHit[0] == true || blockHit[1] == true || blockHit[2] == true || blockHit[3] == true)
 			{
-				dropItems.emplace_back(x, y, 0, i_Sand, 1, true);
+				destroy = true;
 			}
-			return true;
+			break;
 		}
-		else if (hit[0] || hit[1])
+		case p_BouncingArrow:
+		case p_BouncingBullet:
+		case p_BouncingCannonBall:
 		{
-			m_Velocity[0] = velocity[0] / -2.0f;
-		}
-		break;
-	}
-	case p_BouncingCannonBall:
-	{
-		m_Velocity[1] -= 18 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		if (hit[2] || hit[3])
-		{
-			m_Bouncing--;
-			m_Velocity[1] = -1 * velocity[1];
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Bouncing--;
-			m_Velocity[0] = -1 * velocity[0];
-		}
+			if (projectiles.at(i).HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
+			{
+				destroy = true;
+				break;
+			}
+			if (blockHit[2] || blockHit[3])
+			{
+				projectiles.at(i).m_Bouncing--;
+				projectiles.at(i).m_Velocity[1] = -1 * velocity[1];
+			}
+			if (blockHit[0] || blockHit[1])
+			{
+				projectiles.at(i).m_Bouncing--;
+				projectiles.at(i).m_Velocity[0] = -1 * velocity[0];
+			}
 
-		if (m_Bouncing < 0)
-		{
-			float c[4] = { 0,0.4,0,1 };
-			particles.emplace_back(m_Transform,c,1,15);
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4 ;i++)
-		{
-			if (hit[i] == true)
+			if (projectiles.at(i).m_Bouncing < 0)
 			{
-				float c[4] = { 0,0.4,0,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				destroy = true;
 			}
+			break;
 		}
-		break;
-	}
-	case p_PierceCannonBall:
-	{
-		m_Velocity[1] -= 18 * deltaTime;
-		if (m_Velocity[1] < -30)
+		case p_PierceArrow:
+		case p_PierceBullet:
+		case p_PierceCannonBall:
 		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
-		{
-			return true;
-		}
-		if (hit[2])
-		{
-			float c[4] = { 0.8f,0.8f,0.8f,1 };
-			particles.emplace_back(m_Transform, c, 1, 15);
-			return true;
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Velocity[0] = velocity[0] / -2.0f;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4;i++)
-		{
-			if (hit[i] == true)
+			if (projectiles.at(i).HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
 			{
-				float c[4] = { 0.8f,0.8f,0.8f,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				particles.emplace_back(projectiles.at(i).m_Transform, c[projectiles.at(i).m_ProjectileType], 1, 15);
 			}
-		}
-		break;
-	}
-	case p_FireCannonBall:
-	{
-		m_Velocity[1] -= 30 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-		DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
-		{
-			return true;
-		}
-		if (hit[2])
-		{
-			return true;
-			float c[4] = { 1,0.2f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 15);
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Velocity[0] = velocity[0] / -2.0f;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4;i++)
-		{
-			if (hit[i] == true)
+			if (blockHit[0] == true || blockHit[1] == true || blockHit[2] == true || blockHit[3] == true)
 			{
-				float c[4] = { 1,0.2f,0,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				destroy = true;
 			}
+			break;
 		}
-		break;
-	}
-	case p_BasicCannonBall:
-	{
-		m_Velocity[1] -= 24 * deltaTime;
-		if (m_Velocity[1] < -30)
+		case p_FireArrow:
+		case p_FireBullet:
+		case p_FireCannonBall:
 		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		if (hit[2])
-		{
-			float c[4] = { 0,0,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 15);
-			return true;
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Velocity[0] = velocity[0] / -2.0f;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4;i++)
-		{
-			if (hit[i] == true)
+			if (projectiles.at(i).HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
 			{
-				float c[4] = { 0,0,0,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				destroy = true;
 			}
-		}
-		break;
-	}
-	case p_PierceArrow:
-	{
-		m_Velocity[1] -= 8 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
-		{
-			return true;
-		}
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			float c[4] = { 0.7f,0.4f,0.2f,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4;i++)
-		{
-			if (hit[i] == true)
+			
+			if (blockHit[0] == true|| blockHit[1] == true|| blockHit[2] == true || blockHit[3] == true)
 			{
-				float c[4] = { 0.7f,0.4f,0.2f,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				destroy = true;
 			}
+			break;
 		}
-		break;
-	}
-	case p_FireArrow:
-	{
-		m_Velocity[1] -= 14 * deltaTime;
-		if (m_Velocity[1] < -30)
+		case p_Sand:
 		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			float c[4] = { 1,0.2f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-	
-		break;
-	}
-	case p_BasicArrow:
-	{
-		m_Velocity[1] -= 8 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			float c[4] = { 0.7f,0.4f,0.2f,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-
-		break;
-	}
-	case p_BouncingArrow:
-	{
-		m_Velocity[1] -= 8 * deltaTime;
-		if (m_Velocity[1] < -30)
-		{
-			m_Velocity[1] = -30;
-		}
-		vertices[0] = m_Transform[0] - 0.4f; vertices[1] = m_Transform[1] + 0.4f;
-		vertices[2] = m_Transform[0] + 0.4f; vertices[3] = m_Transform[1] - 0.4f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		if (hit[2] || hit[3])
-		{
-			m_Bouncing--;
-			m_Velocity[1] = -1 * velocity[1];
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Bouncing--;
-			m_Velocity[0] = -1 * velocity[0];
-		}
-
-		if (m_Bouncing < 0)
-		{
-			float c[4] = { 0,0.4f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		for (int i = 0; i < 4;i++)
-		{
-			if (hit[i] == true)
+			if (blockHit[2])
 			{
-				float c[4] = { 0,0,0,1 };
-				particles.emplace_back(m_Transform, c, 1, 15);
-				return true;
+				int x = roundf(projectiles.at(i).m_Transform[0]);
+				int y = roundf(projectiles.at(i).m_Transform[1]);
+				bool inBlock = isAnythingOnThisTransform(x, y, blocks, seedlings, Crowns, craftStations, doors, chests);
+				if (!inBlock)
+				{
+					CreateBlock(x, y, t_Sand, chunksToRebuild, blocks, isSandOnX);
+				}
+				else
+				{
+					dropItems.emplace_back(x, y, 0, i_Sand, 1, true);
+				}
+				destroy = true;
+				break;
 			}
+			else if (blockHit[0] || blockHit[1])
+			{
+				projectiles.at(i).m_Velocity[0] = velocity[0] / -2.0f;
+			}
+			break;
 		}
-		break;
-	}
-	case p_PierceBullet:
-	{
+		}
+		AddVelocityToTransform(vertices, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, oldVelocity, wallHit[2], wallHit[1], wallHit[0], wallHit[3], deltaTime);
 		
-		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
-		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemies(deltaTime, oldVelocity, vertices, particles, enemies))
+		if (wallHit[0] == true || wallHit[1] == true || wallHit[2] == true || wallHit[3] == true)
 		{
-			return true;
+			destroy = true;
 		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[0] || hit[1] || hit[2] || hit[3])
+		
+		if (destroy)
 		{
-			float c[4] = { 1,0.5f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
+			particles.emplace_back(projectiles.at(i).m_Transform, c[projectiles.at(i).m_ProjectileType], 1, 15);
+			projectiles.erase(projectiles.begin() + i);
+			i--;
 		}
-		break;
-	}
-	case p_BasicBullet:
-	{
 	
-		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
-		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			float c[4] = { 1,0.5f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-		break;
 	}
-	case p_FireBullet:
-	{
-	
-		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
-		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, true))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[0] || hit[1] || hit[2] || hit[3])
-		{
-			float c[4] = { 1,0.5f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-		break;
-	}
-	case p_BouncingBullet:
-	{
-		vertices[0] = m_Transform[0] - 0.2f; vertices[1] = m_Transform[1] + 0.2f;
-		vertices[2] = m_Transform[0] + 0.2f; vertices[3] = m_Transform[1] - 0.2f;
-					DynamicHitbox(deltaTime, m_Transform,  m_Velocity, oldVelocity, vertices ,true,true, blocks, hit[0], hit[1], hit[2], hit[3]);
-		if (HitEnemy(deltaTime, oldVelocity, vertices, particles, enemies, false))
-		{
-			return true;
-		}
-		AddVelocityToTransform(vertices, m_Transform,  m_Velocity, oldVelocity, hit[2], hit[1], hit[0], hit[3], deltaTime);
-		if (hit[2] || hit[3])
-		{
-			m_Bouncing--;
-			m_Velocity[1] = -1 * velocity[1];
-		}
-		else if (hit[0] || hit[1])
-		{
-			m_Bouncing--;
-			m_Velocity[0] = -1 * velocity[0];
-		}
-
-		if (m_Bouncing < 0)
-		{
-			float c[4] = { 0,0.4f,0,1 };
-			particles.emplace_back(m_Transform, c, 1, 5);
-			return true;
-		}
-		break;
-	}
-	default:
-		std::cout << "Error unknow Projectil" << m_ProjectileType << std::endl;
-		break;
-	}
-	return false;
 }
 void Projectile::Draw(Shader& sh
 	, float* transform
