@@ -694,6 +694,9 @@ int main()
 			enemiesTexs[en_Zombie] = CreateTextureRGBA("res/textures/zombieAnim.png");
 			enemiesDDs[en_Zombie] = CreateDrawData(eob, 1.5f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
+			enemiesTexs[en_Mummy] = CreateTextureRGBA("res/textures/mummyAnim.png");
+			enemiesDDs[en_Mummy] = enemiesDDs[en_Zombie];
+
 			enemiesTexs[en_Slime] = CreateTextureRGBA("res/textures/slimeAnim.png");
 			enemiesDDs[en_Slime] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f / 2.0f);
 			

@@ -117,6 +117,8 @@
     <Image Include="res\textures\accessoriseShackle.png" />
     <Image Include="res\textures\accessoriseWallClimb.png" />
     <Image Include="res\textures\AdamantiteOre.png" />
+    <Image Include="res\textures\alchemyTable.png" />
+    <Image Include="res\textures\alechmyTableInv.png" />
     <Image Include="res\textures\anvil.png" />
     <Image Include="res\textures\anvilInv.png" />
     <Image Include="res\textures\ArmorClass.png" />
@@ -210,6 +212,8 @@
     <Image Include="res\textures\inventorySlot.png" />
     <Image Include="res\textures\iron.png" />
     <Image Include="res\textures\ironIngot.png" />
+    <Image Include="res\textures\lathe.png" />
+    <Image Include="res\textures\LatheInv.png" />
     <Image Include="res\textures\leftGrassBlock.png" />
     <Image Include="res\textures\leftRightGrassBlock.png" />
     <Image Include="res\textures\legAnimDefault.png" />
@@ -221,6 +225,7 @@
     <Image Include="res\textures\missingLeftGrassBlock.png" />
     <Image Include="res\textures\missingRightGrassBlock.png" />
     <Image Include="res\textures\missingTopGrassBlock.png" />
+    <Image Include="res\textures\mummyAnim.png" />
     <Image Include="res\textures\nothingIngredientSlot.png" />
     <Image Include="res\textures\Numbers.png" />
     <Image Include="res\textures\OpenChest.png" />

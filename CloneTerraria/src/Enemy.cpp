@@ -30,6 +30,7 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[3] = -1;
 		break;
 	case en_Zombie:
+	case en_Mummy:
 		vertices[0] = -0.9f;
 		vertices[1] = 1.3f;
 		vertices[2] = 0.9f;
@@ -296,10 +297,11 @@ void Enemy::DrawEnemy(Shader& animSh
 		break;
 	}
 	case en_Zombie:
+	case en_Mummy:
 	{
 		int animOrder[8] = {0, 3, 1, 3, 0, 4, 2, 4};
 		animSh.SetUniform1i(animLeangth, 5);
-		animDraw(animSh,m_AnimTimer,animOrder , 8,0.8f/m_Velocity[0]);
+		animDraw(animSh,m_AnimTimer,animOrder , 8,0.8f/abs(m_Velocity[0]));
 		break;
 	}
 	}
@@ -422,9 +424,9 @@ void EnemySpawnManager(float deltaTime
 			if (enemies.size() < 6)
 			{
 				float transform[2];
-				if (getLocationForEnemySpawn(en_Zombie, cameraTransform, transform, blocks))
+				if (getLocationForEnemySpawn(en_Mummy, cameraTransform, transform, blocks))
 				{
-					enemies.emplace_back(enemies, en_Zombie, transform[0], transform[1], eob);
+					enemies.emplace_back(enemies, en_Mummy, transform[0], transform[1], eob);
 				}
 			}
 		}

@@ -720,6 +720,21 @@
     <Image Include="res\textures\snowSmallBush.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\alechmyTableInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\alchemyTable.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\LatheInv.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\lathe.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\mummyAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\font\atlas.json" />
