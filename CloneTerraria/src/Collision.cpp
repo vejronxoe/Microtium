@@ -96,9 +96,9 @@ void memoryDefender(int* vertices
 	{
 		if (i % 2 == 0)
 		{
-			if (vertices[i] > Blocks::xMax)
+			if (vertices[i] >= Blocks::xMax)
 			{
-				vertices[i] = Blocks::xMax;
+				vertices[i] = Blocks::xMax-1;
 			}
 			else if (vertices[i] < Blocks::xMin)
 			{
@@ -107,9 +107,9 @@ void memoryDefender(int* vertices
 		}
 		else
 		{
-			if (vertices[i] > Blocks::yMax)
+			if (vertices[i] >= Blocks::yMax)
 			{
-				vertices[i] = Blocks::yMax;
+				vertices[i] = Blocks::yMax-1;
 			}
 			else if (vertices[i] < Blocks::yMin)
 			{

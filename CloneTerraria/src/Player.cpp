@@ -2833,7 +2833,6 @@ void Player::EveryFrame(float deltaTime
 		if (m_FloorHit)
 		{
 			m_WalkingTimer += deltaTime;
-
 			if (m_Velocity[0] != 0)
 			{
 				if (m_ArmTimer > 0.1f && m_ArmsBehaviour == ArmStanding)
@@ -2969,7 +2968,7 @@ void Player::EveryFrame(float deltaTime
 							float enemyVertices[4];
 
 							GetEnemyVerticesByType(enemies.at(i).m_TypeOfEnemy, enemyVertices);
-							float distanceVertices[4] = { distance[0] - enemyVertices[0], distance[1] - enemyVertices[1] , distance[0] - enemyVertices[2] , distance[1] - enemyVertices[2] };
+							float distanceVertices[4] = { distance[0] - enemyVertices[0], distance[1] - enemyVertices[1] , distance[0] - enemyVertices[2] , distance[1] - enemyVertices[3] };
 							for (int j = 0; j < 2; j++)
 							{
 								float holder[2];
@@ -2984,8 +2983,7 @@ void Player::EveryFrame(float deltaTime
 									}
 								}
 							}
-
-							if (Pyt2D(distance) <= 2.5f)
+							if (Pyt2D(distance) <= 2.8f)
 							{
 								if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
 								{
