@@ -225,6 +225,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		break;
 	}		
 	case en_Slime:
+	case en_SandSlime:
 	{
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
@@ -255,6 +256,40 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		{
 			m_Velocity[0] = 0;
 		}
+		break;
+	}
+	case en_FrostSlime:
+	{
+		m_Velocity[1] += deltaTime * GRAVITY;
+		bool hit[4] = { false, false, false, false };
+		int direction[2];
+		float distance[2];
+		WhereIsPlayer(playerTransform, distance, direction);
+		m_AnimTimer += deltaTime;
+		DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], false, blocks, hit[0], hit[2], hit[3], hit[1]);
+		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		{
+			RE = m_Damage;
+			m_PlayerHitTimer = 0;
+		}
+
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		m_AbilityTimer += deltaTime;
+		m_AnimTimer += deltaTime;
+
+		if (m_AbilityTimer > SLIMEJUMPCOOLDOWN)
+		{
+			m_AbilityTimer = 0;
+			m_Velocity[1] = 20;
+			m_Velocity[0] = direction[0] * Clamp((abs(distance[0]) - 0.5f), 0, 7.5f);
+			hit[3] = false;
+		}
+		m_Velocity[0] += direction[0] * deltaTime;
+		if (hit[3])
+		{
+			m_Velocity[0] = 0;
+		}
+
 		break;
 	}
 	}
@@ -362,8 +397,8 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 				}
 				if (spaceForEnemy)
 				{
-					spawntransform[0] = i;
-					spawntransform[1] = j;
+					spawntransform[0] = i -enemyVertices[0];
+					spawntransform[1] = j - enemyVertices[3];
 					return true;
 				}
 			}
@@ -408,34 +443,63 @@ void EnemySpawnManager(float deltaTime
 	}
 	if (spawnTimer > SPAWNCOLDDOWN)
 	{
-		if (Blocks::yMax / 12.0f > cameraTransform[1] && 0 <= cameraTransform[1])
+		if (enemies.size() < 8)
 		{
-			if (enemies.size() < 4)
+			int types[3][4] = {
+				{en_Imp,en_Skeleton,	en_FrostSlime, en_Birds }
+			, {en_Worm,en_Zombie , en_Slime,en_Birds }
+			, {en_Ghost,en_Mummy, en_SandSlime,en_Birds }
+			};
+			int index[2] = {};
+			int type = en_Slime;
+			if (cameraTransform[1] < -160)
 			{
-				float transform[2];
-				if (getLocationForEnemySpawn(en_Slime, cameraTransform, transform, blocks))
-				{
-					enemies.emplace_back(enemies, en_Slime, transform[0], transform[1], eob);
-				}
+				index[1] = 0;
 			}
-		}
-		else if (0 > cameraTransform[1])
-		{
-			if (enemies.size() < 6)
+			else if (cameraTransform[1] < 0)
 			{
-				float transform[2];
-				if (getLocationForEnemySpawn(en_Mummy, cameraTransform, transform, blocks))
-				{
-					enemies.emplace_back(enemies, en_Mummy, transform[0], transform[1], eob);
-				}
+				index[1] = 1;
 			}
+			else if (cameraTransform[1] < 100)
+			{
+				index[1] = 2;
+			}
+			else
+			{
+				index[1] = 3;
+			}
+			if (cameraTransform[0] < 360)
+			{
+				index[0] = 0;
+			}
+			else if (cameraTransform[1] < 720)
+			{
+				index[0] = 1;
+			}
+			else
+			{
+				index[0] = 2;
+			}
+			type = types[index[0]][index[1]];
+			float transform[2];
+			if (getLocationForEnemySpawn(type, cameraTransform, transform, blocks))
+			{
+				enemies.emplace_back(enemies, type, transform[0], transform[1], eob);
+			}
+			else if (type == en_Ghost)
+			{
+				index[0] = (rand() % 2) * 2;
+				index[1] = (rand() % 2) * 2 + 1;
+				float cameraVertices[4] = {transform[0] - Window::halfWidthOfGameTransform - 2,transform[1] + Window::halfHeightOfGameTransform+2,transform[0] + Window::halfWidthOfGameTransform+2, transform[1] - Window::halfHeightOfGameTransform-2 };
+				enemies.emplace_back(enemies, type, cameraVertices[index[0]], cameraVertices[index[1]], eob);
+			}
+
 		}
+		
 		spawnTimer = 0;
 	}
-	else
-	{
-		spawnTimer += deltaTime;
-	}
+	
+	spawnTimer += deltaTime;
 }
 
 void Enemy::WhereIsPlayer(float* playerTransform

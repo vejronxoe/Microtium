@@ -2813,6 +2813,7 @@ void Player::EveryFrame(float deltaTime
 					SwapItemStats();
 				}
 				droppedItems.erase(droppedItems.begin() + i);
+				i--;
 			}
 		}
 	}

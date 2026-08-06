@@ -867,9 +867,10 @@ int main()
 
 				glClear(GL_COLOR_BUFFER_BIT);
 
-				deltaTime = glfwGetTime() - pastTime;
+				deltaTime = Clamp(glfwGetTime() - pastTime,0,1);
 				pastTime = glfwGetTime();
 
+				
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
 				if (newHeight != Window::height || newWidth != Window::width)
@@ -1092,36 +1093,42 @@ int main()
 				ErrorGL(glBindVertexArray(particlesDD));
 				for (int i = 0; i < enemies.size(); i++)
 				{
-
-					if (enemies.at(i).m_IsBurning)
+					if (enemies.at(i).m_TypeOfEnemy == en_SandSlime)
 					{
-						enemies.at(i).m_BurningTimer += deltaTime;
-						if (enemies.at(i).m_BurningTimer < TIMEONFIRE)
+						enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, true, enemies.at(i).m_Transform, transform);
+					}
+					else
+					{
+						if (enemies.at(i).m_IsBurning)
 						{
-							if (enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, true, enemies.at(i).m_Transform, transform))
+							enemies.at(i).m_BurningTimer += deltaTime;
+							if (enemies.at(i).m_BurningTimer < TIMEONFIRE)
 							{
-								enemies.at(i).m_BurnDamageNextTime++;
-								if (enemies.at(i).m_BurnDamageNextTime >= 4)
+								if (enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, true, enemies.at(i).m_Transform, transform))
 								{
-									enemies.at(i).m_BurnDamageNextTime = 0;
-									if (enemies.at(i).DamageEnemy(1, NULL))
+									enemies.at(i).m_BurnDamageNextTime++;
+									if (enemies.at(i).m_BurnDamageNextTime >= 4)
 									{
-										enemies.erase(enemies.begin() + i);
-										i--;
+										enemies.at(i).m_BurnDamageNextTime = 0;
+										if (enemies.at(i).DamageEnemy(1, NULL))
+										{
+											enemies.erase(enemies.begin() + i);
+											i--;
+										}
 									}
 								}
+							}
+							else
+							{
+								enemies.at(i).m_BurnDamageNextTime = 0;
+								enemies.at(i).m_BurningTimer = 0;
+								enemies.at(i).m_IsBurning = false;
 							}
 						}
 						else
 						{
-							enemies.at(i).m_BurnDamageNextTime = 0;
-							enemies.at(i).m_BurningTimer = 0;
-							enemies.at(i).m_IsBurning = false;
+							enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, false, enemies.at(i).m_Transform, transform);
 						}
-					}
-					else
-					{
-						enemies.at(i).m_OnFire.DrawParticles(particlesSh, deltaTime, false, enemies.at(i).m_Transform, transform);
 					}
 
 				}
@@ -1765,6 +1772,10 @@ int main()
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
 
+				}
+				if (Input::LeftMousePress)
+				{
+					std::cout << Input::XMousePos + editor.m_Transform[0] << " , " << Input::YMousePos + editor.m_Transform[1] << std::endl;
 				}
 				Input::XMousePos = Clamp(Input::XMousePos, -Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform);
 				Input::YMousePos = Clamp(Input::YMousePos, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform);
