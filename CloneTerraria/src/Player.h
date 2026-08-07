@@ -9,7 +9,7 @@
 #include"ItemList.h"
 #include"BlocksAndWalls.h"
 #include"flora.h"
-#include"projectile.h"
+#include"EnemyAndProjectile.h"
 #include"structures.h"
 #include"glfw/UI.h"
 #include "glfw/Font.h"
@@ -192,7 +192,6 @@ public:
 	char m_WalkingPhase = 0;
 	float m_ArmRotation = 0;
 	
-	unsigned int m_BulletsDD = 0;
 	unsigned int m_BottomAnimDD = 0;
 	unsigned int m_HandDD = 0;
 	unsigned int m_BodyAnimDD = 0;

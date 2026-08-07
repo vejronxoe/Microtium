@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\background.cpp" />
     <ClCompile Include="src\Editor.cpp" />
-    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\EnemyAndProjectile.cpp" />
     <ClCompile Include="src\flora.cpp" />
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\BlocksAndWalls.cpp" />
@@ -44,7 +44,6 @@
     <ClCompile Include="src\particles.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\glfw\Window.cpp" />
-    <ClCompile Include="src\projectile.cpp" />
     <ClCompile Include="src\SaveAndLoad.cpp" />
     <ClCompile Include="src\structures.cpp" />
   </ItemGroup>
@@ -54,7 +53,7 @@
     <ClInclude Include="src\BlocksAndWalls.h" />
     <ClInclude Include="src\DroppedItems.h" />
     <ClInclude Include="src\Editor.h" />
-    <ClInclude Include="src\Enemy.h" />
+    <ClInclude Include="src\EnemyAndProjectile.h" />
     <ClInclude Include="src\flora.h" />
     <ClInclude Include="src\glfw\cursor.h" />
     <ClInclude Include="src\glfw\Font.h" />
@@ -75,7 +74,6 @@
     <ClInclude Include="src\particles.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\glfw\Window.h" />
-    <ClInclude Include="src\projectile.h" />
     <ClInclude Include="src\SaveAndLoad.h" />
     <ClInclude Include="src\structures.h" />
   </ItemGroup>
@@ -197,6 +195,7 @@
     <Image Include="res\textures\forestSmallBush.png" />
     <Image Include="res\textures\forge.png" />
     <Image Include="res\textures\forgeInv.png" />
+    <Image Include="res\textures\frostSlimeAnim.png" />
     <Image Include="res\textures\fullGrassBlock.png" />
     <Image Include="res\textures\GateInv.png" />
     <Image Include="res\textures\GoldOre.png" />
@@ -209,6 +208,7 @@
     <Image Include="res\textures\HeartBlock.png" />
     <Image Include="res\textures\HelmetSlot.png" />
     <Image Include="res\textures\ice.png" />
+    <Image Include="res\textures\impAnim.png" />
     <Image Include="res\textures\inventorySlot.png" />
     <Image Include="res\textures\iron.png" />
     <Image Include="res\textures\ironIngot.png" />
@@ -242,6 +242,7 @@
     <Image Include="res\textures\sand.png" />
     <Image Include="res\textures\sandBrick.png" />
     <Image Include="res\textures\SandPlatform.png" />
+    <Image Include="res\textures\sandSlimeAnim.png" />
     <Image Include="res\textures\SandStone.png" />
     <Image Include="res\textures\sapling.png" />
     <Image Include="res\textures\saplingCactus.png" />
@@ -277,6 +278,8 @@
     <Image Include="res\textures\woodLog.png" />
     <Image Include="res\textures\woodPants.png" />
     <Image Include="res\textures\woodShoes.png" />
+    <Image Include="res\textures\workBench.png" />
+    <Image Include="res\textures\workbenchInv.png" />
     <Image Include="res\textures\zombieAnim.png" />
     <Image Include="res\textures\zombieBody.png" />
   </ItemGroup>

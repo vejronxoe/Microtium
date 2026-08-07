@@ -21,8 +21,7 @@
 #include"NumberRender.h"
 #include"DroppedItems.h"
 #include"flora.h"
-#include"projectile.h"
-#include"Enemy.h"
+
 #include"background.h"
 #include"particles.h"
 #include"structures.h"
@@ -690,7 +689,7 @@ int main()
 
 			unsigned int enemiesTexs[enemySize];
 			unsigned int enemiesDDs[enemySize];
-			
+
 			enemiesTexs[en_Zombie] = CreateTextureRGBA("res/textures/zombieAnim.png");
 			enemiesDDs[en_Zombie] = CreateDrawData(eob, 1.5f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
@@ -700,11 +699,42 @@ int main()
 			enemiesTexs[en_Slime] = CreateTextureRGBA("res/textures/slimeAnim.png");
 			enemiesDDs[en_Slime] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f / 2.0f);
 			
+			enemiesTexs[en_FrostSlime] = CreateTextureRGBA("res/textures/frostSlimeAnim.png");
+			enemiesDDs[en_FrostSlime] = enemiesDDs[en_Slime];
+
+			enemiesTexs[en_SandSlime] = CreateTextureRGBA("res/textures/SandSlimeAnim.png");
+			enemiesDDs[en_SandSlime] = enemiesDDs[en_Slime];
 
 
 
 
 			unsigned int blockTextures[t_BlocksSize];
+			unsigned int projectilesTex[p_Size];
+			unsigned int projectilesDD[p_Size];
+
+			for (int i = 0; i < p_Size; i++)
+			{
+				projectilesDD[i] = blocksDrawData;
+			}
+			projectilesDD[p_BasicBullet] = CreateDrawData(eob, 0.3f, -0.3f, 0.2f, -0.2f);
+			projectilesDD[p_FireBullet] = projectilesDD[p_BasicBullet];
+			projectilesDD[p_BouncingBullet] = projectilesDD[p_BasicBullet];
+			projectilesDD[p_PierceBullet] = projectilesDD[p_BasicBullet];
+
+
+
+			projectilesTex[p_FrostSpike] = CreateTextureRGBA("res/textures/frostSpike.png");
+			
+
+
+
+
+
+
+
+
+
+
 			unsigned int CrownTextures[4];
 			unsigned int CutTextures[4];
 			unsigned int structuresTextures[s_StructureSize];
@@ -712,6 +742,8 @@ int main()
 			unsigned int trapDoorTextures[2] = { CreateTextureRGBA("res/textures/CloseTrapDoor.png"), CreateTextureRGBA("res/textures/OpenTrapDoor.png") };
 			unsigned int openChestTex = CreateTextureRGBA("res/textures/OpenChest.png");
 			unsigned int damageTexture[2] = { CreateTextureRGBA("res/textures/DamageBlock.png"), CreateTextureRGBA("res/textures/lightDamageBlock.png") };
+			
+
 			CutTextures[0] = CreateTextureRGBA("res/textures/cut4.png");
 			CutTextures[1] = CreateTextureRGBA("res/textures/cut3.png");
 			CutTextures[2] = CreateTextureRGBA("res/textures/cut2.png");
@@ -760,7 +792,6 @@ int main()
 
 			CreateAllBlockTextures(blockTextures);
 			
-
 
 			Text menuTexts[6];
 			unsigned int menuBackgroundVBO;
@@ -835,7 +866,19 @@ int main()
 				fill.assign(Blocks::yMax - Blocks::yMin+1, 0);
 				staticLightMap.assign(Blocks::xMax, fill);
 			}
-			
+			projectilesTex[p_Sand] = player.m_AllItemTextures[i_Sand];
+			projectilesTex[p_FireArrow] = player.m_AllItemTextures[i_FireArrow];
+			projectilesTex[p_PierceArrow] = player.m_AllItemTextures[i_PierceArrow];
+			projectilesTex[p_BasicArrow] = player.m_AllItemTextures[i_BasicArrow];
+			projectilesTex[p_BouncingArrow] = player.m_AllItemTextures[i_BouncingArrow];
+			projectilesTex[p_BasicCannonBall] = player.m_AllItemTextures[i_BasicCannonBall];
+			projectilesTex[p_PierceCannonBall] = player.m_AllItemTextures[i_PierceCannonBall];
+			projectilesTex[p_BouncingCannonBall] = player.m_AllItemTextures[i_BouncingCannonBall];
+			projectilesTex[p_FireCannonBall] = player.m_AllItemTextures[i_FireCannonBall];
+			projectilesTex[p_BasicBullet] = player.m_AllItemTextures[i_BasicBullet];
+			projectilesTex[p_PierceBullet] = player.m_AllItemTextures[i_PierceBullet];
+			projectilesTex[p_BouncingBullet] = player.m_AllItemTextures[i_BouncingBullet];
+			projectilesTex[p_FireBullet] = player.m_AllItemTextures[i_FireBullet];
 	
 			int lightMapSize[2] = { 2 * ceil(Window::halfWidthOfGameTransform + 1),2 * ceil(Window::halfHeightOfGameTransform + 1) };
 			unsigned int lightMapVBO = 0;
@@ -922,7 +965,7 @@ int main()
 
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, blocks, player.m_Transform);
+					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, projectiles, blocks, player.m_Transform);
 					if (damage)
 					{
 						if (enemies.at(i).m_IsBurning)
@@ -946,9 +989,10 @@ int main()
 
 				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedCrowns, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, Crowns, seedlings, dropItems, projectiles, doors, chests);
 
-
-				ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock, blockTextures);
-			
+				{
+					int damageToplayer = ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock,player.m_Transform, blockTextures);
+					player.DamagePlayer(NULL, damageToplayer);
+				}
 
 
 
@@ -1136,7 +1180,7 @@ int main()
 				advancedSh.Bind();
 				for (int i = 0; i < projectiles.size(); i++)
 				{
-					projectiles.at(i).Draw(advancedSh, transform, scale, rotation);
+					projectiles.at(i).Draw(advancedSh,projectilesDD,projectilesTex, transform, scale, rotation);
 				}
 
 				player.DrawPlayer(deltaTime, basicSh, animSh, handSh, particlesSh, transform, scale, rotation, camera, particlesDD);
@@ -1502,7 +1546,7 @@ int main()
 				}
 				if (chunksToRebuildBlock.size())
 				{
-					SandEveryFrame(isSandOnX, projectiles, blocks, Walls, chunksToRebuildBlock, blockTextures[t_Sand], blocksDrawData);
+					SandEveryFrame(isSandOnX, projectiles, blocks, Walls, chunksToRebuildBlock);
 					CheckFloorCraftStations(craftStations, blocks, dropItems);
 					for (int i = 0; i < doors.size(); i++)
 					{

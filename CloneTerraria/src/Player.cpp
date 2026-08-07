@@ -692,7 +692,6 @@ Player::Player(unsigned int eob
 	
 	m_ArmorClassTex = CreateTextureRGBA("res/textures/ArmorClass.png");
 
-	m_BulletsDD  = CreateDrawData(eob,0.3f,-0.3f,0.2f,-0.2f);
 	m_ItemsInHandDD[InHandBow] = CreateDrawData(eob, 1.5f, 0.5f, 1, -1);
 	m_ItemsInHandTexture[InHandBow] = CreateTextureRGBA("res/textures/bowInHand.png");
 	m_ItemsInHandDD[InHandCanon] = CreateDrawData(eob, 3, 1, 0.5f, -0.5f);
@@ -2331,18 +2330,18 @@ void Player::EveryFrame(float deltaTime
 						break;
 					case i_WoodBow:
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage);
 
 						break;
 					case i_Cannon:
 
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage, blockDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage);
 						break;
 					case i_Pistol:
 
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 30, velocity[1] * 30, m_Damage, m_BulletsDD, m_AllItemTextures[m_PlayerSlots[m_LocationAmmunition]]);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 30, velocity[1] * 30, m_Damage);
 						break;
 					default:
 						std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;

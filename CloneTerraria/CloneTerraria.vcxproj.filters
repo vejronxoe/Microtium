@@ -63,10 +63,7 @@
     <ClCompile Include="src\flora.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\projectile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Enemy.cpp">
+    <ClCompile Include="src\EnemyAndProjectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\background.cpp">
@@ -152,10 +149,7 @@
     <ClInclude Include="src\flora.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\projectile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Enemy.h">
+    <ClInclude Include="src\EnemyAndProjectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\background.h">
@@ -733,6 +727,21 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\mummyAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\frostSlimeAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\impAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\sandSlimeAnim.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\workBench.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\workbenchInv.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
