@@ -9,12 +9,15 @@
 #include"glfw/Window.h"
 #include"Collision.h"
 
-#define SPAWNCOLDDOWN 10
+#define SPAWNCOOLDOWN 10
 #define DESPAWNTIME 10
-#define ZOMBIEMOVEMENT 9
+#define ENEMIESMOVEMENT 9
 #define COOLDOWNHIT 3
+#define JUMPSTRENGHT 17
+
 
 #define SLIMEABILITIESCOOLDOWN 4
+#define SKELETONCOOLDOWN 5
 #define ZOMBIEDELAY 0.3f
 
 
@@ -31,6 +34,7 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[2] = 0.9f;
 		vertices[3] = -1;
 		break;
+	case en_Skeleton:
 	case en_Zombie:
 	case en_Mummy:
 		vertices[0] = -0.9f;
@@ -140,6 +144,84 @@ Enemy::Enemy(std::vector<Enemy>& enemies
 
 }
 
+int Enemy::walkingToTarget(float deltaTime
+	, std::vector<std::vector<Block>>& blocks
+	, float* vertices
+	, float* oldVelocity
+	, float* targetPos
+	, float* playerPos
+	, bool& hitLeft
+	, bool& hitTop
+	, bool& hitRight
+	, bool& hitDown)
+{
+	bool goDownPlatform = false;
+	bool wantJump = false;
+	int RE = 0;
+	if (targetPos)
+	{
+		goDownPlatform = targetPos[1] < m_Transform[1];
+		int direction[2];
+		float distance[2];
+		WhereIsPlayer(targetPos, distance, direction);
+		m_LookAt = direction[0];
+		if ((abs(distance[0]) < 2 || ENEMIESMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
+		{
+			int oldVelocity = abs(m_Velocity[0]) / m_Velocity[0];
+			m_Velocity[0] -= direction[0] * ENEMIESMOVEMENT * deltaTime;
+			if (m_Velocity[0])
+			{
+				if (m_Velocity[0] / abs(m_Velocity[0]) != oldVelocity)
+				{
+					m_Velocity[0] = 0;
+				}
+			}
+		}
+		else
+		{
+			int multi = 1;
+			if (m_Velocity[0])
+			{
+				if (m_Velocity[0] / abs(m_Velocity[0]) != direction[0])
+				{
+					multi = 3;
+				}
+			}
+			m_Velocity[0] += direction[0] * ENEMIESMOVEMENT * deltaTime * multi;
+		}
+		m_Velocity[1] += deltaTime * GRAVITY;
+		if (m_Velocity[1] < GRAVITY)
+		{
+			m_Velocity[1] = GRAVITY;
+		}
+		if (abs(distance[0]) < 2.0f && distance[1] > 0)
+		{
+			wantJump = true;
+		}
+	}
+	else if(m_Velocity[0])
+	{
+		int dir = m_Velocity[0] / abs(m_Velocity[0]);
+		m_Velocity[0] = m_Velocity[0] -m_Velocity[0] / abs(m_Velocity[0]) * ENEMIESMOVEMENT * 2 * deltaTime;
+		if (m_Velocity[0] / abs(m_Velocity[0]) != dir)
+		{
+			m_Velocity[0] = 0;
+		}
+	}
+	CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices,goDownPlatform, false, blocks, hitLeft, hitRight, hitDown, hitTop);
+	if (PlayerInWay(deltaTime, playerPos, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+	{
+		RE = m_Damage;
+		m_PlayerHitTimer = 0;
+	}
+	
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hitDown, hitRight, hitLeft, hitTop, deltaTime);
+	if ((wantJump ||hitLeft || hitRight) && hitDown)
+	{
+		m_Velocity[1] = JUMPSTRENGHT;
+	}
+	return RE;
+}
 int Enemy::EnemyEveryFrame(float deltaTime
 	, std::vector<Projectile>& projectiles
 	, std::vector<std::vector<Block>>& blocks
@@ -170,61 +252,19 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		if(m_AbilityTimer > ZOMBIEDELAY)
 		{
 			
-			m_Velocity[1] = 17;
+			m_Velocity[1] = JUMPSTRENGHT;
 			m_AbilityTimer = 0;
 		}
-
 		int direction[2];
 		float distance[2];
 		WhereIsPlayer(playerTransform, distance, direction);
-		m_LookAt = direction[0];
-		if ((abs(distance[0]) < 2 || ZOMBIEMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
-		{
-			int oldVelocity = abs(m_Velocity[0]) / m_Velocity[0];
-			m_Velocity[0] -= direction[0] * ZOMBIEMOVEMENT * deltaTime;
-			if (m_Velocity[0])
-			{
-				if (m_Velocity[0] / abs(m_Velocity[0]) != oldVelocity)
-				{
-					m_Velocity[0] = 0;
-				}
-			}
-		}
-		else
-		{
-			int multi = 1;
-			if (m_Velocity[0])
-			{
-				if (m_Velocity[0] / abs(m_Velocity[0]) != direction[0])
-				{
-					multi = 3;
-				}
-			}
-			m_Velocity[0] += direction[0] * ZOMBIEMOVEMENT * deltaTime * multi;
-		}
-		m_Velocity[1] += deltaTime * GRAVITY;
-		if (m_Velocity[1] < GRAVITY)
-		{
-			m_Velocity[1] = GRAVITY;
-		}
-		bool hit[4] = { false, false, false, false };
-		CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1],false, blocks, hit[0], hit[2], hit[3], hit[1]);
-		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
-		{
-			RE = m_Damage;
-			m_PlayerHitTimer = 0;
-		}
-
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		bool hit[4] = {};
+		RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 		if (hit[3])
 		{
 			m_AnimTimer += deltaTime;
 		}
-		else
-		{
-			m_AnimTimer = 1.1f;
-		}
-		if ((hit[0] || hit[2] || (Input::SpacePress && abs(distance[1]) < vertices[1] - m_Transform[1] + 1.5f)) && hit[3])
+		if ((Input::SpacePress && abs(distance[1]) < vertices[1] - m_Transform[1] + 2) && hit[3])
 		{
 			m_AbilityTimer += deltaTime;
 		}
@@ -303,16 +343,103 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 		break;
 	}
+	case en_Skeleton:
+	{
+
+		int direction[2];
+		float distance[2];
+		WhereIsPlayer(playerTransform, distance, direction);
+		m_LookAt = direction[0];
+		m_AbilityTimer += deltaTime;
+		float dis = Pyt2D(distance);
+		m_Velocity[1] += deltaTime * GRAVITY;
+		bool hit[4] = {};
+		if (dis > 20)
+		{
+			if (m_AbilityTimer >= SKELETONCOOLDOWN)
+			{
+				float velocity[2] = { playerTransform[0] - HANDOFFSETX * m_LookAt - m_Transform[0], playerTransform[1] - HANDOFFSETY - m_Transform[1] };
+				NormalizeVector(velocity);
+				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0]*25,velocity[1]*25, m_Damage);
+				m_AbilityTimer = 0;
+			}
+			RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+		}
+		else if (dis > 5 )
+		{
+			float velocity[2] = { 0,4 };
+			velocity[1] += distance[1];
+			velocity[0] = sqrt(velocity[1] * velocity[1] - 625);
+
+			if (velocity[0] < abs(distance[0]))
+			{
+				float targetPos[2] = {m_LookAt * (distance[0] - velocity[0]),m_Transform[1]};
+				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, targetPos , playerTransform, hit[0], hit[1], hit[2], hit[3]);
+			}
+			else
+			{
+				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				if (m_AbilityTimer >= SKELETONCOOLDOWN)
+				{
+					velocity[0] = abs(distance[0]) * m_LookAt;
+					projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0], velocity[1], m_Damage);
+					m_AbilityTimer = 0;
+				}
+			}
+		}
+		else
+		{
+			if (m_AbilityTimer >= SKELETONCOOLDOWN)
+			{
+				float velocity[2] = { playerTransform[0] - HANDOFFSETX * m_LookAt - m_Transform[0], playerTransform[1] - HANDOFFSETY - m_Transform[1] };
+				NormalizeVector(velocity);
+				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0] * 25, velocity[1] * 25, m_Damage);
+				m_AbilityTimer = 0;
+			}
+		}	
+		RE = RE / 2;
+		break;
+	}
 	}
 	return RE;
 }
 
 
+uint8_t animDraw(Shader& animSh
+	, float& timer
+	, int* order
+	, int orderSize
+	, float delayBetweenFrames)
+{
+	int animPhase = -1;
+	for (int i = 0; i < orderSize;i++)
+	{
+		if (timer < i * delayBetweenFrames)
+		{
+			animPhase = order[i];
+			break;
+		}
+	}
+	if (animPhase == -1)
+	{
+		timer = 0;
+		animPhase = order[0];
+	}
+	animSh.SetUniform1i(animNumber, animPhase);
+	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	return animPhase;
+}
+
+
 void Enemy::DrawEnemy(Shader& animSh
+	, Shader& handSh
 	, unsigned int* texs
 	, unsigned int* DDs
+	, unsigned int skeletonhandTex
+	, unsigned int skeletonhandDD
 	, float* transform
-	, float* scale)
+	, float* scale
+	, float* rotation)
 {
 	ChangeTransform(m_Transform[0], m_Transform[1], transform);
 	animSh.SetUniformMat4(animTransform, transform);
@@ -350,6 +477,27 @@ void Enemy::DrawEnemy(Shader& animSh
 		int animOrder[8] = {0, 3, 1, 3, 0, 4, 2, 4};
 		animSh.SetUniform1i(animLeangth, 5);
 		animDraw(animSh,m_AnimTimer,animOrder , 8,0.8f/abs(m_Velocity[0]));
+		break;
+	}
+	case en_Skeleton:
+	{
+
+		int animOrder[8] = { 0, 3, 1, 3, 0, 4, 2, 4 };
+		animSh.SetUniform1i(animLeangth, 5);
+		if (animDraw(animSh, m_AnimTimer, animOrder, 8, 0.8f / abs(m_Velocity[0])) == 0)
+		{
+			ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+			animSh.SetUniformMat4(animTransform, transform);
+		}
+		handSh.Bind();
+		handSh.SetUniformMat4(handTransform, transform);
+		handSh.SetUniformMat4(handScale, scale);
+		ChangeRotation(-90, rotation);
+		handSh.SetUniformMat4(handRotation, rotation);
+		ErrorGL(glBindVertexArray(skeletonhandDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, skeletonhandTex));
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		animSh.Bind();
 		break;
 	}
 	}
@@ -454,7 +602,7 @@ void EnemySpawnManager(float deltaTime
 			enemies.at(i).m_TimerOutOfCamera = 0;
 		}
 	}
-	if (spawnTimer > SPAWNCOLDDOWN)
+	if (spawnTimer > SPAWNCOOLDOWN)
 	{
 		if (enemies.size() < 8)
 		{
@@ -572,32 +720,6 @@ bool Enemy::PlayerInWay(float deltatime
 	}
 	return false;
 }
-
-uint8_t animDraw(Shader& animSh
-	, float& timer
-	, int* order
-	, int orderSize
-	, float delayBetweenFrames)
-{
-	int animPhase = -1;
-	for (int i = 0; i < orderSize;i++)
-	{
-		if (timer < i * delayBetweenFrames)
-		{
-			animPhase = order[i];
-			break;
-		}
-	}
-	if (animPhase == -1)
-	{
-		timer = 0;
-		animPhase = order[0];
-	}
-	animSh.SetUniform1i(animNumber, animPhase);
-	ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
-	return animPhase;
-}
-
 
 Projectile::Projectile(unsigned char projectileType
 	, float x
@@ -879,6 +1001,12 @@ int ProjectileUpdate(float deltaTime
 			c[i][2] = 0.929;
 			c[i][3] = 1;
 			break;
+		case p_BoneArrow:
+			c[i][0] = 1;
+			c[i][1] = 1;
+			c[i][2] = 1;
+			c[i][3] = 1;
+			break;
 		}
 	}
 	float blood[4] = { 1,0,0,1 };
@@ -900,6 +1028,7 @@ int ProjectileUpdate(float deltaTime
 		case p_PierceArrow:
 		case p_BouncingArrow:
 		case p_FireArrow:
+		case p_BoneArrow:
 			halfSize[i] = 0.4f;
 			gravity[i] = 8;
 			break;
@@ -1035,6 +1164,7 @@ int ProjectileUpdate(float deltaTime
 			break;
 		}
 		case p_FrostSpike:
+		case p_BoneArrow:
 		{
 			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity,  projectiles.at(i).m_Velocity, vertices,playerPos, projectiles.at(i).m_Transform ,playerDamage, particles))
 			{

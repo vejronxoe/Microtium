@@ -196,6 +196,7 @@
     <Image Include="res\textures\forge.png" />
     <Image Include="res\textures\forgeInv.png" />
     <Image Include="res\textures\frostSlimeAnim.png" />
+    <Image Include="res\textures\frostSpike.png" />
     <Image Include="res\textures\fullGrassBlock.png" />
     <Image Include="res\textures\GateInv.png" />
     <Image Include="res\textures\GoldOre.png" />

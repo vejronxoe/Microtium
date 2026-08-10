@@ -13,8 +13,7 @@
 #include"structures.h"
 #include"glfw/UI.h"
 #include "glfw/Font.h"
-#define PLAYERHANDOFFSETX -0.5f
-#define PLAYERHANDOFFSETY 0.65f
+
 
 enum RangeWeaponTypes
 {

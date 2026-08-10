@@ -5,7 +5,8 @@
 #include "flora.h"
 #include "structures.h"
 #include "DroppedItems.h"
-
+#define HANDOFFSETX -0.5f
+#define HANDOFFSETY 0.65f
 #define TIMEONFIRE 10
 enum enemyTypes : int8_t
 {
@@ -72,7 +73,16 @@ struct Enemy
 	int8_t m_TypeOfEnemy = en_Slime;
 	int8_t m_AnimPhase = 0;
 
-
+	int walkingToTarget(float deltaTime
+		, std::vector<std::vector<Block>>& blocks
+		, float* vertices
+		, float* oldVelocity
+		, float* targetPos
+		, float* playerPos
+		, bool& hitLeft
+		, bool& hitTop
+		, bool& hitRight
+		, bool& hitDown);
 	void WhereIsPlayer(float* playerTransform
 		, float* distance
 		, int* direction);
@@ -92,10 +102,14 @@ struct Enemy
 
 
 	void DrawEnemy(Shader& animSh
+		, Shader& handSh
 		, unsigned int* textures
 		, unsigned int* DDs
+		, unsigned int skeletonhandTex
+		, unsigned int skeletonhandDD
 		, float* transform
-		, float* scale);
+		, float* scale
+		, float* rotation);
 };
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices);
@@ -128,6 +142,7 @@ enum ProjectilesTypes
 	, p_BouncingBullet
 	, p_FireBullet
 	, p_FrostSpike
+	, p_BoneArrow 
 	, p_Size
 };
 

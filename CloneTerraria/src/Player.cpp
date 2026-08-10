@@ -2321,7 +2321,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				if (m_LocationAmmunition != -1)
 				{
-					float velocity[2] = { Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook - (m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - PLAYERHANDOFFSETY - (m_Transform[1] - CameraCoordinates[1]) };
+					float velocity[2] = { Input::XMousePos - HANDOFFSETX * m_DirectionLook - (m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - HANDOFFSETY - (m_Transform[1] - CameraCoordinates[1]) };
 					NormalizeVector(velocity);
 					switch (m_PlayerSlots[0])
 					{
@@ -2330,18 +2330,18 @@ void Player::EveryFrame(float deltaTime
 						break;
 					case i_WoodBow:
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + HANDOFFSETX * m_DirectionLook, m_Transform[1] + HANDOFFSETY, velocity[0] * 25, velocity[1] * 25, m_Damage);
 
 						break;
 					case i_Cannon:
 
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + HANDOFFSETX * m_DirectionLook, m_Transform[1] + HANDOFFSETY, velocity[0] * 20, velocity[1] * 20, m_Damage);
 						break;
 					case i_Pistol:
 
 
-						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + PLAYERHANDOFFSETX * m_DirectionLook, m_Transform[1] + PLAYERHANDOFFSETY, velocity[0] * 30, velocity[1] * 30, m_Damage);
+						projectiles.emplace_back(AmmunicionToProjectileType(m_PlayerSlots[m_LocationAmmunition]), m_Transform[0] + HANDOFFSETX * m_DirectionLook, m_Transform[1] + HANDOFFSETY, velocity[0] * 30, velocity[1] * 30, m_Damage);
 						break;
 					default:
 						std::cout << "Error player.cpp Dont know this Weapon: " << m_PlayerSlots[0] << std::endl;
@@ -2948,7 +2948,7 @@ void Player::EveryFrame(float deltaTime
 			case i_WoodBow:
 			case i_Cannon:
 			case i_Pistol:
-				m_ArmRotation = atan2f(Input::XMousePos - PLAYERHANDOFFSETX * m_DirectionLook-(m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - PLAYERHANDOFFSETY - (m_Transform[1] - CameraCoordinates[1])) * 180.0 / PI;
+				m_ArmRotation = atan2f(Input::XMousePos - HANDOFFSETX * m_DirectionLook-(m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - HANDOFFSETY - (m_Transform[1] - CameraCoordinates[1])) * 180.0 / PI;
 				if (m_ArmRotation)
 				{
 					m_DirectionLook = m_ArmRotation / abs(m_ArmRotation);
@@ -2959,7 +2959,7 @@ void Player::EveryFrame(float deltaTime
 				m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
 				if (!m_Placeable && !m_LargePlaceable)
 				{
-					float pointOfRotation[2] = { PLAYERHANDOFFSETX * m_DirectionLook + m_Transform[0], PLAYERHANDOFFSETY + m_Transform[1] };
+					float pointOfRotation[2] = { HANDOFFSETX * m_DirectionLook + m_Transform[0], HANDOFFSETY + m_Transform[1] };
 					for (int i = 0; i < enemies.size(); i++)
 					{
 						if ((enemies.at(i).m_Transform[0] - m_Transform[0])*m_DirectionLook >= 0)

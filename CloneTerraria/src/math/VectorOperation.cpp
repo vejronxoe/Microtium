@@ -16,7 +16,7 @@ float Pyt2D(float* vector2D)
 }
 void NormalizeVector(float* vector2D)
 {
-	float lenght = sqrt(pow(vector2D[1], 2) + pow(vector2D[0], 2));
+	float lenght = sqrt(vector2D[1] * vector2D[1] + vector2D[0] * vector2D[0]);
 	vector2D[0] = vector2D[0] / lenght;
 	vector2D[1] = vector2D[1] / lenght;
 }

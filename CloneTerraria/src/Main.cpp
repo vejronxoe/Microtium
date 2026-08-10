@@ -672,7 +672,7 @@ int main()
 			lightMapSh.SetUniformMat4(basicTransform,transform);
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
-			ChangeTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
+			ChangeTransform(HANDOFFSETX, HANDOFFSETY, transform);
 			ChangeCamera(0, Window::width, 0, Window::height, camera);
 			advancedSh.Bind();
 			advancedSh.SetUniform1i(advancedSize + ShadowLocation, 0);
@@ -706,7 +706,8 @@ int main()
 			enemiesDDs[en_SandSlime] = enemiesDDs[en_Slime];
 
 
-
+			enemiesDDs[en_Skeleton] = enemiesDDs[en_Zombie];
+			enemiesTexs[en_Skeleton] = CreateTextureRGBA("res/textures/skeletonAnim.png");
 
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
@@ -725,6 +726,7 @@ int main()
 
 			projectilesTex[p_FrostSpike] = CreateTextureRGBA("res/textures/frostSpike.png");
 			
+			projectilesTex[p_BoneArrow] = CreateTextureRGBA("res/textures/boneArrow.png");
 
 
 
@@ -732,7 +734,8 @@ int main()
 
 
 
-
+			unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/skeletonHand.png");
+			unsigned int skeletonHandDD = CreateDrawData(eob,1.8f,0,1,-1);
 
 
 			unsigned int CrownTextures[4];
@@ -1130,7 +1133,7 @@ int main()
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh,enemiesTexs,enemiesDDs, transform, scale);
+					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD, transform, scale,rotation);
 				}
 
 				particlesSh.Bind();
@@ -1655,7 +1658,7 @@ int main()
 
 			CreateScale(1, 1, scale);
 			CreateRotation(0, rotation);
-			ChangeTransform(PLAYERHANDOFFSETX, PLAYERHANDOFFSETY, transform);
+			ChangeTransform(HANDOFFSETX, HANDOFFSETY, transform);
 			ChangeCamera(0, Window::width, 0, Window::height, camera);
 			advancedSh.Bind();
 			advancedSh.SetUniform1i(advancedSize + ShadowLocation, 0);
