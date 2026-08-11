@@ -735,7 +735,12 @@ int main()
 
 
 			unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/skeletonHand.png");
-			unsigned int skeletonHandDD = CreateDrawData(eob,1.8f,0,1,-1);
+			unsigned int skeletonHandDD = CreateDrawData(eob, 1.8f, 0, 1, -1);
+
+
+
+			//unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/impHand.png");
+			//unsigned int skeletonHandDD = CreateDrawData(eob, , , , );
 
 
 			unsigned int CrownTextures[4];
@@ -1133,7 +1138,7 @@ int main()
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD, transform, scale,rotation);
+					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,player.m_Transform, transform, scale, rotation);
 				}
 
 				particlesSh.Bind();
@@ -1495,6 +1500,10 @@ int main()
 						std::cout << "error can not make save (walls)" << std::endl;
 					}
 					if (!Save(pathToSave, craftStations, chests, doors, Crowns, seedlings))
+					{
+						std::cout << "error can not make save (struct)" << std::endl;
+					}
+					if (!Save(pathToSave, player))
 					{
 						std::cout << "error can not make save (struct)" << std::endl;
 					}

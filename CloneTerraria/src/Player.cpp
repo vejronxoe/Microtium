@@ -2181,7 +2181,7 @@ void Player::EveryFrame(float deltaTime
 				inBlock = isAnythinginArea(vertices, blocks, seedlings, Crowns, craftStations,doors, chests);
 				switch (m_PlayerSlots[0])
 				{
-				case s_TrapDoor:
+				case i_TrapDoor:
 				{
 					floors = blocks.at(x - 1).at(y - Blocks::yMin).m_Type != t_Air;
 					if (!floors)
@@ -2191,8 +2191,8 @@ void Player::EveryFrame(float deltaTime
 					floors = blocks.at(vertices[2] + 1).at(y - Blocks::yMin).m_Type != t_Air;
 					break;
 				}
-				case s_Door:
-				case s_Gate:
+				case i_Door:
+				case i_Gate:
 					floors = blocks.at(x).at(vertices[1] + 1 - Blocks::yMin).m_Type;
 					if (!floors)
 					{

@@ -107,6 +107,7 @@ struct Enemy
 		, unsigned int* DDs
 		, unsigned int skeletonhandTex
 		, unsigned int skeletonhandDD
+		, float* playerPos
 		, float* transform
 		, float* scale
 		, float* rotation);

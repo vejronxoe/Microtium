@@ -542,6 +542,8 @@ bool Load(std::string path
 		}
 		case s_StructureSize + crown_Forest:
 		case s_StructureSize + crown_ForestSmall:
+		case s_StructureSize + crown_SnowSmall:
+		case s_StructureSize + crown_Snow:
 		{
 			int16_t x;
 			file.read(reinterpret_cast<char*>(&x), sizeof(x));

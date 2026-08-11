@@ -29,6 +29,7 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 	case en_Slime:
 	case en_SandSlime:
 	case en_FrostSlime:
+	case en_Imp:
 		vertices[0] = -0.9f;
 		vertices[1] = 0.8f;
 		vertices[2] = 0.9f;
@@ -354,27 +355,23 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		float dis = Pyt2D(distance);
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = {};
-		if (dis > 20)
-		{
-			if (m_AbilityTimer >= SKELETONCOOLDOWN)
-			{
-				float velocity[2] = { playerTransform[0] - HANDOFFSETX * m_LookAt - m_Transform[0], playerTransform[1] - HANDOFFSETY - m_Transform[1] };
-				NormalizeVector(velocity);
-				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0]*25,velocity[1]*25, m_Damage);
-				m_AbilityTimer = 0;
-			}
-			RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
-		}
-		else if (dis > 5 )
+	
+		if (dis > 10 )
 		{
 			float velocity[2] = { 0,4 };
 			velocity[1] += distance[1];
-			velocity[0] = sqrt(velocity[1] * velocity[1] - 625);
-
+			if (velocity[1] * velocity[1] <= 625)
+			{
+				velocity[0] = sqrt(velocity[1] * velocity[1] - 625);
+			}
+			else
+			{
+				velocity[0] = 0;
+				distance[0] = 1;
+			}
 			if (velocity[0] < abs(distance[0]))
 			{
-				float targetPos[2] = {m_LookAt * (distance[0] - velocity[0]),m_Transform[1]};
-				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, targetPos , playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 			}
 			else
 			{
@@ -396,7 +393,8 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0] * 25, velocity[1] * 25, m_Damage);
 				m_AbilityTimer = 0;
 			}
-		}	
+			RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+		}
 		RE = RE / 2;
 		break;
 	}
@@ -437,6 +435,7 @@ void Enemy::DrawEnemy(Shader& animSh
 	, unsigned int* DDs
 	, unsigned int skeletonhandTex
 	, unsigned int skeletonhandDD
+	, float* playerPos
 	, float* transform
 	, float* scale
 	, float* rotation)
@@ -449,7 +448,7 @@ void Enemy::DrawEnemy(Shader& animSh
 	ErrorGL(glBindTexture(GL_TEXTURE_2D, texs[m_TypeOfEnemy]));
 	switch (m_TypeOfEnemy)
 	{
-	case en_Slime:
+	case en_Slime: 
 	case en_FrostSlime:
 	case en_SandSlime:
 	{
@@ -482,6 +481,7 @@ void Enemy::DrawEnemy(Shader& animSh
 	case en_Skeleton:
 	{
 
+		float distance[2] = {playerPos[0] - m_Transform[0] - HANDOFFSETX*m_LookAt,playerPos[1] - m_Transform[1] - HANDOFFSETY};
 		int animOrder[8] = { 0, 3, 1, 3, 0, 4, 2, 4 };
 		animSh.SetUniform1i(animLeangth, 5);
 		if (animDraw(animSh, m_AnimTimer, animOrder, 8, 0.8f / abs(m_Velocity[0])) == 0)
@@ -492,7 +492,7 @@ void Enemy::DrawEnemy(Shader& animSh
 		handSh.Bind();
 		handSh.SetUniformMat4(handTransform, transform);
 		handSh.SetUniformMat4(handScale, scale);
-		ChangeRotation(-90, rotation);
+		ChangeRotation(atan2f(distance[0],distance[1])/PI *180 * - m_LookAt, rotation);
 		handSh.SetUniformMat4(handRotation, rotation);
 		ErrorGL(glBindVertexArray(skeletonhandDD));
 		ErrorGL(glBindTexture(GL_TEXTURE_2D, skeletonhandTex));
