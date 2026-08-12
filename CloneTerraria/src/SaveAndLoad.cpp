@@ -727,4 +727,5 @@ bool Load(std::string path
 		return false;
 	}
 	file.close();
+	return true;
 }

@@ -1,6 +1,6 @@
 #include"BlocksAndWalls.h"
 
-#include<gl/glew.h>
+
 #include<fstream>
 #include<sstream>
 #include<string>

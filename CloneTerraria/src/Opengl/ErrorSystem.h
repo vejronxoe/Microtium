@@ -1,6 +1,6 @@
 #pragma once
 
-#include<GL/glew.h>
+#include<glad/glad.h>
 #include<iostream>
 #ifdef _DEBUG
 #define Assert(x) if((x)){ __debugbreak();}

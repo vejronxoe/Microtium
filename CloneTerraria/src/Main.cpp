@@ -1,4 +1,4 @@
-#include<GL/glew.h>
+#include<glad/glad.h>
 #include<GLFW/glfw3.h>
 
 #include<vector>
@@ -268,12 +268,9 @@ int main()
 
 
 	glfwMakeContextCurrent(window);
-	if (glewInit() != GLEW_OK)
-	{
-		std::cout << "GLEW DONT WORK" << std::endl;
-		std::cin.get();
-		return -1;
-	}
+
+	gladLoadGLLoader((GLADloadproc)(glfwGetProcAddress));
+
 	if (Window::VSync)
 	{
 		glfwSwapInterval(1);

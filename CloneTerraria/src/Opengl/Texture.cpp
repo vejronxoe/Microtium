@@ -1,6 +1,6 @@
 #include"Texture.h"
 
-#include<gl/glew.h>
+#include<glad/glad.h>
 
 #include"ErrorSystem.h"
 #include"../libraries/stb_image.h"
