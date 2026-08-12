@@ -709,6 +709,10 @@ int main()
 			enemiesDDs[en_Skeleton] = enemiesDDs[en_Zombie];
 			enemiesTexs[en_Skeleton] = CreateTextureRGBA("res/textures/skeletonAnim.png");
 
+			enemiesTexs[en_Imp] = CreateTextureRGBA("res/textures/impAnim.png");
+			enemiesDDs[en_Imp] = CreateDrawData(eob, 1.25f, -1.25f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
+
+
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
 			unsigned int projectilesDD[p_Size];
@@ -728,19 +732,19 @@ int main()
 			
 			projectilesTex[p_BoneArrow] = CreateTextureRGBA("res/textures/boneArrow.png");
 
-
+			projectilesTex[p_FireBall] = CreateTextureRGBA("res/textures/fireBall.png");
 
 
 
 
 
 			unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/skeletonHand.png");
-			unsigned int skeletonHandDD = CreateDrawData(eob, 1.8f, 0, 1, -1);
+			unsigned int skeletonHandDD = CreateDrawData(eob, 1.8f, 0, 0.9f, -0.9f);
 
 
 
-			//unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/impHand.png");
-			//unsigned int skeletonHandDD = CreateDrawData(eob, , , , );
+			unsigned int impHandTex = CreateTextureRGBA("res/textures/impHand.png");
+			unsigned int impHandDD = CreateDrawData(eob, 1.25f, 0, 0.15f, -0.15f);
 
 
 			unsigned int CrownTextures[4];
@@ -973,7 +977,7 @@ int main()
 
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, projectiles, blocks, player.m_Transform);
+					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, projectiles, blocks, player.m_Transform,player.m_Velocity);
 					if (damage)
 					{
 						if (enemies.at(i).m_IsBurning)
@@ -1138,7 +1142,7 @@ int main()
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,player.m_Transform, transform, scale, rotation);
+					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,impHandTex,impHandDD,player.m_Transform, transform, scale, rotation);
 				}
 
 				particlesSh.Bind();

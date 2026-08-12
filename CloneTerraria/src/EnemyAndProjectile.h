@@ -98,7 +98,8 @@ struct Enemy
 	int EnemyEveryFrame(float deltaTime
 		, std::vector<Projectile>& projectiles
 		, std::vector<std::vector<Block>>& blocks
-		, float* playerTransform);
+		, float* playerTransform
+		, float* playerVelocity);
 
 
 	void DrawEnemy(Shader& animSh
@@ -107,6 +108,8 @@ struct Enemy
 		, unsigned int* DDs
 		, unsigned int skeletonhandTex
 		, unsigned int skeletonhandDD
+		, unsigned int impHandTex
+		, unsigned int impHandDD
 		, float* playerPos
 		, float* transform
 		, float* scale
@@ -144,6 +147,7 @@ enum ProjectilesTypes
 	, p_FireBullet
 	, p_FrostSpike
 	, p_BoneArrow 
+	, p_FireBall
 	, p_Size
 };
 
