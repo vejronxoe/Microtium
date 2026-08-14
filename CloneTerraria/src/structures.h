@@ -1,5 +1,5 @@
 #pragma once
-#include"Opengl/Shader.h"
+#include"opengl/Shader.h"
 #include"BlocksAndWalls.h"
 #include "DroppedItems.h"
 #include "flora.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include"../opengl/Shader.h"
+#include"opengl/Shader.h"
 struct Slider
 {
 	unsigned int m_SliderDD = -1;

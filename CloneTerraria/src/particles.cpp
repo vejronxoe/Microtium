@@ -1,6 +1,7 @@
 #include"particles.h"
 
 #include"math/matrix.h"
+#include<cmath>
 
 #define FIRELIFETIME 2
 #define FIREVELOCITY 4

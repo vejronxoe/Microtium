@@ -1,9 +1,9 @@
-#include "Window.h"
+#include "glfw/Window.h"
 
 #include<iostream>
 #include<sstream>
 #include<fstream>
-#include"../math/VectorOperation.h"
+#include"math/VectorOperation.h"
 
 namespace Window
 {

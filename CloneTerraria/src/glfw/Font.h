@@ -1,8 +1,8 @@
 #pragma once
 #include<vector>
 #include<iostream>
-#include"../Opengl/Shader.h"
-#include"UI.h"
+#include"opengl/Shader.h"
+#include"glfw/UI.h"
 
 struct Letter
 {

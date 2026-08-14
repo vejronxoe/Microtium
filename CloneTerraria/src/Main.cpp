@@ -6,16 +6,16 @@
 #include<iostream>
 #include<string>
 
-#include"Opengl/ErrorSystem.h"
-#include"Opengl/shader.h"
-#include"Opengl/DrawData.h"
-#include"Opengl/Texture.h"
-#include"Math/matrix.h"
+#include"opengl/ErrorSystem.h"
+#include"opengl/Shader.h"
+#include"opengl/DrawData.h"
+#include"opengl/Texture.h"
+#include"math/matrix.h"
 #include"libraries/stb_image.h"
 #include"glfw/Window.h"
 #include"glfw/cursor.h"
 #include"glfw/input.h"
-#include"player.h"
+#include"Player.h"
 #include"Collision.h"
 #include"BlocksAndWalls.h"
 #include"NumberRender.h"
@@ -84,7 +84,7 @@ void CreateMenu(bool first
 	{
 		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.50f,(menu.description[3+i].m_TextVertices[3]+ menu.description[3 + i].m_Transform[1] + winSideLength - Window::height)/winSideLength,0.87f,(menu.description[3 + i].m_TextVertices[1] + menu.description[3 + i].m_Transform[1] + winSideLength - Window::height) / winSideLength);
 	}
-	int values[2] = { Window::gameZoom*100, Window::volume*100};
+	int values[2] = {static_cast<int>(Window::gameZoom*100), static_cast<int>(Window::volume*100)};
 	for (int i = 0; i < 2 ; i++)
 	{
 		menu.values[i].CreateText("   " + std::to_string(values[i]), std::vector<Format>{{15, 3, 0, 0, 0, 1}}, letters, eob, leftTop, menu.sliders[i].m_Vertices[2], menu.sliders[i].m_Vertices[1]);
@@ -269,12 +269,20 @@ int main()
 
 	glfwMakeContextCurrent(window);
 
-	gladLoadGLLoader((GLADloadproc)(glfwGetProcAddress));
+	if(!gladLoadGLLoader((GLADloadproc)(glfwGetProcAddress)))
+	{
+		std::cout << "GLAD DONT WORK" << std::endl;
+		return -1;
+	}
 
 	if (Window::VSync)
 	{
 		glfwSwapInterval(1);
 
+	}
+	else
+	{
+		glfwSwapInterval(0);
 	}
 
 	std::vector<Letter> letters;
@@ -597,7 +605,7 @@ int main()
 		case stateInGame:
 		{
 			
-			Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt ");
+			Shader HUDSh("res/shaders/verHUD.txt", "res/shaders/fragHUD.txt");
 			HUDSh.Bind();
 			HUDSh.GetUniformLocation("HUDCamera");
 			HUDSh.GetUniformLocation("HUDTransform");
@@ -611,7 +619,7 @@ int main()
 			backgroundSh.GetUniformLocation("camera");
 			backgroundSh.GetUniformLocation("transform");
 			backgroundSh.GetUniformLocation("blendFactor");
-			Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
+			Shader shadowSh("res/shaders/verBasic.txt", "res/shaders/fragShadow.txt");
 			shadowSh.Bind();
 			shadowSh.GetUniformLocation("camera");
 			shadowSh.GetUniformLocation("transform");
@@ -696,17 +704,17 @@ int main()
 			enemiesTexs[en_Slime] = CreateTextureRGBA("res/textures/slimeAnim.png");
 			enemiesDDs[en_Slime] = CreateDrawData(eob, 1, -1, -1, 1, 1, 0, 0, 1.0f / 2.0f);
 			
-			enemiesTexs[en_FrostSlime] = CreateTextureRGBA("res/textures/frostSlimeAnim.png");
+			enemiesTexs[en_FrostSlime] = CreateTextureRGBA("res/textures/FrostSlimeAnim.png");
 			enemiesDDs[en_FrostSlime] = enemiesDDs[en_Slime];
 
-			enemiesTexs[en_SandSlime] = CreateTextureRGBA("res/textures/SandSlimeAnim.png");
+			enemiesTexs[en_SandSlime] = CreateTextureRGBA("res/textures/sandSlimeAnim.png");
 			enemiesDDs[en_SandSlime] = enemiesDDs[en_Slime];
 
 
 			enemiesDDs[en_Skeleton] = enemiesDDs[en_Zombie];
 			enemiesTexs[en_Skeleton] = CreateTextureRGBA("res/textures/skeletonAnim.png");
 
-			enemiesTexs[en_Imp] = CreateTextureRGBA("res/textures/impAnim.png");
+			enemiesTexs[en_Imp] = CreateTextureRGBA("res/textures/ImpAnim.png");
 			enemiesDDs[en_Imp] = CreateDrawData(eob, 1.25f, -1.25f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
 
@@ -889,7 +897,7 @@ int main()
 			projectilesTex[p_BouncingBullet] = player.m_AllItemTextures[i_BouncingBullet];
 			projectilesTex[p_FireBullet] = player.m_AllItemTextures[i_FireBullet];
 	
-			int lightMapSize[2] = { 2 * ceil(Window::halfWidthOfGameTransform + 1),2 * ceil(Window::halfHeightOfGameTransform + 1) };
+			int lightMapSize[2] = {static_cast<int>(2 * ceil(Window::halfWidthOfGameTransform + 1)),static_cast<int>(2 * ceil(Window::halfHeightOfGameTransform + 1)) };
 			unsigned int lightMapVBO = 0;
 			unsigned int lightMapDD = CreateDrawData(eob, ceil(Window::halfHeightOfGameTransform + 1), -ceil(Window::halfHeightOfGameTransform + 1), ceil(Window::halfWidthOfGameTransform + 1), -ceil(Window::halfWidthOfGameTransform+1), lightMapVBO);
 			CalculateLightMap( blocks, Walls, staticLightMap);

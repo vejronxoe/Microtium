@@ -1,24 +1,24 @@
-#include"cursor.h"
+#include"glfw/cursor.h"
 
-#include"../Opengl/drawData.h"
-#include"../Opengl/Texture.h"
-#include"../glfw/input.h"
-#include"../glfw/Window.h"
-#include"../math/matrix.h"
-#include"../NumberRender.h"
+#include"opengl/DrawData.h"
+#include"opengl/Texture.h"
+#include"glfw/input.h"
+#include"glfw/Window.h"
+#include"math/matrix.h"
+#include"NumberRender.h"
 unsigned int CreateCursorDrawData(unsigned int* CursorTextures
 , unsigned int eob)
 {
 	unsigned int drawData = CreateDrawData(eob, 0, -28, 28, 0);
 	CursorTextures[canNotDoIt] = CreateTextureRGBA("res/textures/canNotDo.png");
 	CursorTextures[canClickOnIt] = CreateTextureRGBA("res/textures/canClickon.png");
-	CursorTextures[canPickaxeIt] = CreateTextureRGBA("res/textures/canPickAxeIt.png");
+	CursorTextures[canPickaxeIt] = CreateTextureRGBA("res/textures/canPickaxeIt.png");
 	CursorTextures[canAxeIt] = CreateTextureRGBA("res/textures/canAxeIt.png");
 	CursorTextures[canHammerIt] = CreateTextureRGBA("res/textures/canHammerIt.png");
 	CursorTextures[canPutBin] = CreateTextureRGBA("res/textures/canPutItInBin.png");
 	CursorTextures[canOpenChest] = CreateTextureRGBA("res/textures/CanChest.png");
 	CursorTextures[canOpenDoors] = CreateTextureRGBA("res/textures/CanOpenDoor.png");
-	CursorTextures[canSlideIt] = CreateTextureRGBA("res/textures/CanSlide.png");
+	CursorTextures[canSlideIt] = CreateTextureRGBA("res/textures/canSlide.png");
 	CursorTextures[canBlockPick] = CreateTextureRGBA("res/textures/BlockPicker.png");
 	return drawData;
 }

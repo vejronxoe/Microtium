@@ -83,7 +83,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 		int goingWay;
 		if (m_Velocity[0])
 		{
-			goingWay = abs(m_Velocity[0]) / m_Velocity[0];
+			goingWay = std::abs(m_Velocity[0]) / m_Velocity[0];
 		}
 		else
 		{

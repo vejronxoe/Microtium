@@ -1,11 +1,12 @@
 #include"NumberRender.h"
 
 
-#include"Opengl/Texture.h"
-#include"Opengl/DrawData.h"
+#include"opengl/Texture.h"
+#include"opengl/DrawData.h"
 #include"math/matrix.h"
-#include"glfw/window.h"
+#include"glfw/Window.h"
 
+#include<cmath>
 #include<vector>
 
 unsigned int CreateDrawDataNumbers(unsigned int eob

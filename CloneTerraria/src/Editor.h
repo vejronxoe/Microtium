@@ -1,7 +1,7 @@
 #pragma once
-#include"Opengl/Shader.h"
+#include"opengl/Shader.h"
 #include "BlocksAndWalls.h"
-#include"structures.h"
+#include "structures.h"
 #include"flora.h"
 #include"glfw/Font.h"
 enum PlacingType

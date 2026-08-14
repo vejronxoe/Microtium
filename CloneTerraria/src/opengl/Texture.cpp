@@ -2,11 +2,11 @@
 
 #include<glad/glad.h>
 
-#include"ErrorSystem.h"
-#include"../libraries/stb_image.h"
+#include"opengl/ErrorSystem.h"
+#include"libraries/stb_image.h"
 
 
-
+ 
 unsigned int CreateTextureRGB(const char* filePath)
 {
 	unsigned int iD;

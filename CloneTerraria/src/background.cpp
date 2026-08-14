@@ -1,6 +1,6 @@
 #include"background.h"
-#include"Opengl/DrawData.h"
-#include"Opengl/Texture.h"
+#include"opengl/DrawData.h"
+#include"opengl/Texture.h"
 #include"math/matrix.h"
 #include"BlocksAndWalls.h"
 #define SlowForBackground 2.0f
@@ -35,7 +35,7 @@ void Background::DrawBackground(Shader backgroundSh, Shader basicSh, float* tran
 	ChangeTransform(cameraTransform[0] / SlowForBackground, cameraTransform[1] / SlowForBackground, transform);
 	backgroundSh.SetUniformMat4(basicTransform, transform);
 	ErrorGL(glBindVertexArray(m_DD[0]));
-	float blendFactor = (abs(cameraTransform[0] - Blocks::xMax / 2.0f) - 180) / 20.0f;
+	float blendFactor = (std::abs(cameraTransform[0] - Blocks::xMax / 2.0f) - 180) / 20.0f;
 	if (blendFactor > 1)
 	{
 		blendFactor = 1;

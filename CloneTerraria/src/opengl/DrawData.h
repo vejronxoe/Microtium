@@ -1,5 +1,5 @@
 #pragma once
-#include"ErrorSystem.h"
+#include"opengl/ErrorSystem.h"
 #include<vector>
 unsigned int CreateDrawData(unsigned int eob
 	,float corTop

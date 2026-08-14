@@ -1,6 +1,8 @@
 #include"flora.h"
 
-#include "Opengl/ErrorSystem.h"
+#include<cmath>
+
+#include "opengl/ErrorSystem.h"
 #include "math/matrix.h"
 #include "math/VectorOperation.h"
 #include "glfw/Window.h"
@@ -47,7 +49,7 @@ void DrawCrowns(Shader& sh
 	, float* transform
 	, float* rotation)
 {
-	int cameraVertices[4] = { floor(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5),ceil(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5),ceil(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5),floor(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5) };
+	int cameraVertices[4] = { static_cast<int>(floor(cameraCoordinate[0] - Window::halfWidthOfGameTransform - 5)), static_cast<int>(ceil(cameraCoordinate[1] + Window::halfHeightOfGameTransform + 5)), static_cast<int>(ceil(cameraCoordinate[0] + Window::halfWidthOfGameTransform + 5)), static_cast<int>(floor(cameraCoordinate[1] - Window::halfHeightOfGameTransform - 5)) };
 	for (int i = 0; i < crowns.size(); i++)
 	{
 		if (cameraVertices[2] >= crowns.at(i).m_Transform[0] && cameraVertices[0] <= crowns.at(i).m_Transform[0])

@@ -40,7 +40,7 @@ char GetStructureID(unsigned char Item)
 
 	default:
 		std::cout << "error structure.cpp unknown item :" << (unsigned int)Item << std::endl;
-		Assert(true);
+		assert(false);
 		return s_CraftingTable;
 	}
 }
@@ -77,7 +77,7 @@ unsigned short GetItemIDByStructure(char structure)
 		return i_Lathe;
 	default:
 		std::cout << "error structure.cpp unknown structure :" << (unsigned int)structure << std::endl;
-		Assert(true);
+		assert(false);
 		return i_CraftingTable;
 	}
 }
@@ -189,7 +189,7 @@ void getStructureVertices(int x
 		vertices[3] = y;
 		break;
 	default:
-		Assert(true);
+		assert(false);
 		break;
 
 	}
@@ -256,7 +256,7 @@ Door::Door(int x
 		}
 		break;
 	default:
-		Assert(true);
+		assert(false);
 		break;
 	}
 
@@ -322,7 +322,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 			}
 			break;
 		default:
-			Assert(true);
+			assert(false);
 			break;
 		}
 		m_OpenSide = 0;
@@ -339,7 +339,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				int preferSide = 0;
 				if (playerTransform[0])
 				{
-					preferSide = abs(playerTransform[0]) / playerTransform[0];
+					preferSide = std::abs(playerTransform[0]) / playerTransform[0];
 				}
 				else
 				{
@@ -396,7 +396,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 				int preferSide = 0;
 				if (playerTransform[1])
 				{
-					preferSide = abs(playerTransform[1]) / playerTransform[1];
+					preferSide = std::abs(playerTransform[1]) / playerTransform[1];
 				}
 				else
 				{
@@ -451,7 +451,7 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 			break;
 		}
 			default:
-				Assert(true);
+				assert(false);
 				break;
 		}
 	}
@@ -553,7 +553,7 @@ void DrawDoors(std::vector<Door>& doors
 			break;
 		}
 		default:
-			Assert(true);
+			assert(false);
 			break;
 		}
 		ChangeTransform(doors.at(i).m_Transform[0], doors.at(i).m_Transform[1], transform);
@@ -587,7 +587,7 @@ void Door::DestroyDoor(std::vector<std::vector<Block>>& blocks
 			}
 			break;
 		default:
-			Assert(true);
+			assert(false);
 			break;
 		}
 	}

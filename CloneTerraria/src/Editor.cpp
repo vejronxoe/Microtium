@@ -1,7 +1,7 @@
 #include"Editor.h"
 #include "glfw/input.h"
-#include "Opengl/Texture.h"
-#include "Opengl/drawData.h"
+#include "opengl/Texture.h"
+#include "opengl/DrawData.h"
 #include "glfw/UI.h"
 #include "glfw/Window.h"
 #include "math/VectorOperation.h"
@@ -9,6 +9,7 @@
 #include "ItemList.h"
 #include "glfw/cursor.h"
 
+#include <cmath>
 #include <string>
 #include <iostream>
 #define NUMBEROFSLOTS (t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
@@ -315,7 +316,7 @@ void Editor::Update(float deltaTime
 		{
 			if (m_CopiedBlocks.size())
 			{
-				int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1], m_FirstPointBox[0] + m_CopiedBlocks.size() - 1, m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1 };
+				int Vertices[4] = { m_FirstPointBox[0], m_FirstPointBox[1],static_cast<int>(m_FirstPointBox[0] + m_CopiedBlocks.size() - 1), static_cast<int>(m_FirstPointBox[1] - m_CopiedBlocks[0].size() + 1) };
 				DeleteStructuresInArea(Vertices, Doors, Chests, CraftingStations, saplings);
 
 				for (int i = 0; i < m_CopiedBlocks.size();i++)
@@ -1112,11 +1113,11 @@ int EditorHUD::Update(float deltaTime
 	if (m_WantedScroll != m_Scroll)
 	{
 		float diff = (m_WantedScroll - m_Scroll);
-		m_Scroll += (diff + 1 * diff / abs(diff))*4.0f * deltaTime;
+		m_Scroll += (diff + 1 * diff / std::abs(diff))*4.0f * deltaTime;
 		float newDiff = (m_WantedScroll - m_Scroll);
 		if (newDiff != 0)
 		{
-			if (diff / abs(diff) != newDiff / abs(newDiff))
+			if (diff / std::abs(diff) != newDiff / std::abs(newDiff))
 			{
 				m_Scroll = m_WantedScroll;
 			}

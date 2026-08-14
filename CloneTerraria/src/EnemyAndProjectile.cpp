@@ -1,13 +1,16 @@
 #include"EnemyAndProjectile.h"
 
+#include<cmath>
+
 #include"ItemList.h"
 #include"glfw/input.h"
-#include"Opengl/Texture.h"
-#include"Opengl/DrawData.h"
+#include"opengl/Texture.h"
+#include"opengl/DrawData.h"
 #include"math/matrix.h"
 #include"math/VectorOperation.h"
 #include"glfw/Window.h"
 #include"Collision.h"
+
 
 #define SPAWNCOOLDOWN 10
 #define DESPAWNTIME 10
@@ -49,7 +52,7 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[3] = -1.25;
 		break;
 	default:
-		Assert(true);
+		assert(true);
 		break;
 	}
 }
@@ -63,7 +66,7 @@ bool Enemy::DamageEnemy(int Damage
 		int y = transfromAttacker[1] - m_Transform[1];
 		if (x)
 		{
-			x = abs(x) / x;
+			x = std::abs(x) / x;
 		}
 		else
 		{
@@ -72,7 +75,7 @@ bool Enemy::DamageEnemy(int Damage
 
 		if (y)
 		{
-			y = abs(y) / y;
+			y = std::abs(y) / y;
 		}
 		else
 		{
@@ -171,13 +174,13 @@ int Enemy::walkingToTarget(float deltaTime
 		float distance[2];
 		WhereIsPlayer(targetPos, distance, direction);
 		m_LookAt = direction[0];
-		if ((abs(distance[0]) < 2 || ENEMIESMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
+		if ((std::abs(distance[0]) < 2 || ENEMIESMOVEMENT < m_Velocity[0] * direction[0]) && m_Velocity[0])
 		{
-			int oldVelocity = abs(m_Velocity[0]) / m_Velocity[0];
+			int oldVelocity = std::abs(m_Velocity[0]) / m_Velocity[0];
 			m_Velocity[0] -= direction[0] * ENEMIESMOVEMENT * deltaTime;
 			if (m_Velocity[0])
 			{
-				if (m_Velocity[0] / abs(m_Velocity[0]) != oldVelocity)
+				if (m_Velocity[0] / std::abs(m_Velocity[0]) != oldVelocity)
 				{
 					m_Velocity[0] = 0;
 				}
@@ -188,7 +191,7 @@ int Enemy::walkingToTarget(float deltaTime
 			int multi = 1;
 			if (m_Velocity[0])
 			{
-				if (m_Velocity[0] / abs(m_Velocity[0]) != direction[0])
+				if (m_Velocity[0] / std::abs(m_Velocity[0]) != direction[0])
 				{
 					multi = 3;
 				}
@@ -200,16 +203,16 @@ int Enemy::walkingToTarget(float deltaTime
 		{
 			m_Velocity[1] = GRAVITY;
 		}
-		if (abs(distance[0]) < 2.0f && distance[1] > 0)
+		if (std::abs(distance[0]) < 2.0f && distance[1] > 0)
 		{
 			wantJump = true;
 		}
 	}
 	else if(m_Velocity[0])
 	{
-		int dir = m_Velocity[0] / abs(m_Velocity[0]);
-		m_Velocity[0] = m_Velocity[0] -m_Velocity[0] / abs(m_Velocity[0]) * ENEMIESMOVEMENT * 2 * deltaTime;
-		if (m_Velocity[0] / abs(m_Velocity[0]) != dir)
+		int dir = m_Velocity[0] / std::abs(m_Velocity[0]);
+		m_Velocity[0] = m_Velocity[0] -m_Velocity[0] / std::abs(m_Velocity[0]) * ENEMIESMOVEMENT * 2 * deltaTime;
+		if (m_Velocity[0] / std::abs(m_Velocity[0]) != dir)
 		{
 			m_Velocity[0] = 0;
 		}
@@ -275,7 +278,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		{
 			m_AnimTimer += deltaTime;
 		}
-		if ((Input::SpacePress && abs(distance[1]) < vertices[1] - m_Transform[1] + 2) && hit[3])
+		if ((Input::SpacePress && std::abs(distance[1]) < vertices[1] - m_Transform[1] + 2) && hit[3])
 		{
 			m_AbilityTimer += deltaTime;
 		}
@@ -302,7 +305,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		{
 			m_AbilityTimer = 0;
 			m_Velocity[1] = 20;
-			m_Velocity[0] = direction[0] * Clamp((abs(distance[0]) - 0.5f), 0, 7.5f);
+			m_Velocity[0] = direction[0] * Clamp((std::abs(distance[0]) - 0.5f), 0, 7.5f);
 			hit[3] = false;
 		}
 		m_Velocity[0] += direction[0] * deltaTime;
@@ -330,8 +333,8 @@ int Enemy::EnemyEveryFrame(float deltaTime
 
 		if (m_AbilityTimer > SLIMEABILITIESCOOLDOWN)
 		{
-			float velocity = Clamp(abs(distance[0]), 0, 8);
-			if (abs(distance[0]) < 4)
+			float velocity = Clamp(std::abs(distance[0]), 0, 8);
+			if (std::abs(distance[0]) < 4)
 			{
 				velocity *= 2;
 			}
@@ -368,7 +371,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				velocity[0] = 0;
 				distance[0] = 1;
 			}
-			if (velocity[0] < abs(distance[0]))
+			if (velocity[0] < std::abs(distance[0]))
 			{
 				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 			}
@@ -377,7 +380,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 				if (m_AbilityTimer >= SKELETONCOOLDOWN)
 				{
-					velocity[0] = abs(distance[0]) * m_LookAt;
+					velocity[0] = std::abs(distance[0]) * m_LookAt;
 					projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0], velocity[1], m_Damage);
 					m_AbilityTimer = 0;
 				}
@@ -534,7 +537,7 @@ void Enemy::DrawEnemy(Shader& animSh
 	{
 		int animOrder[8] = {0, 3, 1, 3, 0, 4, 2, 4};
 		animSh.SetUniform1i(animLeangth, 5);
-		animDraw(animSh,m_AnimTimer,animOrder , 8,0.8f/abs(m_Velocity[0]));
+		animDraw(animSh,m_AnimTimer,animOrder , 8,0.8f/std::abs(m_Velocity[0]));
 		break;
 	}
 	case en_Imp:
@@ -545,7 +548,7 @@ void Enemy::DrawEnemy(Shader& animSh
 		int animOrder[8] = { 0, 3, 1, 3, 0, 4, 2, 4 };
 		animSh.SetUniform1i(animLeangth, 5);
 		float animOffset = 0;
-		if (animDraw(animSh, m_AnimTimer, animOrder, 8, 0.8f / abs(m_Velocity[0])) == 0)
+		if (animDraw(animSh, m_AnimTimer, animOrder, 8, 0.8f / std::abs(m_Velocity[0])) == 0)
 		{
 			animOffset = 0.1f;
 			ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
@@ -604,7 +607,7 @@ bool getLocationForEnemySpawn(unsigned int enemyType
 	memoryDefender(spawnVertices, 4);
 	float enemyVertices[4] = {};
 	GetEnemyVerticesByType(enemyType, enemyVertices);
-	int dimensions[2] = { enemyVertices[2] - enemyVertices[0], enemyVertices[1] - enemyVertices[3] };
+	int dimensions[2] = { static_cast<int>(enemyVertices[2] - enemyVertices[0]), static_cast<int>(enemyVertices[1] - enemyVertices[3]) };
 	spawnVertices[2] -= dimensions[0];
 	spawnVertices[1] -= dimensions[1];
 	for(int i  = spawnVertices[0]; i < spawnVertices[2]; i++)
@@ -744,7 +747,7 @@ void Enemy::WhereIsPlayer(float* playerTransform
 	distance[1] = playerTransform[1] - m_Transform[1];
 	if (distance[0])
 	{
-		direction[0] = distance[0] / abs(distance[0]);
+		direction[0] = distance[0] / std::abs(distance[0]);
 	}
 	else
 	{
@@ -752,7 +755,7 @@ void Enemy::WhereIsPlayer(float* playerTransform
 	}
 	if (distance[1])
 	{
-		direction[1] = distance[1] / abs(distance[1]);
+		direction[1] = distance[1] / std::abs(distance[1]);
 	}
 	else
 	{
@@ -1294,11 +1297,11 @@ void Projectile::Draw(Shader& sh
 {
 
 	double angle = atan2(m_Velocity[0], m_Velocity[1]) * 180.0 / PI;
-	ChangeRotation(-abs(angle), rotation);
+	ChangeRotation(-std::abs(angle), rotation);
 	sh.SetUniformMat4(advancedRotation, rotation);
 	if (angle)
 	{
-		ChangeScale(angle / abs(angle), 1, scale);
+		ChangeScale(angle / std::abs(angle), 1, scale);
 	}
 	else
 	{

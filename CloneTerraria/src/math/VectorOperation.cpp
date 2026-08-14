@@ -1,9 +1,10 @@
-#include"VectorOperation.h"
+#include"math/VectorOperation.h"
 
 #include<iostream>
+#include<cmath>
 
-#include"../glfw/Window.h"
-#include"../ItemList.h"
+#include"glfw/Window.h"
+#include"ItemList.h"
 
 float Pyt2D(float x, float y)
 {

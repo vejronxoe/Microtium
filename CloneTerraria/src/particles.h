@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
 
-#include"Opengl/Shader.h"
+#include"opengl/Shader.h"
 
 
 class FireParticle

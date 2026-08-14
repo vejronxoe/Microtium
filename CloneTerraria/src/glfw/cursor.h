@@ -1,6 +1,6 @@
 #pragma once
-#include"../Opengl/Shader.h"
-#include"../player.h"
+#include"opengl/Shader.h"
+#include"Player.h"
 
 enum cursor
 {

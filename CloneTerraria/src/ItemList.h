@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #define GRAVITY -40
 #define BlockSize (1.0f/(5.0f + 75.0f * Window::gameZoom))
 #define TEXSLOTDISTANCE 1.0f/10.0f

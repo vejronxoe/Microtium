@@ -4,9 +4,10 @@
 #include<fstream>
 #include<sstream>
 #include<string>
+#include<cmath>
 
-#include"Opengl/ErrorSystem.h"
-#include"Opengl/Texture.h"
+#include"opengl/ErrorSystem.h"
+#include"opengl/Texture.h"
 #include"math/matrix.h"
 #include"ItemList.h"
 #include"glfw/Window.h"
@@ -240,8 +241,7 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_Ice] = CreateTextureRepeatRGBA("res/textures/ice.png");
 	IDs[t_Asphalt] = CreateTextureRepeatRGBA("res/textures/Asphalt.png");
 	IDs[t_Platform] = CreateTextureRepeatRGBA("res/textures/platform.png");
-	IDs[t_Platform] = CreateTextureRepeatRGBA("res/textures/platform.png");
-	IDs[t_ForestPlank] = CreateTextureRepeatRGBA("res/textures/forestPlank.png");
+	IDs[t_ForestPlank] = CreateTextureRepeatRGBA("res/textures/forestplank.png");
 	IDs[t_Sand] = CreateTextureRepeatRGBA("res/textures/sand.png");
 	IDs[t_DoorBlock] = CreateTextureRepeatRGBA("res/textures/red.png");
 	IDs[t_CopperOre] = CreateTextureRepeatRGBA("res/textures/copper.png");
@@ -249,15 +249,15 @@ void CreateAllBlockTextures(unsigned int* IDs)
 	IDs[t_AdamantiteOre] = CreateTextureRepeatRGBA("res/textures/AdamantiteOre.png");
 	IDs[t_GoldOre] = CreateTextureRepeatRGBA("res/textures/GoldOre.png");
 	IDs[t_TitanOre] = CreateTextureRepeatRGBA("res/textures/TitanOre.png");
-	IDs[t_Stone] = CreateTextureRepeatRGBA("res/textures/Stone.png");
+	IDs[t_Stone] = CreateTextureRepeatRGBA("res/textures/stone.png");
 	IDs[t_Cloude] = CreateTextureRepeatRGBA("res/textures/Cloude.png");
 	IDs[t_StoneBrick] = CreateTextureRepeatRGBA("res/textures/StoneBrick.png");
 	IDs[t_HardStone] = CreateTextureRepeatRGBA("res/textures/HardStone.png");
 	IDs[t_HardStoneBrick] = CreateTextureRepeatRGBA("res/textures/HardStoneBrick.png");
-	IDs[t_SandBrick] = CreateTextureRepeatRGBA("res/textures/SandBrick.png");
-	IDs[t_Terracotta] = CreateTextureRepeatRGBA("res/textures/Terracotta.png");
+	IDs[t_SandBrick] = CreateTextureRepeatRGBA("res/textures/sandBrick.png");
+	IDs[t_Terracotta] = CreateTextureRepeatRGBA("res/textures/terracotta.png");
 	IDs[t_SnowPlatform] = CreateTextureRepeatRGBA("res/textures/SnowPlatform.png");
-	IDs[t_SandPlatform] = CreateTextureRepeatRGBA("res/textures/sandPlatform.png");
+	IDs[t_SandPlatform] = CreateTextureRepeatRGBA("res/textures/SandPlatform.png");
 	IDs[t_Snow] = CreateTextureRepeatRGBA("res/textures/Snow.png");
 	IDs[t_HeartBlock] = CreateTextureRepeatRGBA("res/textures/HeartBlock.png");
 	IDs[t_SandStone] = CreateTextureRepeatRGBA("res/textures/SandStone.png");
@@ -778,10 +778,10 @@ void DrawChunks(Shader& shadowSh
 			, ceilf(cameraTransform[1] + Window::halfHeightOfGameTransform)
 			, ceilf(cameraTransform[0] + Window::halfWidthOfGameTransform)
 			, floorf(cameraTransform[1] - Window::halfHeightOfGameTransform) };
-		float edgeChunks[4] = { FindChunk(cameraVertices[0] ,cameraVertices[3])
-			, FindChunk(cameraVertices[2], cameraVertices[3])
-			, FindChunk(cameraVertices[2], cameraVertices[1])
-			, FindChunk(cameraVertices[0], cameraVertices[1]) };
+		float edgeChunks[4] = { static_cast<float>(FindChunk(cameraVertices[0], cameraVertices[3]))
+			, static_cast<float>(FindChunk(cameraVertices[2], cameraVertices[3]))
+			, static_cast<float>(FindChunk(cameraVertices[2], cameraVertices[1]))
+			, static_cast<float>(FindChunk(cameraVertices[0], cameraVertices[1])) };
 		float deltaChunks[2] = { edgeChunks[1] - edgeChunks[0] ,(edgeChunks[3] - edgeChunks[0]) / 54 };
 
 		for (int i = 0; i <= deltaChunks[1];i++)
@@ -1013,7 +1013,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 
 		float altTransform[2] = {lightX - x, lightY - (y + Blocks::yMin) }; 
 
-		int index[2] = { round(lightX) - x, round(lightY) - (y + Blocks::yMin) };
+		int index[2] = {static_cast<int>(round(lightX)) - x, static_cast<int>(round(lightY) - (y + Blocks::yMin)) };
 		int maxLeanght = ceil(emittingLight/0.08f)+1;
 		int SpaceOfLight[4] = {index[0] - maxLeanght, index[1] +maxLeanght, index[0] + maxLeanght, index[1] - maxLeanght};
 		SpaceOfLight[0] = Clamp(SpaceOfLight[0], 0, width);
@@ -1036,8 +1036,8 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 					float searchScale[2] = {};
 					float searchLeanghts[2] = {};
 					float leanght[3] = { altTransform[0] - searchIndex[0],altTransform[1] -searchIndex[1],Pyt2D(searchIndex[0] - altTransform[0], searchIndex[1] - altTransform[1])};
-					searchAdd[0] = (leanght[0]) / abs(leanght[0]);
-					searchAdd[1] = (leanght[1]) / abs(leanght[1]);
+					searchAdd[0] = (leanght[0]) / std::abs(leanght[0]);
+					searchAdd[1] = (leanght[1]) / std::abs(leanght[1]);
 					searchScale[0] = Pyt2D( 1 ,leanght[1] / leanght[0]);
 					searchScale[1] = Pyt2D(1, leanght[0] / leanght[1]);
 					searchLeanghts[0] = searchScale[0];

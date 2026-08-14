@@ -4,10 +4,10 @@
 #include<string>
 #include<sstream>
 
-#include"Opengl/Texture.h"
-#include"Opengl/drawData.h"
-#include"glfw/Input.h"
-#include"glfw/window.h"
+#include"opengl/Texture.h"
+#include"opengl/DrawData.h"
+#include"glfw/input.h"
+#include"glfw/Window.h"
 #include"math/matrix.h"
 #include"math/VectorOperation.h"
 #include"NumberRender.h"
@@ -79,7 +79,7 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_Sapling] = CreateTextureRGBA("res/textures/saplingInv.png");
 	itemTex[i_WoodBow] = CreateTextureRGBA("res/textures/bowInInv.png");
 	itemTex[i_BasicArrow] = CreateTextureRGBA("res/textures/basicArrow.png");
-	itemTex[i_PierceArrow] = CreateTextureRGBA("res/textures/BleedArrow.png");
+	itemTex[i_PierceArrow] = CreateTextureRGBA("res/textures/bleedArrow.png");
 	itemTex[i_BouncingArrow] = CreateTextureRGBA("res/textures/bouncingArrow.png");
 	itemTex[i_FireArrow] = CreateTextureRGBA("res/textures/fireArrow.png");
 	itemTex[i_Cannon] = CreateTextureRGBA("res/textures/canonInv.png");
@@ -89,7 +89,7 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_FireCannonBall] = CreateTextureRGBA("res/textures/fireCannonBall.png");
 	itemTex[i_Pistol] = CreateTextureRGBA("res/textures/pistolInv.png");
 	itemTex[i_BasicBullet] = CreateTextureRGBA("res/textures/basicBullet.png");
-	itemTex[i_PierceBullet] = CreateTextureRGBA("res/textures/BleedBullet.png");
+	itemTex[i_PierceBullet] = CreateTextureRGBA("res/textures/bleedBullet.png");
 	itemTex[i_BouncingBullet] = CreateTextureRGBA("res/textures/bouncingBullet.png");
 	itemTex[i_FireBullet] = CreateTextureRGBA("res/textures/fireBullet.png");
 	itemTex[i_WoodHelmet] = CreateTextureRGBA("res/textures/woodHelmet.png");
@@ -111,8 +111,8 @@ void CreateAllItemTextures(unsigned int* itemTex
 	itemTex[i_Door] = CreateTextureRGBA("res/textures/DoorInv.png");
 	itemTex[i_Gate] = CreateTextureRGBA("res/textures/GateInv.png");
 	itemTex[i_TrapDoor] = CreateTextureRGBA("res/textures/TrapDoorInv.png");
-	itemTex[i_Lathe] = CreateTextureRGBA("res/textures/latheInv.png");
-	itemTex[i_WorkBench] = CreateTextureRGBA("res/textures/workBenchInv.png");
+	itemTex[i_Lathe] = CreateTextureRGBA("res/textures/LatheInv.png");
+	itemTex[i_WorkBench] = CreateTextureRGBA("res/textures/workbenchInv.png");
 	itemTex[i_AlchemyTable] = CreateTextureRGBA("res/textures/alechmyTableInv.png");
 
 
@@ -1235,7 +1235,7 @@ void Player::clear()
 	m_TimerSpliting = 0;
 	m_AddNextFrameDrop = 0;
 	m_ItemsToTake = 0;
-	m_NumberOfRecipesDone;
+	m_NumberOfRecipesDone= 0.0f;
 	m_LastStandingY = 10;
 	m_TimerSinceLastHit = 0;
 	m_AddNextFrameHP = 0;
@@ -1368,9 +1368,8 @@ void Player::EveryFrame(float deltaTime
 			{
 				int vertices[4];
 				getStructureVertices(craftStations.at(i).m_Transform[0], craftStations.at(i).m_Transform[1], craftStations.at(i).m_CraftStationtype, vertices);
-				if (abs(m_Transform[0] - (float)(vertices[0] + vertices[2]) / 2.0f) < 5)
+				if (std::abs(m_Transform[0] - (float)(vertices[0] + vertices[2]) / 2.0f) < 5.0f)
 				{
-					Assert(s_Chest <= craftStations.at(i).m_CraftStationtype);
 					isCloseToCraftStation[craftStations.at(i).m_CraftStationtype] = true;
 				}
 			}
@@ -1380,7 +1379,6 @@ void Player::EveryFrame(float deltaTime
 		{
 			if (m_Recipes[l].m_CraftingStation != -1)
 			{
-				Assert(s_Chest <= m_Recipes[l].m_CraftingStation);
 				if (!isCloseToCraftStation[m_Recipes[l].m_CraftingStation])
 				{
 					m_Recipes[l].m_CraftingState = cantCraft;
@@ -1934,7 +1932,7 @@ void Player::EveryFrame(float deltaTime
 			}
 		}
 	}
-	float verticesPlayer[4] = { m_Transform[0] - 0.8 ,m_Transform[1] + 1.3 ,m_Transform[0] + 0.8,m_Transform[1] - 1.5 };
+	float verticesPlayer[4] = { static_cast<float>(m_Transform[0] - 0.8) ,static_cast<float>(m_Transform[1] + 1.3) ,static_cast<float>(m_Transform[0] + 0.8),static_cast<float>(m_Transform[1] - 1.5) };
 	int x = roundf(Input::XMousePos + CameraCoordinates[0]);
 	int y = roundf(Input::YMousePos + CameraCoordinates[1]);
 
@@ -2321,7 +2319,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				if (m_LocationAmmunition != -1)
 				{
-					float velocity[2] = { Input::XMousePos - HANDOFFSETX * m_DirectionLook - (m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - HANDOFFSETY - (m_Transform[1] - CameraCoordinates[1]) };
+					float velocity[2] = { static_cast<float>(Input::XMousePos - HANDOFFSETX * m_DirectionLook - (m_Transform[0] - CameraCoordinates[0])), static_cast<float>(Input::YMousePos - HANDOFFSETY - (m_Transform[1] - CameraCoordinates[1])) };
 					NormalizeVector(velocity);
 					switch (m_PlayerSlots[0])
 					{

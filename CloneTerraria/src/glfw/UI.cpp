@@ -1,14 +1,14 @@
-#include"UI.h"
+#include"glfw/UI.h"
 
 #include<string>
 
-#include"Window.h"
-#include"input.h"
-#include"../math/VectorOperation.h"
-#include"../math/Matrix.h"
-#include"../ItemList.h"
-#include"../opengl/drawData.h"
-#include"../Opengl/ErrorSystem.h"
+#include"glfw/Window.h"
+#include"glfw/input.h"
+#include"math/VectorOperation.h"
+#include"math/matrix.h"
+#include"ItemList.h"
+#include"opengl/DrawData.h"
+#include"opengl/ErrorSystem.h"
 
 void UITranslatorToPixels(float leftCoordinates
 	, float downCoordinates

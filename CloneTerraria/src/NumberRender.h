@@ -1,5 +1,5 @@
 #pragma once
-#include"Opengl/Shader.h"
+#include"opengl/Shader.h"
 
 unsigned int CreateDrawDataNumbers(unsigned int eob
 	, unsigned int& numberTexture

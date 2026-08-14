@@ -1,15 +1,15 @@
-#include "Font.h"
+#include "glfw/Font.h"
 
 #include<iostream>
 #include<fstream>
 
-#include "../math/VectorOperation.h"
-#include "../math/matrix.h"
-#include "window.h"
-#include "../libraries/json.hpp"
-#include "../Opengl/ErrorSystem.h"
-#include "../Opengl/DrawData.h"
-#include "../ItemList.h"
+#include "math/VectorOperation.h"
+#include "math/matrix.h"
+#include "glfw/Window.h"
+#include "libraries/json.hpp"
+#include "opengl/ErrorSystem.h"
+#include "opengl/DrawData.h"
+#include "ItemList.h"
 
 #define BEGINLETTER 32	
 

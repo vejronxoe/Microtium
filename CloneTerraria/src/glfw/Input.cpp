@@ -1,8 +1,8 @@
-	#include "input.h"
+	#include "glfw/input.h"
 
 #include<iostream>
 
-#include"Window.h"
+#include"glfw/Window.h"
 
 namespace Input
 {
