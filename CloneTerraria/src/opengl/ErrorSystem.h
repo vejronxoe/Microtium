@@ -2,9 +2,9 @@
 #include<cassert>
 #include<glad/glad.h>
 #include<iostream>
-#define ErrorGL(x) GLClearError();\
-x;\
-assert(!GLCheakError(__FILE__,__LINE__))
+#define ErrorGL(x) x //GLClearError();\
+//x;\
+//assert(!GLCheakError(__FILE__,__LINE__))
 
 
 

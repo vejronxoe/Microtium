@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 
 
@@ -31,7 +31,7 @@ target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLFW_INCLUDE_NONE=1)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glad glfw )
 
 
-set(MY_BUILD_TYPE debug) # setting of the optimization level for the project, can be debug, release or debInfo
+set(MY_BUILD_TYPE "debug") # setting of the optimization level for the project, can be debug, release or debInfo
 
 
 if(MY_BUILD_TYPE STREQUAL "debug")

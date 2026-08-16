@@ -717,6 +717,13 @@ int main()
 			enemiesTexs[en_Imp] = CreateTextureRGBA("res/textures/ImpAnim.png");
 			enemiesDDs[en_Imp] = CreateDrawData(eob, 1.25f, -1.25f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
+			enemiesTexs[en_Imp] = CreateTextureRGBA("res/textures/ImpAnim.png");
+			enemiesDDs[en_Imp] = CreateDrawData(eob, 1.25f, -1.25f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
+
+
+			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ImpAnim.png");
+			enemiesDDs[en_Ghost] = enemiesDDs[en_Slime];
+
 
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
@@ -929,6 +936,7 @@ int main()
 
 				deltaTime = Clamp(glfwGetTime() - pastTime,0,1);
 				pastTime = glfwGetTime();
+				assert(!GLCheakError(__FILE__,__LINE__));
 
 				
 				int newWidth, newHeight;
@@ -1635,7 +1643,7 @@ int main()
 			backgroundSh.GetUniformLocation("camera");
 			backgroundSh.GetUniformLocation("transform");
 			backgroundSh.GetUniformLocation("blendFactor");
-			Shader shadowSh("res/shaders/verbasic.txt", "res/shaders/fragShadow.txt ");
+			Shader shadowSh("res/shaders/verBasic.txt", "res/shaders/fragShadow.txt");
 			shadowSh.Bind();
 			shadowSh.GetUniformLocation("camera");
 			shadowSh.GetUniformLocation("transform");
@@ -1810,6 +1818,7 @@ int main()
 				deltaTime = glfwGetTime() - pastTime;
 				pastTime = glfwGetTime();
 				int cursorState = canNotDoIt;
+				assert(!GLCheakError(__FILE__,__LINE__));
 
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
@@ -1837,10 +1846,6 @@ int main()
 					fontSh.Bind();
 					fontSh.SetUniformMat4(fontCamera, camera);
 
-				}
-				if (Input::LeftMousePress)
-				{
-					std::cout << Input::XMousePos + editor.m_Transform[0] << " , " << Input::YMousePos + editor.m_Transform[1] << std::endl;
 				}
 				Input::XMousePos = Clamp(Input::XMousePos, -Window::halfWidthOfGameTransform, Window::halfWidthOfGameTransform);
 				Input::YMousePos = Clamp(Input::YMousePos, -Window::halfHeightOfGameTransform, Window::halfHeightOfGameTransform);

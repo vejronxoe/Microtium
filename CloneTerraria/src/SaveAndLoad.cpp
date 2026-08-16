@@ -194,26 +194,30 @@ bool Load(std::string path
 		{
 			uint8_t type = 0;
 			file.read(reinterpret_cast<char*>(&type), sizeof(type));
-
-			blocks.at(i).at(j - Blocks::yMin).Create(type);
-
-			if (type == t_Sand)
+			if(type < t_DoorBlock)
 			{
-				bool isAlreadyThere = false;
-				for (int k = 0; k < sandXs.size(); k++)
+				blocks.at(i).at(j - Blocks::yMin).Create(type);
+				if (type == t_Sand)
 				{
-					if (sandXs.at(k) == i)
+					bool isAlreadyThere = false;
+					for (int k = 0; k < sandXs.size(); k++)
 					{
-						isAlreadyThere = true;
-						break;
+						if (sandXs.at(k) == i)
+						{
+							isAlreadyThere = true;
+							break;
+						}
+					}
+					if (!isAlreadyThere)
+					{
+						sandXs.emplace_back(i);
 					}
 				}
-				if (!isAlreadyThere)
-				{
-					sandXs.emplace_back(i);
-				}
 			}
-
+			else
+			{
+				blocks.at(i).at(j - Blocks::yMin).Create(t_Air);
+			}
 		}
 	}
 	
@@ -307,7 +311,14 @@ bool Load(std::string path
 
 			uint8_t type = 0;
 			file.read(reinterpret_cast<char*>(&type), sizeof(type));
-			walls.at(i).at(j - Blocks::yMin) = type;
+			if(type < t_DoorBlock)
+			{
+				walls.at(i).at(j - Blocks::yMin) = type;
+			}
+			else
+			{
+				walls.at(i).at(j - Blocks::yMin) = 0;
+			}
 			
 		}
 	}

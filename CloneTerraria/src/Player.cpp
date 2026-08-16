@@ -2116,7 +2116,7 @@ void Player::EveryFrame(float deltaTime
 			{
 				m_CursorOnMinableBlock = blocks.at(x).at(y - Blocks::yMin).m_Type != b_Air;
 				blockIndex = y - Blocks::yMin;
-
+				
 				if (m_CursorOnMinableBlock && (blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Indestructible 
 					|| blocks.at(x).at(y - Blocks::yMin).m_Behavior == b_Door
 					|| blocks.at(x).at(y - Blocks::yMin).m_Type >= t_LightWoodVer && blocks.at(x).at(y - Blocks::yMin).m_Type <= t_CactusTop

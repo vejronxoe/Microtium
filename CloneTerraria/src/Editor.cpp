@@ -732,7 +732,7 @@ void Editor::Draw(Shader& animSh
 EditorHUD::EditorHUD(unsigned int eob
 	, unsigned int backGroundTex)
 {
-	m_Icons[0] = CreateTextureRGBA("res/textures/PaintBrush.png");
+	m_Icons[0] = CreateTextureRGBA("res/textures/paintBrush.png");
 	m_Icons[1] = CreateTextureRGBA("res/textures/SelectIcon.png");
 	m_Icons[2] = CreateTextureRGBA("res/textures/Bucket.png");
 	m_Icons[3] = CreateTextureRGBA("res/textures/RubberIcon.png");

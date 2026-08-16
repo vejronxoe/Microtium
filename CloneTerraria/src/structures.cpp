@@ -394,49 +394,53 @@ void Door::DoorInteract(std::vector<std::vector<Block>>& blocks
 			{
 				playerTransform[1] -= m_Transform[1];
 				int preferSide = 0;
-				if (playerTransform[1])
+				int testVertices[4] = {};
+				int vertices[4] = {};
+				for(int i = 0; i < 2;i++)
 				{
-					preferSide = std::abs(playerTransform[1]) / playerTransform[1];
-				}
-				else
-				{
-					preferSide = 1;
-				}
-				int vertices[4] = { m_Vertices[0], preferSide + m_Vertices[1], m_Vertices[2] ,preferSide + m_Vertices[3] };
-				if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
-				{
-					for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
+					if (playerTransform[1] > 0 && (i == 0 || m_Vertices[1] == vertices[1]))
 					{
-						DestroyBlock(chunksFill, blocks, sandX, i, m_Transform[1]);
+						preferSide = 1;
+
+						vertices[0] = m_Vertices[0]; 
+						vertices[1] = m_Vertices[1]+1;
+						vertices[2] = m_Vertices[2];
+						vertices[3] = m_Vertices[3];
+
+						testVertices[0] = m_Vertices[0]; 
+						testVertices[1] = m_Vertices[1]+1;
+						testVertices[2] = m_Vertices[2];
+						testVertices[3] = m_Vertices[3]+1;
+
 					}
-
-					m_Vertices[0] = vertices[0];
-					m_Vertices[1] = vertices[1];
-					m_Vertices[2] = vertices[2];
-					m_Vertices[3] = vertices[3];
-
-					m_OpenSide = preferSide;
-				}
-				else
-				{
-
-					vertices[0] = m_Vertices[0];
-					vertices[1] = m_Vertices[1] - preferSide;
-					vertices[2] = m_Vertices[2];
-					vertices[3] = m_Vertices[3] - preferSide;
-					if (!isAnythinginArea(vertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
+					else
 					{
+						preferSide = -1;
+
+						vertices[0] = m_Vertices[0]; 
+						vertices[1] = m_Vertices[1];
+						vertices[2] = m_Vertices[2];
+						vertices[3] = m_Vertices[3]-1;
+
+						testVertices[0] = m_Vertices[0]; 
+						testVertices[1] = m_Vertices[1]-1;
+						testVertices[2] = m_Vertices[2];
+						testVertices[3] = m_Vertices[3]-1;
+
+					}
+					if (!isAnythinginArea(testVertices, blocks, seedlings, Crowns, craftingStations, doors, chests))
+					{
+						m_OpenSide = preferSide;
 						for (int i = m_Vertices[0]; i <= m_Vertices[2]; i++)
 						{
-							DestroyBlock(chunksFill,blocks, sandX, i, m_Transform[1]);
+							DestroyBlock(chunksFill, blocks, sandX, i, m_Transform[1]);
 						}
+
 						m_Vertices[0] = vertices[0];
 						m_Vertices[1] = vertices[1];
 						m_Vertices[2] = vertices[2];
 						m_Vertices[3] = vertices[3];
-
-						m_OpenSide = -preferSide;
-
+						break;
 					}
 				}
 				break;

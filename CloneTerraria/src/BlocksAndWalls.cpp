@@ -416,7 +416,7 @@ bool FindBlock(std::vector<std::vector<Block>>& blocks
 {
 	for (int j = vertices[0]; j <= vertices[2]; j++)
 	{
-		for (int i = vertices[3]; i < vertices[1]; i++)
+		for (int i = vertices[3]; i <= vertices[1]; i++)
 		{
 			if (blocks.at(j).at(i - Blocks::yMin).m_Type != t_Air)
 			{
