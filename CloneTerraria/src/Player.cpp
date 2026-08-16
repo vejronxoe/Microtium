@@ -753,7 +753,7 @@ void Player::DamagePlayer(float* transfromAttacker
 		int y = transfromAttacker[1] - m_Transform[1];
 		if (x)
 		{
-			x = abs(x) / x;
+			x = std::abs(x) / x;
 		}
 		else
 		{
@@ -1454,11 +1454,11 @@ void Player::EveryFrame(float deltaTime
 		if (m_RecipeY != m_UsingIndexRecipe)
 		{
 			float distanceBefore = m_UsingIndexRecipe - m_RecipeY;
-			m_RecipeY += (abs(distanceBefore) / distanceBefore * (abs(distanceBefore) + 1)) * 5 * deltaTime;
+			m_RecipeY += (std::abs(distanceBefore) / distanceBefore * (std::abs(distanceBefore) + 1)) * 5 * deltaTime;
 			float distanceAfter = m_UsingIndexRecipe - m_RecipeY;
 			if (distanceAfter)
 			{
-				if (abs(distanceAfter) / distanceAfter != abs(distanceBefore) / distanceBefore)
+				if (std::abs(distanceAfter) / distanceAfter != std::abs(distanceBefore) / distanceBefore)
 					m_RecipeY = m_UsingIndexRecipe;
 			}
 
@@ -1654,7 +1654,7 @@ void Player::EveryFrame(float deltaTime
 											amountLeft -= m_AmountInSlots[j];
 											if (amountLeft <= 0)
 											{
-												m_AmountInSlots[j] = abs(amountLeft);
+												m_AmountInSlots[j] = std::abs(amountLeft);
 												break;
 											}
 											else if (amountLeft == 0)
@@ -1689,7 +1689,7 @@ void Player::EveryFrame(float deltaTime
 											amountLeft -= m_AmountInSlots[j];
 											if (amountLeft < 0)
 											{
-												m_AmountInSlots[j] = abs(amountLeft);
+												m_AmountInSlots[j] = std::abs(amountLeft);
 												break;
 											}
 											else if (amountLeft == 0)
@@ -2842,7 +2842,7 @@ void Player::EveryFrame(float deltaTime
 				{
 					m_ArmTimer += deltaTime;
 				}
-				if (0.1f / abs(m_Velocity[0]) >= m_WalkingTimer)
+				if (0.1f / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2850,7 +2850,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 2;
 					}
 				}
-				else if (SPEEDOFANIM / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2858,7 +2858,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 3;
 					}
 				}
-				else if (SPEEDOFANIM * 2 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 2 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 1;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2866,7 +2866,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 3;
 					}
 				}
-				else if (SPEEDOFANIM * 3 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 3 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 3;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2874,7 +2874,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 2;
 					}
 				}
-				else if (SPEEDOFANIM * 4 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 4 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2882,7 +2882,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 2;
 					}
 				}
-				else if (SPEEDOFANIM * 5 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 5 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 4;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2890,7 +2890,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 1;
 					}
 				}
-				else if (SPEEDOFANIM * 6 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 6 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 2;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2898,7 +2898,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 1;
 					}
 				}
-				else if (SPEEDOFANIM * 7 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 7 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 4;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2906,7 +2906,7 @@ void Player::EveryFrame(float deltaTime
 						m_ArmPhase = 2;
 					}
 				}
-				else if (SPEEDOFANIM * 8 / abs(m_Velocity[0]) >= m_WalkingTimer)
+				else if (SPEEDOFANIM * 8 / std::abs(m_Velocity[0]) >= m_WalkingTimer)
 				{
 					m_WalkingPhase = 0;
 					if (m_ArmsBehaviour == ArmRun)
@@ -2949,9 +2949,9 @@ void Player::EveryFrame(float deltaTime
 				m_ArmRotation = atan2f(Input::XMousePos - HANDOFFSETX * m_DirectionLook-(m_Transform[0] - CameraCoordinates[0]), Input::YMousePos - HANDOFFSETY - (m_Transform[1] - CameraCoordinates[1])) * 180.0 / PI;
 				if (m_ArmRotation)
 				{
-					m_DirectionLook = m_ArmRotation / abs(m_ArmRotation);
+					m_DirectionLook = m_ArmRotation / std::abs(m_ArmRotation);
 				}
-				m_ArmRotation = -abs(m_ArmRotation);
+				m_ArmRotation = -std::abs(m_ArmRotation);
 				break;
 			default:
 				m_ArmRotation -= 150 * deltaTime / m_CooldownToUse;
@@ -2983,7 +2983,7 @@ void Player::EveryFrame(float deltaTime
 							}
 							if (Pyt2D(distance) <= 2.8f)
 							{
-								if (abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
+								if (std::abs(atan2(distance[0], distance[1])) <= -m_ArmRotation)
 								{
 									bool wasEnemyHit = false;
 									for (int j = 0; j < m_HitEnemies.size(); j++)

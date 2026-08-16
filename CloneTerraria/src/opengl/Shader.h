@@ -5,99 +5,59 @@
 
 #include"opengl/ErrorSystem.h"
 
-enum ShadowFragmentSh
+enum uniformSh
 {
 	ShadowLocation = 0
 	, ShadowSize
-};
-enum AnimationVertexSh
-{
-	animCamera = 0
+	, animCamera = 0
 	, animTransform
 	, animScale
 	, animNumber
 	, animLeangth
 	, animSize
-};
-enum BasicVertexSh
-{
-	basicCamera = 0
+	, basicCamera = 0
 	, basicTransform
 	, basicSize
-};
-enum numberVertexSh
-{
-	numberCamera = 0
+	, numberCamera = 0
 	, numberTransform
 	, numberScale
 	, numberLetter
 	, numberSize
-};
-enum HandVertexSh
-{
-	handCamera = 0
+	, handCamera = 0
 	, handTransform
 	, handScale
 	, handRotation
 	, handBeginTransform
 	, handSize
-};
-enum HUDVertexSh
-{
-	HUDCamera = 0
+	, HUDCamera = 0
 	, HUDTransform
 	, HUDScale
 	, HUDBasicLocation
 	, HUDSize
-};
-enum CrownVertexSh
-{
-	CrownCamera = 0
+	, CrownCamera = 0
 	, CrownTransform
 	, CrownRotation
 	, CrownSize
-};
-enum advancedVertexSh
-{
-	advancedCamera = 0
+	, advancedCamera = 0
 	, advancedTransform
 	, advancedScale
 	, advancedRotation
 	, advancedSize
-};
-enum backgroundVertexSh
-{
-	backgroundBlendFactor = 0 
-};
-enum particlesVertexSh
-{
-	particlesCamera = 0
+	, backgroundBlendFactor = 0 
+	, particlesCamera = 0
 	, particlesTransform
 	, particlesScale
 	, particlesRotation
 	, particlesSize
-};
-enum particlesFragSh
-{
-	particlesColor = 0
+	, particlesColor = 0
 	, particlesFragSize
-};
-enum structureFragSh
-{
-	structureShadow = 0
+	, structureShadow = 0
 	, structureLookAt
 	, structureSize
-};
-enum craftingHUDFragSh
-{
-	HUDShadow = 0
+	, HUDShadow = 0
 	, HUDCraftingY
 	, fragHUDSize
-};
-
-enum fontVertexSh
-{
-	fontCamera = 0
+	, fontCamera = 0
 	, fontTransform
 	, fontSize
 };
@@ -120,5 +80,6 @@ public:
 	void SetUniformMat4(unsigned int location, float* v);
 	void Bind();
 	void Unbind();
+	
 };
 

@@ -980,6 +980,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	, int height
 	, unsigned int &iD)
 {
+	
 	y -= Blocks::yMin;
 	std::vector<uint8_t> data;
 	data.assign(width * height,0);

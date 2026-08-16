@@ -245,7 +245,7 @@ public:
 	FireParticle m_OnFire;
 
 	
-	unsigned char m_AimingAtSlot = 0;
+	char m_AimingAtSlot = 0;
 	unsigned char m_UseSlot = 0;
 	bool m_IsInventoryOpen = false;
 

@@ -835,7 +835,7 @@ void EditorHUD::Create(unsigned int eob
 			
 			Vertices.emplace_back( m_GapLengthChest + i * (m_GapLengthChest + m_SideLengthChest));
 			Vertices.emplace_back(Window::height - (3 * (m_GapLength + m_SideLength) + m_GapLength) - (m_GapLengthChest + j * (m_GapLengthChest + m_SideLengthChest)));
-			Vertices.emplace_back(TEXSLOTDISTANCE* chestSlot);
+			Vertices.emplace_back(TEXSLOTDISTANCE * chestSlot);
 			Vertices.emplace_back(0);
 
 			Vertices.emplace_back( (1+i) * (m_GapLengthChest + m_SideLengthChest));
