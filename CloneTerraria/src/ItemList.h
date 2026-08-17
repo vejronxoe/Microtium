@@ -88,6 +88,7 @@ enum Items
 	, i_WorkBench
 	, i_AlchemyTable
 	, i_Lathe
+	, i_Torch
 	, i_ItemSize
 };
 enum Structures

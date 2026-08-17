@@ -41,3 +41,7 @@ elseif(MY_BUILD_TYPE STREQUAL "release")
 elseif(MY_BUILD_TYPE STREQUAL "debInfo")
 	target_compile_options("${CMAKE_PROJECT_NAME}" PRIVATE -O3 -g -DNDEBUG)
 endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	target_link_options("${CMAKE_PROJECT_NAME}" PRIVATE -static)
+endif()

@@ -61,6 +61,7 @@ enum blockTypes
 	, t_CactusTop
 	, t_SnowPlank
 	, t_CactusPlank
+	, t_Torch
 	, t_DoorBlock
 	, t_BlocksSize
 
@@ -159,18 +160,3 @@ void DrawChunks(Shader& basicSh
 	, float* cameraTransform
 	, std::vector<ChunkDD>& chunks
 	, std::vector<ChunkDD>& chunksWall);
-void CalculateLightMap(int chunkNumber
-	, std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<uint8_t>>& walls
-	, std::vector<std::vector<float>>& StaticLightMap);
-void CalculateLightMap(std::vector<std::vector<Block>>& blocks
-	, std::vector<std::vector<uint8_t>>& walls
-	, std::vector<std::vector<float>>& StaticLightMap);
-void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
-	, std::vector<std::vector<Block>>& blocks
-	, float* playerTransform
-	, int x
-	, int y
-	, int width
-	, int height
-	, unsigned int& iD);

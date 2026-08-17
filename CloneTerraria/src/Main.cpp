@@ -5,6 +5,7 @@
 #include<ctime>
 #include<iostream>
 #include<string>
+#include <algorithm>
 
 #include"opengl/ErrorSystem.h"
 #include"opengl/Shader.h"
@@ -21,7 +22,6 @@
 #include"NumberRender.h"
 #include"DroppedItems.h"
 #include"flora.h"
-
 #include"background.h"
 #include"particles.h"
 #include"structures.h"
@@ -30,7 +30,7 @@
 #include"Editor.h"
 #include"SaveAndLoad.h"
 #include"glfw/input.h"
-#include <algorithm>
+#include"light.h"
 
 struct Menu
 {
@@ -1225,7 +1225,7 @@ int main()
 
 					}
 
-					CreateLightMap(staticLightMap, blocks, player.m_Transform, round(CameraCoordinates[0]) - ceil(Window::halfWidthOfGameTransform + 1), round(CameraCoordinates[1]) - ceil(Window::halfHeightOfGameTransform + 1), 2 * ceil(Window::halfWidthOfGameTransform + 1), 2 * ceil(Window::halfHeightOfGameTransform + 1), lightMap);
+					CreateLightMap(staticLightMap, blocks,projectiles, player.m_Transform, player.m_PlayerSlots[0], round(CameraCoordinates[0]) - ceil(Window::halfWidthOfGameTransform + 1), round(CameraCoordinates[1]) - ceil(Window::halfHeightOfGameTransform + 1), 2 * ceil(Window::halfWidthOfGameTransform + 1), 2 * ceil(Window::halfHeightOfGameTransform + 1), lightMap);
 					ChangeTransform(round(CameraCoordinates[0]) - 0.5f, round(CameraCoordinates[1]) - 0.5f, transform);
 					lightMapSh.SetUniformMat4(basicTransform, transform);
 					ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
