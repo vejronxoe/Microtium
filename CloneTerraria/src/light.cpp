@@ -206,7 +206,7 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 	    dynamicStack.emplace_back(1);
     }
 	
-	for(int i = 0; i <0;)// projectiles.size(); i++)
+	for(int i = 0; i < projectiles.size(); i++)
     {
         if(projectiles.at(i).m_ProjectileType == p_FireArrow
         || projectiles.at(i).m_ProjectileType == p_FireCannonBall
@@ -226,92 +226,94 @@ void CreateLightMap(std::vector<std::vector<float>>& StaticLightMap
 		dynamicStack.pop_back();
 		float lightX = dynamicStack.at(dynamicStack.size() - 1);
 		dynamicStack.pop_back();
-
 		float altTransform[2] = {lightX - x, lightY - (y + Blocks::yMin) }; 
-
-		int index[2] = {static_cast<int>(lightX) - x, static_cast<int>((lightY) - (y + Blocks::yMin)) };
-		int maxLeanght = ceil(emittingLight/0.08f)+1;
-		int SpaceOfLight[4] = {index[0] - maxLeanght, index[1] +maxLeanght, index[0] + maxLeanght, index[1] - maxLeanght};
-		SpaceOfLight[0] = Clamp(SpaceOfLight[0], 0, width-1);
-		SpaceOfLight[1] = Clamp(SpaceOfLight[1], 0, height-1);
-		SpaceOfLight[2] = Clamp(SpaceOfLight[2], 0, width-1);
-		SpaceOfLight[3] = Clamp(SpaceOfLight[3], 0, height-1);
-
-		for (int i = SpaceOfLight[0]; i < SpaceOfLight[2]; i++)
+		if(altTransform[0] > 1 && altTransform[0]  < width-2 && altTransform[1] > 1 && altTransform[1] < height-2)
 		{
-			for (int j = SpaceOfLight[3]; j <  SpaceOfLight[1]; j++)
+
+			int index[2] = {static_cast<int>(round(lightX)) - x, static_cast<int>((round(lightY)) - (y + Blocks::yMin)) };
+			int maxLeanght = ceil(emittingLight/0.08f)+1;
+			int SpaceOfLight[4] = {index[0] - maxLeanght, index[1] +maxLeanght, index[0] + maxLeanght, index[1] - maxLeanght};
+			SpaceOfLight[0] = Clamp(SpaceOfLight[0], 0, width);
+			SpaceOfLight[1] = Clamp(SpaceOfLight[1], 0, height);
+			SpaceOfLight[2] = Clamp(SpaceOfLight[2], 0, width);
+			SpaceOfLight[3] = Clamp(SpaceOfLight[3], 0, height);
+
+			for (int i = SpaceOfLight[0]; i < SpaceOfLight[2]; i++)
 			{
+				for (int j = SpaceOfLight[3]; j <  SpaceOfLight[1]; j++)
+				{
+
+					float circleCheck = Pyt2D(i- altTransform[0], j- altTransform[1]);
+					if ( circleCheck >= maxLeanght || circleCheck <= 1.5f )	
+					{
+						continue;
+					}
+					float blockValue = 0;
+					float dist[3] ={i - altTransform[0],j - altTransform[1],Pyt2D(i - altTransform[0], j - altTransform[1])};
+    				int step[2] = {static_cast<int>((dist[0] == 0) ? 0 : dist[0]/std::abs(dist[0])),static_cast<int>((dist[1] == 0) ? 0 : dist[1]/std::abs(dist[1]))};
+
+    				float sideDist[2] = {};			
+    				float deltaDist[2] = {(step[0] == 0) ? INFINITY : std::abs(dist[2]/dist[0]), (step[1] == 0) ? INFINITY : std::abs(dist[2] / dist[1])};					
+					int searchPos[2] ={index[0],index[1]};
+					if (step[0] == -1)
+					{
+						sideDist[0] = ((altTransform[0]+0.5f) - index[0] )*deltaDist[0];
+					}
+					else
+					{
+						sideDist[0] = (1+index[0]-(altTransform[0]+0.5f))*deltaDist[0];
+					}
+					if (step[1] == -1)
+					{
+						sideDist[1] = ((altTransform[1]+0.5f) - index[1] )*deltaDist[1];
+					}
+					else
+					{
+						sideDist[1] = (1+index[1]-(altTransform[1]+0.5f))*deltaDist[1];
+					}
 				
-				float circleCheck = Pyt2D(i- altTransform[0], j- altTransform[1]);
-				if ( circleCheck >= maxLeanght || circleCheck <= 1.5f )	
-				{
-					continue;
-				}
-				float blockValue = 0;
-				float dist[3] ={i - altTransform[0],j - altTransform[1],Pyt2D(i - altTransform[0], j - altTransform[1])};
-    			int step[2] = {static_cast<int>((dist[0] == 0) ? 0 : dist[0]/std::abs(dist[0])),static_cast<int>((dist[1] == 0) ? 0 : dist[1]/std::abs(dist[1]))};
-
-    			float sideDist[2] = {};			
-    			float deltaDist[2] = {(step[0] == 0) ? INFINITY : std::abs(dist[2]/dist[0]), (step[1] == 0) ? INFINITY : std::abs(dist[2] / dist[1])};					
-				int searchPos[2] ={index[0],index[1]};
-				if (step[0] == -1)
-				{
-					sideDist[0] = ((altTransform[0]+0.5f) - index[0] )*deltaDist[0];
-				}
-				else
-				{
-					sideDist[0] = (1+index[0]-(altTransform[0]+0.5f))*deltaDist[0];
-				}
-				if (step[1] == -1)
-				{
-					sideDist[1] = ((altTransform[1]+0.5f) - index[1] )*deltaDist[1];
-				}
-				else
-				{
-					sideDist[1] = (1+index[1]-(altTransform[1]+0.5f))*deltaDist[1];
-				}
-			
-				float leanghtBefore = 0;
-				while (i != searchPos[0] || j != searchPos[1])
-				{
-			
-					if (sideDist[0] > sideDist[1])
+					float leanghtBefore = 0;
+					while (i != searchPos[0] || j != searchPos[1])
 					{
-						blockValue += (sideDist[1] - leanghtBefore) *0.08f * (1 + (blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Air && blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Platform));
-						leanghtBefore = sideDist[1];
-						sideDist[1] += deltaDist[1];
-						searchPos[1] += step[1];
-					}
-		 			else
-					{
-						blockValue += (sideDist[0] - leanghtBefore) * 0.08f * (1 + (blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Air && blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Platform));
-						leanghtBefore = sideDist[0];
-						sideDist[0] += deltaDist[0];
-						searchPos[0] += step[0];
-					}
+					
+						if (sideDist[0] > sideDist[1])
+						{
+							blockValue += (sideDist[1] - leanghtBefore) *0.08f * (1 + (blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Air && blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Platform));
+							leanghtBefore = sideDist[1];
+							sideDist[1] += deltaDist[1];
+							searchPos[1] += step[1];
+						}
+			 			else
+						{
+							blockValue += (sideDist[0] - leanghtBefore) * 0.08f * (1 + (blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Air && blocks.at(searchPos[0] + x).at(searchPos[1] + y).m_Behavior != b_Platform));
+							leanghtBefore = sideDist[0];
+							sideDist[0] += deltaDist[0];
+							searchPos[0] += step[0];
+						}
 
+					}
+					int hold = 255*(emittingLight - blockValue);
+					if (hold > data.at(width * j + i))
+					{
+						data.at(width * j + i) = hold;
+					}
+				
+				
 				}
-				int hold = 255*(emittingLight - blockValue);
-				if (hold > data.at(width * j + i))
-				{
-					data.at(width * j + i) = hold;
-				}
-			
-	
 			}
-		}
+
+			int table[2][9] = {{0,0,-1,-1,-1,0,1,1,1},{0,-1,-1,0,1,1,1,0,-1}};
 		
-		int table[2][9] = {{0,0,-1,-1,-1,0,1,1,1},{0,-1,-1,0,1,1,1,0,-1}};
-	
-		for(int i = 0; i < 9;i++)
-		{
-			int hold = 255*(emittingLight - (Pyt2D(index[0] + table[0][i] - altTransform[0],index[1] + table[1][i] - altTransform[1]) * 0.08f * (1 + (blocks.at(index[0] + table[0][i] + x).at(index[1] + table[1][i] + y).m_Behavior != b_Air && blocks.at(index[0] + table[0][i] + x).at(index[1] + table[1][i] + y).m_Behavior != b_Platform))));
-			
-			if (hold > data.at(width * (index[1] + table[1][i]) + index[0] + table[0][i]))
+			for(int i = 0; i < 9;i++)
 			{
-				data.at(width * (index[1] + table[1][i])+ index[0] + table[0][i]) = hold;
+				int hold = 255*(emittingLight - (Pyt2D(index[0] + table[0][i] - altTransform[0],index[1] + table[1][i] - altTransform[1]) * 0.08f * (1 + (blocks.at(index[0] + table[0][i] + x).at(index[1] + table[1][i] + y).m_Behavior != b_Air && blocks.at(index[0] + table[0][i] + x).at(index[1] + table[1][i] + y).m_Behavior != b_Platform))));
+
+				if (hold > data.at(width * (index[1] + table[1][i]) + index[0] + table[0][i]))
+				{
+					data.at(width * (index[1] + table[1][i])+ index[0] + table[0][i]) = hold;
+				}
+
 			}
-			
 		}
 	}
 	
