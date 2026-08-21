@@ -1016,7 +1016,10 @@ int main()
 
 				{
 					int damageToplayer = ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock,player.m_Transform, blockTextures);
-					player.DamagePlayer(NULL, damageToplayer);
+					if(damageToplayer)
+					{
+						player.DamagePlayer(NULL, damageToplayer);
+					}
 				}
 
 
@@ -1406,6 +1409,7 @@ int main()
 							}
 							CreateChunks(blockChunks, blocks);
 							CreateChunks(wallChunks, Walls);
+							CalculateLightMap( blocks, Walls, staticLightMap);
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -1546,7 +1550,7 @@ int main()
 					}
 					CreateChunks(blockChunks, blocks);
 					CreateChunks(wallChunks, Walls);
-
+					CalculateLightMap( blocks, Walls, staticLightMap);
 				}
 
 				numberSh.Bind();

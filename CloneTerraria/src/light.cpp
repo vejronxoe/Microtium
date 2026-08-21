@@ -205,6 +205,13 @@ void CalculateLightMap(std::vector<std::vector<Block>>& blocks
 	, std::vector<std::vector<uint8_t>>& walls
 	, std::vector<std::vector<float>>& StaticLightMap)
 {
+	for(int i = 0;i < StaticLightMap.size();i++)
+	{
+		for(int j = 0;j < StaticLightMap.at(i).size();j++)
+		{
+			StaticLightMap.at(i).at(j) = 0;
+		}
+	}
 	int lightMapSpace[4] = {0,Blocks::yMax-1,Blocks::xMax-1,Blocks::yMin };
 	std::vector<int> stack;
 	LightMapAlgorithm(lightMapSpace, stack, walls, blocks, StaticLightMap);

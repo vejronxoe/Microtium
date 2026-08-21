@@ -17,7 +17,7 @@
 #define ARROWSTYPES 4
 #define CANNONBALLSTYPES 5
 #define BULLETSTYPES 4
-#define REGENCOLDDOWN 4
+#define REGENCOLDDOWN 10
 #define CRAFTINGOFFSET 3
 #define CHESTANDDOORSREACH 8.0f
 
@@ -486,7 +486,7 @@ char WhatPartOfArmor(unsigned char item)
 
 }
 
-void Player::slotsSwap(float deltaTime
+bool Player::slotsSwap(float deltaTime
 	, unsigned short* amount
 	, unsigned short* items
 	, int begin)
@@ -631,8 +631,9 @@ void Player::slotsSwap(float deltaTime
 	{
 		m_TimerSpliting = 1;
 		m_AddNextFrameDrop = 0;
+		return false;
 	}
-	
+	return true;
 }
 void Player::ChangeAmountText(Text& text
 	, std::vector<Letter>& ascii
@@ -1479,9 +1480,9 @@ void Player::EveryFrame(float deltaTime
 	if (m_ArmsBehaviour != ArmUsing && (!Input::LeftMouseHold || Input::LeftMousePress || m_TimerSpliting != 1) && !Input::LeftMouseRelease)
 	{
 		float slotVertices[4] = { m_InvOffset[0] - m_HalfOfSlotLeanght
-									   , Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
-									   , m_InvOffset[0] + m_HalfOfSlotLeanght
-									   , Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght };
+			, Window::height - m_InvOffset[1] - m_HalfOfSlotLeanght
+			, m_InvOffset[0] + m_HalfOfSlotLeanght
+			, Window::height - m_InvOffset[1] + m_HalfOfSlotLeanght };
 
 		m_AimingAtSlot = 0;
 		int slotCoordinates[2] = { -1,-1 };
@@ -1739,17 +1740,16 @@ void Player::EveryFrame(float deltaTime
 						m_AimingAtSlot = slotCoordinates[0] + (slotCoordinates[1] - 6) * 10;
 						if (chests.at(m_IndexOfOpenChest).m_Items[m_AimingAtSlot] || m_PlayerSlots[0] != i_Nothing && m_UseSlot != 0)
 						{
-							slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
+							bool act = slotsSwap(deltaTime, chests.at(m_IndexOfOpenChest).m_amount, chests.at(m_IndexOfOpenChest).m_Items, -1);
 							chests.at(m_IndexOfOpenChest).m_Indestrucrtible = false;
 							for (int i = 0; i < 50; i++)
 							{
 								if (chests.at(m_IndexOfOpenChest).m_Items[i] != i_Nothing)
 								{
 									chests.at(m_IndexOfOpenChest).m_Indestrucrtible = true;
-
 								}
 							}
-							if (m_AimingAtSlot == 0)
+							if (m_AimingAtSlot == 0 && act)
 							{
 								m_AimingAtSlot = 1;
 								m_UseSlot = 1;

@@ -114,7 +114,7 @@ public:
 		, std::vector<Letter>& Ascii
 		, unsigned int* texturesIDs
 		, unsigned int* structuretexs);
-	void slotsSwap(float deltaTime
+	bool slotsSwap(float deltaTime
 		, unsigned short* amount
 		, unsigned short* items
 		, int begin);

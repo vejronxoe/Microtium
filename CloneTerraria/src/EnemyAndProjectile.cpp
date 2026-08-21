@@ -836,21 +836,21 @@ bool HitEnemy(float deltaTime
 	if (velocity[0] > 0)
 	{
 		vertices[0] = proVertices[0];
-		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;
+		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;
 	}
 	else
 	{
-		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;
+		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;;
 		vertices[2] = proVertices[2];
 	}
 	if (velocity[1] > 0)
 	{
 		vertices[3] = proVertices[3];
-		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;
+		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;
 	}
 	else
 	{
-		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;
+		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;;
 		vertices[1] = proVertices[1];
 	}
 	for (int i = 0; i < enemies.size(); i++)
@@ -862,7 +862,7 @@ bool HitEnemy(float deltaTime
 		enemyVertices[1] = enemies.at(i).m_Transform[1] + enemyVertices[1];
 		enemyVertices[2] = enemies.at(i).m_Transform[0] + enemyVertices[2];
 		enemyVertices[3] = enemies.at(i).m_Transform[1] + enemyVertices[3];
-		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
+		if (DoTheyIntersect(enemyVertices,vertices))
 		{
 			if (burning)
 			{
@@ -894,21 +894,21 @@ bool HitEnemies(float deltaTime
 	if (velocity[0] > 0)
 	{
 		vertices[0] = proVertices[0];
-		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;
+		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;
 	}
 	else
 	{
-		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;;
+		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;;
 		vertices[2] = proVertices[2];
 	}
 	if (velocity[1] > 0)
 	{
 		vertices[3] = proVertices[3];
-		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;
+		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;
 	}
 	else
 	{
-		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;;
+		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;;
 		vertices[1] = proVertices[1];
 	}
 	for (int i = 0; i < enemies.size(); i++)
@@ -921,7 +921,7 @@ bool HitEnemies(float deltaTime
 		enemyVertices[1] = enemies.at(i).m_Transform[1] + enemyVertices[1];
 		enemyVertices[2] = enemies.at(i).m_Transform[0] + enemyVertices[2];
 		enemyVertices[3] = enemies.at(i).m_Transform[1] + enemyVertices[3];
-		if (vertices[1] >= enemyVertices[3] && vertices[3] <= enemyVertices[1] && vertices[2] >= enemyVertices[0] && vertices[0] <= enemyVertices[2])
+		if (DoTheyIntersect(enemyVertices,vertices))
 		{
 			bool wasHit = false;
 			for (int j = 0; j < hitEnemies.size(); j++)
@@ -963,37 +963,37 @@ bool HitPlayer(float deltaTime
 	if (velocity[0] > 0)
 	{
 		vertices[0] = proVertices[0];
-		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;
+		vertices[2] = proVertices[2] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;
 	}
 	else
 	{
-		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (oldVelocity[0] - velocity[0]) * deltaTime;;
+		vertices[0] = proVertices[0] + oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;;
 		vertices[2] = proVertices[2];
 	}
 	if (velocity[1] > 0)
 	{
 		vertices[3] = proVertices[3];
-		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;
+		vertices[1] = proVertices[1] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;
 	}
 	else
 	{
-		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (oldVelocity[1] - velocity[1]) * deltaTime;;
+		vertices[3] = proVertices[3] + oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;;
 		vertices[1] = proVertices[1];
 	}
-	
 
-		float playerVertices[4];
-		playerVertices[0] = playerPos[0] - 0.8;
-		playerVertices[1] = playerPos[1] + 1.3;
-		playerVertices[2] = playerPos[0] + 0.8;
-		playerVertices[3] = playerPos[1] - 1.5;
-		if (vertices[1] >= playerVertices[3] && vertices[3] <= playerVertices[1] && vertices[2] >= playerVertices[0] && vertices[0] <= playerVertices[2])
-		{
-				playerDamage += damage;
-				float c[4] = { 1,0,0,0.8f };
-				particles.emplace_back(transform, c, 1, 8);
-				return true;
-		}
+	
+	float playerVertices[4];
+	playerVertices[0] = playerPos[0] - 0.8;
+	playerVertices[1] = playerPos[1] + 1.3;
+	playerVertices[2] = playerPos[0] + 0.8;
+	playerVertices[3] = playerPos[1] - 1.5;
+	if (vertices[1] >= playerVertices[3] && vertices[3] <= playerVertices[1] && vertices[2] >= playerVertices[0] && vertices[0] <= playerVertices[2])
+	{
+			playerDamage += damage;
+			float c[4] = { 1,0,0,0.8f };
+			particles.emplace_back(transform, c, 1, 8);
+			return true;
+	}
 	
 	return false;
 }
@@ -1158,7 +1158,7 @@ int ProjectileUpdate(float deltaTime
 		case p_BasicBullet:
 		case p_BasicCannonBall:
 		{
-			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, oldVelocity, vertices, particles, enemies, false))
+			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity,vertices,projectiles.at(i).m_Transform, particles, enemies, false))
 			{
 				destroy = true;
 				break;
@@ -1173,7 +1173,7 @@ int ProjectileUpdate(float deltaTime
 		case p_BouncingBullet:
 		case p_BouncingCannonBall:
 		{
-			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, oldVelocity, vertices, particles, enemies, false))
+			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices,projectiles.at(i).m_Transform, particles, enemies, false))
 			{
 				destroy = true;
 				break;
@@ -1199,7 +1199,7 @@ int ProjectileUpdate(float deltaTime
 		case p_PierceBullet:
 		case p_PierceCannonBall:
 		{
-			if (HitEnemies(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, oldVelocity, vertices, particles, enemies, projectiles.at(i).m_HitEnemies))
+			if (HitEnemies(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices,projectiles.at(i).m_Transform, particles, enemies, projectiles.at(i).m_HitEnemies))
 			{
 				particles.emplace_back(projectiles.at(i).m_Transform, c[projectiles.at(i).m_ProjectileType], 1, 15);
 			}
@@ -1213,7 +1213,7 @@ int ProjectileUpdate(float deltaTime
 		case p_FireBullet:
 		case p_FireCannonBall:
 		{
-			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, oldVelocity, vertices, particles, enemies, true))
+			if (HitEnemy(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, projectiles.at(i).m_Transform, particles, enemies, true))
 			{
 				destroy = true;
 			}
