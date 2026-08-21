@@ -8,12 +8,12 @@
 
 float Pyt2D(float x, float y)
 {
-	return sqrt(pow(y, 2) + pow(x, 2));
+	return sqrt(y * y + x * x);
 }
 
 float Pyt2D(float* vector2D)
 {
-	return sqrt(pow(vector2D[0], 2) + pow(vector2D[1], 2));
+	return sqrt(vector2D[0] * vector2D[0] + vector2D[1] * vector2D[1]);
 }
 void NormalizeVector(float* vector2D)
 {
