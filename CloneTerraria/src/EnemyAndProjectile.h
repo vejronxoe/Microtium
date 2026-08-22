@@ -104,6 +104,7 @@ struct Enemy
 
 	void DrawEnemy(Shader& animSh
 		, Shader& handSh
+		, Shader& ProAnimSh
 		, unsigned int* textures
 		, unsigned int* DDs
 		, unsigned int skeletonhandTex

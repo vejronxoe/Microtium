@@ -53,10 +53,10 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[3] = -1.25;
 		break;
 	case en_Ghost:
-		vertices[0] = -1.5f;
-		vertices[1] = -1.5f;
-		vertices[2] = -1.5f;
-		vertices[3] = -1.5f;
+		vertices[0] = -1.3f;
+		vertices[1] = 1.3f;
+		vertices[2] = 1.3f;
+		vertices[3] = -1.3f;
 	break;
 	default:
 		assert(true);
@@ -473,17 +473,20 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	case en_Ghost:
 	{
 		float dist = Pyt2D(distance);
-		NormalizeVector(distance);
-		m_Velocity[0] = distance[0] * 8;
-		m_Velocity[1] = distance[1] * 8;
-		m_AbilityTimer = dist;
-		m_AnimTimer += deltaTime;
-		bool hit = false;
+		if(dist >1)
+		{
+			NormalizeVector(distance);
+			m_Velocity[0] = distance[0] * 4;
+			m_Velocity[1] = distance[1] * 4;
+			m_AbilityTimer = dist;
+			m_AnimTimer += deltaTime;
+		}
 		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
 			m_PlayerHitTimer = 0;
 		}
+		bool hit = false;
 		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit, hit, hit,hit,deltaTime);
 
 		break;
@@ -521,6 +524,7 @@ uint8_t animDraw(Shader& animSh
 
 void Enemy::DrawEnemy(Shader& animSh
 	, Shader& handSh
+	, Shader& proAnimSh
 	, unsigned int* texs
 	, unsigned int* DDs
 	, unsigned int skeletonHandTex
@@ -608,8 +612,11 @@ void Enemy::DrawEnemy(Shader& animSh
 	}
 	case en_Ghost:
 	{
-		animSh.SetUniform1i(animLeangth, 2);
-		if (m_AnimTimer > m_AbilityTimer)
+		proAnimSh.Bind();
+		ChangeTransform(m_Transform[0], m_Transform[1], transform);
+		animSh.SetUniformMat4(proAnimTransform, transform);
+		proAnimSh.SetUniform1i(proAnimLeangth, 2);
+		if (m_AnimTimer > m_AbilityTimer/10)
 		{
 			m_AnimTimer = 0;
 
@@ -622,8 +629,21 @@ void Enemy::DrawEnemy(Shader& animSh
 				m_AnimPhase = 1;
 			}
 		}
-		animSh.SetUniform1i(animNumber, m_AnimPhase);
+		double angle = atan2(m_Velocity[0], m_Velocity[1]) * 180.0 / PI;
+		ChangeRotation(-std::abs(angle), rotation);
+		proAnimSh.SetUniformMat4(proAnimRotation, rotation);
+		if (angle)
+		{
+			ChangeScale(angle / std::abs(angle), 1, scale);
+		}
+		else
+		{
+			ChangeScale(1, 1, scale);
+		}
+		proAnimSh.SetUniformMat4(proAnimScale, scale);
+		proAnimSh.SetUniform1i(proAnimNumber, m_AnimPhase);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		animSh.Bind();
 	break;
 	}
 	}

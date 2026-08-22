@@ -640,6 +640,15 @@ int main()
 			animSh.GetUniformLocation("craftingY");
 			animSh.SetUniform1f(animSize + HUDCraftingY, 0);
 			animSh.SetUniform1i(animSize + HUDShadow, 0);
+			Shader proAnimSh("res/shaders/verProAnim.txt", "res/shaders/fragBasic.txt");
+			proAnimSh.Bind();
+			proAnimSh.GetUniformLocation("animCamera");
+			proAnimSh.GetUniformLocation("animTransform");
+			proAnimSh.GetUniformLocation("animScale");
+			proAnimSh.GetUniformLocation("animRotation");
+			proAnimSh.GetUniformLocation("animNumber");
+			proAnimSh.GetUniformLocation("animLeangth");
+			
 			Shader handSh("res/shaders/verHand.txt", "res/shaders/fragBasic.txt");
 			handSh.Bind();
 			handSh.GetUniformLocation("camera");
@@ -695,10 +704,7 @@ int main()
 			unsigned int enemiesTexs[enemySize];
 			unsigned int enemiesDDs[enemySize];
 
-			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ghost.png");
-			enemiesDDs[en_Ghost] = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
-
-
+			
 			enemiesTexs[en_Zombie] = CreateTextureRGBA("res/textures/zombieAnim.png");
 			enemiesDDs[en_Zombie] = CreateDrawData(eob, 1.5f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
@@ -725,8 +731,9 @@ int main()
 			enemiesDDs[en_Imp] = CreateDrawData(eob, 1.25f, -1.25f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 
 
-			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ImpAnim.png");
-			enemiesDDs[en_Ghost] = enemiesDDs[en_Slime];
+			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ghost.png");
+			enemiesDDs[en_Ghost] = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
+
 
 
 			unsigned int blockTextures[t_BlocksSize];
@@ -1083,6 +1090,8 @@ int main()
 				
 				animSh.Bind();
 				animSh.SetUniformMat4(animCamera, camera);
+				proAnimSh.Bind();
+				proAnimSh.SetUniformMat4(proAnimCamera, camera);
 				basicSh.Bind();
 				basicSh.SetUniformMat4(basicCamera, camera);
 				handSh.Bind();
@@ -1162,7 +1171,7 @@ int main()
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh,handSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,impHandTex,impHandDD,player.m_Transform, transform, scale, rotation);
+					enemies.at(i).DrawEnemy(animSh,handSh,proAnimSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,impHandTex,impHandDD,player.m_Transform, transform, scale, rotation);
 				}
 
 				particlesSh.Bind();

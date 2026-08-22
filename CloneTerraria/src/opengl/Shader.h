@@ -60,6 +60,13 @@ enum uniformSh
 	, fontCamera = 0
 	, fontTransform
 	, fontSize
+	, proAnimCamera = 0
+	, proAnimTransform
+	, proAnimScale
+	, proAnimRotation
+	, proAnimNumber
+	, proAnimLeangth
+	, proAnimSize
 };
 class Shader
 {
