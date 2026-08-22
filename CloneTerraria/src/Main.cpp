@@ -695,6 +695,10 @@ int main()
 			unsigned int enemiesTexs[enemySize];
 			unsigned int enemiesDDs[enemySize];
 
+			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ghost.png");
+			enemiesDDs[en_Ghost] = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
+
+
 			enemiesTexs[en_Zombie] = CreateTextureRGBA("res/textures/zombieAnim.png");
 			enemiesDDs[en_Zombie] = CreateDrawData(eob, 1.5f, -1.5f, -1, 1, 1, 0, 0, 1.0f / 5.0f);
 

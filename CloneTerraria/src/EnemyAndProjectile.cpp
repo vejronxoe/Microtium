@@ -22,8 +22,9 @@
 #define SLIMEABILITIESCOOLDOWN 4
 #define SKELETONCOOLDOWN 5
 #define ZOMBIEDELAY 0.3f
-
-
+#define GHOSTCOOLDOWN 5.0f
+#define GHOSTFLIGHTDUR 1.5f
+#define GHOSTLOOKDUR 0.75f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -51,6 +52,12 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[2] = 0.9;
 		vertices[3] = -1.25;
 		break;
+	case en_Ghost:
+		vertices[0] = -1.5f;
+		vertices[1] = -1.5f;
+		vertices[2] = -1.5f;
+		vertices[3] = -1.5f;
+	break;
 	default:
 		assert(true);
 		break;
@@ -381,7 +388,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				if (m_AbilityTimer >= SKELETONCOOLDOWN)
 				{
 					velocity[0] = std::abs(distance[0]) * m_LookAt;
-					projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0], velocity[1], m_Damage);
+					projectiles.emplace_back(p_BoneArrow, HANDOFFSETX * m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0], velocity[1], m_Damage);
 					m_AbilityTimer = 0;
 				}
 			}
@@ -412,26 +419,31 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = {};
 
-		if (dis > 10)
+		if (dis > 7)
 		{
 			if (m_AbilityTimer >= SKELETONCOOLDOWN)
 			{
-				float velocity[2] = { playerVelocity[0], playerVelocity[1]};
-				float power = Pyt2D(velocity); 
-				NormalizeVector(distance);
-				
-
-				if (power < 20)
+				bool walkCloser = true;
+				for(int i = 1; i < 6;i++)
 				{
-					velocity[0] += distance[0] * (20 - power);
-					velocity[1] += distance[1] * (20 - power);
-					projectiles.emplace_back(p_FireBall, (HANDOFFSETX + 0.35f)* m_LookAt + m_Transform[0], HANDOFFSETY - 0.45f + m_Transform[1], velocity[0], velocity[1], m_Damage);
-					m_AbilityTimer = 0;
-					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+					float dir[2] = {playerTransform[0] + playerVelocity[0] * i- (HANDOFFSETX + 0.35f)* m_LookAt - m_Transform[0] ,  playerTransform[1] + playerVelocity[1] * i -HANDOFFSETY - 0.45f - m_Transform[1]};
+					if(Pyt2D(dir) <= 20 * i)
+					{
+						NormalizeVector(dir);
+						dir[0] *= 20;
+						dir[1] *= 20;
+						projectiles.emplace_back(p_FireBall, (HANDOFFSETX + 0.35f)* m_LookAt + m_Transform[0], HANDOFFSETY - 0.45f + m_Transform[1], dir[0], dir[1], m_Damage);
+						m_AbilityTimer = 0;
+						break;
+					}
+				}
+				if(walkCloser)
+				{
+					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 				}
 				else
 				{
-					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 				}
 			}
 			else if (dis > 20)
@@ -456,6 +468,24 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 		m_LookAt = direction[0];
 		RE = RE / 2;
+		break;
+	}
+	case en_Ghost:
+	{
+		float dist = Pyt2D(distance);
+		NormalizeVector(distance);
+		m_Velocity[0] = distance[0] * 8;
+		m_Velocity[1] = distance[1] * 8;
+		m_AbilityTimer = dist;
+		m_AnimTimer += deltaTime;
+		bool hit = false;
+		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		{
+			RE = m_Damage;
+			m_PlayerHitTimer = 0;
+		}
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit, hit, hit,hit,deltaTime);
+
 		break;
 	}
 	}
@@ -575,6 +605,26 @@ void Enemy::DrawEnemy(Shader& animSh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		animSh.Bind();
 		break;
+	}
+	case en_Ghost:
+	{
+		animSh.SetUniform1i(animLeangth, 2);
+		if (m_AnimTimer > m_AbilityTimer)
+		{
+			m_AnimTimer = 0;
+
+			if (m_AnimPhase)
+			{
+				m_AnimPhase = 0;
+			}
+			else
+			{
+				m_AnimPhase = 1;
+			}
+		}
+		animSh.SetUniform1i(animNumber, m_AnimPhase);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+	break;
 	}
 	}
 	
