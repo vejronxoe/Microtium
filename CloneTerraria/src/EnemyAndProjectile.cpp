@@ -25,6 +25,7 @@
 #define GHOSTCOOLDOWN 5.0f
 #define GHOSTFLIGHTDUR 1.5f
 #define GHOSTLOOKDUR 0.75f
+#define WORMBOOMDELAY 1.75f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -58,6 +59,12 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[2] = 1.3f;
 		vertices[3] = -1.3f;
 	break;
+	case en_Worm:
+		vertices[0] = -1.5f;
+		vertices[1] = 1;
+		vertices[2] = 1.5f;
+		vertices[3] = -1;
+		
 	default:
 		assert(true);
 		break;
@@ -205,11 +212,7 @@ int Enemy::walkingToTarget(float deltaTime
 			}
 			m_Velocity[0] += direction[0] * ENEMIESMOVEMENT * deltaTime * multi;
 		}
-		m_Velocity[1] += deltaTime * GRAVITY;
-		if (m_Velocity[1] < GRAVITY)
-		{
-			m_Velocity[1] = GRAVITY;
-		}
+		
 		if (std::abs(distance[0]) < 2.0f && distance[1] > 0)
 		{
 			wantJump = true;
@@ -224,6 +227,12 @@ int Enemy::walkingToTarget(float deltaTime
 			m_Velocity[0] = 0;
 		}
 	}
+	m_Velocity[1] += deltaTime * GRAVITY;
+	if (m_Velocity[1] < GRAVITY)
+	{
+		m_Velocity[1] = GRAVITY;
+	}
+
 	CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices,goDownPlatform, false, blocks, hitLeft, hitRight, hitDown, hitTop);
 	if (PlayerInWay(deltaTime, playerPos, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{
@@ -259,13 +268,13 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	int direction[2];
 	float distance[2];
 	WhereIsPlayer(playerTransform, distance, direction);
-	m_LookAt = direction[0];
 	switch (m_TypeOfEnemy)
 	{
 	case en_Zombie:
 	case en_Mummy:
 	{
 	
+		m_LookAt = direction[0];
 		if (m_AbilityTimer)
 		{
 			m_AbilityTimer += deltaTime;
@@ -276,9 +285,6 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_Velocity[1] = JUMPSTRENGHT;
 			m_AbilityTimer = 0;
 		}
-		int direction[2];
-		float distance[2];
-		WhereIsPlayer(playerTransform, distance, direction);
 		bool hit[4] = {};
 		RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 		if (hit[3])
@@ -294,6 +300,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	case en_Slime:
 	case en_SandSlime:
 	{
+		m_LookAt = direction[0];
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
 		m_AnimTimer += deltaTime;
@@ -324,6 +331,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	}
 	case en_FrostSlime:
 	{
+		m_LookAt = direction[0];
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
 		m_AnimTimer += deltaTime;
@@ -360,6 +368,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	}
 	case en_Skeleton:
 	{
+		m_LookAt = direction[0];
 		m_AbilityTimer += deltaTime;
 		float dis = Pyt2D(distance);
 		m_Velocity[1] += deltaTime * GRAVITY;
@@ -414,6 +423,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	case en_Imp:
 	{
 		
+		m_LookAt = direction[0];
 		m_AbilityTimer += deltaTime;
 		float dis = Pyt2D(distance);
 		m_Velocity[1] += deltaTime * GRAVITY;
@@ -472,6 +482,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	}
 	case en_Ghost:
 	{
+		m_LookAt = direction[0];
 		float dist = Pyt2D(distance);
 		if(dist >1)
 		{
@@ -491,6 +502,34 @@ int Enemy::EnemyEveryFrame(float deltaTime
 
 		break;
 	}
+	case en_Worm:
+	{
+		m_AnimTimer += deltaTime;
+		bool hit[4] = {};
+		if(!m_AbilityTimer)
+		{
+			
+			m_LookAt = direction[0];
+			if(Pyt2D(distance) < 5)
+			{
+				m_AbilityTimer += deltaTime;
+			}
+			walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+		}
+		else
+		{
+			m_AbilityTimer += deltaTime;
+			if( m_AbilityTimer > WORMBOOMDELAY)
+			{
+				projectiles.emplace_back(p_Gas, m_Transform[0], m_Transform[1],7*m_LookAt,2, m_Damage);
+				projectiles.emplace_back(p_Gas, m_Transform[0], m_Transform[1],5*m_LookAt,4, m_Damage);
+				projectiles.emplace_back(p_Gas, m_Transform[0], m_Transform[1],3*m_LookAt,6, m_Damage);
+				
+				RE = -1;
+			}
+			walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+		}
+	}
 	}
 	return RE;
 }
@@ -505,7 +544,7 @@ uint8_t animDraw(Shader& animSh
 	int animPhase = -1;
 	for (int i = 0; i < orderSize;i++)
 	{
-		if (timer < i * delayBetweenFrames)
+		if (timer < (i+1) * delayBetweenFrames)
 		{
 			animPhase = order[i];
 			break;
@@ -645,6 +684,23 @@ void Enemy::DrawEnemy(Shader& animSh
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		animSh.Bind();
 	break;
+	}
+	case en_Worm:
+	{
+		animSh.SetUniform1i(animLeangth, 3);
+		if(!m_AbilityTimer)
+		{
+			int animOrder[2] = {0, 1};
+			animDraw(animSh,m_AnimTimer,animOrder , 2,0.5f);
+		}
+		else
+		{
+
+
+			animSh.SetUniform1i(animNumber, 2);
+			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		}
+		break;
 	}
 	}
 	
@@ -887,6 +943,9 @@ Projectile::Projectile(unsigned char projectileType
 	case p_BouncingArrow:
 		m_Bouncing = 5;
 		break;
+	case p_Gas:
+		m_Bouncing = 3;
+		break;
 	default:
 		m_Bouncing = 0;
 		break;
@@ -1127,6 +1186,7 @@ int ProjectileUpdate(float deltaTime
 			c[i][2] = 0.612;
 			c[i][3] = 1;
 			break;
+		case p_Gas:
 		case p_BouncingArrow:
 		case p_BouncingCannonBall:
 		case p_BouncingBullet:
@@ -1168,9 +1228,10 @@ int ProjectileUpdate(float deltaTime
 		case p_BasicCannonBall:
 		case p_FireCannonBall:
 		case p_PierceCannonBall:
-			halfSize[i] = 0.4f;
-			gravity[i] = 18;
-			break;
+		halfSize[i] = 0.4f;
+		gravity[i] = 18;
+		break;
+		case p_Gas:
 		case p_BasicArrow:
 		case p_PierceArrow:
 		case p_BouncingArrow:
@@ -1193,6 +1254,7 @@ int ProjectileUpdate(float deltaTime
 		case p_FrostSpike:
 			gravity[i] = 40;
 			halfSize[i] = 0.35f;
+
 			break;
 		}
 	}
@@ -1335,6 +1397,30 @@ int ProjectileUpdate(float deltaTime
 			{
 				destroy = true;
 				break;
+			}
+			break;
+		}
+		case p_Gas:
+		{
+			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))
+			{
+				destroy = true;
+				break;
+			}
+			if (blockHit[2] || blockHit[3])
+			{
+				projectiles.at(i).m_Bouncing--;
+				projectiles.at(i).m_Velocity[1] = -1 * velocity[1];
+			}
+			if (blockHit[0] || blockHit[1])
+			{
+				projectiles.at(i).m_Bouncing--;
+				projectiles.at(i).m_Velocity[0] = -1 * velocity[0];
+			}
+
+			if (projectiles.at(i).m_Bouncing < 0)
+			{
+				destroy = true;
 			}
 			break;
 		}

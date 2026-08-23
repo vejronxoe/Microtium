@@ -149,6 +149,7 @@ enum ProjectilesTypes
 	, p_FrostSpike
 	, p_BoneArrow 
 	, p_FireBall
+	, p_Gas
 	, p_Size
 };
 

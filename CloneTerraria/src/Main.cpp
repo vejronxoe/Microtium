@@ -734,6 +734,9 @@ int main()
 			enemiesTexs[en_Ghost] = CreateTextureRGBA("res/textures/ghost.png");
 			enemiesDDs[en_Ghost] = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
 
+			enemiesTexs[en_Worm] = CreateTextureRGBA("res/textures/worms.png");
+			enemiesDDs[en_Worm]  = CreateDrawData(eob, 1, -1, -1.5f, 1.5f, 1, 0, 0, 1.0f / 3.0f);
+
 
 
 			unsigned int blockTextures[t_BlocksSize];
@@ -756,6 +759,9 @@ int main()
 			projectilesTex[p_BoneArrow] = CreateTextureRGBA("res/textures/boneArrow.png");
 
 			projectilesTex[p_FireBall] = CreateTextureRGBA("res/textures/fireBall.png");
+
+
+			projectilesTex[p_Gas] = CreateTextureRGBA("res/textures/gas.png");
 
 
 
@@ -1002,7 +1008,7 @@ int main()
 				for (int i = 0; i < enemies.size(); i++)
 				{
 					int damage = enemies.at(i).EnemyEveryFrame(deltaTime, projectiles, blocks, player.m_Transform,player.m_Velocity);
-					if (damage)
+					if (damage > 0)
 					{
 						if (enemies.at(i).m_IsBurning)
 						{
@@ -1010,6 +1016,11 @@ int main()
 							player.m_BurningTimer = 0;
 						}
 						player.DamagePlayer(enemies.at(i).m_Transform, damage);
+					}
+					else if(damage == -1)
+					{
+						enemies.at(i) = enemies.at(enemies.size() - 1);
+						enemies.pop_back();
 					}
 				}
 				bool escapePressed = Input::EscapePress;
