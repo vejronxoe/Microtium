@@ -26,6 +26,7 @@
 #define GHOSTFLIGHTDUR 1.5f
 #define GHOSTLOOKDUR 0.75f
 #define WORMBOOMDELAY 1.75f
+#define BIRDCOOLDOWN 4.5f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -54,6 +55,7 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[3] = -1.25;
 		break;
 	case en_Ghost:
+	case en_Birds:
 		vertices[0] = -1.3f;
 		vertices[1] = 1.3f;
 		vertices[2] = 1.3f;
@@ -64,9 +66,10 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[1] = 1;
 		vertices[2] = 1.5f;
 		vertices[3] = -1;
-		
+		break;
+	
 	default:
-		assert(true);
+		assert(false);
 		break;
 	}
 }
@@ -530,6 +533,77 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
 		}
 	}
+	case en_Birds:
+	{
+		m_AbilityTimer += deltaTime;
+		if(playerTransform[1] > 100)
+		{
+			m_LookAt = direction[0];
+			float dist = Pyt2D(distance);
+			if(dist >15)
+			{
+				NormalizeVector(distance);
+				m_Velocity[0] += distance[0] * 8;
+				m_Velocity[1] += distance[1] * 8;
+			}
+			else if(dist < 5)
+			{
+				NormalizeVector(distance);
+				m_Velocity[0] += -distance[0] * 8;
+				m_Velocity[1] += -distance[1] * 8;
+			}
+			else
+			{
+				NormalizeVector(distance);
+				for(int i = 0; i < 2;i++)
+				{
+					int dir = 0;
+					if(m_Velocity[i])
+					{
+						dir = m_Velocity[i]/std::abs(m_Velocity[i]);
+						m_Velocity[i] += -distance[i] * deltaTime * 8;
+					
+						if(m_Velocity[i])
+						{
+							if(dir == m_Velocity[i]/std::abs(m_Velocity[i]))
+							{
+								m_Velocity[i] = 0;
+							}
+						}
+					}
+				}
+
+			}
+			m_Velocity[0] = Clamp(m_Velocity[0],-4,4);
+			m_Velocity[1] = Clamp(m_Velocity[1],-4,4);
+		}
+		else
+		{
+			m_Velocity[1] = 8;
+			if(m_Transform[1] > playerTransform[1] + Window::halfHeightOfGameTransform)
+			{
+				RE =-1;
+			}
+		}
+		bool hit = false;
+		m_AnimTimer += deltaTime;
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit, hit, hit,hit,deltaTime);
+		if(m_AbilityTimer > BIRDCOOLDOWN)
+		{
+			float angle = atan2(distance[0], distance[1]);
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+			angle -= 5.0f/36.0f	* PI;
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+			angle -= 5.0f/36.0f	* PI;
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+			angle += 5.0f/36.0f * PI * 3;
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+			angle += 5.0f/36.0f	* PI;
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+			m_AbilityTimer = 0;
+		}
+		break;
+	}
 	}
 	return RE;
 }
@@ -695,11 +769,17 @@ void Enemy::DrawEnemy(Shader& animSh
 		}
 		else
 		{
-
-
 			animSh.SetUniform1i(animNumber, 2);
 			ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		}
+		break;
+	}
+	case en_Birds:
+	{
+		animSh.SetUniform1i(animLeangth, 2);
+		int animOrder[2] = {0, 1};
+		animDraw(animSh,m_AnimTimer,animOrder , 2,0.2f);
+	
 		break;
 	}
 	}
@@ -849,7 +929,7 @@ void EnemySpawnManager(float deltaTime
 			{
 				enemies.emplace_back(enemies, type, transform[0], transform[1], eob);
 			}
-			else if (type == en_Ghost)
+			else if (type == en_Ghost || type == en_Birds)
 			{
 				index[0] = (rand() % 2) * 2;
 				index[1] = (rand() % 2) * 2 + 1;
@@ -1214,6 +1294,11 @@ int ProjectileUpdate(float deltaTime
 			c[i][2] = 1;
 			c[i][3] = 1;
 			break;
+		case p_ArcaneBall:
+			c[i][0] = 0.2;
+			c[i][1] = 0.2;
+			c[i][2] = 1;
+			c[i][3] = 1;
 		}
 	}
 	float blood[4] = { 1,0,0,1 };
@@ -1248,6 +1333,7 @@ int ProjectileUpdate(float deltaTime
 			halfSize[i] = 0.2f;
 			break;
 		case p_FireBall:
+		case p_ArcaneBall:
 			gravity[i] = 0;
 			halfSize[i] = 0.3f;
 			break;
@@ -1280,7 +1366,7 @@ int ProjectileUpdate(float deltaTime
 		}
 		vertices[0] = projectiles.at(i).m_Transform[0] - halfSize[projectiles.at(i).m_ProjectileType]; vertices[1] = projectiles.at(i).m_Transform[1] + halfSize[projectiles.at(i).m_ProjectileType];
 		vertices[2] = projectiles.at(i).m_Transform[0] + halfSize[projectiles.at(i).m_ProjectileType]; vertices[3] = projectiles.at(i).m_Transform[1] - halfSize[projectiles.at(i).m_ProjectileType];
-		if (projectiles.at(i).m_ProjectileType != p_FireBall)
+		if (projectiles.at(i).m_ProjectileType != p_FireBall && projectiles.at(i).m_ProjectileType != p_ArcaneBall)
 		{
 			DynamicHitbox(deltaTime, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, oldVelocity, vertices, true, true, blocks, blockHit[0], blockHit[1], blockHit[2], blockHit[3]);
 		}
@@ -1392,6 +1478,7 @@ int ProjectileUpdate(float deltaTime
 			break;
 		}
 		case p_FireBall:
+		case p_ArcaneBall:
 		{
 			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))
 			{

@@ -150,6 +150,7 @@ enum ProjectilesTypes
 	, p_BoneArrow 
 	, p_FireBall
 	, p_Gas
+	, p_ArcaneBall
 	, p_Size
 };
 

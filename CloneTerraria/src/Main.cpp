@@ -737,6 +737,8 @@ int main()
 			enemiesTexs[en_Worm] = CreateTextureRGBA("res/textures/worms.png");
 			enemiesDDs[en_Worm]  = CreateDrawData(eob, 1, -1, -1.5f, 1.5f, 1, 0, 0, 1.0f / 3.0f);
 
+			enemiesTexs[en_Birds] = CreateTextureRGBA("res/textures/bird.png");
+			enemiesDDs[en_Birds]  = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
 
 
 			unsigned int blockTextures[t_BlocksSize];
@@ -760,6 +762,7 @@ int main()
 
 			projectilesTex[p_FireBall] = CreateTextureRGBA("res/textures/fireBall.png");
 
+			projectilesTex[p_ArcaneBall] = CreateTextureRGBA("res/textures/arcane.png");
 
 			projectilesTex[p_Gas] = CreateTextureRGBA("res/textures/gas.png");
 
