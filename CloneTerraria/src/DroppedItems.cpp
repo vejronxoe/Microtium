@@ -27,11 +27,10 @@ bool DroppedItem::EveryFrame(float deltaTime
 	, float* playerTransform
 	, bool doesPlayerHaveSpace)
 {
-	float oldVelocity[2] = {m_Velocity[0], m_Velocity[1]};
-	bool floorHit = false;
+	bool hit[4] = {};
 	float itemVertices[4] = { m_Transform[0] - 0.45f ,m_Transform[1] + 0.45f,m_Transform[0] + 0.45f,m_Transform[1] - 0.45f };
+	float relvertices[4] = {- 0.45f, 0.45f, 0.45f, -0.45f};
 
-	bool hit = false;
 	m_Timer += deltaTime;
 	m_Velocity[1] -= deltaTime * 10;
 	if (m_Velocity[1] <= -5)
@@ -79,7 +78,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 	else
 	{
 	
-		unsigned char behavior =  DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, itemVertices,false, false, blocks,hit, hit, floorHit, hit);
+		unsigned char behavior =  DynamicHitbox(deltaTime, m_Transform, m_Velocity, relvertices,false, false, blocks, hit);
 		int goingWay;
 		if (m_Velocity[0])
 		{
@@ -114,7 +113,7 @@ bool DroppedItem::EveryFrame(float deltaTime
 		}
 
 	}
-	AddVelocityToTransform(itemVertices, m_Transform, m_Velocity, oldVelocity, floorHit, hit, hit, hit, deltaTime);
+	AddVelocityToTransform(itemVertices, m_Transform, m_Velocity,hit, deltaTime);
 	return false;
 }
 void DroppedItem::DrawItem(unsigned int* textureIDs

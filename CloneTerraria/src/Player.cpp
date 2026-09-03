@@ -1342,7 +1342,6 @@ void Player::EveryFrame(float deltaTime
 	{
 		oldAmountInSlot[i] = m_AmountInSlots[i + 1];
 	}
-	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1] };
 	if (chests.size() > m_IndexOfOpenChest && m_IndexOfOpenChest != -1)
 	{
 		if (CHESTANDDOORSREACH < Pyt2D(m_Transform[0] - chests.at(m_IndexOfOpenChest).m_Transform[0], m_Transform[1] - chests.at(m_IndexOfOpenChest).m_Transform[1]))
@@ -2665,19 +2664,19 @@ void Player::EveryFrame(float deltaTime
 	{
 		
 		
-			if (Input::DHold)
-			{
-				m_DirectionLook = 1;
-			}
-			if (Input::AHold)
-			{
-				m_DirectionLook = -1;
-			}
-		
-			if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
-			{
-				m_Velocity[0] += m_Acceleration * deltaTime;
-			}
+		if (Input::DHold)
+		{
+			m_DirectionLook = 1;
+		}
+		if (Input::AHold)
+		{
+			m_DirectionLook = -1;
+		}
+	
+		if (Input::DHold && m_Velocity[0] <= m_MaxMovementSpeed)
+		{
+			m_Velocity[0] += m_Acceleration * deltaTime;
+		}
 		else if (m_Velocity[0] > 0)
 		{
 			float velocity = m_Velocity[0] - m_Friction * deltaTime;
@@ -2732,12 +2731,17 @@ void Player::EveryFrame(float deltaTime
 		m_CeilHit = false;
 		m_LeftWallHit = false;
 		m_RightWallHit = false;
-	
-		m_FloorBehaviour = CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, verticesPlayer, Input::SHold,false, blocks, m_LeftWallHit, m_RightWallHit, m_FloorHit, m_CeilHit);
-		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, oldVelocity, m_FloorHit, m_RightWallHit, m_LeftWallHit, m_CeilHit, deltaTime))
+		bool hit[4] = {};
+		float relVertices[4] = {- 0.8 , 1.3 , 0.8,- 1.5};
+		m_FloorBehaviour = CharacterHitbox(deltaTime, m_Transform, m_Velocity, relVertices, Input::SHold,false, blocks,hit);
+		if (AddVelocityToTransform(verticesPlayer, m_Transform, m_Velocity, hit, deltaTime))
 		{
 			m_FloorBehaviour = b_BasicSolid;
 		}
+		m_FloorHit = hit[3];
+		m_CeilHit = hit[1];
+		m_LeftWallHit = hit[0];
+		m_RightWallHit = hit[2];
 		
 		
 		if (m_FloorHit)
@@ -3052,10 +3056,10 @@ void Player::EveryFrame(float deltaTime
 		}
 	}
 		
-			
+
 
 	//health
-	int playerVertices[4] = { RoundFiveUp(verticesPlayer[0]), RoundFiveDown(verticesPlayer[1]), RoundFiveDown(verticesPlayer[2]), RoundFiveUp(verticesPlayer[3]) };
+	int playerVertices[4] = { RoundFiveUp(m_Transform[0] - 0.8), RoundFiveDown(m_Transform[1] + 1.3), RoundFiveDown(m_Transform[0] + 0.8), RoundFiveUp(m_Transform[1] - 1.5) };
 	{
 		bool IsPlayerInBlock = false; 
 		for (int i = playerVertices[0] ; i < playerVertices[2]; i++)

@@ -4,61 +4,11 @@
 #include<math.h>
 
 #include"glfw/input.h"
+#include"math/VectorOperation.h"
 #include"glfw/Window.h"
 #include"ItemList.h"
 
 
-bool FindClosestBlockInArea(std::vector<std::vector<Block>>& blocks
-	, float* objVertices
-	, int* vertices
-	, int index
-	, bool PlatformControl
-	, bool platformIgnore
-	, int& behavior
-	,int& closest)
-{
-	bool count = false;
-	for (int j = vertices[0]; j <= vertices[2]; j++)
-	{
-		for (int i = vertices[3]; i <= vertices[1]; i++)
-		{
-
-			if (blocks.at(j).at(i - Blocks::yMin).m_Behavior != b_Air)
-			{
-				if (blocks.at(j).at(i - Blocks::yMin).m_Behavior != b_Platform || blocks.at(j).at(i - Blocks::yMin).m_Behavior == b_Platform && !platformIgnore && (objVertices[3] > i + 0.5f || objVertices[3] == i + 0.5f && !PlatformControl))
-				{
-					int chooser[4] = { j, i, j, i };
-					if (count)
-					{
-						if (abs(closest - vertices[index]) > abs(chooser[index] - vertices[index]))
-						{
-							closest = chooser[index];
-							if (behavior < blocks.at(j).at(i - Blocks::yMin).m_Behavior)
-							{
-								behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
-							}
-						}
-						else if (abs(closest - vertices[index]) == abs(chooser[index] - vertices[index]))
-						{
-							if (behavior < blocks.at(j).at(i - Blocks::yMin).m_Behavior)
-							{
-								behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
-							}
-						}
-					}
-					else
-					{
-						closest = chooser[index];
-						behavior = blocks.at(j).at(i - Blocks::yMin).m_Behavior;
-						count = true;
-					}
-				}
-			}
-
-		}
-	}
-	return count;
-}
 int RoundFiveUp(float x)
 {
 
@@ -118,131 +68,23 @@ void memoryDefender(int* vertices
 		}
 	}
 }
-unsigned int OneDirectionCheck(int* vertices
-	, float* objectVertices4f
-	, std::vector<std::vector<Block>>& hitbox
-	, int blockIndex
-	, int playerIndex 
-	, bool platformControl
-	, bool platformIgnore
-	, float& transform
-	, float& velocity
-	, float& oldVelocity
-	, bool& sideHit)
-{
-	int closest;
-	int behavior = b_Air;
-	sideHit = FindClosestBlockInArea(hitbox, objectVertices4f, vertices, blockIndex,platformControl, platformIgnore, behavior, closest);
-	if (sideHit)
-	{
-		float couner[4] = { -0.5, 0.5, 0.5, -0.5 };
-		velocity = 0;
-		oldVelocity = 0;
-		transform += closest + couner[blockIndex] - objectVertices4f[playerIndex];
-	
-	}
-	return behavior;
-}
-unsigned int TwoDirectionCheck(std::vector< std::vector<Block>>& hitbox
-	, int* verticesX
-	, int* verticesY
-	, int* verticesEdge
-	, float* objectVertices4f
-	, int XHitboxIndex
-	, int YHitboxIndex
-	, int XplayerIndex
-	, int YplayerIndex
-	, bool PlatformControl
-	, bool platformIgnore
-	, float* transform
-	, float* velocity
-	, float* oldVelocity
-	, bool& floorHit
-	, bool& WallHit)
-{
-	int closest[4];
-	bool edgehit[2];
-	int behavior[2];
-	WallHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesX, XHitboxIndex, PlatformControl, platformIgnore, behavior[0], closest[0]);
-	floorHit = FindClosestBlockInArea(hitbox, objectVertices4f, verticesY, YHitboxIndex, PlatformControl, platformIgnore, behavior[0], closest[1]);
-	edgehit[0] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, XHitboxIndex, PlatformControl, platformIgnore, behavior[1], closest[2]);
-	edgehit[1] = FindClosestBlockInArea(hitbox, objectVertices4f, verticesEdge, YHitboxIndex, PlatformControl, platformIgnore, behavior[1], closest[3]);
-	float couner[4] = { -0.5, 0.5, 0.5, -0.5 };
 
-	if (!WallHit && !floorHit && (edgehit[0] || edgehit[1]))
-	{
-		if (abs(velocity[0]) < abs(velocity[1]) && edgehit[1] || edgehit[1] && !edgehit[0])
-		{
-			oldVelocity[1] = 0;
-			velocity[1] = 0;
-			transform[1] += closest[2] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
-			WallHit = true;
-		}
-		else
-		{
-			oldVelocity[0] = 0;
-			velocity[0] = 0;
-			transform[0] += closest[3] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
-			floorHit = true;
-			return behavior[1];
-		}
-	}
-	else if(WallHit && floorHit && edgehit[1] && edgehit[0] && abs(closest[0] - objectVertices4f[XplayerIndex]) > abs(closest[2] - objectVertices4f[XplayerIndex]) && abs(closest[1] - objectVertices4f[YplayerIndex]) > abs(closest[3] - objectVertices4f[YplayerIndex]))
-	{
-		if ( edgehit[0])
-		{
-			oldVelocity[0] = 0;
-			velocity[0] = 0;
-			transform[0] += closest[3] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
-			floorHit = true;
-			return behavior[1];
-		}
-		else
-		{
-			oldVelocity[1] = 0;
-			velocity[1] = 0;
-			transform[1] += closest[2] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
-			WallHit = true;
-		}
-		
-	}
-	else
-	{
-		
-		if (WallHit)
-		{
-			oldVelocity[0] = 0;
-			velocity[0] = 0;
-			transform[0] += closest[0] + couner[XHitboxIndex] - objectVertices4f[XplayerIndex];
-		}
-		if (floorHit)
-		{
-			oldVelocity[1] = 0;
-			velocity[1] = 0;
-			transform[1] += closest[1] + couner[YHitboxIndex] - objectVertices4f[YplayerIndex];
-		}
-	}
-	return behavior[0];
-}
+
 bool AddVelocityToTransform(float* objectVertices4f
 	, float* transform
 	, float* velocity
-	, float* oldVelocity
-	, bool& floorHit
-	, bool& rightHit
-	, bool& leftHit
-	, bool& ceilHit
+	, bool* hit
 	, float deltaTime)
 {
 	objectVertices4f[0] -= transform[0]; 
 	objectVertices4f[2] -= transform[0];
-	transform[0] += oldVelocity[0] * deltaTime + 0.5f * (velocity[0] - oldVelocity[0]) * deltaTime;
+	transform[0] += velocity[0]* deltaTime;
 	objectVertices4f[0] += transform[0]; 
 	objectVertices4f[2] += transform[0]; 
 
 	objectVertices4f[1] -= transform[1];
 	objectVertices4f[3] -= transform[1];
-	transform[1] += oldVelocity[1] * deltaTime + 0.5f * (velocity[1] - oldVelocity[1]) * deltaTime;
+	transform[1] += velocity[1] * deltaTime;
 	objectVertices4f[1] += transform[1];
 	objectVertices4f[3] += transform[1];
 
@@ -251,136 +93,205 @@ bool AddVelocityToTransform(float* objectVertices4f
 	{
 		transform[0] -= objectVertices4f[2] - Blocks::xMax + SAFEDISTANCE;
 		velocity[0] = 0;
-		oldVelocity[0] = 0;
-		rightHit = true;
+		hit[2] = true;
 	}
 	else if (objectVertices4f[0] < Blocks::xMin + SAFEDISTANCE)
 	{
 		transform[0] -= objectVertices4f[0]- Blocks::xMin - SAFEDISTANCE;
 		velocity[0] = 0;
-		oldVelocity[0] = 0;
-		leftHit = true;
+		hit[0] = true;
 	}
 	if (objectVertices4f[1] > Blocks::yMax - SAFEDISTANCE)
 	{
 		transform[1] -= objectVertices4f[1] - Blocks::yMax + SAFEDISTANCE;
 		velocity[1] = 0;
-		oldVelocity[1] = 0;
-		ceilHit = true;
+		hit[1] = true;
 	}
 	else if (objectVertices4f[3] < Blocks::yMin + SAFEDISTANCE)
 	{
 		transform[1] -= objectVertices4f[3] - Blocks::yMin - SAFEDISTANCE;
 		velocity[1] = 0;
-		oldVelocity[1] = 0;
-		floorHit = true;
+		hit[3] = true;
 		return true;
 
 	}
 	return false;
 }
 
+bool RayVsRect(float* rectPos
+	, float* rectSides
+	, float* rayPos
+	, float* rayDir
+	, float* contactPoint
+	, float* normal
+	, float& hitTime)
+{
+	float invDir[2] = { 1.0f/rayDir[0],  1.0f/rayDir[1]};
+	float x[2] = {(rectPos[0] + rectSides[0] - rayPos[0]) * invDir[0] ,(rectPos[0]+ rectSides[2] - rayPos[0])* invDir[0]};
+	float y[2] = {(rectPos[1] + rectSides[3] - rayPos[1]) * invDir[1] ,(rectPos[1]+ rectSides[1] - rayPos[1])* invDir[1]};
+	if (std::isnan(y[1]) || std::isnan(x[1]) || std::isnan(y[0]) || std::isnan(x[0])) return false;
+
+	if(x[1] < x[0])std::swap(x[0],x[1]);
+	if(y[1] < y[0])std::swap(y[0],y[1]);
+	if(x[0] > y[1] || y[0] > x[1])return false;
+	hitTime = std::max(x[0],y[0]);
+	float hitTimeFar = std::min(y[1],x[1]);
+	
+	if(hitTimeFar < 0) return false;
+
+
+	contactPoint[0] = rayPos[0] + rayDir[0] * hitTime; 
+	contactPoint[1] = rayPos[1] + rayDir[1] * hitTime;
+
+	if(x[0] > y[0])
+	{
+		if(invDir[0] > 0)
+		{
+			normal[0] = -1;
+		}
+		else if(invDir[0] < 0)
+		{
+			normal[0] = 1;
+		}
+		normal[1] = 0;
+	}
+	else if((x[0] < y[0]))
+	{
+		if(invDir[1] > 0)
+		{
+			normal[1] = -1;
+		}
+		else if(invDir[1] < 0)
+		{
+			normal[1] = 1;
+		}
+		normal[0] = 0;
+	}
+	return true;
+}
+bool rectDymVsBlock(float deltatime
+	, float* rectpos
+	, float* rectSides
+	, float* rectVelocity
+	, int* blockPos 
+	, float* contactNormal
+	, float* contactPoint
+	, float& hitTime)
+{
+	float blockSides[4] = {-0.5f-rectSides[2],0.5f-rectSides[3],0.5f-rectSides[0],-0.5f-rectSides[1]};
+ 	float blockPos2f[2] = {(float)blockPos[0],(float)blockPos[1]};
+	float velocity[2] = {rectVelocity[0] * deltatime,rectVelocity[1] * deltatime};
+	
+	if(RayVsRect(blockPos2f,blockSides,rectpos,velocity, contactPoint,contactNormal,hitTime)) 
+	return (hitTime >= 0.0f && hitTime < 1.0f);
+	return false;
+}
+struct contact
+{
+	int pos[2] ={};
+	float time = 0;
+	contact(int* bPos,float hitTime)
+	{
+		time = hitTime;
+		pos[0] = bPos[0]; 
+		pos[1] = bPos[1]; 
+	}
+};
 unsigned char DynamicHitbox(float deltaTime
 	, float* transform
 	, float* velocity
-	, float* oldVelocity
-	, float* objectVertices4f
+	, float* relVertices
 	, bool platformControl
 	, bool platformIgnore
-	, std::vector<std::vector<Block>>& hitbox
-	, bool& leftWallHit
-	, bool& rightWallHit
-	, bool& floorHit
-	, bool& ceilHit)
-
+	, std::vector<std::vector<Block>>& blocks
+	, bool* hit)
 {
-
-	if (velocity[0] == 0 && velocity[1] == 0)
-		return b_Air;
-	float move[2] = { velocity[0] * deltaTime, velocity[1] * deltaTime };
-	int WallVertices[4];
-	int floorVertices[4];
-	int edgeVertices[4];
-	WallVertices[1] = RoundFiveDown(objectVertices4f[1]);
-	WallVertices[3] = RoundFiveUp(objectVertices4f[3]);
-
-	if (move[0] > 0)
+	unsigned char behavior = b_Air;
+	if(velocity[0] == 0 && velocity[1] == 0) return b_Air;
+	int workSpace[4] = {};
+	if(velocity[1] > 0)
 	{
-
-		WallVertices[0] = RoundFiveUp(objectVertices4f[2]);
-		WallVertices[2] = RoundFiveDown(objectVertices4f[2] + move[0]);
-
-		edgeVertices[0] = RoundFiveUp(objectVertices4f[2]);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[2] + move[0]);
+		workSpace[1] = RoundFiveDown(transform[1]+relVertices[1]+velocity[1]*deltaTime)+2;
+		workSpace[3] = RoundFiveUp(transform[1]+relVertices[3]) - 1;
 	}
 	else
 	{
-		WallVertices[0] = RoundFiveUp(objectVertices4f[0] + move[0]);
-		WallVertices[2] = RoundFiveDown(objectVertices4f[0]);
-
-		edgeVertices[0] = RoundFiveUp(objectVertices4f[0]);
-		edgeVertices[2] = RoundFiveDown(objectVertices4f[0] + move[0]);
+		workSpace[1] = round(transform[1]+relVertices[1])+2;
+		workSpace[3] = round(transform[1]+relVertices[3]+velocity[1]*deltaTime) - 1;
 	}
-
-	floorVertices[0] = RoundFiveUp(objectVertices4f[0]);
-	floorVertices[2] = RoundFiveDown(objectVertices4f[2]);
-	if (move[1] > 0)
+	if(velocity[1] > 0)
 	{
-		floorVertices[1] = RoundFiveDown(objectVertices4f[1] + move[1]);
-		floorVertices[3] = RoundFiveUp(objectVertices4f[1]);
-		edgeVertices[1] = RoundFiveDown(objectVertices4f[1] + move[1]);
-		edgeVertices[3] = RoundFiveUp(objectVertices4f[1]);
+		workSpace[2] = round(transform[0]+relVertices[2]+velocity[0]*deltaTime)+2;
+		workSpace[0] = round(transform[0]+relVertices[0]) - 1;
 	}
 	else
 	{
-		floorVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		floorVertices[3] = RoundFiveUp(objectVertices4f[3] + move[1]);
-		edgeVertices[1] = RoundFiveDown(objectVertices4f[3]);
-		edgeVertices[3] = RoundFiveUp(objectVertices4f[3] + move[1]);
+		workSpace[2] = round(transform[0]+relVertices[2])+2;
+		workSpace[0] = round(transform[0]+relVertices[0]+velocity[0]*deltaTime) - 1;
 	}
-	memoryDefender(WallVertices, 4);
-	memoryDefender(floorVertices, 4);
-	memoryDefender(edgeVertices, 4);
-	unsigned int behavior = b_Air;
-	if (velocity[0] > 0 && velocity[1] > 0)
+	memoryDefender(workSpace,4);
+	workSpace[1] -= Blocks::yMin;
+	workSpace[3] -= Blocks::yMin;
+	float rectpos[2] = {transform[0],transform[1] - Blocks::yMin}; 
+	int blockPos[2] = {};
+	std::vector<contact> contacts;
+	for(blockPos[0] = workSpace[0]; blockPos[0] < workSpace[2];blockPos[0]++)
 	{
-		TwoDirectionCheck(hitbox, WallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 3, 2, 1,platformControl , platformIgnore, transform, velocity, oldVelocity, ceilHit, rightWallHit);
+		for(blockPos[1] = workSpace[3]; blockPos[1] < workSpace[1];blockPos[1]++)
+		{
+			if (blocks.at(blockPos[0]).at(blockPos[1]).m_Behavior == b_Air)
+			{
+				continue;
+			}
+			float contactPoint[2] ={};
+			float contactNormal[2] = {};
+			float hitTime = 0;
+			if(rectDymVsBlock(deltaTime,rectpos,relVertices,velocity,blockPos,contactNormal,contactPoint,hitTime))
+			{
+				if(contactNormal[1] == 1 && (blocks.at(blockPos[0]).at(blockPos[1]).m_Behavior > behavior))
+					behavior = blocks.at(blockPos[0]).at(blockPos[1]).m_Behavior;
+				int indexToPlace = 0;
+				for (indexToPlace = 0; indexToPlace < contacts.size(); indexToPlace++)
+				{
+					if (contacts.at(indexToPlace).time > hitTime)
+					{
+						break;
+					}
+				}
+				contacts.emplace(contacts.begin()+ indexToPlace,blockPos,hitTime);
+			}
+		
+		}
 	}
-	else if (velocity[0] < 0 && velocity[1] < 0)
+	
+	for(int i = 0; i < contacts.size(); i++)
 	{
-		behavior = TwoDirectionCheck(hitbox, WallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 1, 0, 3, platformControl, platformIgnore, transform, velocity, oldVelocity, floorHit, leftWallHit);
+		float contactPoint[2] ={};
+		float contactNormal[2] = {};
+		float hitTime = 0;
+	
+		if(rectDymVsBlock(deltaTime,rectpos,relVertices,velocity,contacts.at(i).pos,contactNormal,contactPoint,hitTime))
+		{
+			//transform[0] = contactPoint[0];
+			//transform[1] = contactPoint[1] + Blocks::yMin;
+			//rectpos[0] = contactPoint[0];
+			//rectpos[1] = contactPoint[1];
+			//velocity[0] += contactNormal[0] * std::abs(velocity[0]);
+			//velocity[1] += contactNormal[1] * std::abs(velocity[1]);
+			
+			velocity[0] += contactNormal[0] * std::abs(velocity[0]) * (1-hitTime);
+			velocity[1] += contactNormal[1] * std::abs(velocity[1]) * (1-hitTime);
+		
+			if(contactNormal[0] == 1)hit[0] = true;
+			if(contactNormal[1] == -1)hit[1] = true;
+			if(contactNormal[0] == -1)hit[2] = true;
+			if(contactNormal[1] == 1)hit[3] = true;
+				
+		}
 	}
-	else if (velocity[0] < 0 && velocity[1] > 0)
-	{
-		TwoDirectionCheck(hitbox, WallVertices, floorVertices, edgeVertices, objectVertices4f, 2, 3, 0, 1, platformControl, platformIgnore, transform, velocity, oldVelocity, ceilHit, leftWallHit);
-	}
-	else if (velocity[0] > 0 && velocity[1] < 0)
-	{
-		behavior = TwoDirectionCheck(hitbox, WallVertices, floorVertices, edgeVertices, objectVertices4f, 0, 1, 2, 3, platformControl, platformIgnore, transform, velocity, oldVelocity, floorHit, rightWallHit);
-	}
-	else if (velocity[1] > 0)
-	{
-
-		OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 3, 1, platformControl, platformIgnore, transform[1], velocity[1], oldVelocity[1], ceilHit);
-
-	}
-	else if (velocity[1] < 0)
-	{
-		behavior = OneDirectionCheck(floorVertices, objectVertices4f, hitbox, 1, 3, platformControl, platformIgnore, transform[1], velocity[1], oldVelocity[1], floorHit);
-	}
-	else if (velocity[0] > 0)
-	{
-		OneDirectionCheck(WallVertices, objectVertices4f, hitbox, 0, 2, platformControl, platformIgnore, transform[0], velocity[0], oldVelocity[0], leftWallHit);
-	}
-	else if (velocity[0] < 0)
-	{
-
-		OneDirectionCheck(WallVertices, objectVertices4f, hitbox, 2, 0, platformControl, platformIgnore, transform[0], velocity[0], oldVelocity[0], rightWallHit);
-
-	}
-
 	return behavior;
 }
+
 float CameraHitboxX(float x)
 {
 	float topX = x + Window::halfWidthOfGameTransform;
@@ -415,23 +326,19 @@ float CameraHitboxY(float y)
 unsigned char CharacterHitbox(float deltaTime
 	, float* transform
 	, float* velocity
-	, float* oldVelocity
-	, float* objectVertices4f
+	, float* relVertices
 	, bool platformControl
 	, bool platformIgnore
 	, std::vector<std::vector<Block>>& hitbox
-	, bool& leftWallHit
-	, bool& rightWallHit
-	, bool& floorHit
-	, bool& ceilHit)
+	, bool* hit)
 {
+	float objectVertices4f[4] = {transform[0] + relVertices[0],transform[1] + relVertices[1], transform[0] + relVertices[2],transform[1] + relVertices[3]};
 	float  vel[2] = { velocity[0] , velocity[1] };
-	float  oldVel[2] = { oldVelocity[0] , oldVelocity[1] };
-	unsigned char behavior = DynamicHitbox(deltaTime, transform, velocity, oldVelocity, objectVertices4f, platformControl, platformIgnore, hitbox, leftWallHit, rightWallHit, floorHit, ceilHit);
+	unsigned char behavior = DynamicHitbox(deltaTime, transform, velocity,relVertices, platformControl, platformIgnore, hitbox, hit);
 	bool autoJump = false;
-	if ((leftWallHit || rightWallHit)&& abs(vel[0]) > 9)
+	if ((hit[0] || hit[1])&& abs(vel[0]) > 9)
 	{
-		if (floorHit)
+		if (hit[3])
 		{
 			autoJump = true;
 		}
@@ -456,7 +363,7 @@ unsigned char CharacterHitbox(float deltaTime
 	if (autoJump)
 	{
 		int wallX = 0;
-		if (leftWallHit)
+		if (hit)
 		{
 			wallX = RoundFiveUp( - 1 + objectVertices4f[0]);
 		}
@@ -476,8 +383,6 @@ unsigned char CharacterHitbox(float deltaTime
 		{
 			velocity[0] = vel[0];
 			velocity[1] = 0;
-			oldVelocity[0] = oldVel[0];
-			oldVelocity[1] = 0;
 			transform[1]++;
 		}
 	}

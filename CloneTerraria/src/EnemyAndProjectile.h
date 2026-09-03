@@ -76,20 +76,15 @@ struct Enemy
 	int walkingToTarget(float deltaTime
 		, std::vector<std::vector<Block>>& blocks
 		, float* vertices
-		, float* oldVelocity
 		, float* targetPos
 		, float* playerPos
-		, bool& hitLeft
-		, bool& hitTop
-		, bool& hitRight
-		, bool& hitDown);
+		, bool* hit);
 	void WhereIsPlayer(float* playerTransform
 		, float* distance
 		, int* direction);
 
 	bool PlayerInWay(float deltatime
 		, float* playerTransform
-		, float* oldVelocity
 		, float* enemyVertices);
 
 	bool DamageEnemy(int Damage

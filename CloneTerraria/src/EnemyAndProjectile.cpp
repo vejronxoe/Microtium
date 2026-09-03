@@ -173,13 +173,9 @@ Enemy::Enemy(std::vector<Enemy>& enemies
 int Enemy::walkingToTarget(float deltaTime
 	, std::vector<std::vector<Block>>& blocks
 	, float* vertices
-	, float* oldVelocity
 	, float* targetPos
 	, float* playerPos
-	, bool& hitLeft
-	, bool& hitTop
-	, bool& hitRight
-	, bool& hitDown)
+	, bool* hit)
 {
 	bool goDownPlatform = false;
 	bool wantJump = false;
@@ -235,16 +231,17 @@ int Enemy::walkingToTarget(float deltaTime
 	{
 		m_Velocity[1] = GRAVITY;
 	}
-
-	CharacterHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices,goDownPlatform, false, blocks, hitLeft, hitRight, hitDown, hitTop);
-	if (PlayerInWay(deltaTime, playerPos, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+	float relVertices[4] = {};
+	GetEnemyVerticesByType(m_TypeOfEnemy,relVertices);
+	CharacterHitbox(deltaTime, m_Transform, m_Velocity, relVertices,goDownPlatform, false, blocks, hit);
+	if (PlayerInWay(deltaTime, playerPos, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 	{
 		RE = m_Damage;
 		m_PlayerHitTimer = 0;
 	}
 	
-	AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hitDown, hitRight, hitLeft, hitTop, deltaTime);
-	if ((wantJump ||hitLeft || hitRight) && hitDown)
+	AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit, deltaTime);
+	if ((wantJump ||hit[0] || hit[2]) && hit[3])
 	{
 		m_Velocity[1] = JUMPSTRENGHT;
 	}
@@ -263,11 +260,13 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		m_PlayerHitTimer += deltaTime;
 	}
 	float vertices[4];
-	GetEnemyVerticesByType(m_TypeOfEnemy, vertices);
-	vertices[0] = m_Transform[0] + vertices[0];
-	vertices[1] = m_Transform[1] + vertices[1];
-	vertices[2] = m_Transform[0] + vertices[2];
-	vertices[3] = m_Transform[1] + vertices[3];
+	float relVertices[4];
+	GetEnemyVerticesByType(m_TypeOfEnemy, relVertices);
+
+	vertices[0] = m_Transform[0] + relVertices[0];
+	vertices[1] = m_Transform[1] + relVertices[1];
+	vertices[2] = m_Transform[0] + relVertices[2];
+	vertices[3] = m_Transform[1] + relVertices[3];
 	int direction[2];
 	float distance[2];
 	WhereIsPlayer(playerTransform, distance, direction);
@@ -289,7 +288,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_AbilityTimer = 0;
 		}
 		bool hit[4] = {};
-		RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+		RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform,hit);
 		if (hit[3])
 		{
 			m_AnimTimer += deltaTime;
@@ -307,14 +306,15 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
 		m_AnimTimer += deltaTime;
-		int behavior = DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1],false, blocks, hit[0], hit[2], hit[3], hit[1]);
-		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+
+		int behavior = DynamicHitbox(deltaTime, m_Transform, m_Velocity, relVertices, playerTransform[1] < m_Transform[1],false, blocks, hit);
+		if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
 			m_PlayerHitTimer = 0;
 		}
 	
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit, deltaTime);
 		m_AbilityTimer += deltaTime;
 		m_AnimTimer += deltaTime;
 
@@ -338,14 +338,14 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = { false, false, false, false };
 		m_AnimTimer += deltaTime;
-		int behavior = DynamicHitbox(deltaTime, m_Transform, m_Velocity, oldVelocity, vertices, playerTransform[1] < m_Transform[1], false, blocks, hit[0], hit[2], hit[3], hit[1]);
-		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		int behavior = DynamicHitbox(deltaTime, m_Transform, m_Velocity, relVertices, playerTransform[1] < m_Transform[1], false, blocks, hit);
+		if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
 			m_PlayerHitTimer = 0;
 		}
 
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit[3], hit[2], hit[0], hit[1], deltaTime);
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit, deltaTime);
 		m_AbilityTimer += deltaTime;
 		m_AnimTimer += deltaTime;
 
@@ -392,11 +392,11 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			}
 			if (velocity[0] < std::abs(distance[0]))
 			{
-				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				RE = walkingToTarget(deltaTime, blocks, relVertices, playerTransform, playerTransform, hit);
 			}
 			else
 			{
-				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				RE = walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
 				if (m_AbilityTimer >= SKELETONCOOLDOWN)
 				{
 					velocity[0] = std::abs(distance[0]) * m_LookAt;
@@ -414,13 +414,13 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0] * 25, velocity[1] * 25, m_Damage);
 				m_AbilityTimer = 0;
 			}
-			RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+			RE = walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
 		}
 		if (hit[3] && m_Velocity[0])
 		{
 			m_AnimTimer += deltaTime;
 		}
-		RE = RE / 2;
+		RE = 0;
 		break;
 	}
 	case en_Imp:
@@ -452,20 +452,20 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				}
 				if(walkCloser)
 				{
-					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+					RE = walkingToTarget(deltaTime, blocks, relVertices,  playerTransform, playerTransform, hit);
 				}
 				else
 				{
-					RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+					RE = walkingToTarget(deltaTime, blocks, relVertices,  NULL, playerTransform, hit);
 				}
 			}
 			else if (dis > 20)
 			{
-				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				RE = walkingToTarget(deltaTime, blocks, relVertices,  playerTransform, playerTransform, hit);
 			}
 			else
 			{
-				RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+				RE = walkingToTarget(deltaTime, blocks, relVertices,  NULL, playerTransform, hit);
 			}
 			
 		}
@@ -473,7 +473,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		{
 			NormalizeVector(distance);
 			float target[2] = {m_Transform[0] - distance[0]*10,m_Transform[1] - distance[1] * 10 };
-			RE = walkingToTarget(deltaTime, blocks, vertices, oldVelocity, target, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+			RE = walkingToTarget(deltaTime, blocks, relVertices, target, playerTransform, hit);
 		}
 		if (hit[3] && m_Velocity[0])
 		{
@@ -495,13 +495,13 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			m_AbilityTimer = dist;
 			m_AnimTimer += deltaTime;
 		}
-		if (PlayerInWay(deltaTime, playerTransform, oldVelocity, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
+		if (PlayerInWay(deltaTime, playerTransform, vertices) && m_PlayerHitTimer >= COOLDOWNHIT)
 		{
 			RE = m_Damage;
 			m_PlayerHitTimer = 0;
 		}
-		bool hit = false;
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit, hit, hit,hit,deltaTime);
+		bool hit[4] = {};
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity,hit,deltaTime);
 
 		break;
 	}
@@ -517,7 +517,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			{
 				m_AbilityTimer += deltaTime;
 			}
-			walkingToTarget(deltaTime, blocks, vertices, oldVelocity, playerTransform, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+			walkingToTarget(deltaTime, blocks, relVertices, playerTransform, playerTransform, hit);
 		}
 		else
 		{
@@ -530,7 +530,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				
 				RE = -1;
 			}
-			walkingToTarget(deltaTime, blocks, vertices, oldVelocity, NULL, playerTransform, hit[0], hit[1], hit[2], hit[3]);
+			walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
 		}
 	}
 	case en_Birds:
@@ -585,9 +585,9 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				RE =-1;
 			}
 		}
-		bool hit = false;
+		bool hit[4] = {};
 		m_AnimTimer += deltaTime;
-		AddVelocityToTransform(vertices, m_Transform, m_Velocity, oldVelocity, hit, hit, hit,hit,deltaTime);
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit,deltaTime);
 		if(m_AbilityTimer > BIRDCOOLDOWN)
 		{
 			float angle = atan2(distance[0], distance[1]);
@@ -971,28 +971,27 @@ void Enemy::WhereIsPlayer(float* playerTransform
 
 bool Enemy::PlayerInWay(float deltatime
 	, float* playerTransform
-	, float* oldVelocity
 	, float* enemyVertices)
 {
 	float vertices[4];
 	if (m_Velocity[0] > 0)
 	{
 		vertices[0] = enemyVertices[0];
-		vertices[2] = enemyVertices[2] + oldVelocity[0] * deltatime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltatime;
+		vertices[2] = enemyVertices[2] + m_Velocity[0] * deltatime;
 	}
 	else
 	{
-		vertices[0] = enemyVertices[0] + oldVelocity[0] * deltatime + 0.5f * (m_Velocity[0] - oldVelocity[0]) * deltatime;
+		vertices[0] = enemyVertices[0] + m_Velocity[0] * deltatime;
 		vertices[2] = enemyVertices[2];
 	}
 	if (m_Velocity[1] > 0)
 	{
 		vertices[3] = enemyVertices[3];
-		vertices[1] = enemyVertices[1] + oldVelocity[1] * deltatime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltatime;
+		vertices[1] = enemyVertices[1] + m_Velocity[1] * deltatime;
 	}
 	else
 	{
-		vertices[3] = enemyVertices[3] + oldVelocity[1] * deltatime + 0.5f * (m_Velocity[1] - oldVelocity[1]) * deltatime;
+		vertices[3] = enemyVertices[3] + m_Velocity[1] * deltatime;
 		vertices[1] = enemyVertices[1];
 	}
 	float playerVertices[4] = { playerTransform[0] - 1, playerTransform[1] + 1.5f, playerTransform[0] + 1, playerTransform[1] - 1.5f };
@@ -1346,6 +1345,7 @@ int ProjectileUpdate(float deltaTime
 	}
 
 	float vertices[4];
+	float relVertices[4];
 	float velocity[2];
 	float oldVelocity[2];
 	for (int i = 0; i < projectiles.size(); i++)
@@ -1366,9 +1366,12 @@ int ProjectileUpdate(float deltaTime
 		}
 		vertices[0] = projectiles.at(i).m_Transform[0] - halfSize[projectiles.at(i).m_ProjectileType]; vertices[1] = projectiles.at(i).m_Transform[1] + halfSize[projectiles.at(i).m_ProjectileType];
 		vertices[2] = projectiles.at(i).m_Transform[0] + halfSize[projectiles.at(i).m_ProjectileType]; vertices[3] = projectiles.at(i).m_Transform[1] - halfSize[projectiles.at(i).m_ProjectileType];
+		relVertices[0] =  - halfSize[projectiles.at(i).m_ProjectileType]; relVertices[1] = + halfSize[projectiles.at(i).m_ProjectileType];
+		relVertices[2] =  + halfSize[projectiles.at(i).m_ProjectileType]; relVertices[3] = - halfSize[projectiles.at(i).m_ProjectileType];
+	
 		if (projectiles.at(i).m_ProjectileType != p_FireBall && projectiles.at(i).m_ProjectileType != p_ArcaneBall)
 		{
-			DynamicHitbox(deltaTime, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, oldVelocity, vertices, true, true, blocks, blockHit[0], blockHit[1], blockHit[2], blockHit[3]);
+			DynamicHitbox(deltaTime, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, relVertices, true, true, blocks, blockHit);
 		}
 		switch (projectiles.at(i).m_ProjectileType)
 		{
@@ -1512,7 +1515,7 @@ int ProjectileUpdate(float deltaTime
 			break;
 		}
 		}
-		AddVelocityToTransform(vertices, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, oldVelocity, wallHit[2], wallHit[1], wallHit[0], wallHit[3], deltaTime);
+		AddVelocityToTransform(vertices, projectiles.at(i).m_Transform, projectiles.at(i).m_Velocity, wallHit, deltaTime);
 
 		if (wallHit[0] == true || wallHit[1] == true || wallHit[2] == true || wallHit[3] == true)
 		{

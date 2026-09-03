@@ -776,6 +776,7 @@ void DrawChunks(Shader& shadowSh
 {
 	if (Window::height)
 	{
+
 		shadowSh.Bind();
 		ChangeTransform(0, 0, trasform);
 		shadowSh.SetUniformMat4(basicTransform, trasform);
@@ -789,20 +790,21 @@ void DrawChunks(Shader& shadowSh
 			, static_cast<float>(FindChunk(cameraVertices[2], cameraVertices[1]))
 			, static_cast<float>(FindChunk(cameraVertices[0], cameraVertices[1])) };
 		float deltaChunks[2] = { edgeChunks[1] - edgeChunks[0] ,(edgeChunks[3] - edgeChunks[0]) / 54 };
-
+			
 		for (int i = 0; i <= deltaChunks[1];i++)
 		{
 			for (int j = 0; j <= deltaChunks[0]; j++)
 			{
 				int chunkIndex = edgeChunks[0] + j + i * 54;
-
+				
 				for (int k = 0; k < t_BlocksSize - 1;k++)
 				{
-					if (chunksWall[chunkIndex].m_VA[k])
+					
+					if (chunksWall.at(chunkIndex).m_VA[k])
 					{
 						ErrorGL(glBindTexture(GL_TEXTURE_2D, textures[k]));
-						ErrorGL(glBindVertexArray(chunksWall[chunkIndex].m_VA[k]));
-						ErrorGL(glDrawElements(GL_TRIANGLES, chunksWall[chunkIndex].m_EOBNumber[k], GL_UNSIGNED_SHORT, 0));
+						ErrorGL(glBindVertexArray(chunksWall.at(chunkIndex).m_VA[k]));
+						ErrorGL(glDrawElements(GL_TRIANGLES, chunksWall.at(chunkIndex).m_EOBNumber[k], GL_UNSIGNED_SHORT, 0));
 					}
 				}
 			}

@@ -1036,7 +1036,6 @@ int main()
 
 				}
 
-
 				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedCrowns, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, Crowns, seedlings, dropItems, projectiles, doors, chests);
 
 				{
