@@ -1653,7 +1653,7 @@ int main()
 					CalculateLightMap(chunkToRebuildLightMap.at(i), blocks, Walls, staticLightMap);
 				}
 				chunkToRebuildLightMap.clear();
-
+				chunksToRebuildBlock.emplace_back(FindChunk(player.m_Transform[0],player.m_Transform[1]));
 
 				CreateChunks(chunksToRebuildBlock, blockChunks, blocks);
 				CreateChunks(chunksToRebuildWall, wallChunks, Walls);

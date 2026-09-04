@@ -142,31 +142,31 @@ bool RayVsRect(float* rectPos
 
 	contactPoint[0] = rayPos[0] + rayDir[0] * hitTime; 
 	contactPoint[1] = rayPos[1] + rayDir[1] * hitTime;
-
-	if(x[0] > y[0])
-	{
-		if(invDir[0] > 0)
-		{
-			normal[0] = -1;
-		}
-		else if(invDir[0] < 0)
-		{
-			normal[0] = 1;
-		}
-		normal[1] = 0;
-	}
-	else if((x[0] < y[0]))
+	if (x[0] < y[0])
 	{
 		if(invDir[1] > 0)
 		{
 			normal[1] = -1;
 		}
-		else if(invDir[1] < 0)
+		else 
 		{
 			normal[1] = 1;
 		}
 		normal[0] = 0;
 	}
+	else if(x[0] > y[0])
+	{
+		if(invDir[0] > 0)
+		{
+			normal[0] = -1;
+		}
+		else
+		{
+			normal[0] = 1;
+		}
+		normal[1] = 0;
+	}
+ 
 	return true;
 }
 bool rectDymVsBlock(float deltatime
@@ -190,11 +190,11 @@ struct contact
 {
 	int pos[2] ={};
 	float time = 0;
-	contact(int* bPos,float hitTime)
+	contact(int x,int y,float hitTime)
 	{
 		time = hitTime;
-		pos[0] = bPos[0]; 
-		pos[1] = bPos[1]; 
+		pos[0] = x; 
+		pos[1] = y; 
 	}
 };
 unsigned char DynamicHitbox(float deltaTime
@@ -243,11 +243,13 @@ unsigned char DynamicHitbox(float deltaTime
 			{
 				continue;
 			}
+
 			float contactPoint[2] ={};
 			float contactNormal[2] = {};
 			float hitTime = 0;
 			if(rectDymVsBlock(deltaTime,rectpos,relVertices,velocity,blockPos,contactNormal,contactPoint,hitTime))
 			{
+
 				if(contactNormal[1] == 1 && (blocks.at(blockPos[0]).at(blockPos[1]).m_Behavior > behavior))
 					behavior = blocks.at(blockPos[0]).at(blockPos[1]).m_Behavior;
 				int indexToPlace = 0;
@@ -258,7 +260,7 @@ unsigned char DynamicHitbox(float deltaTime
 						break;
 					}
 				}
-				contacts.emplace(contacts.begin()+ indexToPlace,blockPos,hitTime);
+				contacts.emplace(contacts.begin()+ indexToPlace,blockPos[0],blockPos[1],hitTime);
 			}
 		
 		}
@@ -269,19 +271,29 @@ unsigned char DynamicHitbox(float deltaTime
 		float contactPoint[2] ={};
 		float contactNormal[2] = {};
 		float hitTime = 0;
-	
 		if(rectDymVsBlock(deltaTime,rectpos,relVertices,velocity,contacts.at(i).pos,contactNormal,contactPoint,hitTime))
-		{
-			//transform[0] = contactPoint[0];
-			//transform[1] = contactPoint[1] + Blocks::yMin;
-			//rectpos[0] = contactPoint[0];
-			//rectpos[1] = contactPoint[1];
-			//velocity[0] += contactNormal[0] * std::abs(velocity[0]);
-			//velocity[1] += contactNormal[1] * std::abs(velocity[1]);
-			
-			velocity[0] += contactNormal[0] * std::abs(velocity[0]) * (1-hitTime);
-			velocity[1] += contactNormal[1] * std::abs(velocity[1]) * (1-hitTime);
-		
+		{	
+			if(blocks.at(contacts.at(i).pos[0]).at(contacts.at(i).pos[1]).m_Behavior == b_Platform)
+			{
+				if(platformControl  && transform[1] + relVertices[3] - floor(transform[1] + relVertices[3]) <= 0.5f)
+				{
+					continue;
+				}
+				if( contactNormal[1] != 1)
+				{
+					continue;
+				}
+				if(platformIgnore)
+				{
+					continue;
+				}
+			}		
+			transform[0] = contactPoint[0];
+			transform[1] = contactPoint[1] + Blocks::yMin;
+			rectpos[0] = contactPoint[0];
+			rectpos[1] = contactPoint[1];
+			velocity[0] += contactNormal[0] * std::abs(velocity[0]);
+			velocity[1] += contactNormal[1] * std::abs(velocity[1]);
 			if(contactNormal[0] == 1)hit[0] = true;
 			if(contactNormal[1] == -1)hit[1] = true;
 			if(contactNormal[0] == -1)hit[2] = true;
@@ -332,11 +344,11 @@ unsigned char CharacterHitbox(float deltaTime
 	, std::vector<std::vector<Block>>& hitbox
 	, bool* hit)
 {
-	float objectVertices4f[4] = {transform[0] + relVertices[0],transform[1] + relVertices[1], transform[0] + relVertices[2],transform[1] + relVertices[3]};
 	float  vel[2] = { velocity[0] , velocity[1] };
 	unsigned char behavior = DynamicHitbox(deltaTime, transform, velocity,relVertices, platformControl, platformIgnore, hitbox, hit);
+	float objectVertices4f[4] = {transform[0] + relVertices[0],transform[1] + relVertices[1], transform[0] + relVertices[2],transform[1] + relVertices[3]};
 	bool autoJump = false;
-	if ((hit[0] || hit[1])&& abs(vel[0]) > 9)
+	if ((hit[0] || hit[2])&& abs(vel[0]) > 9)
 	{
 		if (hit[3])
 		{
@@ -363,7 +375,7 @@ unsigned char CharacterHitbox(float deltaTime
 	if (autoJump)
 	{
 		int wallX = 0;
-		if (hit)
+		if (hit[0])
 		{
 			wallX = RoundFiveUp( - 1 + objectVertices4f[0]);
 		}
@@ -371,7 +383,7 @@ unsigned char CharacterHitbox(float deltaTime
 		{
 			wallX = RoundFiveDown( 1 + objectVertices4f[2]);
 		}
-		for (int i = RoundFiveUp(objectVertices4f[3]) +1; i < RoundFiveDown(objectVertices4f[1])+1; i++)
+		for (int i = RoundFiveUp(objectVertices4f[3]) +1; i < RoundFiveDown(objectVertices4f[1])+2; i++)
 		{
 			if (hitbox.at(wallX).at(i-Blocks::yMin).m_Behavior != b_Air)
 			{
