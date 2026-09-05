@@ -18,6 +18,7 @@ struct Editor
 	char m_placingType = -1;
 	bool m_BlocksEraser = false;
 	bool m_WallsEraser = false;
+	int cursorLastPos[2] = { -1, -1};
 	unsigned int m_SelectBoxDD = 0;
 	unsigned int m_SelectBoxTex = 0;
 	int m_FirstPointBox[2] = {};

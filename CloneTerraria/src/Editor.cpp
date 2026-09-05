@@ -212,6 +212,11 @@ void Editor::Update(float deltaTime
 	, std::vector<Door>& Doors
 	, std::vector<int>& SandsXs)
 { 
+	if(!Input::LeftMouseHold)
+	{
+		cursorLastPos[0] = -1;
+		cursorLastPos[1] = -1;
+	}
 	float oldVelocity[2] = { m_Velocity[0], m_Velocity[1]};
 	if (Input::AHold)
 	{
@@ -421,19 +426,68 @@ void Editor::Update(float deltaTime
 						DeleteStructuresInArea(vec4, Doors, Chests, CraftingStations, saplings);
 					}
 				}
-				else if (m_Selected >= 0 && m_Selected < t_BlocksSize)
+				else if ((m_Selected >= 0 && m_Selected < t_BlocksSize) || (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1)))
 				{
 
 					std::vector<Crown> t;
-					if (!isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
+					if (isAnythingOnThisTransform(x, y, blocks, saplings, t, CraftingStations, Doors, Chests) || blocks.at(x).at(y - Blocks::yMin).m_Type != t_Air)
+					break;
+					if(cursorLastPos[0] == -1 && cursorLastPos[1] == -1)
 					{
 						CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
-
+						createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+						cursorLastPos[0] = x;
+						cursorLastPos[1] = y;
+						break;
 					}
-				}
-				else if (m_Selected >= t_BlocksSize && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1))
-				{
-					createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+					
+					int i = cursorLastPos[0];
+					int j = cursorLastPos[1];
+					float blockValue = 0;
+					float dist[3] ={static_cast<float>(i - x),static_cast<float>(j - y),Pyt2D(static_cast<float>(i - x), static_cast<float>(j - y))};
+    				int step[2] = {static_cast<int>((dist[0] == 0) ? 0 : dist[0]/std::abs(dist[0])),static_cast<int>((dist[1] == 0) ? 0 : dist[1]/std::abs(dist[1]))};
+    				float deltaDist[2] = {(step[0] == 0) ? INFINITY : std::abs(dist[2]/dist[0]), (step[1] == 0) ? INFINITY : std::abs(dist[2] / dist[1])};					
+    				float sideDist[2] = {deltaDist[0],deltaDist[1]};			
+					int searchPos[2] ={x,y};
+					float leanghtBefore = 0;
+					if(m_Selected >= 0 && m_Selected < t_BlocksSize)
+					{
+						while (i != searchPos[0] || j != searchPos[1])
+						{
+							if (sideDist[0] > sideDist[1])
+							{
+								CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
+								sideDist[1] += deltaDist[1];
+								searchPos[1] += step[1];
+							}
+							else
+							{
+								CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
+								sideDist[0] += deltaDist[0];
+								searchPos[0] += step[0];
+							}
+						}
+					}
+					else
+					{
+						while (i != searchPos[0] || j != searchPos[1])
+						{
+							if (sideDist[0] > sideDist[1])
+							{
+								createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+								sideDist[1] += deltaDist[1];
+								searchPos[1] += step[1];
+							}
+							else
+							{
+								createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+								sideDist[0] += deltaDist[0];
+								searchPos[0] += step[0];
+							}
+						}	
+					}
+					cursorLastPos[0] = x;
+					cursorLastPos[1] = y;
 				}
 				else if (m_Selected >= t_BlocksSize + (i_WallIce - i_WallDirt + 1) && m_Selected < t_BlocksSize + (i_WallIce - i_WallDirt + 1) + s_StructureSize)
 				{

@@ -1844,6 +1844,10 @@ int main()
 
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
 			{
+				if(Input::LeftMousePress)
+				{
+					std::cout << Input::XMousePos + editor.m_Transform[0] <<"  "<< Input::YMousePos + editor.m_Transform[1] << "\n";
+				}
 				glClear(GL_COLOR_BUFFER_BIT);
 				deltaTime = glfwGetTime() - pastTime;
 				pastTime = glfwGetTime();
