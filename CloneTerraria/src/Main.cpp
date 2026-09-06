@@ -949,6 +949,7 @@ int main()
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
 
+			pastTime = glfwGetTime();
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
 
@@ -1436,6 +1437,7 @@ int main()
 							CreateChunks(blockChunks, blocks);
 							CreateChunks(wallChunks, Walls);
 							CalculateLightMap( blocks, Walls, staticLightMap);
+							pastTime = glfwGetTime();
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -1513,6 +1515,7 @@ int main()
 							{
 								std::cout << "error can not make save (player)" << std::endl;
 							}
+							pastTime = glfwGetTime();
 							break;
 						case 3:
 							menuState = stateDefault;
@@ -1554,6 +1557,7 @@ int main()
 					{
 						std::cout << "error can not make save (struct)" << std::endl;
 					}
+					pastTime = glfwGetTime();
 				}
 				else if (Input::F8Press)
 				{
@@ -1577,6 +1581,7 @@ int main()
 					CreateChunks(blockChunks, blocks);
 					CreateChunks(wallChunks, Walls);
 					CalculateLightMap( blocks, Walls, staticLightMap);
+					pastTime = glfwGetTime();
 				}
 
 				numberSh.Bind();
@@ -1841,13 +1846,9 @@ int main()
 			Background background(eob, backgroundSh);
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks, Walls);
-
+			pastTime = glfwGetTime();
 			while (!glfwWindowShouldClose(window) && gameState == stateEditor)
 			{
-				if(Input::LeftMousePress)
-				{
-					std::cout << Input::XMousePos + editor.m_Transform[0] <<"  "<< Input::YMousePos + editor.m_Transform[1] << "\n";
-				}
 				glClear(GL_COLOR_BUFFER_BIT);
 				deltaTime = glfwGetTime() - pastTime;
 				pastTime = glfwGetTime();

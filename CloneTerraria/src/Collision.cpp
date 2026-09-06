@@ -276,17 +276,11 @@ unsigned char DynamicHitbox(float deltaTime
 			if(blocks.at(contacts.at(i).pos[0]).at(contacts.at(i).pos[1]).m_Behavior == b_Platform)
 			{
 				if(platformControl  && transform[1] + relVertices[3] - floor(transform[1] + relVertices[3]) <= 0.5f)
-				{
-					continue;
-				}
+				continue;
 				if( contactNormal[1] != 1)
-				{
-					continue;
-				}
+				continue;
 				if(platformIgnore)
-				{
-					continue;
-				}
+				continue;
 			}		
 			transform[0] = contactPoint[0];
 			transform[1] = contactPoint[1] + Blocks::yMin;

@@ -452,38 +452,38 @@ void Editor::Update(float deltaTime
 					float leanghtBefore = 0;
 					if(m_Selected >= 0 && m_Selected < t_BlocksSize)
 					{
+						CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 						while (i != searchPos[0] || j != searchPos[1])
 						{
 							if (sideDist[0] > sideDist[1])
 							{
-								CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 								sideDist[1] += deltaDist[1];
 								searchPos[1] += step[1];
 							}
 							else
 							{
-								CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 								sideDist[0] += deltaDist[0];
 								searchPos[0] += step[0];
 							}
+							CreateBlock(searchPos[0], searchPos[1], m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
 						}
 					}
 					else
 					{
+						createWall(searchPos[0], searchPos[1], getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 						while (i != searchPos[0] || j != searchPos[1])
 						{
 							if (sideDist[0] > sideDist[1])
 							{
-								createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 								sideDist[1] += deltaDist[1];
 								searchPos[1] += step[1];
 							}
 							else
 							{
-								createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 								sideDist[0] += deltaDist[0];
 								searchPos[0] += step[0];
 							}
+							createWall(searchPos[0], searchPos[1], getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 						}	
 					}
 					cursorLastPos[0] = x;
