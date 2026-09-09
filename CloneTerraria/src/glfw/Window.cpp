@@ -13,7 +13,6 @@ namespace Window
 	int windowWidth;
 	float halfHeightOfGameTransform;
 	float halfWidthOfGameTransform;
-	float volume;
 	float gameZoom;
 	bool fullScreen;
 	bool VSync;
@@ -41,7 +40,6 @@ namespace Window
 		VSync = false;
 		smoothShadows = true;
 
-		volume = 50;
 		gameZoom = 50;
 		std::ifstream file(filepath, std::ios::binary);
 		
@@ -62,20 +60,16 @@ namespace Window
 					windowWidth = Clamp(windowWidth, 400, maxHeight);
 					break;
 				case 2:
-					file.read(reinterpret_cast<char*>(&volume), sizeof(volume));
-					volume = Clamp(volume, 0, 1);
-					break;
-				case 3:
 					file.read(reinterpret_cast<char*>(&gameZoom), sizeof(gameZoom));
 					gameZoom = Clamp(gameZoom, 0, 1);
 					break;
-				case 4:
+				case 3:
 					file.read(reinterpret_cast<char*>(&fullScreen), sizeof(fullScreen));
 					break;
-				case 5:
+				case 4:
 					file.read(reinterpret_cast<char*>(&VSync), sizeof(VSync));
 					break;
-				case 6:
+				case 5:
 					file.read(reinterpret_cast<char*>(&smoothShadows), sizeof(smoothShadows));
 					break;
 				}
@@ -100,7 +94,6 @@ namespace Window
 			width = maxWidth / 2.0f;
 			windowHeight = maxHeight / 2.0f;
 			windowWidth = maxWidth / 2.0f;
-			volume = 0.5f;
 			gameZoom = 0.5f;
 			fullScreen = false;
 			VSync = false;
@@ -111,7 +104,11 @@ namespace Window
 			}
 		}
 		 
-	
+		if(Window::fullScreen)
+		{
+			height = maxHeight;
+			width = maxWidth;
+		}
 		return true;
 	}
 	bool SaveSetting(const char* filePath)
@@ -123,7 +120,6 @@ namespace Window
 		}
 		file.write(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
 		file.write(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
-		file.write(reinterpret_cast<char*>(&volume), sizeof(volume));
 		file.write(reinterpret_cast<char*>(&gameZoom), sizeof(gameZoom));
 		file.write(reinterpret_cast<char*>(&fullScreen), sizeof(fullScreen));
 		file.write(reinterpret_cast<char*>(&VSync), sizeof(VSync));

@@ -27,6 +27,7 @@
 #define GHOSTLOOKDUR 0.75f
 #define WORMBOOMDELAY 1.75f
 #define BIRDCOOLDOWN 4.5f
+#define BIGBIRDCOOLDOWN 8.0f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -67,7 +68,13 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[2] = 1.5f;
 		vertices[3] = -1;
 		break;
+	case en_ThunderBird:
+		vertices[0] = -2.5f;
+		vertices[1] = 2.5f;
+		vertices[2] = 2.5f;
+		vertices[3] = -2.5f;
 	
+		break;
 	default:
 		assert(false);
 		break;
@@ -604,6 +611,79 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 		break;
 	}
+	case en_ThunderBird:
+	{
+		m_AbilityTimer += deltaTime;
+	
+		m_LookAt = direction[0];
+		float dist = Pyt2D(distance);
+		if(dist >25)
+		{
+			NormalizeVector(distance);
+			m_Velocity[0] += distance[0] * 8;
+			m_Velocity[1] += distance[1] * 8;
+		}
+		else if(dist < 3)
+		{
+			NormalizeVector(distance);
+			m_Velocity[0] += -distance[0] * 8;
+			m_Velocity[1] += -distance[1] * 8;
+		}
+		else
+		{
+			NormalizeVector(distance);
+			for(int i = 0; i < 2;i++)
+			{
+				int dir = 0;
+				if(m_Velocity[i])
+				{
+					dir = m_Velocity[i]/std::abs(m_Velocity[i]);
+					m_Velocity[i] += -distance[i] * deltaTime * 8;
+				
+					if(m_Velocity[i])
+					{
+						if(dir == m_Velocity[i]/std::abs(m_Velocity[i]))
+						{
+							m_Velocity[i] = 0;
+						}
+					}
+				}
+			}
+		}
+		
+		bool hit[4] = {};
+		m_AnimTimer += deltaTime;
+		AddVelocityToTransform(vertices, m_Transform, m_Velocity, hit,deltaTime);
+
+		m_Velocity[0] = Clamp(m_Velocity[0],-4,4);
+		m_Velocity[1] = Clamp(m_Velocity[1],-4,4);
+		if(m_AbilityTimer < BIGBIRDCOOLDOWN)
+		break;
+		
+		if(BIGBIRDCOOLDOWN + 10 < m_AbilityTimer )
+		{
+			m_AbilityTimer = 0;
+			break;
+		}
+		float angle = -1;
+		for(int i = 0; i < 10; i+=2)
+		{
+			if(i + BIGBIRDCOOLDOWN  <= m_AbilityTimer && i + BIGBIRDCOOLDOWN+1  > m_AbilityTimer)
+			{
+				m_AbilityTimer +=1;
+				angle = i * 1.0f/36.0f	* PI;
+			}
+		}
+		if(angle == -1)
+		break;
+		for(int i = 0; i < 18;i++)
+		{
+			angle -= 1.0f/9.0f	* PI;
+			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
+		}
+		
+		break;
+	}
 	}
 	return RE;
 }
@@ -775,6 +855,7 @@ void Enemy::DrawEnemy(Shader& animSh
 		break;
 	}
 	case en_Birds:
+	case en_ThunderBird:
 	{
 		animSh.SetUniform1i(animLeangth, 2);
 		int animOrder[2] = {0, 1};
@@ -869,7 +950,10 @@ void EnemySpawnManager(float deltaTime
 		if (!(vertices[2] < cameraTransform[0] + Window::halfWidthOfGameTransform &&
 			vertices[0] > cameraTransform[0] - Window::halfWidthOfGameTransform &&
 			vertices[1] < cameraTransform[1] + Window::halfHeightOfGameTransform &&
-			vertices[3] > cameraTransform[1] - Window::halfHeightOfGameTransform))
+			vertices[3] > cameraTransform[1] - Window::halfHeightOfGameTransform) 
+			&& e.m_TypeOfEnemy != en_ThunderBird
+			&& e.m_TypeOfEnemy != en_Necromancer
+			&& e.m_TypeOfEnemy != en_BigImp)
 		{
 			enemies.at(i) .m_TimerOutOfCamera += deltaTime;
 			if (e.m_TimerOutOfCamera > 10)

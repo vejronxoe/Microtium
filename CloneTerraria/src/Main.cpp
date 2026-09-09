@@ -34,10 +34,10 @@
 
 struct Menu
 {
-	Slider sliders[2];
+	Slider sliders;
 	CheckBox checkBoxs[3];
-	Text description[5];
-	Text values[2];
+	Text description[4];
+	Text values;
 	Text saveText[3];
 	Text loadText[3];
 	Text backText;
@@ -69,9 +69,9 @@ void CreateMenu(bool first
 	}
 	float sideLength = DistanceOnUI(0.05f);
 	sliderDD = CreateDrawData(eob, sideLength, -sideLength, sideLength, -sideLength, sliderVBO);
-	std::string texts[5] = { "smooth shadows\n(please reset the game in order\nto see differnt shadows)", "vsync", "full screne", "game zoom", "volume" };
-	menu.description[4].CreateText(texts[4], std::vector<Format>{basicform}, letters, eob, leftTop, 0.02f * Window::width, 0.98f * Window::height);
-	for (int i = 3; i > 0; i--)
+	std::string texts[5] = { "smooth shadows\n(please reset the game in order\nto see different shadows)", "vsync", "full screen", "game zoom" };
+	menu.description[3].CreateText(texts[3], std::vector<Format>{basicform}, letters, eob, leftTop, 0.02f * Window::width, 0.98f * Window::height);
+	for (int i = 2; i > 0; i--)
 	{
 		menu.description[i].CreateText(texts[i], std::vector<Format>{{basicform}}, letters, eob, leftTop, 0.02f * Window::width, menu.description[i + 1].m_TextVertices[3] + menu.description[i + 1].m_Transform[1] - Window::height * 0.02f);
 	}
@@ -80,15 +80,9 @@ void CreateMenu(bool first
 	{
 		menu.checkBoxs[i].Create(checkBoxTex, eob, leftTop, (menu.description[0].m_TextVertices[2] + menu.description[0].m_Transform[0] ) / winSideLength, (menu.description[1].m_TextVertices[3] + menu.description[i].m_Transform[1] + winSideLength - Window::height) / winSideLength, (menu.description[0].m_TextVertices[2] - menu.description[1].m_TextVertices[3] + menu.description[0].m_Transform[0] ) / winSideLength, (menu.description[i].m_TextVertices[1] + menu.description[i].m_Transform[1] + winSideLength - Window::height) / winSideLength);
 	}
-	for (int i  = 0; i < 2; i++)
-	{
-		menu.sliders[i].CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.50f,(menu.description[3+i].m_TextVertices[3]+ menu.description[3 + i].m_Transform[1] + winSideLength - Window::height)/winSideLength,0.87f,(menu.description[3 + i].m_TextVertices[1] + menu.description[3 + i].m_Transform[1] + winSideLength - Window::height) / winSideLength);
-	}
-	int values[2] = {static_cast<int>(Window::gameZoom*100), static_cast<int>(Window::volume*100)};
-	for (int i = 0; i < 2 ; i++)
-	{
-		menu.values[i].CreateText("   " + std::to_string(values[i]), std::vector<Format>{{15, 3, 0, 0, 0, 1}}, letters, eob, leftTop, menu.sliders[i].m_Vertices[2], menu.sliders[i].m_Vertices[1]);
-	}
+	
+	menu.sliders.CreateSlider(sliderTex, trailTex, sliderDD, eob, leftTop, 0.50f,(menu.description[3].m_TextVertices[3]+ menu.description[3 ].m_Transform[1] + winSideLength - Window::height)/winSideLength,0.87f,(menu.description[3].m_TextVertices[1] + menu.description[3].m_Transform[1] + winSideLength - Window::height) / winSideLength);
+	menu.values.CreateText("   " + std::to_string(static_cast<int>(Window::gameZoom*100)), std::vector<Format>{{15, 3, 0, 0, 0, 1}}, letters, eob, leftTop, menu.sliders.m_Vertices[2], menu.sliders.m_Vertices[1]);
 	menu.backText.CreateText("Back", std::vector<Format>{basicform}, letters, eob, middleBottom, 0.5f * Window::width, 0.02f *Window::height);
 	for (int i = 0; i < 3;i++)
 	{
@@ -114,10 +108,9 @@ void optionsUpdate(Menu& menu
 	{
 		menu.description[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	}
-	for (int i = 0; i < 2; i++)
-	{
-		menu.values[i].Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
-	}
+	
+	menu.values.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
+	
 	float Textvertices[4] =
 	{
 		menu.backText.m_TextVertices[0] + menu.backText.m_Transform[0]
@@ -137,27 +130,18 @@ void optionsUpdate(Menu& menu
 	menu.backText.Draw(fontSh, basicSh, transform, fontTex, TextBackGroundTex, false);
 	basicSh.Bind();
 	bool howeringOver = false;
-	float value = menu.sliders[0].Update(Window::gameZoom, howeringOver);
+	float value = menu.sliders.Update(Window::gameZoom, howeringOver);
 	if (Window::gameZoom != value)
 	{
 		Window::gameZoom = value;
 		blockSize = DistanceOnUI(BlockSize);
 		Window::halfHeightOfGameTransform = (Window::height / blockSize) / 2.0f;
 		Window::halfWidthOfGameTransform = (Window::width / blockSize) / 2.0f;
-		menu.values[0].CreateText("   " + std::to_string(int(Window::gameZoom*100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders[0].m_Vertices[2], menu.sliders[0].m_Vertices[1]);
+		menu.values.CreateText("   " + std::to_string(int(Window::gameZoom*100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders.m_Vertices[2], menu.sliders.m_Vertices[1]);
 
 	}
 	if (howeringOver){cursorState = canSlideIt;}
-	menu.sliders[0].Draw(basicSh, Window::gameZoom , transform);
-
-	value = menu.sliders[1].Update(Window::volume, howeringOver);
-	if (Window::volume != value)
-	{
-		Window::volume = value;
-		menu.values[1].CreateText("   " + std::to_string(int(Window::volume * 100)), std::vector<Format>{ {15, 3, 0, 0, 0, 1} }, letters, eob, leftTop, menu.sliders[1].m_Vertices[2], menu.sliders[1].m_Vertices[1]);
-	}
-	if (howeringOver){cursorState = canSlideIt;}
-	menu.sliders[1].Draw(basicSh, Window::volume, transform);
+	menu.sliders.Draw(basicSh, Window::gameZoom , transform);
 
 
 
@@ -209,6 +193,7 @@ void optionsUpdate(Menu& menu
 	for (int i = 0; i < 3; i++)
 	{
 		menu.checkBoxs[i].Draw(basicSh,table[i], transform);
+		assert(!GLCheakError(__FILE__,__LINE__));
 	}
 
 }
@@ -239,7 +224,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	GLFWwindow* window;
 
-	window = glfwCreateWindow(Window::width, Window::height, "Mikrotium", (Window::fullScreen ? glfwGetPrimaryMonitor() : NULL), NULL);
+	window = glfwCreateWindow(Window::width,Window::height , "Mikrotium", (Window::fullScreen ? glfwGetPrimaryMonitor() : NULL), NULL);
 
 
 	if (!window)
@@ -740,6 +725,9 @@ int main()
 			enemiesTexs[en_Birds] = CreateTextureRGBA("res/textures/bird.png");
 			enemiesDDs[en_Birds]  = CreateDrawData(eob, 1.5f, -1.5f, -1.5f, 1.5f, 1, 0, 0, 1.0f / 2.0f);
 
+			enemiesTexs[en_ThunderBird] = CreateTextureRGBA("res/textures/bird.png");
+			enemiesDDs[en_ThunderBird]  = CreateDrawData(eob, 2.5f, -2.5f, -2.5f, 2.5f, 1, 0, 0, 1.0f / 2.0f);
+
 
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
@@ -948,6 +936,14 @@ int main()
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
+
+
+
+
+			enemies.emplace_back(enemies,en_ThunderBird ,500 , 0,eob);
+
+
+
 
 			pastTime = glfwGetTime();
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)

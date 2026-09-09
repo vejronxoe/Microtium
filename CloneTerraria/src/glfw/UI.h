@@ -30,7 +30,7 @@ struct Slider
 		, float top);
 	float Update(float value
 		, bool& howerOver);
-	void Draw(Shader sh
+	void Draw(Shader& sh
 		, float value
 		, float* transform);
 	void Delete();
@@ -58,7 +58,7 @@ struct CheckBox
 		, float top);
 	bool Update(bool isActive
 		, bool& value);
-	void Draw(Shader sh
+	void Draw(Shader& sh
 		, bool value
 		, float* transform);
 	void Delete();

@@ -12,7 +12,6 @@ namespace Window
 	extern bool fullScreen;
 	extern bool VSync;
 	extern float gameZoom;
-	extern float volume;
 	extern bool smoothShadows;
 	extern float lineHeight;
 	extern float FontSize;

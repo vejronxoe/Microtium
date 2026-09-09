@@ -159,7 +159,7 @@ void Slider::CreateSlider(unsigned int SliderTex
 	}
 	return value;
 }
-void Slider::Draw(Shader sh
+void Slider::Draw(Shader& sh
 	, float value
 	, float* transform)
 {
@@ -222,7 +222,7 @@ bool CheckBox::Update(bool isActive
 	}
 	return false;
 }
-void CheckBox::Draw(Shader sh
+void CheckBox::Draw(Shader& sh
 	, bool value
 	, float* transform)
 {
