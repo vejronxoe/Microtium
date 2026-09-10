@@ -632,8 +632,6 @@ bool Load(std::string path
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
-	, std::vector<Projectile>& projectiles
-	, std::vector<Enemy>& enemies
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Letter>& Ascii
 	, unsigned int eob)
@@ -641,8 +639,6 @@ bool Load(std::string path
 	damagedWoods.clear();
 	damageblocks.clear();
 	damagedWalls.clear();
-	projectiles.clear();
-	enemies.clear();
 	droppedItems.clear();
 	player.clear();
 	if (!LoadingSafely(path+"Player"))
@@ -733,6 +729,101 @@ bool Load(std::string path
 	}
 	player.ChangeAmountText(player.m_AmountText[50], Ascii, eob, 0, player.m_AmountInSlots[51], player.m_InvOffset[0] + player.m_SlotGap * 9, player.m_InvOffset[1] - player.m_HalfOfSlotLeanght - player.m_SlotGap * 5);
 
+	if (!file.good())
+	{
+		return false;
+	}
+	file.close();
+	return true;
+}
+bool Save(std::string path
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies)
+{
+	
+	std::ofstream file(path + "enemies0.dat", std::ios::binary | std::ios::trunc);
+	if (!file.good())
+	{
+		return false;
+	}
+	for (int i = 0; i < enemies.size();i++)
+	{
+
+		file.write(reinterpret_cast<char*>(&enemies.at(i).m_TypeOfEnemy), sizeof(enemies.at(i).m_TypeOfEnemy));
+		file.write(reinterpret_cast<char*>(&enemies.at(i).m_Transform[0]), sizeof(enemies.at(i).m_Transform[0]));
+		file.write(reinterpret_cast<char*>(&enemies.at(i).m_Transform[1]), sizeof(enemies.at(i).m_Transform[1]));
+		file.write(reinterpret_cast<char*>(&enemies.at(i).m_Velocity[0]), sizeof(enemies.at(i).m_Velocity[0]));
+		file.write(reinterpret_cast<char*>(&enemies.at(i).m_Velocity[1]), sizeof(enemies.at(i).m_Velocity[1]));
+		
+	}
+
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		int8_t type = projectiles.at(i).m_ProjectileType+ enemySize;
+		file.write(reinterpret_cast<char*>(&type), sizeof(type));
+		file.write(reinterpret_cast<char*>(&projectiles.at(i).m_Transform[0]), sizeof(projectiles.at(i).m_Transform[0]));
+		file.write(reinterpret_cast<char*>(&projectiles.at(i).m_Transform[1]), sizeof(projectiles.at(i).m_Transform[1]));
+		file.write(reinterpret_cast<char*>(&projectiles.at(i).m_Velocity[0]), sizeof(projectiles.at(i).m_Velocity[0]));
+		file.write(reinterpret_cast<char*>(&projectiles.at(i).m_Velocity[1]), sizeof(projectiles.at(i).m_Velocity[1]));
+		file.write(reinterpret_cast<char*>(&projectiles.at(i).m_Damage), sizeof(projectiles.at(i).m_Damage));
+	}
+
+	if (!file.good())
+	{
+		return false;
+	}
+
+	file.close();
+	if (!SavingSafely(path + "enemies"))
+	{
+		return false;
+	}
+	return true;
+}
+bool Load(std::string path
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies)
+{
+	if (!LoadingSafely(path + "enemies"))
+	{
+		return false;
+	}
+	projectiles.clear();
+	enemies.clear();
+	std::uintmax_t totalSize = std::filesystem::file_size(path + "enemies0.dat");
+	std::ifstream file(path + "enemies0.dat", std::ios::binary);
+	if (!file.good())
+	{
+		return false;
+	}
+	while (totalSize > 0)
+	{
+		uint8_t type;
+		file.read(reinterpret_cast<char*>(&type), sizeof(type));
+		float x,y;
+		float vel[2];
+		file.read(reinterpret_cast<char*>(&x), sizeof(x));
+		file.read(reinterpret_cast<char*>(&y), sizeof(y));
+		file.read(reinterpret_cast<char*>(&vel[0]), sizeof(vel[0]));
+		file.read(reinterpret_cast<char*>(&vel[1]), sizeof(vel[1]));
+		totalSize -= sizeof(type);
+		totalSize -= 4 * sizeof(x);
+		
+		if( type < enemySize)
+		{
+			enemies.emplace_back(enemies,type,x,y,0);
+			enemies.at(enemies.size()-1).m_Velocity[0] = vel[0];	
+			enemies.at(enemies.size()-1).m_Velocity[1] = vel[1];	
+		}
+		else
+		{
+			uint8_t damage;
+			totalSize -= sizeof(damage);
+
+			file.read(reinterpret_cast<char*>(&damage), sizeof(damage));
+			projectiles.emplace_back(type - enemySize,x,y,vel[0],vel[1],damage);
+		}
+	}
 	if (!file.good())
 	{
 		return false;

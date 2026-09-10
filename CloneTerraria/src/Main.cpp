@@ -873,6 +873,11 @@ int main()
 			std::vector<Door> doors;
 			Player player(eob, chests, letters, blockTextures, structuresTextures);
 
+
+
+			
+			
+			
 			if(!Load(pathToSave, blocks,isSandOnX))
 			{
 				std::cout << "error can not load blocks" << std::endl;
@@ -880,17 +885,22 @@ int main()
 			if (!Load(pathToSave, Walls))
 			{
 				std::cout << "error can not load walls" << std::endl;
-
+				
 			}
 			if (!Load(pathToSave, blocks, craftStations, chests, doors, Crowns, seedlings, structuresTextures, CrownTextures, CrownDD))
 			{
 				std::cout << "error can not load structs" << std::endl;
-
+				
 			}
-			if (!Load(pathToSave,player,damagedCrowns,damagedBlocks,damagedWalls,projectiles,enemies,dropItems, letters, eob))
+			if (!Load(pathToSave,player,damagedCrowns,damagedBlocks,damagedWalls,dropItems, letters, eob))
 			{
 				std::cout << "error can not load player" << std::endl;
-
+				
+			}
+			if(!Load(pathToSave,projectiles,enemies))
+			{
+				std::cout << "error can not load enemies" << std::endl;
+				
 			}
 			Background background(eob, backgroundSh);
 			{
@@ -911,7 +921,7 @@ int main()
 			projectilesTex[p_PierceBullet] = player.m_AllItemTextures[i_PierceBullet];
 			projectilesTex[p_BouncingBullet] = player.m_AllItemTextures[i_BouncingBullet];
 			projectilesTex[p_FireBullet] = player.m_AllItemTextures[i_FireBullet];
-	
+			
 			int lightMapSize[2] = {static_cast<int>(2 * ceil(Window::halfWidthOfGameTransform + 1)),static_cast<int>(2 * ceil(Window::halfHeightOfGameTransform + 1)) };
 			unsigned int lightMapVBO = 0;
 			unsigned int lightMapDD = CreateDrawData(eob, ceil(Window::halfHeightOfGameTransform + 1), -ceil(Window::halfHeightOfGameTransform + 1), ceil(Window::halfWidthOfGameTransform + 1), -ceil(Window::halfWidthOfGameTransform+1), lightMapVBO);
@@ -919,7 +929,7 @@ int main()
 			unsigned int lightMap;
 			ErrorGL(glGenTextures(1, &lightMap));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, lightMap));
-
+			
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 			ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 			if (Window::smoothShadows)
@@ -931,20 +941,20 @@ int main()
 			{
 				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 				ErrorGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-
+				
 			}
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
-
-
-
-
+			
+			
+			
+			
 			enemies.emplace_back(enemies,en_ThunderBird ,500 , 0,eob);
-
-
-
-
+			
+			
+			
+			
 			pastTime = glfwGetTime();
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
 			{
@@ -1425,10 +1435,15 @@ int main()
 							{
 								std::cout << "error can not load (struct)" << std::endl;
 							}
-							if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
+							if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, dropItems, letters, eob))
 							{
 								std::cout << "error can not load player" << std::endl;
 
+							}
+							if(!Load(pathToSave,projectiles,enemies))
+							{
+								std::cout << "error can not load enemies" << std::endl;
+							
 							}
 							CreateChunks(blockChunks, blocks);
 							CreateChunks(wallChunks, Walls);
@@ -1511,6 +1526,10 @@ int main()
 							{
 								std::cout << "error can not make save (player)" << std::endl;
 							}
+							if (!Save(pathToSave, projectiles,enemies))
+							{
+								std::cout << "error can not make save (enemies)" << std::endl;
+							}
 							pastTime = glfwGetTime();
 							break;
 						case 3:
@@ -1551,7 +1570,11 @@ int main()
 					}
 					if (!Save(pathToSave, player))
 					{
-						std::cout << "error can not make save (struct)" << std::endl;
+						std::cout << "error can not make save (player)" << std::endl;
+					}
+					if (!Save(pathToSave, projectiles,enemies))
+					{
+						std::cout << "error can not make save (enemies)" << std::endl;
 					}
 					pastTime = glfwGetTime();
 				}
@@ -1569,10 +1592,13 @@ int main()
 					{
 						std::cout << "error can not load (struct)" << std::endl;
 					}
-					if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, projectiles, enemies, dropItems, letters, eob))
+					if (!Load(pathToSave, player, damagedCrowns, damagedBlocks, damagedWalls, dropItems, letters, eob))
 					{
 						std::cout << "error can not load player" << std::endl;
-
+					}
+					if(!Load(pathToSave,projectiles,enemies))
+					{
+						std::cout << "error can not load enemies" << std::endl;
 					}
 					CreateChunks(blockChunks, blocks);
 					CreateChunks(wallChunks, Walls);

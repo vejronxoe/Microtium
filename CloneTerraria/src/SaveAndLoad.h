@@ -39,8 +39,12 @@ bool Load(std::string path
 	, std::vector<damagedWood>& damagedWoods
 	, std::vector<DamagedBlock>& damageblocks
 	, std::vector<DamagedBlock>& damagedWalls
-	, std::vector<Projectile>& projectiles
-	, std::vector<Enemy>& enemies
 	, std::vector<DroppedItem>& droppedItems
 	, std::vector<Letter>& Ascii
 	, unsigned int eob);
+	bool Save(std::string path
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies);
+	bool Load(std::string path
+	, std::vector<Projectile>& projectiles
+	, std::vector<Enemy>& enemies);

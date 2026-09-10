@@ -613,6 +613,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	}
 	case en_ThunderBird:
 	{
+		
 		m_AbilityTimer += deltaTime;
 	
 		m_LookAt = direction[0];
