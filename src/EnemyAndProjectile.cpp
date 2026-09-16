@@ -613,7 +613,15 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	}
 	case en_ThunderBird:
 	{
-		
+		float ver[4] = {544,263,696,115};
+		if(!IsInArea(ver,m_Transform[0],m_Transform[1]))
+		{
+
+		    m_AbilityTimer = 0;
+		    m_HP = 180;
+		    distance[0] = (ver[0] + ver[2])/2.0f - m_Transform[0];
+		    distance[1] = (ver[1] + ver[3])/2.0f - m_Transform[1];
+		}
 		m_AbilityTimer += deltaTime;
 	
 		m_LookAt = direction[0];
@@ -682,7 +690,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			angle -= 1.0f/9.0f	* PI;
 			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
 		}
-		
+
 		break;
 	}
 	}

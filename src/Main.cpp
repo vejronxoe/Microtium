@@ -877,7 +877,6 @@ int main()
 
 			
 			
-			
 			if(!Load(pathToSave, blocks,isSandOnX))
 			{
 				std::cout << "error can not load blocks" << std::endl;
@@ -1876,7 +1875,10 @@ int main()
 				pastTime = glfwGetTime();
 				int cursorState = canNotDoIt;
 				assert(!GLCheakError(__FILE__,__LINE__));
-
+				if(Input::LeftMousePress)
+				{
+					  std::cout <<editor.m_Transform[0] + Input::XMousePos << " " << editor.m_Transform[1] + Input::YMousePos << "\n";
+				}
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
 				if (newHeight != Window::height || newWidth != Window::width)
