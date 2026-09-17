@@ -7,6 +7,7 @@
 #include<string>
 #include <algorithm>
 
+#include "EnemyAndProjectile.h"
 #include"opengl/ErrorSystem.h"
 #include"opengl/Shader.h"
 #include"opengl/DrawData.h"
@@ -729,6 +730,10 @@ int main()
 			enemiesDDs[en_ThunderBird]  = CreateDrawData(eob, 2.5f, -2.5f, -2.5f, 2.5f, 1, 0, 0, 1.0f / 2.0f);
 
 
+			enemiesTexs[en_Necromancer] = CreateTextureRGBA("res/textures/necromancer.png");
+			enemiesDDs[en_Necromancer]  = CreateDrawData(eob, 3.5f, -3.5f, -3.5f, 3.5f, 1, 0, 0, 1.0f / 2.0f);
+
+
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
 			unsigned int projectilesDD[p_Size];
@@ -949,7 +954,6 @@ int main()
 			
 			
 			
-			enemies.emplace_back(enemies,en_ThunderBird ,500 , 0,eob);
 			
 			
 			

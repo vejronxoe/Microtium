@@ -28,6 +28,7 @@
 #define WORMBOOMDELAY 1.75f
 #define BIRDCOOLDOWN 4.5f
 #define BIGBIRDCOOLDOWN 8.0f
+#define NECROMANCERCOOLDOWN 8.0f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -73,7 +74,12 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[1] = 2.5f;
 		vertices[2] = 2.5f;
 		vertices[3] = -2.5f;
-	
+		break;
+	case en_Necromancer:
+		vertices[0] = -3.5f;
+		vertices[1] = 3.5f;
+		vertices[2] = 3.5f;
+		vertices[3] = -3.5f;
 		break;
 	default:
 		assert(false);
@@ -614,7 +620,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 	case en_ThunderBird:
 	{
 		float ver[4] = {544,263,696,115};
-		if(!IsInArea(ver,m_Transform[0],m_Transform[1]))
+		if(!IsInArea(ver,playerTransform[0],playerTransform[1]))
 		{
 
 		    m_AbilityTimer = 0;
@@ -691,6 +697,33 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			projectiles.emplace_back(p_ArcaneBall, m_Transform[0], m_Transform[1], sin(angle) * 15,cos(-angle) * 15 , m_Damage);
 		}
 
+		break;
+	}
+	case en_Necromancer:
+	{
+		float ver[4] = {903,-167,1013,-310};
+		if(!IsInArea(ver,playerTransform[0],playerTransform[1]))
+		{
+			m_HP = 60;
+			break;
+		}
+		m_AbilityTimer += deltaTime;
+
+		if(m_AbilityTimer  < NECROMANCERCOOLDOWN)
+		{
+			break;
+		}
+		m_AbilityTimer = 0;
+		for(int i = 0; i < 2 ; i++)
+		{
+			for(int j = 0; j < 2 ; j++)
+			{
+				distance[0] = playerTransform[0] - ver[i * 2];
+				distance[1] = playerTransform[1] - ver[j * 2 + 1];
+				NormalizeVector(distance);
+				projectiles.emplace_back(p_FireBall,ver[i * 2] ,ver[j * 2 + 1], distance[0] * 15, distance[1] * 15, m_Damage);
+			}
+		}
 		break;
 	}
 	}
@@ -869,7 +902,16 @@ void Enemy::DrawEnemy(Shader& animSh
 		animSh.SetUniform1i(animLeangth, 2);
 		int animOrder[2] = {0, 1};
 		animDraw(animSh,m_AnimTimer,animOrder , 2,0.2f);
-	
+
+
+		break;
+	}
+	case en_Necromancer:
+	{
+		animSh.SetUniform1i(animLeangth, 2);
+		if(m_AbilityTimer < NECROMANCERCOOLDOWN - 1.0f ) proAnimSh.SetUniform1i(animNumber, 0);
+		else proAnimSh.SetUniform1i(animNumber, 1);
+		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
 		break;
 	}
 	}
