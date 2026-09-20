@@ -1,4 +1,5 @@
 #include"Editor.h"
+#include "BlocksAndWalls.h"
 #include "glfw/input.h"
 #include "opengl/Texture.h"
 #include "opengl/DrawData.h"
@@ -434,8 +435,8 @@ void Editor::Update(float deltaTime
 					break;
 					if(cursorLastPos[0] == -1 && cursorLastPos[1] == -1)
 					{
-						CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
-						createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
+						if(m_Selected < t_BlocksSize)CreateBlock(x, y, m_Selected, chunksToRebuildBlocks, blocks, SandsXs);
+						else createWall(x, y, getTypeByItem(m_Selected - t_BlocksSize + i_WallDirt), chunksToRebuildWalls, Walls);
 						cursorLastPos[0] = x;
 						cursorLastPos[1] = y;
 						break;
