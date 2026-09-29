@@ -1,6 +1,7 @@
 #include"EnemyAndProjectile.h"
 
 #include<cmath>
+#include <cstddef>
 
 #include"ItemList.h"
 #include"glfw/input.h"
@@ -29,6 +30,7 @@
 #define BIRDCOOLDOWN 4.5f
 #define BIGBIRDCOOLDOWN 8.0f
 #define NECROMANCERCOOLDOWN 8.0f
+#define IMPPROJECTILESPEED 15.0f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -405,11 +407,11 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			}
 			if (velocity[0] < std::abs(distance[0]))
 			{
-				RE = walkingToTarget(deltaTime, blocks, relVertices, playerTransform, playerTransform, hit);
+				RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform, hit);
 			}
 			else
 			{
-				RE = walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
+				RE = walkingToTarget(deltaTime, blocks, vertices, NULL, playerTransform, hit);
 				if (m_AbilityTimer >= SKELETONCOOLDOWN)
 				{
 					velocity[0] = std::abs(distance[0]) * m_LookAt;
@@ -427,9 +429,9 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				projectiles.emplace_back(p_BoneArrow, HANDOFFSETX* m_LookAt + m_Transform[0], HANDOFFSETY + m_Transform[1], velocity[0] * 25, velocity[1] * 25, m_Damage);
 				m_AbilityTimer = 0;
 			}
-			RE = walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
+			RE = walkingToTarget(deltaTime, blocks, vertices, NULL, playerTransform, hit);
 		}
-		if (hit[3] && m_Velocity[0])
+		if (hit[3])
 		{
 			m_AnimTimer += deltaTime;
 		}
@@ -441,58 +443,61 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		
 		m_LookAt = direction[0];
 		m_AbilityTimer += deltaTime;
-		float dis = Pyt2D(distance);
+		float dist = Pyt2D(distance);
 		m_Velocity[1] += deltaTime * GRAVITY;
 		bool hit[4] = {};
 
-		if (dis > 7)
+		if(dist > 6 && dist < 25)
 		{
-			if (m_AbilityTimer >= SKELETONCOOLDOWN)
+			RE = walkingToTarget(deltaTime, blocks, vertices, NULL, playerTransform,hit);
+			if (hit[3])
 			{
-				bool walkCloser = true;
-				for(int i = 1; i < 6;i++)
-				{
-					float dir[2] = {playerTransform[0] + playerVelocity[0] * i- (HANDOFFSETX + 0.35f)* m_LookAt - m_Transform[0] ,  playerTransform[1] + playerVelocity[1] * i -HANDOFFSETY - 0.45f - m_Transform[1]};
-					if(Pyt2D(dir) <= 20 * i)
-					{
-						NormalizeVector(dir);
-						dir[0] *= 20;
-						dir[1] *= 20;
-						projectiles.emplace_back(p_FireBall, (HANDOFFSETX + 0.35f)* m_LookAt + m_Transform[0], HANDOFFSETY - 0.45f + m_Transform[1], dir[0], dir[1], m_Damage);
-						m_AbilityTimer = 0;
-						break;
-					}
-				}
-				if(walkCloser)
-				{
-					RE = walkingToTarget(deltaTime, blocks, relVertices,  playerTransform, playerTransform, hit);
-				}
-				else
-				{
-					RE = walkingToTarget(deltaTime, blocks, relVertices,  NULL, playerTransform, hit);
-				}
+				m_AnimTimer += deltaTime;
 			}
-			else if (dis > 20)
-			{
-				RE = walkingToTarget(deltaTime, blocks, relVertices,  playerTransform, playerTransform, hit);
-			}
-			else
-			{
-				RE = walkingToTarget(deltaTime, blocks, relVertices,  NULL, playerTransform, hit);
-			}
-			
+			RE = RE / 2;
+			if(m_AbilityTimer < SKELETONCOOLDOWN) break;
+			float deltaPos[2] = {playerTransform[0] + - (HANDOFFSETX + 0.35f)* m_LookAt - m_Transform[0] ,  playerTransform[1] +  -HANDOFFSETY + 0.45f - m_Transform[1]};
+			float a = -IMPPROJECTILESPEED*IMPPROJECTILESPEED+playerVelocity[0]*playerVelocity[0]+playerVelocity[1]*playerVelocity[1];
+			float b = 2*(playerVelocity[0]*deltaPos[0] + playerVelocity[1]*deltaPos[1]);
+			float c = deltaPos[0]*deltaPos[0]+deltaPos[1]*deltaPos[1];
+			float d = b*b - 4.0*a*c;
+			if(d < 0 || a ==0) break;
+
+			float t[2] = {	(-b- std::sqrt(d))/(2*a),(-b+ std::sqrt(d))/(2*a)};
+
+			if(t[0] < 0.0f || 5.0f < t[0]) t[0] = 6.0f;
+			if(t[1] < 0.0f || 5.0f < t[1]) t[1] = 6.0f;
+			t[0] = std::min(t[0], t[1]);
+			if(t[0] == 6.0f) break;
+			deltaPos[0] += playerVelocity[0]*t[0];
+			deltaPos[1] += playerVelocity[1]*t[0];
+			if(deltaPos[0] == 0 && deltaPos[1] == 0)break;
+
+			NormalizeVector(deltaPos);
+			projectiles.emplace_back(p_FireBall, (HANDOFFSETX + 0.35f)* m_LookAt + m_Transform[0], HANDOFFSETY - 0.45f + m_Transform[1], deltaPos[0]*IMPPROJECTILESPEED, deltaPos[1]*IMPPROJECTILESPEED, m_Damage);
+			m_AbilityTimer = 0;
+
+
+			break;
 		}
-		else
+		else if (dist <= 6)
 		{
 			NormalizeVector(distance);
 			float target[2] = {m_Transform[0] - distance[0]*10,m_Transform[1] - distance[1] * 10 };
-			RE = walkingToTarget(deltaTime, blocks, relVertices, target, playerTransform, hit);
+			RE = walkingToTarget(deltaTime, blocks, vertices, target, playerTransform, hit);
+			if (hit[3])
+			{
+				m_AnimTimer += deltaTime;
+			}
+			RE = RE / 2;
+
+			break;
 		}
-		if (hit[3] && m_Velocity[0])
+		RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform,hit);
+		if (hit[3])
 		{
 			m_AnimTimer += deltaTime;
 		}
-		m_LookAt = direction[0];
 		RE = RE / 2;
 		break;
 	}
@@ -530,7 +535,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			{
 				m_AbilityTimer += deltaTime;
 			}
-			walkingToTarget(deltaTime, blocks, relVertices, playerTransform, playerTransform, hit);
+			walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform, hit);
 		}
 		else
 		{
@@ -543,7 +548,7 @@ int Enemy::EnemyEveryFrame(float deltaTime
 				
 				RE = -1;
 			}
-			walkingToTarget(deltaTime, blocks, relVertices, NULL, playerTransform, hit);
+			walkingToTarget(deltaTime, blocks, vertices, NULL, playerTransform, hit);
 		}
 	}
 	case en_Birds:
@@ -836,7 +841,7 @@ void Enemy::DrawEnemy(Shader& animSh
 		else
 		{
 			
-			ChangeTransform(m_Transform[0] + (0.35f) * m_LookAt, m_Transform[1] + animOffset - (0.45f), transform);
+			ChangeTransform(m_Transform[0] + (0.50f) * m_LookAt, m_Transform[1] + animOffset - (0.60f), transform);
 			handSh.SetUniformMat4(handTransform, transform);
 			ErrorGL(glBindVertexArray(impHandDD));
 			ErrorGL(glBindTexture(GL_TEXTURE_2D, impHandTex));

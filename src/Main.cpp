@@ -351,14 +351,7 @@ int main()
 	float spawnTimer =0;
 	unsigned int menuState = stateDefault;
 
-	/*/////////////////////////////////////////////
-	gameState = stateEditor;
 
-	pathToSave += "0/";
-
-
-
-	//////////*////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window))
 	{
 		switch (gameState)
@@ -950,7 +943,6 @@ int main()
 			CreateChunks(blockChunks, blocks);
 			CreateChunks(wallChunks,Walls);
 			Input::OffAllButtons();
-			
 			
 			
 			
@@ -1879,10 +1871,6 @@ int main()
 				pastTime = glfwGetTime();
 				int cursorState = canNotDoIt;
 				assert(!GLCheakError(__FILE__,__LINE__));
-				if(Input::LeftMousePress)
-				{
-					  std::cout <<editor.m_Transform[0] + Input::XMousePos << " " << editor.m_Transform[1] + Input::YMousePos << "\n";
-				}
 				int newWidth, newHeight;
 				glfwGetWindowSize(window, &newWidth, &newHeight);
 				if (newHeight != Window::height || newWidth != Window::width)
