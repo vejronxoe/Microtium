@@ -146,6 +146,7 @@ enum ProjectilesTypes
 	, p_FireBall
 	, p_Gas
 	, p_ArcaneBall
+	, p_ImpBullet
 	, p_Size
 };
 
@@ -168,6 +169,7 @@ int ProjectileUpdate(float deltaTime
 	, std::vector<int>& isSandOnX
 	, std::vector<int>& chunksToRebuild
 	, float* playerPos
+	, bool& playerOnFire
 	, unsigned int* blockTextures);
 
 void SandEveryFrame(std::vector<int>& isSandOnX

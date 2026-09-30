@@ -31,6 +31,7 @@
 #define BIGBIRDCOOLDOWN 8.0f
 #define NECROMANCERCOOLDOWN 8.0f
 #define IMPPROJECTILESPEED 15.0f
+#define BIGIMPCOOLDOWN 8.0f
 
 void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 {
@@ -82,6 +83,12 @@ void GetEnemyVerticesByType(unsigned int typeOfEnemy, float* vertices)
 		vertices[1] = 3.5f;
 		vertices[2] = 3.5f;
 		vertices[3] = -3.5f;
+		break;
+	case en_BigImp:
+		vertices[0] = -1.66f;
+		vertices[1] = 2.5f;
+		vertices[2] = 1.66f;
+		vertices[3] = -2.5f;
 		break;
 	default:
 		assert(false);
@@ -731,6 +738,35 @@ int Enemy::EnemyEveryFrame(float deltaTime
 		}
 		break;
 	}
+	case en_BigImp:
+	{
+		float ver[4] = {903,-167,1013,-310};
+		if(!IsInArea(ver,playerTransform[0],playerTransform[1]))
+		{
+			m_HP = 240;
+			//break;
+		}
+		m_AbilityTimer += deltaTime;
+		for(int i = 0;i < BIGIMPCOOLDOWN*4;i++ )
+		{
+			if(m_AbilityTimer < i +0.5f && m_AbilityTimer >= i)
+			{
+				m_AbilityTimer += 0.5f;
+				NormalizeVector(distance);
+				projectiles.emplace_back(p_FireBall,m_Transform[0] + HANDOFFSETX ,m_Transform[1] + HANDOFFSETY, distance[0] * 25, distance[1] * 25, m_Damage);
+			}
+		}
+		if(m_AbilityTimer > BIGIMPCOOLDOWN *5) m_AbilityTimer=0;
+
+		bool hit[4] = {};
+		RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform,hit);
+		if (hit[3])
+		{
+			m_AnimTimer += deltaTime;
+		}
+
+		break;
+	}
 	}
 	return RE;
 }
@@ -816,6 +852,7 @@ void Enemy::DrawEnemy(Shader& animSh
 	}
 	case en_Imp:
 	case en_Skeleton:
+	case en_BigImp:
 	{
 
 		float distance[2] = {playerPos[0] - m_Transform[0] - HANDOFFSETX*m_LookAt,playerPos[1] - m_Transform[1] - HANDOFFSETY};
@@ -1361,6 +1398,7 @@ int ProjectileUpdate(float deltaTime
 	, std::vector<int>& isSandOnX
 	, std::vector<int>& chunksToRebuild
 	, float* playerPos
+	, bool& playerOnFire
 	, unsigned int* blockTextures)
 {
 	int playerDamage = 0;
@@ -1379,6 +1417,7 @@ int ProjectileUpdate(float deltaTime
 		case p_FireBullet:
 		case p_FireCannonBall:
 		case p_FireBall:
+		case p_ImpBullet:
 			c[i][0] = 0.922;
 			c[i][1] = 0.141;
 			c[i][2] = 0.141;
@@ -1468,6 +1507,7 @@ int ProjectileUpdate(float deltaTime
 		case p_BasicBullet:
 		case p_FireBullet:
 		case p_PierceBullet:
+		case p_ImpBullet:
 			gravity[i] = 0;
 			halfSize[i] = 0.2f;
 			break;
@@ -1609,18 +1649,39 @@ int ProjectileUpdate(float deltaTime
 			}
 			break;
 		}
+		case p_ImpBullet:
+		{
+			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))
+			{
+				destroy = true;
+				playerOnFire = true;
+				break;
+			}
+			destroy = (blockHit[0] == true || blockHit[1] == true || blockHit[2] == true || blockHit[3] == true);
+			break;
+		}
 		case p_FrostSpike:
 		case p_BoneArrow:
 		{
 			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))
 			{
 				destroy = true;
+
 				break;
 			}
 			destroy = (blockHit[0] == true || blockHit[1] == true || blockHit[2] == true || blockHit[3] == true);
 			break;
 		}
 		case p_FireBall:
+		{
+			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))
+			{
+				playerOnFire = true;
+				destroy = true;
+				break;
+			}
+			break;
+		}
 		case p_ArcaneBall:
 		{
 			if (HitPlayer(deltaTime, projectiles.at(i).m_Damage, oldVelocity, projectiles.at(i).m_Velocity, vertices, playerPos, projectiles.at(i).m_Transform, playerDamage, particles))

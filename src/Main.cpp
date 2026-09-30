@@ -722,10 +722,11 @@ int main()
 			enemiesTexs[en_ThunderBird] = CreateTextureRGBA("res/textures/bird.png");
 			enemiesDDs[en_ThunderBird]  = CreateDrawData(eob, 2.5f, -2.5f, -2.5f, 2.5f, 1, 0, 0, 1.0f / 2.0f);
 
-
 			enemiesTexs[en_Necromancer] = CreateTextureRGBA("res/textures/necromancer.png");
 			enemiesDDs[en_Necromancer]  = CreateDrawData(eob, 3.5f, -3.5f, -3.5f, 3.5f, 1, 0, 0, 1.0f / 2.0f);
 
+			enemiesTexs[en_BigImp] = CreateTextureRGBA("res/textures/bigImpAnim.png");
+			enemiesDDs[en_BigImp]  = CreateDrawData(eob, 2.5f, -2.5f, -1.66f, 1.66f, 1, 0, 0, 1.0f / 5.0f);
 
 			unsigned int blockTextures[t_BlocksSize];
 			unsigned int projectilesTex[p_Size];
@@ -736,6 +737,7 @@ int main()
 				projectilesDD[i] = blocksDrawData;
 			}
 			projectilesDD[p_BasicBullet] = CreateDrawData(eob, 0.3f, -0.3f, 0.2f, -0.2f);
+			projectilesDD[p_ImpBullet] = projectilesDD[p_BasicBullet];
 			projectilesDD[p_FireBullet] = projectilesDD[p_BasicBullet];
 			projectilesDD[p_BouncingBullet] = projectilesDD[p_BasicBullet];
 			projectilesDD[p_PierceBullet] = projectilesDD[p_BasicBullet];
@@ -743,16 +745,11 @@ int main()
 
 
 			projectilesTex[p_FrostSpike] = CreateTextureRGBA("res/textures/frostSpike.png");
-			
 			projectilesTex[p_BoneArrow] = CreateTextureRGBA("res/textures/boneArrow.png");
-
 			projectilesTex[p_FireBall] = CreateTextureRGBA("res/textures/fireBall.png");
-
 			projectilesTex[p_ArcaneBall] = CreateTextureRGBA("res/textures/arcane.png");
-
 			projectilesTex[p_Gas] = CreateTextureRGBA("res/textures/gas.png");
-
-
+			projectilesTex[p_ImpBullet] = CreateTextureRGBA("res/textures/impBullet.png");
 
 
 
@@ -948,7 +945,7 @@ int main()
 			
 			
 			
-			
+			enemies.emplace_back(enemies, en_BigImp, player.m_Transform[0]+5, player.m_Transform[1]+2,0);
 			
 			pastTime = glfwGetTime();
 			while (!glfwWindowShouldClose(window) && gameState == stateInGame)
@@ -1041,10 +1038,17 @@ int main()
 				player.EveryFrame(deltaTime, chunksToRebuildBlock, blocks, chunksToRebuildWall, Walls, enemies, isSandOnX, craftStations, damagedCrowns, damagedBlocks, damagedWalls, letters, CameraCoordinates, blocksDrawData, eob, blockTextures, structuresTextures, Crowns, seedlings, dropItems, projectiles, doors, chests);
 
 				{
-					int damageToplayer = ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock,player.m_Transform, blockTextures);
+					bool playerOnFire = false;
+					int damageToplayer = ProjectileUpdate(deltaTime, projectiles, enemies, blocks, Walls, craftStations, seedlings, Crowns, dropItems, boomParticles, doors, chests, isSandOnX, chunksToRebuildBlock,player.m_Transform, playerOnFire, blockTextures);
 					if(damageToplayer)
 					{
+						if(playerOnFire)
+						{
+							player.m_IsBurning = true;
+							player.m_BurningTimer = 0;
+						}
 						player.DamagePlayer(NULL, damageToplayer);
+
 					}
 				}
 
