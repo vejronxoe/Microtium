@@ -5,6 +5,7 @@
 
 #include"ItemList.h"
 #include"glfw/input.h"
+#include "opengl/Shader.h"
 #include"opengl/Texture.h"
 #include"opengl/DrawData.h"
 #include"math/matrix.h"
@@ -753,13 +754,21 @@ int Enemy::EnemyEveryFrame(float deltaTime
 			{
 				m_AbilityTimer += 0.5f;
 				NormalizeVector(distance);
-				projectiles.emplace_back(p_FireBall,m_Transform[0] + HANDOFFSETX ,m_Transform[1] + HANDOFFSETY, distance[0] * 25, distance[1] * 25, m_Damage);
+				projectiles.emplace_back(p_ImpBullet,m_Transform[0] + HANDOFFSETX ,m_Transform[1] + HANDOFFSETY, distance[0] * 30, distance[1] * 30, m_Damage);
 			}
 		}
-		if(m_AbilityTimer > BIGIMPCOOLDOWN *5) m_AbilityTimer=0;
-
+		if(m_AbilityTimer > BIGIMPCOOLDOWN *5) m_AbilityTimer = 0;
+		m_LookAt = direction[0];
 		bool hit[4] = {};
-		RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform,hit);
+		float dist = Pyt2D(distance);
+		if(dist > 20)
+		{
+			RE = walkingToTarget(deltaTime, blocks, vertices, playerTransform, playerTransform,hit);
+		}
+		else
+		{
+			RE = walkingToTarget(deltaTime, blocks, vertices, NULL, playerTransform,hit);
+		}
 		if (hit[3])
 		{
 			m_AnimTimer += deltaTime;
@@ -801,12 +810,15 @@ uint8_t animDraw(Shader& animSh
 void Enemy::DrawEnemy(Shader& animSh
 	, Shader& handSh
 	, Shader& proAnimSh
+	, Shader& impHandSh
 	, unsigned int* texs
 	, unsigned int* DDs
 	, unsigned int skeletonHandTex
 	, unsigned int skeletonHandDD
 	, unsigned int impHandTex
 	, unsigned int impHandDD
+	, unsigned int bigImpHandTex
+	, unsigned int bigImpHandDD
 	, float* playerPos
 	, float* transform
 	, float* scale
@@ -852,7 +864,6 @@ void Enemy::DrawEnemy(Shader& animSh
 	}
 	case en_Imp:
 	case en_Skeleton:
-	case en_BigImp:
 	{
 
 		float distance[2] = {playerPos[0] - m_Transform[0] - HANDOFFSETX*m_LookAt,playerPos[1] - m_Transform[1] - HANDOFFSETY};
@@ -954,6 +965,45 @@ void Enemy::DrawEnemy(Shader& animSh
 		if(m_AbilityTimer < NECROMANCERCOOLDOWN - 1.0f ) proAnimSh.SetUniform1i(animNumber, 0);
 		else proAnimSh.SetUniform1i(animNumber, 1);
 		ErrorGL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0));
+		break;
+	}
+	case en_BigImp:
+	{
+
+		float distance[2] = {playerPos[0] - m_Transform[0] - HANDOFFSETX*m_LookAt,playerPos[1] - m_Transform[1] - HANDOFFSETY};
+		int animOrder[8] = { 0, 3, 1, 3, 0, 4, 2, 4 };
+		animSh.SetUniform1i(animLeangth, 5);
+		float animOffset = 0;
+		if (animDraw(animSh, m_AnimTimer, animOrder, 8, 0.8f / std::abs(m_Velocity[0])) == 0)
+		{
+			animOffset = 0.1f;
+			ChangeTransform(m_Transform[0], m_Transform[1] + 0.1f, transform);
+			animSh.SetUniformMat4(animTransform, transform);
+		}
+		float blend[2] = {};
+
+		if(m_AbilityTimer < BIGIMPCOOLDOWN*4)
+		{
+			blend[0] = Clamp(m_AbilityTimer/(2*BIGIMPCOOLDOWN), 0, 1);
+			blend[1] = Clamp((m_AbilityTimer-BIGIMPCOOLDOWN*2)/(2*BIGIMPCOOLDOWN), 0, 1);
+		}
+		else
+		{
+			blend[1] =1- Clamp((m_AbilityTimer-BIGIMPCOOLDOWN*4.0f)/(BIGIMPCOOLDOWN*0.5f), 0, 1);
+			blend[0] =1- Clamp((m_AbilityTimer-BIGIMPCOOLDOWN*4.5f)/(BIGIMPCOOLDOWN*0.5f), 0, 1);
+		}
+		impHandSh.Bind();
+		impHandSh.SetUniformMat4(handScale, scale);
+		impHandSh.SetUniform2f(handBlend, blend[0], blend[1]);
+		ChangeRotation(atan2f(distance[0],distance[1])/PI *180 * -m_LookAt, rotation);
+		impHandSh.SetUniformMat4(handRotation, rotation);
+		ChangeTransform(m_Transform[0], m_Transform[1] + animOffset , transform);
+		impHandSh.SetUniformMat4(handTransform, transform);
+		ErrorGL(glBindVertexArray(bigImpHandDD));
+		ErrorGL(glBindTexture(GL_TEXTURE_2D, bigImpHandTex));
+
+		ErrorGL(glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, 0));
+		animSh.Bind();
 		break;
 	}
 	}

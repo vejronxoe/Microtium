@@ -100,12 +100,15 @@ struct Enemy
 	void DrawEnemy(Shader& animSh
 		, Shader& handSh
 		, Shader& ProAnimSh
+		, Shader& impHandSh
 		, unsigned int* textures
 		, unsigned int* DDs
 		, unsigned int skeletonhandTex
 		, unsigned int skeletonhandDD
 		, unsigned int impHandTex
 		, unsigned int impHandDD
+		, unsigned int bigImpHandTex
+		, unsigned int bigImpHandDD
 		, float* playerPos
 		, float* transform
 		, float* scale

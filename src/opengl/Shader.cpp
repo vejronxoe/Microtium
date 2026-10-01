@@ -60,6 +60,10 @@ void Shader::SetUniform1i(unsigned int location, int v)
 {
 	ErrorGL(glUniform1i(m_Locations.at(location), v));
 }
+void Shader::SetUniform2f(unsigned int location, float v0 ,float v1)
+{
+	ErrorGL(glUniform2f(m_Locations.at(location), v0, v1));
+}
 void Shader::SetUniform1b(unsigned int location, bool v)
 {
 	ErrorGL(glUniform1d(m_Locations.at(location), v));

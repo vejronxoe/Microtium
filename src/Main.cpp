@@ -635,6 +635,14 @@ int main()
 			handSh.GetUniformLocation("scale");
 			handSh.GetUniformLocation("rotation");
 			handSh.GetUniformLocation("beginTransform");
+			Shader impHandSh("res/shaders/verImpHand.txt", "res/shaders/fragImpHand.txt");
+			impHandSh.Bind();
+			impHandSh.GetUniformLocation("camera");
+			impHandSh.GetUniformLocation("transform");
+			impHandSh.GetUniformLocation("scale");
+			impHandSh.GetUniformLocation("rotation");
+			impHandSh.GetUniformLocation("beginTransform");
+			impHandSh.GetUniformLocation("blend");
 			Shader advancedSh("res/shaders/verAdvanced.txt", "res/shaders/fragShadow.txt");
 			advancedSh.Bind();
 			advancedSh.GetUniformLocation("camera");
@@ -672,6 +680,8 @@ int main()
 			advancedSh.SetUniformMat4(advancedRotation, rotation);
 			handSh.Bind();
 			handSh.SetUniformMat4(handBeginTransform, transform);
+			impHandSh.Bind();
+			impHandSh.SetUniformMat4(handBeginTransform, transform);
 			CrownSh.Bind();
 			CrownSh.SetUniformMat4(CrownRotation, rotation);
 			HUDSh.Bind();
@@ -756,7 +766,47 @@ int main()
 			unsigned int skeletonHandTex = CreateTextureRGBA("res/textures/skeletonHand.png");
 			unsigned int skeletonHandDD = CreateDrawData(eob, 1.8f, 0, 0.9f, -0.9f);
 
+			unsigned int bigImpHandTex = CreateTextureRGBA("res/textures/BigImpHand.png");
+			unsigned int bigImpHandDD ;
+			{
 
+				float ver[30] =
+				{
+					-0.6f,0,0,0,0
+					,0.6f,0,1,0,0
+					,0.6f,4.0f-0.1875f*4,1,1.0f-0.1875f,0
+					,0.6f,4,1,1,1
+					,-0.6f,4,0,1,1
+					,-0.6f,4.0f-0.1875f*4,0,1.0f-0.1875f,0
+				};
+				unsigned char order[12] =
+				{
+					0,1,2
+					,2,5,0
+					,5,2,3
+					,5,4,3
+				};
+				unsigned int EOB = 0;
+				unsigned int VBO = 0;
+				ErrorGL(glGenBuffers(1, &EOB));
+				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+				ErrorGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12, order, GL_STATIC_DRAW));
+				ErrorGL(glGenVertexArrays(1, &bigImpHandDD));
+				ErrorGL(glBindVertexArray(bigImpHandDD));
+				ErrorGL(glGenBuffers(1, &VBO));
+				ErrorGL(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+				ErrorGL(glBufferData(GL_ARRAY_BUFFER, 30 * sizeof(float), ver, GL_STATIC_DRAW));
+
+				ErrorGL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
+				ErrorGL(glEnableVertexAttribArray(0));
+				ErrorGL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float))));
+				ErrorGL(glEnableVertexAttribArray(1));
+				ErrorGL(glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float))));
+				ErrorGL(glEnableVertexAttribArray(2));
+				ErrorGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EOB));
+
+				ErrorGL(glBindVertexArray(0));
+			}
 
 			unsigned int impHandTex = CreateTextureRGBA("res/textures/impHand.png");
 			unsigned int impHandDD = CreateDrawData(eob, 1.25f, 0, 0.15f, -0.15f);
@@ -1115,6 +1165,8 @@ int main()
 				basicSh.SetUniformMat4(basicCamera, camera);
 				handSh.Bind();
 				handSh.SetUniformMat4(handCamera, camera);
+				impHandSh.Bind();
+				impHandSh.SetUniformMat4(handCamera, camera);
 				advancedSh.Bind();
 				advancedSh.SetUniformMat4(advancedCamera, camera);
 				particlesSh.Bind();
@@ -1186,11 +1238,15 @@ int main()
 				particlesSh.SetUniformMat4(particlesRotation, rotation);
 				ChangeScale(1, 1, scale);
 				particlesSh.SetUniformMat4(particlesScale, scale);
-
+				advancedSh.Bind();
+				for (int i = 0; i < projectiles.size(); i++)
+				{
+					projectiles.at(i).Draw(advancedSh,projectilesDD,projectilesTex, transform, scale, rotation);
+				}
 				animSh.Bind();
 				for (int i = 0; i < enemies.size(); i++)
 				{
-					enemies.at(i).DrawEnemy(animSh,handSh,proAnimSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,impHandTex,impHandDD,player.m_Transform, transform, scale, rotation);
+					enemies.at(i).DrawEnemy(animSh,handSh,proAnimSh,impHandSh,enemiesTexs,enemiesDDs,skeletonHandTex,skeletonHandDD,impHandTex,impHandDD,bigImpHandTex,bigImpHandDD,player.m_Transform, transform, scale, rotation);
 				}
 
 				particlesSh.Bind();
@@ -1238,11 +1294,6 @@ int main()
 				}
 
 				advancedSh.Bind();
-				for (int i = 0; i < projectiles.size(); i++)
-				{
-					projectiles.at(i).Draw(advancedSh,projectilesDD,projectilesTex, transform, scale, rotation);
-				}
-
 				player.DrawPlayer(deltaTime, basicSh, animSh, handSh, particlesSh, transform, scale, rotation, camera, particlesDD);
 				if (Window::height)
 				{
